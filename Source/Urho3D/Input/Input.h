@@ -233,6 +233,10 @@ public:
     bool GetKeyDown(int key) const;
     /// Check if a key has been pressed on this frame.
     bool GetKeyPress(int key) const;
+    /// Check if a key is held down.
+    bool GetKeyTapDown(int key, int numberOfPresses) const;
+    /// Check if a key has been pressed on this frame.
+    bool GetKeyTap(int key, int numberOfPresses) const;
     /// Check if a key is held down by scancode.
     bool GetScancodeDown(int scancode) const;
     /// Check if a key has been pressed on this frame by scancode.
@@ -300,6 +304,12 @@ public:
 
     /// Return whether application window is minimized.
     bool IsMinimized() const;
+
+    /// Returns multipress time interval in milliseconds.
+    unsigned GetTapTime() { return tapMilliseconds_; }
+
+    /// Sets multipress time interval to `ms` milliseconds.
+    void SetTapTime(unsigned ms) { tapMilliseconds_ = ms; }
 
 private:
     /// Initialize when screen mode initially set.
@@ -429,6 +439,14 @@ private:
     bool screenModeChanged_;
     /// Initialized flag.
     bool initialized_;
+    /// Key that was pressed last.
+    int lastKeyPressed_;
+    /// System time when key was last pressed.
+    unsigned lastKeyPressSystemTime_;
+    /// Number of times last key was pressed in a row.
+    int lastKeyNumberOfPresses_;
+    /// Number of milliseconds that key has to be pressed within since last key press in order to register a tap.
+    unsigned tapMilliseconds_;
 
 #ifdef __EMSCRIPTEN__
     /// Emscripten Input glue instance.

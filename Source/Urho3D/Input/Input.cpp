@@ -28,6 +28,7 @@
 #include "../Core/ProcessUtils.h"
 #include "../Core/Profiler.h"
 #include "../Core/StringUtils.h"
+#include "../Core/Timer.h"
 #include "../Graphics/Graphics.h"
 #include "../Graphics/GraphicsEvents.h"
 #include "../Input/Input.h"
@@ -347,7 +348,11 @@ Input::Input(Context* context) :
     suppressNextMouseMove_(false),
     inResize_(false),
     screenModeChanged_(false),
-    initialized_(false)
+    initialized_(false),
+    lastKeyPressed_(-1),
+    lastKeyPressSystemTime_(0),
+    lastKeyNumberOfPresses_(0),
+    tapMilliseconds_(250)
 {
     for (int i = 0; i < TOUCHID_MAX; i++)
         availableTouchIDs_.Push(i);
@@ -1298,6 +1303,16 @@ bool Input::GetKeyPress(int key) const
     return keyPress_.Contains(SDL_tolower(key));
 }
 
+bool Input::GetKeyTapDown(int key, int numberOfPresses) const
+{
+    return GetKeyDown(key) && lastKeyPressed_ == key && numberOfPresses == lastKeyNumberOfPresses_;
+}
+
+bool Input::GetKeyTap(int key, int numberOfPresses) const
+{
+    return GetKeyPress(key) && lastKeyPressed_ == key && numberOfPresses == lastKeyNumberOfPresses_;
+}
+
 bool Input::GetScancodeDown(int scancode) const
 {
     return scancodeDown_.Contains(scancode);
@@ -1735,6 +1750,20 @@ void Input::SetKey(int key, int scancode, bool newState)
         {
             keyDown_.Insert(key);
             keyPress_.Insert(key);
+            unsigned now = Time::GetSystemTime();
+            if (key == lastKeyPressed_)
+            {
+                if (now - lastKeyPressSystemTime_ <= tapMilliseconds_)
+                    ++lastKeyNumberOfPresses_;
+                else
+                    lastKeyNumberOfPresses_ = 1;
+            }
+            else
+            {
+                lastKeyNumberOfPresses_ = 1;
+                lastKeyPressed_ = key;
+            }
+            lastKeyPressSystemTime_ = now;
         }
         else
             repeat = true;
