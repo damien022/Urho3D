@@ -155,6 +155,9 @@ public:
     /// Return length.
     float Length() const { return sqrtf((float)(x_ * x_ + y_ * y_)); }
 
+    /// Test for equality with another vector with epsilon.
+    bool Equals(const IntVector2& rhs) const { return Urho3D::Equals(x_, rhs.x_) && Urho3D::Equals(y_, rhs.y_); }
+
     /// X coordinate.
     int x_;
     /// Y coordinate.

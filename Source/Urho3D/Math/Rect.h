@@ -66,6 +66,13 @@ public:
     {
     }
 
+    /// Construct from a int array.
+    explicit Rect(const int* data) :
+        min_(data[0], data[1]),
+        max_(data[2], data[3])
+    {
+    }
+
     /// Copy-construct from another rect.
     Rect(const Rect& rect) :
         min_(rect.min_),
@@ -155,6 +162,12 @@ public:
     /// Return size.
     Vector2 Size() const { return max_ - min_; }
 
+    /// Return width.
+    float Width() const { return max_.x_ - min_.x_; }
+
+    /// Return height.
+    float Height() const { return max_.y_ - min_.y_; }
+
     /// Return half-size.
     Vector2 HalfSize() const { return (max_ - min_) * 0.5f; }
 
@@ -182,7 +195,7 @@ public:
     }
 
     /// Return float data.
-    const void* Data() const { return &min_.x_; }
+    const float* Data() const { return &min_.x_; }
 
     /// Return as a vector.
     Vector4 ToVector4() const { return Vector4(min_.x_, min_.y_, max_.x_, max_.y_); }
@@ -235,12 +248,31 @@ public:
     }
 
     /// Construct from an int array.
-    IntRect(const int* data) :
+    explicit IntRect(const int* data) :
         left_(data[0]),
         top_(data[1]),
         right_(data[2]),
         bottom_(data[3])
     {
+    }
+
+    /// Copy-construct from another rect.
+    IntRect(const IntRect& other) :
+        left_(other.left_),
+        top_(other.top_),
+        right_(other.right_),
+        bottom_(other.bottom_)
+    {
+    }
+
+    /// Assign from another rect.
+    IntRect& operator =(const IntRect& rhs)
+    {
+        left_ = rhs.left_;
+        top_ = rhs.top_;
+        right_ = rhs.right_;
+        bottom_ = rhs.bottom_;
+        return *this;
     }
 
     /// Test for equality with another rect.
@@ -255,6 +287,34 @@ public:
         return left_ != rhs.left_ || top_ != rhs.top_ || right_ != rhs.right_ || bottom_ != rhs.bottom_;
     }
 
+    /// Define from another rect.
+    void Define(const IntRect& rect)
+    {
+        left_ = rect.left_;
+        top_ = rect.top_;
+        right_ = rect.right_;
+        bottom_ = rect.bottom_;
+    }
+
+    /// Define from minimum and maximum vectors.
+    void Define(const IntVector2& min, const IntVector2& max)
+    {
+        left_ = min.x_;
+        top_ = min.y_;
+        right_ = max.x_;
+        bottom_ = max.y_;
+    }
+
+    /// Define from a point.
+    void Define(const IntVector2& point)
+    {
+        left_ = right_ = point.x_;
+        top_ = bottom_ = point.y_;
+    }
+
+    /// Return center.
+    IntVector2 Center() const { return IntVector2(left_ + right_, top_ + bottom_) / 2; }
+
     /// Return size.
     IntVector2 Size() const { return IntVector2(Width(), Height()); }
 
@@ -263,6 +323,12 @@ public:
 
     /// Return height.
     int Height() const { return bottom_ - top_; }
+
+    /// Return half-size.
+    IntVector2 HalfSize() const { return Size() / 2; }
+
+    /// Test for equality with another rect.
+    bool Equals(const IntRect& rhs) const { return *this == rhs; }
 
     /// Test whether a point is inside.
     Intersection IsInside(const IntVector2& point) const
