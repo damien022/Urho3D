@@ -42,6 +42,7 @@ namespace glm
 
 			union
 			{
+				struct{ T x_, y_, z_; };    // Urho3D compatibility
 				struct{ T x, y, z; };
 				struct{ T r, g, b; };
 				struct{ T s, t, p; };
@@ -66,9 +67,9 @@ namespace glm
 #				pragma GCC diagnostic pop
 #			endif
 #		else
-			union { T x, r, s; };
-			union { T y, g, t; };
-			union { T z, b, p; };
+			union { T x, x_, r, s; };
+			union { T y, y_, g, t; };
+			union { T z, z_, b, p; };
 
 #			if GLM_SWIZZLE == GLM_SWIZZLE_ENABLED
 				GLM_SWIZZLE_GEN_VEC_FROM_VEC3(T, P)
@@ -223,6 +224,8 @@ namespace glm
 		GLM_FUNC_DECL vec & operator>>=(vec<1, U, Q> const& v);
 		template<typename U>
 		GLM_FUNC_DECL vec & operator>>=(vec<3, U, Q> const& v);
+
+		#include "../Urho3D/mixin_vec.inl"
 	};
 
 	// -- Unary operators --
@@ -406,3 +409,5 @@ namespace glm
 #ifndef GLM_EXTERNAL_TEMPLATE
 #include "type_vec3.inl"
 #endif//GLM_EXTERNAL_TEMPLATE
+
+#include "../Urho3D/mixin_vec_global.inl"
