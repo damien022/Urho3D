@@ -31,6 +31,7 @@ add_subdirectory(STB)
 add_subdirectory(Mustache)
 add_subdirectory(imgui)
 add_subdirectory(IconFontCppHeaders)
+add_subdirectory(glm)
 
 if (URHO3D_NETWORK)
     add_subdirectory (Civetweb)

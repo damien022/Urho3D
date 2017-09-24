@@ -65,6 +65,7 @@ Urho3D uses the following third-party libraries:
 - easy_profiler 1.3.0 (https://github.com/yse/easy_profiler)
 - tinyfiledialogs v2.9.1 (http://tinyfiledialogs.sourceforge.net/)
 - IconFontCppHeaders (https://github.com/juliettef/IconFontCppHeaders)
+- glm 0.9.8.5 (https://github.com/g-truc/glm)
 
 DXT / ETC1 / PVRTC decompression code based on the Squish library and the Oolong Engine.
 Jack and mushroom models from the realXtend project. (https://www.realxtend.org)
