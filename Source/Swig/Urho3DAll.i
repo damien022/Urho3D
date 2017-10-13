@@ -1,6 +1,8 @@
-%module Urho3D
+%module(directors="1") Urho3D
 %{
 #include <Urho3D/LibraryInfo.h>
+#include <Urho3D/Container/RefCounted.h>
+#include <Urho3D/Core/Object.h>
 #include <Urho3D/Graphics/AnimatedModel.h>
 #include <Urho3D/Graphics/Animation.h>
 #include <Urho3D/Graphics/AnimationController.h>
@@ -77,7 +79,6 @@
 #include <Urho3D/Container/ListBase.h>
 #include <Urho3D/Container/Pair.h>
 #include <Urho3D/Container/Ptr.h>
-#include <Urho3D/Container/RefCounted.h>
 #include <Urho3D/Container/Sort.h>
 #include <Urho3D/Container/Str.h>
 #include <Urho3D/Container/Swap.h>
@@ -90,7 +91,6 @@
 #include <Urho3D/Core/Main.h>
 #include <Urho3D/Core/MiniDump.h>
 #include <Urho3D/Core/Mutex.h>
-#include <Urho3D/Core/Object.h>
 #include <Urho3D/Core/ProcessUtils.h>
 #include <Urho3D/Core/Profiler.h>
 #include <Urho3D/Core/Spline.h>
@@ -279,9 +279,36 @@ using namespace Urho3D;
 %}
 
 #define URHO3D_API
+// Workaround for syntax that swig does not support
+#define final
+#define static_assert(cond, msg)
+// Prevent error due to missing imgui
+#define ImGui Urho3D
 
 %include typemaps.i
+%include swiginterface.i
 
+// Enable overloading of virtual methods
+//%feature("director");
+
+// Create interfaces for these classes to allow multiple inheritance.
+%interface_impl(Urho3D::Thread);
+%interface_impl(Urho3D::Serializer);
+%interface_impl(Urho3D::Deserializer);
+%interface_impl(Urho3D::GPUObject);
+%interface_impl(Urho3D::AbstractFile);
+%interface_impl(Urho3D::Octant);
+
+// Ignore list
+%ignore Urho3D::Object::SendEvent(StringHash,VariantMap const &);		// This method is only required for c++ side so API accepts std::initializer_list<>
+%ignore Urho3D::UpdateDrawablesWork;									// Internal function
+%ignore Urho3D::RaycastDrawablesWork;									// Internal function
+%ignore Urho3D::CheckVisibilityWork;									// Internal function
+%ignore Urho3D::ProcessLightWork;										//
+%ignore Urho3D::CrowdAgentUpdateCallback;
+%ignore Urho3D::InternalPreTickCallback;
+%ignore Urho3D::InternalTickCallback;
+%ignore Urho3D::CheckDrawableVisibilityWork;
 
 %include "Urho3D/LibraryInfo.h"
 // Utilities
@@ -306,17 +333,14 @@ using namespace Urho3D;
 %include "Urho3D/Container/Vector.h"
 %include "Urho3D/Container/VectorBase.h"
 
-
 // Base of all other objects
 %include "Urho3D/Container/RefCounted.h"
-%ignore Urho3D::Object::SendEvent(StringHash,VariantMap const &);		// This method is only required for c++ side so API accepts std::initializer_list<>
 %include "Urho3D/Core/Object.h"
 
 %include "Urho3D/Scene/Serializable.h"
 %include "Urho3D/Scene/ValueAnimationInfo.h"
 %include "Urho3D/Scene/Animatable.h"
 %include "Urho3D/Scene/Component.h"
-%ignore Urho3D::UpdateDrawablesWork;									// Internal function
 %include "Urho3D/Graphics/Drawable.h"
 %include "Urho3D/Resource/Resource.h"
 %include "Urho3D/Graphics/StaticModel.h"
@@ -332,18 +356,17 @@ using namespace Urho3D;
 %include "Urho3D/Graphics/CustomGeometry.h"
 %include "Urho3D/Graphics/DebugRenderer.h"
 %include "Urho3D/Graphics/DecalSet.h"
-////%include "Urho3D/Graphics/DrawableEvents.h"
+//%include "Urho3D/Graphics/DrawableEvents.h"
 %include "Urho3D/Graphics/Geometry.h"
 %include "Urho3D/Graphics/Graphics.h"
 %include "Urho3D/Graphics/GraphicsDefs.h"
-////%include "Urho3D/Graphics/GraphicsEvents.h"
+//%include "Urho3D/Graphics/GraphicsEvents.h"
 %include "Urho3D/Graphics/GraphicsImpl.h"
 %include "Urho3D/Graphics/IndexBuffer.h"
 %include "Urho3D/Graphics/Light.h"
 %include "Urho3D/Graphics/Material.h"
 %include "Urho3D/Graphics/Model.h"
 %include "Urho3D/Graphics/OcclusionBuffer.h"
-%ignore Urho3D::RaycastDrawablesWork;									// Internal function
 %include "Urho3D/Graphics/Octree.h"
 %include "Urho3D/Graphics/OctreeQuery.h"
 %include "Urho3D/Graphics/ParticleEffect.h"
@@ -370,8 +393,6 @@ using namespace Urho3D;
 %include "Urho3D/Graphics/TextureCube.h"
 %include "Urho3D/Graphics/VertexBuffer.h"
 %include "Urho3D/Graphics/VertexDeclaration.h"
-%ignore Urho3D::CheckVisibilityWork;									// Internal function
-%ignore Urho3D::ProcessLightWork;										//
 %include "Urho3D/Graphics/View.h"
 %include "Urho3D/Graphics/Viewport.h"
 %include "Urho3D/Graphics/Zone.h"
@@ -417,8 +438,6 @@ using namespace Urho3D;
 //%include "Urho3D/IO/IOEvents.h"
 %include "Urho3D/IO/Log.h"
 %include "Urho3D/IO/MacFileWatcher.h"
-%ignore Urho3D::MemoryBuffer::MemoryBuffer(void const *,unsigned int);
-%ignore Urho3D::MemoryBuffer::MemoryBuffer(void *,unsigned int);
 %include "Urho3D/IO/MemoryBuffer.h"
 %include "Urho3D/IO/NamedPipe.h"
 %include "Urho3D/IO/PackageFile.h"
@@ -448,6 +467,7 @@ using namespace Urho3D;
 %include "Urho3D/Resource/Decompress.h"
 %include "Urho3D/Resource/Image.h"
 %include "Urho3D/Resource/JSONFile.h"
+
 %include "Urho3D/Resource/JSONValue.h"
 %include "Urho3D/Resource/Localization.h"
 %include "Urho3D/Resource/PListFile.h"
@@ -462,114 +482,134 @@ using namespace Urho3D;
 %include "Urho3D/Scene/ReplicationState.h"
 %include "Urho3D/Scene/Scene.h"
 ////%include "Urho3D/Scene/SceneEvents.h"
-//%include "Urho3D/Scene/SceneResolver.h"
-//%include "Urho3D/Scene/SmoothedTransform.h"
-//%include "Urho3D/Scene/SplinePath.h"
-//%include "Urho3D/Scene/UnknownComponent.h"
-//%include "Urho3D/Scene/ValueAnimation.h"
-//%include "Urho3D/UI/BorderImage.h"
-//%include "Urho3D/UI/Button.h"
-//%include "Urho3D/UI/CheckBox.h"
-//%include "Urho3D/UI/Cursor.h"
-//%include "Urho3D/UI/DropDownList.h"
-//%include "Urho3D/UI/FileSelector.h"
-//%include "Urho3D/UI/Font.h"
-//%include "Urho3D/UI/FontFace.h"
-//%include "Urho3D/UI/FontFaceBitmap.h"
-//%include "Urho3D/UI/FontFaceFreeType.h"
-//%include "Urho3D/UI/LineEdit.h"
-//%include "Urho3D/UI/ListView.h"
-//%include "Urho3D/UI/Menu.h"
-//%include "Urho3D/UI/MessageBox.h"
-//%include "Urho3D/UI/ProgressBar.h"
-//%include "Urho3D/UI/ScrollBar.h"
-//%include "Urho3D/UI/ScrollView.h"
-//%include "Urho3D/UI/Slider.h"
-//%include "Urho3D/UI/Sprite.h"
-//%include "Urho3D/UI/Text.h"
-//%include "Urho3D/UI/Text3D.h"
-//%include "Urho3D/UI/ToolTip.h"
-//%include "Urho3D/UI/UI.h"
-//%include "Urho3D/UI/UIBatch.h"
-//%include "Urho3D/UI/UIComponent.h"
-//%include "Urho3D/UI/UIElement.h"
-////%include "Urho3D/UI/UIEvents.h"
-//%include "Urho3D/UI/View3D.h"
-//%include "Urho3D/UI/Window.h"
-//%include "Urho3D/Graphics/OpenGL/OGLGraphicsImpl.h"
-//%include "Urho3D/Graphics/OpenGL/OGLShaderProgram.h"
-//%include "Urho3D/IK/IK.h"
-//%include "Urho3D/IK/IKConstraint.h"
-//%include "Urho3D/IK/IKConverters.h"
-//%include "Urho3D/IK/IKEffector.h"
-////%include "Urho3D/IK/IKEvents.h"
-//%include "Urho3D/IK/IKSolver.h"
-//%include "Urho3D/Navigation/CrowdAgent.h"
-//%include "Urho3D/Navigation/CrowdManager.h"
-//%include "Urho3D/Navigation/DynamicNavigationMesh.h"
-//%include "Urho3D/Navigation/NavArea.h"
-//%include "Urho3D/Navigation/NavBuildData.h"
-//%include "Urho3D/Navigation/Navigable.h"
-////%include "Urho3D/Navigation/NavigationEvents.h"
-//%include "Urho3D/Navigation/NavigationMesh.h"
-//%include "Urho3D/Navigation/Obstacle.h"
-//%include "Urho3D/Navigation/OffMeshConnection.h"
-//%include "Urho3D/Network/Connection.h"
-//%include "Urho3D/Network/HttpRequest.h"
-//%include "Urho3D/Network/Network.h"
-////%include "Urho3D/Network/NetworkEvents.h"
-//%include "Urho3D/Network/NetworkPriority.h"
-//%include "Urho3D/Network/Protocol.h"
-//%include "Urho3D/Physics/CollisionShape.h"
-//%include "Urho3D/Physics/Constraint.h"
-////%include "Urho3D/Physics/PhysicsEvents.h"
-//%include "Urho3D/Physics/PhysicsUtils.h"
-//%include "Urho3D/Physics/PhysicsWorld.h"
-//%include "Urho3D/Physics/RaycastVehicle.h"
-//%include "Urho3D/Physics/RigidBody.h"
-//%include "Urho3D/Urho2D/AnimatedSprite2D.h"
-//%include "Urho3D/Urho2D/AnimationSet2D.h"
-//%include "Urho3D/Urho2D/CollisionBox2D.h"
-//%include "Urho3D/Urho2D/CollisionChain2D.h"
-//%include "Urho3D/Urho2D/CollisionCircle2D.h"
-//%include "Urho3D/Urho2D/CollisionEdge2D.h"
-//%include "Urho3D/Urho2D/CollisionPolygon2D.h"
-//%include "Urho3D/Urho2D/CollisionShape2D.h"
-//%include "Urho3D/Urho2D/Constraint2D.h"
-//%include "Urho3D/Urho2D/ConstraintDistance2D.h"
-//%include "Urho3D/Urho2D/ConstraintFriction2D.h"
-//%include "Urho3D/Urho2D/ConstraintGear2D.h"
-//%include "Urho3D/Urho2D/ConstraintMotor2D.h"
-//%include "Urho3D/Urho2D/ConstraintMouse2D.h"
-//%include "Urho3D/Urho2D/ConstraintPrismatic2D.h"
-//%include "Urho3D/Urho2D/ConstraintPulley2D.h"
-//%include "Urho3D/Urho2D/ConstraintRevolute2D.h"
-//%include "Urho3D/Urho2D/ConstraintRope2D.h"
-//%include "Urho3D/Urho2D/ConstraintWeld2D.h"
-//%include "Urho3D/Urho2D/ConstraintWheel2D.h"
-//%include "Urho3D/Urho2D/Drawable2D.h"
-//%include "Urho3D/Urho2D/ParticleEffect2D.h"
-//%include "Urho3D/Urho2D/ParticleEmitter2D.h"
-////%include "Urho3D/Urho2D/PhysicsEvents2D.h"
-//%include "Urho3D/Urho2D/PhysicsUtils2D.h"
-//%include "Urho3D/Urho2D/PhysicsWorld2D.h"
-//%include "Urho3D/Urho2D/Renderer2D.h"
-//%include "Urho3D/Urho2D/RigidBody2D.h"
-//%include "Urho3D/Urho2D/Sprite2D.h"
-//%include "Urho3D/Urho2D/SpriteSheet2D.h"
-//%include "Urho3D/Urho2D/SpriterData2D.h"
-//%include "Urho3D/Urho2D/SpriterInstance2D.h"
-//%include "Urho3D/Urho2D/StaticSprite2D.h"
-//%include "Urho3D/Urho2D/TileMap2D.h"
-//%include "Urho3D/Urho2D/TileMapDefs2D.h"
-//%include "Urho3D/Urho2D/TileMapLayer2D.h"
-//%include "Urho3D/Urho2D/TmxFile2D.h"
-//%include "Urho3D/Urho2D/Urho2D.h"
-////%include "Urho3D/Urho2D/Urho2DEvents.h"
-//%include "Urho3D/SystemUI/Console.h"
-//%include "Urho3D/SystemUI/DebugHud.h"
-//%include "Urho3D/SystemUI/SystemMessageBox.h"
-//%include "Urho3D/SystemUI/SystemUI.h"
-////%include "Urho3D/SystemUI/SystemUIEvents.h"
-//%include "Urho3D/SystemUI/Widgets/AttributeInspector.h"
-//%include "Urho3D/SystemUI/Widgets/Gizmo.h"
+%include "Urho3D/Scene/SceneResolver.h"
+%include "Urho3D/Scene/SmoothedTransform.h"
+%include "Urho3D/Scene/SplinePath.h"
+%include "Urho3D/Scene/UnknownComponent.h"
+%include "Urho3D/Scene/ValueAnimation.h"
+%include "Urho3D/UI/UIElement.h"
+%include "Urho3D/UI/BorderImage.h"
+%include "Urho3D/UI/Button.h"
+%include "Urho3D/UI/CheckBox.h"
+%include "Urho3D/UI/Cursor.h"
+%include "Urho3D/UI/Menu.h"
+%include "Urho3D/UI/DropDownList.h"
+%include "Urho3D/UI/FileSelector.h"
+%include "Urho3D/UI/Font.h"
+%include "Urho3D/UI/FontFace.h"
+%include "Urho3D/UI/FontFaceBitmap.h"
+%include "Urho3D/UI/FontFaceFreeType.h"
+%include "Urho3D/UI/LineEdit.h"
+%include "Urho3D/UI/ScrollView.h"
+%include "Urho3D/UI/ListView.h"
+%include "Urho3D/UI/MessageBox.h"
+%include "Urho3D/UI/ProgressBar.h"
+%include "Urho3D/UI/ScrollBar.h"
+%include "Urho3D/UI/Slider.h"
+%include "Urho3D/UI/Sprite.h"
+%include "Urho3D/UI/Text.h"
+%include "Urho3D/UI/Text3D.h"
+%include "Urho3D/UI/ToolTip.h"
+%include "Urho3D/UI/UI.h"
+%include "Urho3D/UI/UIBatch.h"
+%include "Urho3D/UI/UIComponent.h"
+//%include "Urho3D/UI/UIEvents.h"
+%include "Urho3D/UI/Window.h"
+%include "Urho3D/UI/View3D.h"
+%include "Urho3D/Graphics/OpenGL/OGLGraphicsImpl.h"
+%include "Urho3D/Graphics/OpenGL/OGLShaderProgram.h"
+%include "Urho3D/IK/IK.h"
+%include "Urho3D/IK/IKConstraint.h"
+%include "Urho3D/IK/IKConverters.h"
+%include "Urho3D/IK/IKEffector.h"
+//%include "Urho3D/IK/IKEvents.h"
+%include "Urho3D/IK/IKSolver.h"
+%include "Urho3D/Navigation/CrowdAgent.h"
+%include "Urho3D/Navigation/CrowdManager.h"
+%include "Urho3D/Navigation/NavigationMesh.h"
+%include "Urho3D/Navigation/DynamicNavigationMesh.h"
+%include "Urho3D/Navigation/NavArea.h"
+%include "Urho3D/Navigation/NavBuildData.h"
+%include "Urho3D/Navigation/Navigable.h"
+//%include "Urho3D/Navigation/NavigationEvents.h"
+%include "Urho3D/Navigation/Obstacle.h"
+%include "Urho3D/Navigation/OffMeshConnection.h"
+%include "Urho3D/Network/Connection.h"
+%include "Urho3D/Network/HttpRequest.h"
+%include "Urho3D/Network/Network.h"
+//%include "Urho3D/Network/NetworkEvents.h"
+%include "Urho3D/Network/NetworkPriority.h"
+%include "Urho3D/Network/Protocol.h"
+%include "Urho3D/Physics/CollisionShape.h"
+%include "Urho3D/Physics/Constraint.h"
+//%include "Urho3D/Physics/PhysicsEvents.h"
+%include "Urho3D/Physics/PhysicsUtils.h"
+%include "Urho3D/Physics/PhysicsWorld.h"
+%include "Urho3D/Physics/RaycastVehicle.h"
+%include "Urho3D/Physics/RigidBody.h"
+%include "Urho3D/Urho2D/AnimationSet2D.h"
+%include "Urho3D/Urho2D/CollisionShape2D.h"
+%include "Urho3D/Urho2D/CollisionBox2D.h"
+%include "Urho3D/Urho2D/CollisionChain2D.h"
+%include "Urho3D/Urho2D/CollisionCircle2D.h"
+%include "Urho3D/Urho2D/CollisionEdge2D.h"
+%include "Urho3D/Urho2D/CollisionPolygon2D.h"
+%include "Urho3D/Urho2D/Constraint2D.h"
+%include "Urho3D/Urho2D/ConstraintDistance2D.h"
+%include "Urho3D/Urho2D/ConstraintFriction2D.h"
+%include "Urho3D/Urho2D/ConstraintGear2D.h"
+%include "Urho3D/Urho2D/ConstraintMotor2D.h"
+%include "Urho3D/Urho2D/ConstraintMouse2D.h"
+%include "Urho3D/Urho2D/ConstraintPrismatic2D.h"
+%include "Urho3D/Urho2D/ConstraintPulley2D.h"
+%include "Urho3D/Urho2D/ConstraintRevolute2D.h"
+%include "Urho3D/Urho2D/ConstraintRope2D.h"
+%include "Urho3D/Urho2D/ConstraintWeld2D.h"
+%include "Urho3D/Urho2D/ConstraintWheel2D.h"
+%include "Urho3D/Urho2D/Drawable2D.h"
+%include "Urho3D/Urho2D/ParticleEffect2D.h"
+%include "Urho3D/Urho2D/ParticleEmitter2D.h"
+//%include "Urho3D/Urho2D/PhysicsEvents2D.h"
+%include "Urho3D/Urho2D/PhysicsUtils2D.h"
+%include "Urho3D/Urho2D/PhysicsWorld2D.h"
+%include "Urho3D/Urho2D/Renderer2D.h"
+%include "Urho3D/Urho2D/RigidBody2D.h"
+%include "Urho3D/Urho2D/Sprite2D.h"
+%include "Urho3D/Urho2D/SpriteSheet2D.h"
+%rename(SpriterFile) Urho3D::Spriter::File;
+%rename(SpriterFolder) Urho3D::Spriter::Folder;
+%rename(SpriterEntity) Urho3D::Spriter::Entity;
+
+%rename(SpriterAnimation) Urho3D::Spriter::Animation;
+%rename(SpriterBoneTimelineKey) Urho3D::Spriter::BoneTimelineKey;
+%rename(SpriterCharacterMap) Urho3D::Spriter::CharacterMap;
+%rename(SpriterEntity) Urho3D::Spriter::Entity;
+%rename(SpriterFile) Urho3D::Spriter::File;
+%rename(SpriterFolder) Urho3D::Spriter::Folder;
+%rename(SpriterMainlineKey) Urho3D::Spriter::MainlineKey;
+%rename(SpriterMapInstruction) Urho3D::Spriter::MapInstruction;
+%rename(SpriterRef) Urho3D::Spriter::Ref;
+%rename(SpriterSpatialInfo) Urho3D::Spriter::SpatialInfo;
+%rename(SpriterSpatialTimelineKey) Urho3D::Spriter::SpatialTimelineKey;
+%rename(SpriterSpriterData) Urho3D::Spriter::SpriterData;
+%rename(SpriterSpriteTimelineKey) Urho3D::Spriter::SpriteTimelineKey;
+%rename(SpriterTimeline) Urho3D::Spriter::Timeline;
+%rename(SpriterTimelineKey) Urho3D::Spriter::TimelineKey;
+
+%include "Urho3D/Urho2D/SpriterData2D.h"
+%include "Urho3D/Urho2D/SpriterInstance2D.h"
+%include "Urho3D/Urho2D/StaticSprite2D.h"
+%include "Urho3D/Urho2D/AnimatedSprite2D.h"
+%include "Urho3D/Urho2D/TileMap2D.h"
+%include "Urho3D/Urho2D/TileMapDefs2D.h"
+%include "Urho3D/Urho2D/TileMapLayer2D.h"
+%include "Urho3D/Urho2D/TmxFile2D.h"
+%include "Urho3D/Urho2D/Urho2D.h"
+//%include "Urho3D/Urho2D/Urho2DEvents.h"
+%include "Urho3D/SystemUI/SystemUI.h"
+%include "Urho3D/SystemUI/Console.h"
+%include "Urho3D/SystemUI/DebugHud.h"
+%include "Urho3D/SystemUI/SystemMessageBox.h"
+//%include "Urho3D/SystemUI/SystemUIEvents.h"
+%include "Urho3D/SystemUI/Widgets/AttributeInspector.h"
+%include "Urho3D/SystemUI/Widgets/Gizmo.h"

@@ -187,3 +187,19 @@
 	%rename(__ieq__) operator = (const Frustum&);
 	%csmethodmodifiers operator = "private";
 };
+
+
+%extend Urho3D::JSONValue
+{
+	%rename(__ieq__) operator = (bool);
+	%rename(__ieq__) operator = (int);
+	%rename(__ieq__) operator = (unsigned);
+	%rename(__ieq__) operator = (float);
+	%rename(__ieq__) operator = (double);
+	%rename(__ieq__) operator = (const String&);
+	%rename(__ieq__) operator = (const char*);
+	%rename(__ieq__) operator = (const JSONArray&);
+	%rename(__ieq__) operator = (const JSONObject&);
+	%rename(__ieq__) operator = (const JSONValue&);
+	%csmethodmodifiers operator = "private";
+};

@@ -93,11 +93,20 @@ group_sources("SystemUI")
 group_sources("UI")
 group_sources("Urho2D")
 
+if (TARGET Urho3DNET)
+    list (APPEND SOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/../Swig/Urho3DNET_swig.cxx)
+endif ()
+
 add_library(Urho3D ${URHO3D_LIBRARY_TYPE} ${SOURCE_FILES} ${HEADER_FILES})
 target_include_directories(Urho3D PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/..      # For parent projects to find engine headers
     ${CMAKE_CURRENT_BINARY_DIR}/..      # For parent projects to find auto-generated engine headers
 )
+
+if (TARGET Urho3DNET)
+    target_include_directories(Urho3D PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/../Swig)
+    add_dependencies(Urho3D Urho3DNET)
+endif ()
 
 # Add any variables starting with URHO3D_ as project defines
 get_cmake_property(__cmake_variables VARIABLES)

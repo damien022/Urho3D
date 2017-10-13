@@ -20,28 +20,17 @@
 # THE SOFTWARE.
 #
 
-if (MSVC)
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-    # Enable parallel builds
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
-endif ()
-
-add_subdirectory(ThirdParty)
-
-if (BUILD_SHARED_LIBS)
-    add_subdirectory(Swig)
-endif ()
-
-add_subdirectory (Urho3D)
-
-if (NOT CMAKE_CROSS_COMPILING)
-    add_subdirectory (Tools)
-    if (URHO3D_EXTRAS)
-        add_subdirectory (Extras)
-    endif ()
-endif ()
-
-if (URHO3D_SAMPLES)
-    add_subdirectory (Samples)
-endif ()
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Urho3DNET)
+add_custom_target(Urho3DNET
+    COMMAND swig -c++ -O -fastdispatch -fvirtual
+            -I${Urho3D_SOURCE_DIR}/Source
+            -w473                   # Returning a pointer or reference in a director method is not recommended.
+            -w516                   # Overloaded method XX ignored, using YY instead. Usually spam about const vs non-const methods, defaults to non-consts.
+            -outdir Urho3DNET
+            -o Urho3DNET_swig.cxx
+            -csharp
+            -dllimport Urho3D.so
+            -namespace Urho3D
+            ${CMAKE_CURRENT_SOURCE_DIR}/Urho3DAll.i
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
