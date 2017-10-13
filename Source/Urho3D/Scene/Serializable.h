@@ -148,9 +148,10 @@ private:
 template <typename T, typename U> class EnumAttributeAccessorImpl : public AttributeAccessor
 {
 public:
+#ifndef SWIG
     using GetFunctionPtr = U (T::*)() const;
     using SetFunctionPtr = void (T::*)(U);
-
+#endif
     /// Construct with function pointers.
     EnumAttributeAccessorImpl(GetFunctionPtr getFunction, SetFunctionPtr setFunction) :
         getFunction_(getFunction),
@@ -268,9 +269,10 @@ template <typename T> struct MixedAttributeTrait
 template <typename T, typename U, typename Trait> class AttributeAccessorImpl : public AttributeAccessor
 {
 public:
+#ifndef SWIG
     using GetFunctionPtr = typename Trait::ReturnType (T::*)() const;
     using SetFunctionPtr = void (T::*)(typename Trait::ParameterType);
-
+#endif
     /// Construct with function pointers.
     AttributeAccessorImpl(GetFunctionPtr getFunction, SetFunctionPtr setFunction) :
         getFunction_(getFunction),
@@ -340,12 +342,14 @@ public:
     SetFunctionPtr setFunction_;
 };
 
+#ifndef SWIG
 /// Attribute metadata.
 namespace AttributeMetadata
 {
     /// Names of vector struct elements. StringVector.
     static const StringHash P_VECTOR_STRUCT_ELEMENTS("VectorStructElements");
 }
+#endif
 
 // The following macros need to be used within a class member function such as ClassName::RegisterObject().
 // A variable called "context" needs to exist in the current scope and point to a valid Context object.
