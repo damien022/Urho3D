@@ -29,10 +29,6 @@ endif ()
 
 add_subdirectory(ThirdParty)
 
-if (BUILD_SHARED_LIBS)
-    add_subdirectory(Swig)
-endif ()
-
 add_subdirectory (Urho3D)
 
 if (NOT CMAKE_CROSS_COMPILING)

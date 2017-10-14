@@ -93,20 +93,11 @@ group_sources("SystemUI")
 group_sources("UI")
 group_sources("Urho2D")
 
-if (TARGET Urho3DNET)
-    list (APPEND SOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/../Swig/Urho3DNET_swig.cxx)
-endif ()
-
 add_library(Urho3D ${URHO3D_LIBRARY_TYPE} ${SOURCE_FILES} ${HEADER_FILES})
 target_include_directories(Urho3D PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/..      # For parent projects to find engine headers
     ${CMAKE_CURRENT_BINARY_DIR}/..      # For parent projects to find auto-generated engine headers
 )
-
-if (TARGET Urho3DNET)
-    target_include_directories(Urho3D PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/../Swig)
-    add_dependencies(Urho3D Urho3DNET)
-endif ()
 
 # Add any variables starting with URHO3D_ as project defines
 get_cmake_property(__cmake_variables VARIABLES)
@@ -271,3 +262,17 @@ string (REPLACE ";" ">\n#include <Urho3D/" HEADER_FILES "${HEADER_FILES}")
 set (HEADER_FILES "#include <Urho3D/${HEADER_FILES}>")
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/Urho3DAll.h.in ${CMAKE_CURRENT_BINARY_DIR}/Urho3DAll.h @ONLY)
 install (FILES ${CMAKE_CURRENT_BINARY_DIR}/Urho3DAll.h DESTINATION ${DEST_INCLUDE_DIR})
+
+find_package(SWIG REQUIRED)
+include(${SWIG_USE_FILE})
+set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR}/Urho3DNET)
+set_source_files_properties(Urho3DAll.i PROPERTIES CPLUSPLUS ON)
+set_property(SOURCE Urho3DAll.i PROPERTY SWIG_MODULE_NAME Urho3D.${CMAKE_SHARED_LIBRARY_SUFFIX})
+set_source_files_properties(Urho3DAll.i PROPERTIES SWIG_FLAGS "-O;-fastdispatch;-fvirtual;-namespace;Urho3D;-w473;-w516")
+# -w473  Returning a pointer or reference in a director method is not recommended.
+# -w516  Overloaded method XX ignored, using YY instead. Usually spam about const vs non-const methods, defaults to non-consts.
+swig_add_module(Urho3DNET csharp Urho3DAll.i)
+target_compile_definitions(Urho3DNET PRIVATE ${URHO3D_COMPILE_DEFINITIONS})
+get_property(URHO3D_INCLUDE_DIRECTORIES TARGET Urho3D PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+target_include_directories(Urho3DNET PRIVATE .. ${URHO3D_INCLUDE_DIRECTORIES})
+target_link_libraries(Urho3DNET Urho3D)
