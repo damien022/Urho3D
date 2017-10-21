@@ -28,10 +28,8 @@
 
 namespace Urho3D
 {
-
 class Node;
 class Scene;
-
 }
 
 /// Water example.

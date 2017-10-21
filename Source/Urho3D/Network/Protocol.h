@@ -24,7 +24,6 @@
 
 namespace Urho3D
 {
-
 /// Client->server: send VariantMap of identity and authentication data.
 static const int MSG_IDENTITY = 0x5;
 /// Client->server: send controls (buttons and mouse movement.)
@@ -68,5 +67,4 @@ static const int MSG_PACKAGEINFO = 0x16;
 static const unsigned CONTROLS_CONTENT_ID = 1;
 /// Package file fragment size.
 static const unsigned PACKAGE_FRAGMENT_SIZE = 1024;
-
 }

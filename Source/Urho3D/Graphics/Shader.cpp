@@ -35,7 +35,6 @@
 
 namespace Urho3D
 {
-
 void CommentOutFunction(String& code, const String& signature)
 {
     unsigned startPos = code.Find(signature);
@@ -61,10 +60,10 @@ void CommentOutFunction(String& code, const String& signature)
     }
 }
 
-Shader::Shader(Context* context) :
-    Resource(context),
-    timeStamp_(0),
-    numVariations_(0)
+Shader::Shader(Context* context)
+    : Resource(context)
+    , timeStamp_(0)
+    , numVariations_(0)
 {
     RefreshMemoryUse();
 }
@@ -76,10 +75,7 @@ Shader::~Shader()
         cache->ResetDependencies(this);
 }
 
-void Shader::RegisterObject(Context* context)
-{
-    context->RegisterFactory<Shader>();
-}
+void Shader::RegisterObject(Context* context) { context->RegisterFactory<Shader>(); }
 
 bool Shader::BeginLoad(Deserializer& source)
 {
@@ -112,9 +108,11 @@ bool Shader::BeginLoad(Deserializer& source)
 bool Shader::EndLoad()
 {
     // If variations had already been created, release them and require recompile
-    for (HashMap<StringHash, SharedPtr<ShaderVariation> >::Iterator i = vsVariations_.Begin(); i != vsVariations_.End(); ++i)
+    for (HashMap<StringHash, SharedPtr<ShaderVariation>>::Iterator i = vsVariations_.Begin(); i != vsVariations_.End();
+         ++i)
         i->second_->Release();
-    for (HashMap<StringHash, SharedPtr<ShaderVariation> >::Iterator i = psVariations_.Begin(); i != psVariations_.End(); ++i)
+    for (HashMap<StringHash, SharedPtr<ShaderVariation>>::Iterator i = psVariations_.Begin(); i != psVariations_.End();
+         ++i)
         i->second_->Release();
 
     return true;
@@ -128,12 +126,12 @@ ShaderVariation* Shader::GetVariation(ShaderType type, const String& defines)
 ShaderVariation* Shader::GetVariation(ShaderType type, const char* defines)
 {
     StringHash definesHash(defines);
-    HashMap<StringHash, SharedPtr<ShaderVariation> >& variations(type == VS ? vsVariations_ : psVariations_);
-    HashMap<StringHash, SharedPtr<ShaderVariation> >::Iterator i = variations.Find(definesHash);
+    HashMap<StringHash, SharedPtr<ShaderVariation>>& variations(type == VS ? vsVariations_ : psVariations_);
+    HashMap<StringHash, SharedPtr<ShaderVariation>>::Iterator i = variations.Find(definesHash);
     if (i == variations.End())
     {
-        // If shader not found, normalize the defines (to prevent duplicates) and check again. In that case make an alias
-        // so that further queries are faster
+        // If shader not found, normalize the defines (to prevent duplicates) and check again. In that case make an
+        // alias so that further queries are faster
         String normalizedDefines = NormalizeDefines(defines);
         StringHash normalizedHash(normalizedDefines);
 
@@ -143,7 +141,8 @@ ShaderVariation* Shader::GetVariation(ShaderType type, const char* defines)
         else
         {
             // No shader variation found. Create new
-            i = variations.Insert(MakePair(normalizedHash, SharedPtr<ShaderVariation>(new ShaderVariation(this, type))));
+            i = variations.Insert(
+                MakePair(normalizedHash, SharedPtr<ShaderVariation>(new ShaderVariation(this, type))));
             if (definesHash != normalizedHash)
                 variations.Insert(MakePair(definesHash, i->second_));
 
@@ -214,8 +213,7 @@ String Shader::NormalizeDefines(const String& defines)
 
 void Shader::RefreshMemoryUse()
 {
-    SetMemoryUse(
-        (unsigned)(sizeof(Shader) + vsSourceCode_.Length() + psSourceCode_.Length() + numVariations_ * sizeof(ShaderVariation)));
+    SetMemoryUse((unsigned)(sizeof(Shader) + vsSourceCode_.Length() + psSourceCode_.Length() +
+                            numVariations_ * sizeof(ShaderVariation)));
 }
-
 }

@@ -29,14 +29,13 @@
 
 namespace Urho3D
 {
-
 /// Skeletal animation keyframe.
 struct AnimationKeyFrame
 {
     /// Construct.
-    AnimationKeyFrame() :
-        time_(0.0f),
-        scale_(Vector3::ONE)
+    AnimationKeyFrame()
+        : time_(0.0f)
+        , scale_(Vector3::ONE)
     {
     }
 
@@ -54,8 +53,8 @@ struct AnimationKeyFrame
 struct URHO3D_API AnimationTrack
 {
     /// Construct.
-    AnimationTrack() :
-        channelMask_(0)
+    AnimationTrack()
+        : channelMask_(0)
     {
     }
 
@@ -91,8 +90,8 @@ struct URHO3D_API AnimationTrack
 struct AnimationTriggerPoint
 {
     /// Construct.
-    AnimationTriggerPoint() :
-        time_(0.0f)
+    AnimationTriggerPoint()
+        : time_(0.0f)
     {
     }
 
@@ -130,7 +129,8 @@ public:
     void SetLength(float length);
     /// Create and return a track by name. If track by same name already exists, returns the existing.
     AnimationTrack* CreateTrack(const String& name);
-    /// Remove a track by name. Return true if was found and removed successfully. This is unsafe if the animation is currently used in playback.
+    /// Remove a track by name. Return true if was found and removed successfully. This is unsafe if the animation is
+    /// currently used in playback.
     bool RemoveTrack(const String& name);
     /// Remove all tracks. This is unsafe if the animation is currently used in playback.
     void RemoveAllTracks();
@@ -165,7 +165,7 @@ public:
     unsigned GetNumTracks() const { return tracks_.Size(); }
 
     /// Return animation track by index.
-    AnimationTrack *GetTrack(unsigned index);
+    AnimationTrack* GetTrack(unsigned index);
 
     /// Return animation track by name.
     AnimationTrack* GetTrack(const String& name);
@@ -183,6 +183,7 @@ public:
 
     /// Set all animation tracks.
     void SetTracks(const Vector<AnimationTrack>& tracks);
+
 private:
     /// Animation name.
     String animationName_;
@@ -195,5 +196,4 @@ private:
     /// Animation trigger points.
     Vector<AnimationTriggerPoint> triggers_;
 };
-
 }

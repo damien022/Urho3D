@@ -28,7 +28,6 @@
 
 namespace Urho3D
 {
-
 class AsyncExecRequest;
 
 /// Return files.
@@ -55,15 +54,21 @@ public:
     bool CreateDir(const String& pathName);
     /// Set whether to execute engine console commands as OS-specific system command.
     void SetExecuteConsoleCommands(bool enable);
-    /// Run a program using the command interpreter, block until it exits and return the exit code. Will fail if any allowed paths are defined.
+    /// Run a program using the command interpreter, block until it exits and return the exit code. Will fail if any
+    /// allowed paths are defined.
     int SystemCommand(const String& commandLine, bool redirectStdOutToLog = false);
-    /// Run a specific program, block until it exits and return the exit code. Will fail if any allowed paths are defined.
+    /// Run a specific program, block until it exits and return the exit code. Will fail if any allowed paths are
+    /// defined.
     int SystemRun(const String& fileName, const Vector<String>& arguments);
-    /// Run a program using the command interpreter asynchronously. Return a request ID or M_MAX_UNSIGNED if failed. The exit code will be posted together with the request ID in an AsyncExecFinished event. Will fail if any allowed paths are defined.
+    /// Run a program using the command interpreter asynchronously. Return a request ID or M_MAX_UNSIGNED if failed. The
+    /// exit code will be posted together with the request ID in an AsyncExecFinished event. Will fail if any allowed
+    /// paths are defined.
     unsigned SystemCommandAsync(const String& commandLine);
-    /// Run a specific program asynchronously. Return a request ID or M_MAX_UNSIGNED if failed. The exit code will be posted together with the request ID in an AsyncExecFinished event. Will fail if any allowed paths are defined.
+    /// Run a specific program asynchronously. Return a request ID or M_MAX_UNSIGNED if failed. The exit code will be
+    /// posted together with the request ID in an AsyncExecFinished event. Will fail if any allowed paths are defined.
     unsigned SystemRunAsync(const String& fileName, const Vector<String>& arguments);
-    /// Open a file in an external program, with mode such as "edit" optionally specified. Will fail if any allowed paths are defined.
+    /// Open a file in an external program, with mode such as "edit" optionally specified. Will fail if any allowed
+    /// paths are defined.
     bool SystemOpen(const String& fileName, const String& mode = String::EMPTY);
     /// Copy a file. Return true if successful.
     bool Copy(const String& srcFileName, const String& destFileName);
@@ -71,7 +76,9 @@ public:
     bool Rename(const String& srcFileName, const String& destFileName);
     /// Delete a file. Return true if successful.
     bool Delete(const String& fileName);
-    /// Register a path as allowed to access. If no paths are registered, all are allowed. Registering allowed paths is considered securing the Urho3D execution environment: running programs and opening files externally through the system will fail afterward.
+    /// Register a path as allowed to access. If no paths are registered, all are allowed. Registering allowed paths is
+    /// considered securing the Urho3D execution environment: running programs and opening files externally through the
+    /// system will fail afterward.
     void RegisterPath(const String& pathName);
     /// Set a file's last modified time as seconds since 1.1.1970. Return true on success.
     bool SetLastModifiedTime(const String& fileName, unsigned newTime);
@@ -94,7 +101,8 @@ public:
     /// Check if a directory exists.
     bool DirExists(const String& pathName) const;
     /// Scan a directory for specified files.
-    void ScanDir(Vector<String>& result, const String& pathName, const String& filter, unsigned flags, bool recursive) const;
+    void ScanDir(Vector<String>& result, const String& pathName, const String& filter, unsigned flags,
+                 bool recursive) const;
     /// Return the program's directory.
     String GetProgramDir() const;
     /// Return the user documents directory.
@@ -111,13 +119,14 @@ public:
     bool CreateDirsRecursive(const String& directoryIn);
     /// Remove files in a directory, or remove entire directory recursively.
     bool RemoveDir(const String& directoryIn, bool recursive);
-    /// Return path of temporary directory. Result is a directory in application settings directory, not system temporary directory.
+    /// Return path of temporary directory. Result is a directory in application settings directory, not system
+    /// temporary directory.
     String GetTemporaryPath() const;
 
 private:
     /// Scan directory, called internally.
-    void ScanDirInternal
-        (Vector<String>& result, String path, const String& startPath, const String& filter, unsigned flags, bool recursive) const;
+    void ScanDirInternal(Vector<String>& result, String path, const String& startPath, const String& filter,
+                         unsigned flags, bool recursive) const;
     /// Handle begin frame event to check for completed async executions.
     void HandleBeginFrame(StringHash eventType, VariantMap& eventData);
     /// Handle a console command event.
@@ -134,15 +143,16 @@ private:
 };
 
 /// Split a full path to path, filename and extension. The extension will be converted to lowercase by default.
-URHO3D_API void
-    SplitPath(const String& fullPath, String& pathName, String& fileName, String& extension, bool lowercaseExtension = true);
+URHO3D_API void SplitPath(const String& fullPath, String& pathName, String& fileName, String& extension,
+                          bool lowercaseExtension = true);
 /// Return the path from a full path.
 URHO3D_API String GetPath(const String& fullPath);
 /// Return the filename from a full path.
 URHO3D_API String GetFileName(const String& fullPath);
 /// Return the extension from a full path, converted to lowercase by default.
 URHO3D_API String GetExtension(const String& fullPath, bool lowercaseExtension = true);
-/// Return the filename and extension from a full path. The case of the extension is preserved by default, so that the file can be opened in case-sensitive operating systems.
+/// Return the filename and extension from a full path. The case of the extension is preserved by default, so that the
+/// file can be opened in case-sensitive operating systems.
 URHO3D_API String GetFileNameAndExtension(const String& fullPath, bool lowercaseExtension = false);
 /// Replace the extension of a file name with another.
 URHO3D_API String ReplaceExtension(const String& fullPath, const String& newExtension);
@@ -167,5 +177,4 @@ URHO3D_API String GetSanitizedPath(const String& path);
 /// Given two absolute directory paths, get the relative path from one to the other
 /// Returns false if either path isn't absolute, or if they are unrelated
 URHO3D_API bool GetRelativePath(const String& fromPath, const String& toPath, String& output);
-
 }

@@ -26,24 +26,18 @@
 
 namespace Urho3D
 {
-
-SoundStream::SoundStream() :
-    frequency_(44100),
-    stopAtEnd_(false),
-    sixteenBit_(false),
-    stereo_(false)
+SoundStream::SoundStream()
+    : frequency_(44100)
+    , stopAtEnd_(false)
+    , sixteenBit_(false)
+    , stereo_(false)
 {
 }
 
-SoundStream::~SoundStream()
-{
-}
+SoundStream::~SoundStream() {}
 
-bool SoundStream::Seek(unsigned int sample_number)
-{
-    return false;
-}
-    
+bool SoundStream::Seek(unsigned int sample_number) { return false; }
+
 void SoundStream::SetFormat(unsigned frequency, bool sixteenBit, bool stereo)
 {
     frequency_ = frequency;
@@ -51,10 +45,7 @@ void SoundStream::SetFormat(unsigned frequency, bool sixteenBit, bool stereo)
     stereo_ = stereo;
 }
 
-void SoundStream::SetStopAtEnd(bool enable)
-{
-    stopAtEnd_ = enable;
-}
+void SoundStream::SetStopAtEnd(bool enable) { stopAtEnd_ = enable; }
 
 unsigned SoundStream::GetSampleSize() const
 {
@@ -65,5 +56,4 @@ unsigned SoundStream::GetSampleSize() const
         size <<= 1;
     return size;
 }
-
 };

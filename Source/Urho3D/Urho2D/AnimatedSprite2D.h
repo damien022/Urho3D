@@ -43,15 +43,15 @@ enum LoopMode2D
 
 namespace Urho3D
 {
-
 namespace Spriter
 {
-    class SpriterInstance;
+class SpriterInstance;
 }
 
 class AnimationSet2D;
 
-/// Animated sprite component, it uses to play animation created by Spine (http://www.esotericsoftware.com) and Spriter (http://www.brashmonkey.com/).
+/// Animated sprite component, it uses to play animation created by Spine (http://www.esotericsoftware.com) and Spriter
+/// (http://www.brashmonkey.com/).
 class URHO3D_API AnimatedSprite2D : public StaticSprite2D
 {
     URHO3D_OBJECT(AnimatedSprite2D, StaticSprite2D);
@@ -141,9 +141,8 @@ protected:
     /// Animation state.
     spAnimationState* animationState_;
 #endif
-    
+
     /// Spriter instance.
     UniquePtr<Spriter::SpriterInstance> spriterInstance_;
 };
-
 }

@@ -32,42 +32,39 @@
 
 namespace Urho3D
 {
-
-AnimationStateTrack::AnimationStateTrack() :
-    track_(nullptr),
-    bone_(nullptr),
-    weight_(1.0f),
-    keyFrame_(0)
+AnimationStateTrack::AnimationStateTrack()
+    : track_(nullptr)
+    , bone_(nullptr)
+    , weight_(1.0f)
+    , keyFrame_(0)
 {
 }
 
-AnimationStateTrack::~AnimationStateTrack()
-{
-}
+AnimationStateTrack::~AnimationStateTrack() {}
 
-AnimationState::AnimationState(AnimatedModel* model, Animation* animation) :
-    model_(model),
-    animation_(animation),
-    startBone_(nullptr),
-    looped_(false),
-    weight_(0.0f),
-    time_(0.0f),
-    layer_(0),
-    blendingMode_(ABM_LERP)
+AnimationState::AnimationState(AnimatedModel* model, Animation* animation)
+    : model_(model)
+    , animation_(animation)
+    , startBone_(nullptr)
+    , looped_(false)
+    , weight_(0.0f)
+    , time_(0.0f)
+    , layer_(0)
+    , blendingMode_(ABM_LERP)
 {
     // Set default start bone (use all tracks.)
     SetStartBone(nullptr);
 }
 
-AnimationState::AnimationState(Node* node, Animation* animation) :
-    node_(node),
-    animation_(animation),
-    startBone_(nullptr),
-    looped_(false),
-    weight_(1.0f),
-    time_(0.0f),
-    layer_(0),
-    blendingMode_(ABM_LERP)
+AnimationState::AnimationState(Node* node, Animation* animation)
+    : node_(node)
+    , animation_(animation)
+    , startBone_(nullptr)
+    , looped_(false)
+    , weight_(1.0f)
+    , time_(0.0f)
+    , layer_(0)
+    , blendingMode_(ABM_LERP)
 {
     if (animation_)
     {
@@ -91,7 +88,8 @@ AnimationState::AnimationState(Node* node, Animation* animation) :
                     if (targetNode)
                         stateTrack.node_ = targetNode;
                     else
-                        URHO3D_LOGWARNING("Node " + i->second_.name_ + " not found for node animation " + animation_->GetName());
+                        URHO3D_LOGWARNING("Node " + i->second_.name_ + " not found for node animation " +
+                                          animation_->GetName());
                 }
 
                 if (stateTrack.node_)
@@ -101,10 +99,7 @@ AnimationState::AnimationState(Node* node, Animation* animation) :
     }
 }
 
-
-AnimationState::~AnimationState()
-{
-}
+AnimationState::~AnimationState() {}
 
 void AnimationState::SetStartBone(Bone* startBone)
 {
@@ -161,10 +156,7 @@ void AnimationState::SetStartBone(Bone* startBone)
     model_->MarkAnimationDirty();
 }
 
-void AnimationState::SetLooped(bool looped)
-{
-    looped_ = looped;
-}
+void AnimationState::SetLooped(bool looped) { looped_ = looped; }
 
 void AnimationState::SetWeight(float weight)
 {
@@ -225,7 +217,7 @@ void AnimationState::SetBoneWeight(unsigned index, float weight, bool recursive)
         Node* boneNode = stateTracks_[index].node_;
         if (boneNode)
         {
-            const Vector<SharedPtr<Node> >& children = boneNode->GetChildren();
+            const Vector<SharedPtr<Node>>& children = boneNode->GetChildren();
             for (unsigned i = 0; i < children.Size(); ++i)
             {
                 unsigned childTrackIndex = GetTrackIndex(children[i]);
@@ -356,7 +348,8 @@ void AnimationState::AddTime(float delta)
                 eventData[P_TIME] = i->time_;
                 eventData[P_DATA] = i->data_;
 
-                // Note: this may cause arbitrary deletion of animation states, including the one we are currently processing
+                // Note: this may cause arbitrary deletion of animation states, including the one we are currently
+                // processing
                 senderNode->SendEvent(E_ANIMATIONTRIGGER, eventData);
                 if (senderNode.Expired() || self.Expired())
                     return;
@@ -375,35 +368,20 @@ void AnimationState::SetLayer(unsigned char layer)
     }
 }
 
-AnimatedModel* AnimationState::GetModel() const
-{
-    return model_;
-}
+AnimatedModel* AnimationState::GetModel() const { return model_; }
 
-Node* AnimationState::GetNode() const
-{
-    return node_;
-}
+Node* AnimationState::GetNode() const { return node_; }
 
-Bone* AnimationState::GetStartBone() const
-{
-    return model_ ? startBone_ : nullptr;
-}
+Bone* AnimationState::GetStartBone() const { return model_ ? startBone_ : nullptr; }
 
 float AnimationState::GetBoneWeight(unsigned index) const
 {
     return index < stateTracks_.Size() ? stateTracks_[index].weight_ : 0.0f;
 }
 
-float AnimationState::GetBoneWeight(const String& name) const
-{
-    return GetBoneWeight(GetTrackIndex(name));
-}
+float AnimationState::GetBoneWeight(const String& name) const { return GetBoneWeight(GetTrackIndex(name)); }
 
-float AnimationState::GetBoneWeight(StringHash nameHash) const
-{
-    return GetBoneWeight(GetTrackIndex(nameHash));
-}
+float AnimationState::GetBoneWeight(StringHash nameHash) const { return GetBoneWeight(GetTrackIndex(nameHash)); }
 
 unsigned AnimationState::GetTrackIndex(const String& name) const
 {
@@ -440,10 +418,7 @@ unsigned AnimationState::GetTrackIndex(StringHash nameHash) const
     return M_MAX_UNSIGNED;
 }
 
-float AnimationState::GetLength() const
-{
-    return animation_ ? animation_->GetLength() : 0.0f;
-}
+float AnimationState::GetLength() const { return animation_ ? animation_->GetLength() : 0.0f; }
 
 void AnimationState::Apply()
 {
@@ -466,7 +441,7 @@ void AnimationState::ApplyToModel()
         // Do not apply if zero effective weight or the bone has animation disabled
         if (Equals(finalWeight, 0.0f) || !stateTrack.bone_->animated_)
             continue;
-            
+
         ApplyTrack(stateTrack, finalWeight, true);
     }
 }
@@ -534,7 +509,7 @@ void AnimationState::ApplyTrack(AnimationStateTrack& stateTrack, float weight, b
         if (channelMask & CHANNEL_SCALE)
             newScale = keyFrame->scale_;
     }
-    
+
     if (blendingMode_ == ABM_ADDITIVE) // not ABM_LERP
     {
         if (channelMask & CHANNEL_POSITION)
@@ -567,7 +542,7 @@ void AnimationState::ApplyTrack(AnimationStateTrack& stateTrack, float weight, b
                 newScale = node->GetScale().Lerp(newScale, weight);
         }
     }
-    
+
     if (silent)
     {
         if (channelMask & CHANNEL_POSITION)
@@ -587,5 +562,4 @@ void AnimationState::ApplyTrack(AnimationStateTrack& stateTrack, float weight, b
             node->SetScale(newScale);
     }
 }
-
 }

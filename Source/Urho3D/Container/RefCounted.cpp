@@ -28,9 +28,8 @@
 
 namespace Urho3D
 {
-
-RefCounted::RefCounted() :
-    refCount_(new RefCount())
+RefCounted::RefCounted()
+    : refCount_(new RefCount())
 {
     // Hold a weak ref to self to avoid possible double delete of the refcount
     (refCount_->weakRefs_)++;
@@ -65,15 +64,11 @@ void RefCounted::ReleaseRef()
         delete this;
 }
 
-int RefCounted::Refs() const
-{
-    return refCount_->refs_;
-}
+int RefCounted::Refs() const { return refCount_->refs_; }
 
 int RefCounted::WeakRefs() const
 {
     // Subtract one to not return the internally held reference
     return refCount_->weakRefs_ - 1;
 }
-
 }

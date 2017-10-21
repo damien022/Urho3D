@@ -22,8 +22,8 @@
 
 #include "../IK/IKConverters.h"
 
-namespace Urho3D {
-
+namespace Urho3D
+{
 // ----------------------------------------------------------------------------
 vec3_t Vec3Urho2IK(const Vector3& urho)
 {
@@ -35,10 +35,7 @@ vec3_t Vec3Urho2IK(const Vector3& urho)
 }
 
 // ----------------------------------------------------------------------------
-Vector3 Vec3IK2Urho(const vec3_t* ik)
-{
-    return Vector3(ik->v.x, ik->v.y, ik->v.z);
-}
+Vector3 Vec3IK2Urho(const vec3_t* ik) { return Vector3(ik->v.x, ik->v.y, ik->v.z); }
 
 // ----------------------------------------------------------------------------
 quat_t QuatUrho2IK(const Quaternion& urho)
@@ -52,9 +49,5 @@ quat_t QuatUrho2IK(const Quaternion& urho)
 }
 
 // ----------------------------------------------------------------------------
-Quaternion QuatIK2Urho(const quat_t* ik)
-{
-    return Quaternion(ik->q.w, ik->q.x, ik->q.y, ik->q.z);
-}
-
+Quaternion QuatIK2Urho(const quat_t* ik) { return Quaternion(ik->q.w, ik->q.x, ik->q.y, ik->q.z); }
 }

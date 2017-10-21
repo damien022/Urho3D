@@ -28,12 +28,12 @@
 #include "../Graphics/AnimatedModel.h"
 #include "../Graphics/Camera.h"
 #include "../Graphics/DebugRenderer.h"
+#include "../Graphics/Geometry.h"
 #include "../Graphics/Graphics.h"
+#include "../Graphics/IndexBuffer.h"
 #include "../Graphics/Light.h"
 #include "../Graphics/ShaderVariation.h"
 #include "../Graphics/VertexBuffer.h"
-#include "../Graphics/IndexBuffer.h"
-#include "../Graphics/Geometry.h"
 #include "../Math/Polyhedron.h"
 #include "../Resource/ResourceCache.h"
 
@@ -41,7 +41,6 @@
 
 namespace Urho3D
 {
-
 extern const char* SUBSYSTEM_CATEGORY;
 
 // Cap the amount of lines to prevent crash when eg. debug rendering large heightfields
@@ -49,18 +48,16 @@ static const unsigned MAX_LINES = 1000000;
 // Cap the amount of triangles to prevent crash.
 static const unsigned MAX_TRIANGLES = 100000;
 
-DebugRenderer::DebugRenderer(Context* context) :
-    Component(context),
-    lineAntiAlias_(false)
+DebugRenderer::DebugRenderer(Context* context)
+    : Component(context)
+    , lineAntiAlias_(false)
 {
     vertexBuffer_ = new VertexBuffer(context_);
 
     SubscribeToEvent(E_ENDFRAME, URHO3D_HANDLER(DebugRenderer, HandleEndFrame));
 }
 
-DebugRenderer::~DebugRenderer()
-{
-}
+DebugRenderer::~DebugRenderer() {}
 
 void DebugRenderer::RegisterObject(Context* context)
 {
@@ -104,7 +101,8 @@ void DebugRenderer::AddLine(const Vector3& start, const Vector3& end, unsigned c
         noDepthLines_.Push(DebugLine(start, end, color));
 }
 
-void DebugRenderer::AddTriangle(const Vector3& v1, const Vector3& v2, const Vector3& v3, const Color& color, bool depthTest)
+void DebugRenderer::AddTriangle(const Vector3& v1, const Vector3& v2, const Vector3& v3, const Color& color,
+                                bool depthTest)
 {
     AddTriangle(v1, v2, v3, color.ToUInt(), depthTest);
 }
@@ -120,13 +118,15 @@ void DebugRenderer::AddTriangle(const Vector3& v1, const Vector3& v2, const Vect
         noDepthTriangles_.Push(DebugTriangle(v1, v2, v3, color));
 }
 
-void DebugRenderer::AddPolygon(const Vector3& v1, const Vector3& v2, const Vector3& v3, const Vector3& v4, const Color& color, bool depthTest)
+void DebugRenderer::AddPolygon(const Vector3& v1, const Vector3& v2, const Vector3& v3, const Vector3& v4,
+                               const Color& color, bool depthTest)
 {
     AddTriangle(v1, v2, v3, color, depthTest);
     AddTriangle(v3, v4, v1, color, depthTest);
 }
 
-void DebugRenderer::AddPolygon(const Vector3& v1, const Vector3& v2, const Vector3& v3, const Vector3& v4, unsigned color, bool depthTest)
+void DebugRenderer::AddPolygon(const Vector3& v1, const Vector3& v2, const Vector3& v3, const Vector3& v4,
+                               unsigned color, bool depthTest)
 {
     AddTriangle(v1, v2, v3, color, depthTest);
     AddTriangle(v3, v4, v1, color, depthTest);
@@ -185,7 +185,8 @@ void DebugRenderer::AddBoundingBox(const BoundingBox& box, const Color& color, b
     }
 }
 
-void DebugRenderer::AddBoundingBox(const BoundingBox& box, const Matrix3x4& transform, const Color& color, bool depthTest, bool solid)
+void DebugRenderer::AddBoundingBox(const BoundingBox& box, const Matrix3x4& transform, const Color& color,
+                                   bool depthTest, bool solid)
 {
     const Vector3& min = box.min_;
     const Vector3& max = box.max_;
@@ -282,8 +283,8 @@ void DebugRenderer::AddSphere(const Sphere& sphere, const Color& color, bool dep
     }
 }
 
-void DebugRenderer::AddSphereSector(const Sphere& sphere, const Quaternion& rotation, float angle,
-    bool drawLines, const Color& color, bool depthTest)
+void DebugRenderer::AddSphereSector(const Sphere& sphere, const Quaternion& rotation, float angle, bool drawLines,
+                                    const Color& color, bool depthTest)
 {
     if (angle <= 0.0f)
         return;
@@ -304,10 +305,9 @@ void DebugRenderer::AddSphereSector(const Sphere& sphere, const Quaternion& rota
     // Draw circle
     for (unsigned j = 0; j < numCircleSegments; ++j)
     {
-        AddLine(
-            sphere.center_ + rotation * sphere.GetLocalPoint(j * 360.0f / numCircleSegments, halfAngle),
-            sphere.center_ + rotation * sphere.GetLocalPoint((j + 1) * 360.0f / numCircleSegments, halfAngle),
-            uintColor);
+        AddLine(sphere.center_ + rotation * sphere.GetLocalPoint(j * 360.0f / numCircleSegments, halfAngle),
+                sphere.center_ + rotation * sphere.GetLocalPoint((j + 1) * 360.0f / numCircleSegments, halfAngle),
+                uintColor);
     }
 
     // Draw arcs
@@ -317,10 +317,9 @@ void DebugRenderer::AddSphereSector(const Sphere& sphere, const Quaternion& rota
         for (unsigned j = 0; j < numCircleSegments; j += step)
         {
             const float nextPhi = i + 1 == numArcSegments - 1 ? halfAngle : (i + 1) * arcStep;
-            AddLine(
-                sphere.center_ + rotation * sphere.GetLocalPoint(j * 360.0f / numCircleSegments, i * arcStep),
-                sphere.center_ + rotation * sphere.GetLocalPoint(j * 360.0f / numCircleSegments, nextPhi),
-                uintColor);
+            AddLine(sphere.center_ + rotation * sphere.GetLocalPoint(j * 360.0f / numCircleSegments, i * arcStep),
+                    sphere.center_ + rotation * sphere.GetLocalPoint(j * 360.0f / numCircleSegments, nextPhi),
+                    uintColor);
         }
     }
 
@@ -330,8 +329,8 @@ void DebugRenderer::AddSphereSector(const Sphere& sphere, const Quaternion& rota
         for (unsigned j = 0; j < numCircleSegments; j += step)
         {
             AddLine(sphere.center_,
-                sphere.center_ + rotation * sphere.GetLocalPoint(j * 360.0f / numCircleSegments, halfAngle),
-                uintColor);
+                    sphere.center_ + rotation * sphere.GetLocalPoint(j * 360.0f / numCircleSegments, halfAngle),
+                    uintColor);
         }
     }
 }
@@ -389,8 +388,9 @@ void DebugRenderer::AddSkeleton(const Skeleton& skeleton, const Color& color, bo
     }
 }
 
-void DebugRenderer::AddTriangleMesh(const void* vertexData, unsigned vertexSize, const void* indexData, unsigned indexSize,
-    unsigned indexStart, unsigned indexCount, const Matrix3x4& transform, const Color& color, bool depthTest)
+void DebugRenderer::AddTriangleMesh(const void* vertexData, unsigned vertexSize, const void* indexData,
+                                    unsigned indexSize, unsigned indexStart, unsigned indexCount,
+                                    const Matrix3x4& transform, const Color& color, bool depthTest)
 {
     unsigned uintColor = color.ToUInt();
     const unsigned char* srcData = (const unsigned char*)vertexData;
@@ -445,21 +445,22 @@ void DebugRenderer::AddTriangleMesh(Node* node, const Color& color, bool depthTe
             for (const auto& vb : geometry->GetVertexBuffers())
             {
                 AddTriangleMesh(vb->GetShadowData(), vb->GetVertexSize(), ib->GetShadowData(), ib->GetIndexSize(),
-                                geometry->GetIndexStart(), geometry->GetIndexCount(), node->GetWorldTransform(),
-                                color, depthTest);
+                                geometry->GetIndexStart(), geometry->GetIndexCount(), node->GetWorldTransform(), color,
+                                depthTest);
             }
         }
     }
 }
 
-void DebugRenderer::AddCircle(const Vector3& center, const Vector3& normal, float radius, const Color& color, int steps, bool depthTest)
+void DebugRenderer::AddCircle(const Vector3& center, const Vector3& normal, float radius, const Color& color, int steps,
+                              bool depthTest)
 {
     Quaternion orientation;
     orientation.FromRotationTo(Vector3::UP, normal.Normalized());
     Vector3 p = orientation * Vector3(radius, 0, 0) + center;
     unsigned uintColor = color.ToUInt();
 
-    for(int i = 1; i <= steps; ++i)
+    for (int i = 1; i <= steps; ++i)
     {
         const float angle = (float)i / (float)steps * 360.0f;
         Vector3 v(radius * Cos(angle), 0, radius * Sin(angle));
@@ -479,8 +480,8 @@ void DebugRenderer::AddCross(const Vector3& center, float size, const Color& col
     float halfSize = size / 2.0f;
     for (int i = 0; i < 3; ++i)
     {
-        float start[3] = { center.x_, center.y_, center.z_ };
-        float end[3] = { center.x_, center.y_, center.z_ };
+        float start[3] = {center.x_, center.y_, center.z_};
+        float end[3] = {center.x_, center.y_, center.z_};
         start[i] -= halfSize;
         end[i] += halfSize;
         AddLine(Vector3(start), Vector3(end), uintColor, depthTest);
@@ -515,7 +516,8 @@ void DebugRenderer::Render()
     ShaderVariation* vs = graphics->GetShader(VS, "Basic", "VERTEXCOLOR");
     ShaderVariation* ps = graphics->GetShader(PS, "Basic", "VERTEXCOLOR");
 
-    unsigned numVertices = (lines_.Size() + noDepthLines_.Size()) * 2 + (triangles_.Size() + noDepthTriangles_.Size()) * 3;
+    unsigned numVertices =
+        (lines_.Size() + noDepthLines_.Size()) * 2 + (triangles_.Size() + noDepthTriangles_.Size()) * 3;
     // Resize the vertex buffer if too small or much too large
     if (vertexBuffer_->GetVertexCount() < numVertices || vertexBuffer_->GetVertexCount() > numVertices * 2)
         vertexBuffer_->SetSize(numVertices, MASK_POSITION | MASK_COLOR, true);
@@ -654,10 +656,7 @@ void DebugRenderer::Render()
     graphics->SetLineAntiAlias(false);
 }
 
-bool DebugRenderer::IsInside(const BoundingBox& box) const
-{
-    return frustum_.IsInsideFast(box) == INSIDE;
-}
+bool DebugRenderer::IsInside(const BoundingBox& box) const { return frustum_.IsInsideFast(box) == INSIDE; }
 
 bool DebugRenderer::HasContent() const
 {
@@ -686,5 +685,4 @@ void DebugRenderer::HandleEndFrame(StringHash eventType, VariantMap& eventData)
     if (noDepthTriangles_.Capacity() > noDepthTrianglesSize * 2)
         noDepthTriangles_.Reserve(noDepthTrianglesSize);
 }
-
 }

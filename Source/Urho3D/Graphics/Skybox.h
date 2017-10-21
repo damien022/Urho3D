@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// Static model component with fixed position in relation to the camera.
 class URHO3D_API Skybox : public StaticModel
 {
@@ -42,7 +41,8 @@ public:
 
     /// Process octree raycast. May be called from a worker thread.
     virtual void ProcessRayQuery(const RayOctreeQuery& query, PODVector<RayQueryResult>& results) override;
-    /// Calculate distance and prepare batches for rendering. May be called from worker thread(s), possibly re-entrantly.
+    /// Calculate distance and prepare batches for rendering. May be called from worker thread(s), possibly
+    /// re-entrantly.
     virtual void UpdateBatches(const FrameInfo& frame) override;
 
 protected:
@@ -54,5 +54,4 @@ protected:
     /// Last frame counter for knowing when to erase the custom world transforms of previous frame.
     unsigned lastFrame_;
 };
-
 }

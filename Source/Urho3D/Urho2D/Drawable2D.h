@@ -27,8 +27,7 @@
 
 namespace Urho3D
 {
-
-class Drawable2D; 
+class Drawable2D;
 class Renderer2D;
 class Texture2D;
 class VertexBuffer;
@@ -119,5 +118,4 @@ protected:
     /// Renderer2D.
     WeakPtr<Renderer2D> renderer_;
 };
-
 }

@@ -27,7 +27,6 @@
 
 namespace Urho3D
 {
-
 /// Combined information for specific vertex and pixel shaders.
 class ShaderProgram : public RefCounted
 {
@@ -50,5 +49,4 @@ public:
     /// Combined parameters from the vertex and pixel shader.
     HashMap<StringHash, ShaderParameter> parameters_;
 };
-
 }

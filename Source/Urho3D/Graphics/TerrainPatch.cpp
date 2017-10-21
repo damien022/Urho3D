@@ -40,19 +40,18 @@
 
 namespace Urho3D
 {
-
 static const float LOD_CONSTANT = 1.0f / 150.0f;
 
 extern const char* GEOMETRY_CATEGORY;
 
-TerrainPatch::TerrainPatch(Context* context) :
-    Drawable(context, DRAWABLE_GEOMETRY),
-    geometry_(new Geometry(context)),
-    maxLodGeometry_(new Geometry(context)),
-    occlusionGeometry_(new Geometry(context)),
-    vertexBuffer_(new VertexBuffer(context)),
-    coordinates_(IntVector2::ZERO),
-    lodLevel_(0)
+TerrainPatch::TerrainPatch(Context* context)
+    : Drawable(context, DRAWABLE_GEOMETRY)
+    , geometry_(new Geometry(context))
+    , maxLodGeometry_(new Geometry(context))
+    , occlusionGeometry_(new Geometry(context))
+    , vertexBuffer_(new VertexBuffer(context))
+    , coordinates_(IntVector2::ZERO)
+    , lodLevel_(0)
 {
     geometry_->SetVertexBuffer(0, vertexBuffer_);
     maxLodGeometry_->SetVertexBuffer(0, vertexBuffer_);
@@ -63,14 +62,9 @@ TerrainPatch::TerrainPatch(Context* context) :
     batches_[0].geometryType_ = GEOM_STATIC_NOINSTANCING;
 }
 
-TerrainPatch::~TerrainPatch()
-{
-}
+TerrainPatch::~TerrainPatch() {}
 
-void TerrainPatch::RegisterObject(Context* context)
-{
-    context->RegisterFactory<TerrainPatch>();
-}
+void TerrainPatch::RegisterObject(Context* context) { context->RegisterFactory<TerrainPatch>(); }
 
 void TerrainPatch::ProcessRayQuery(const RayOctreeQuery& query, PODVector<RayQueryResult>& results)
 {
@@ -84,32 +78,32 @@ void TerrainPatch::ProcessRayQuery(const RayOctreeQuery& query, PODVector<RayQue
 
     case RAY_OBB:
     case RAY_TRIANGLE:
+    {
+        Matrix3x4 inverse(node_->GetWorldTransform().Inverse());
+        Ray localRay = query.ray_.Transformed(inverse);
+        float distance = localRay.HitDistance(boundingBox_);
+        Vector3 normal = -query.ray_.direction_;
+
+        if (level == RAY_TRIANGLE && distance < query.maxDistance_)
         {
-            Matrix3x4 inverse(node_->GetWorldTransform().Inverse());
-            Ray localRay = query.ray_.Transformed(inverse);
-            float distance = localRay.HitDistance(boundingBox_);
-            Vector3 normal = -query.ray_.direction_;
-
-            if (level == RAY_TRIANGLE && distance < query.maxDistance_)
-            {
-                Vector3 geometryNormal;
-                distance = geometry_->GetHitDistance(localRay, &geometryNormal);
-                normal = (node_->GetWorldTransform() * Vector4(geometryNormal, 0.0f)).Normalized();
-            }
-
-            if (distance < query.maxDistance_)
-            {
-                RayQueryResult result;
-                result.position_ = query.ray_.origin_ + distance * query.ray_.direction_;
-                result.normal_ = normal;
-                result.distance_ = distance;
-                result.drawable_ = this;
-                result.node_ = node_;
-                result.subObject_ = M_MAX_UNSIGNED;
-                results.Push(result);
-            }
+            Vector3 geometryNormal;
+            distance = geometry_->GetHitDistance(localRay, &geometryNormal);
+            normal = (node_->GetWorldTransform() * Vector4(geometryNormal, 0.0f)).Normalized();
         }
-        break;
+
+        if (distance < query.maxDistance_)
+        {
+            RayQueryResult result;
+            result.position_ = query.ray_.origin_ + distance * query.ray_.direction_;
+            result.normal_ = normal;
+            result.distance_ = distance;
+            result.drawable_ = this;
+            result.node_ = node_;
+            result.subObject_ = M_MAX_UNSIGNED;
+            results.Push(result);
+        }
+    }
+    break;
 
     case RAY_TRIANGLE_UV:
         URHO3D_LOGWARNING("RAY_TRIANGLE_UV query level is not supported for TerrainPatch component");
@@ -200,12 +194,13 @@ bool TerrainPatch::DrawOcclusion(OcclusionBuffer* buffer)
 
     occlusionGeometry_->GetRawData(vertexData, vertexSize, indexData, indexSize, elements);
     // Check for valid geometry data
-    if (!vertexData || !indexData || !elements || VertexBuffer::GetElementOffset(*elements, TYPE_VECTOR3, SEM_POSITION) != 0)
+    if (!vertexData || !indexData || !elements ||
+        VertexBuffer::GetElementOffset(*elements, TYPE_VECTOR3, SEM_POSITION) != 0)
         return false;
 
     // Draw and check for running out of triangles
-    return buffer->AddTriangles(node_->GetWorldTransform(), vertexData, vertexSize, indexData, indexSize, occlusionGeometry_->GetIndexStart(),
-        occlusionGeometry_->GetIndexCount());
+    return buffer->AddTriangles(node_->GetWorldTransform(), vertexData, vertexSize, indexData, indexSize,
+                                occlusionGeometry_->GetIndexStart(), occlusionGeometry_->GetIndexCount());
 }
 
 void TerrainPatch::DrawDebugGeometry(DebugRenderer* debug, bool depthTest)
@@ -213,10 +208,7 @@ void TerrainPatch::DrawDebugGeometry(DebugRenderer* debug, bool depthTest)
     // Intentionally no operation
 }
 
-void TerrainPatch::SetOwner(Terrain* terrain)
-{
-    owner_ = terrain;
-}
+void TerrainPatch::SetOwner(Terrain* terrain) { owner_ = terrain; }
 
 void TerrainPatch::SetNeighbors(TerrainPatch* north, TerrainPatch* south, TerrainPatch* west, TerrainPatch* east)
 {
@@ -226,10 +218,7 @@ void TerrainPatch::SetNeighbors(TerrainPatch* north, TerrainPatch* south, Terrai
     east_ = east;
 }
 
-void TerrainPatch::SetMaterial(Material* material)
-{
-    batches_[0].material_ = material;
-}
+void TerrainPatch::SetMaterial(Material* material) { batches_[0].material_ = material; }
 
 void TerrainPatch::SetBoundingBox(const BoundingBox& box)
 {
@@ -237,40 +226,19 @@ void TerrainPatch::SetBoundingBox(const BoundingBox& box)
     OnMarkedDirty(node_);
 }
 
-void TerrainPatch::SetCoordinates(const IntVector2& coordinates)
-{
-    coordinates_ = coordinates;
-}
+void TerrainPatch::SetCoordinates(const IntVector2& coordinates) { coordinates_ = coordinates; }
 
-void TerrainPatch::ResetLod()
-{
-    lodLevel_ = 0;
-}
+void TerrainPatch::ResetLod() { lodLevel_ = 0; }
 
-Geometry* TerrainPatch::GetGeometry() const
-{
-    return geometry_;
-}
+Geometry* TerrainPatch::GetGeometry() const { return geometry_; }
 
-Geometry* TerrainPatch::GetMaxLodGeometry() const
-{
-    return maxLodGeometry_;
-}
+Geometry* TerrainPatch::GetMaxLodGeometry() const { return maxLodGeometry_; }
 
-Geometry* TerrainPatch::GetOcclusionGeometry() const
-{
-    return occlusionGeometry_;
-}
+Geometry* TerrainPatch::GetOcclusionGeometry() const { return occlusionGeometry_; }
 
-VertexBuffer* TerrainPatch::GetVertexBuffer() const
-{
-    return vertexBuffer_;
-}
+VertexBuffer* TerrainPatch::GetVertexBuffer() const { return vertexBuffer_; }
 
-Terrain* TerrainPatch::GetOwner() const
-{
-    return owner_;
-}
+Terrain* TerrainPatch::GetOwner() const { return owner_; }
 
 void TerrainPatch::OnWorldBoundingBoxUpdate()
 {
@@ -290,5 +258,4 @@ unsigned TerrainPatch::GetCorrectedLodLevel(unsigned lodLevel)
 
     return lodLevel;
 }
-
 }

@@ -27,7 +27,6 @@
 
 namespace Urho3D
 {
-
 class Texture;
 
 /// %Color or depth-stencil surface that can be rendered into.
@@ -64,10 +63,10 @@ public:
 
     /// Return width.
     int GetWidth() const;
-    
+
     /// Return height.
     int GetHeight() const;
-    
+
     /// Return usage.
     TextureUsage GetUsage() const;
 
@@ -94,7 +93,7 @@ public:
 
     /// Return whether manual update queued. Called internally.
     bool IsUpdateQueued() const { return updateQueued_; }
-    
+
     /// Reset update queued flag. Called internally.
     void ResetUpdateQueued();
 
@@ -126,8 +125,7 @@ private:
     /// Parent texture.
     WeakPtr<Texture> parentTexture_;
 
-    union
-    {
+    union {
         /// Direct3D9 surface.
         void* surface_;
         /// Direct3D11 rendertarget or depth-stencil view.
@@ -136,8 +134,7 @@ private:
         unsigned renderBuffer_;
     };
 
-    union
-    {
+    union {
         /// Direct3D11 read-only depth-stencil view. Present only on depth-stencil surfaces.
         void* readOnlyView_;
         /// OpenGL target.
@@ -145,7 +142,7 @@ private:
     };
 
     /// Viewports.
-    Vector<SharedPtr<Viewport> > viewports_;
+    Vector<SharedPtr<Viewport>> viewports_;
     /// Linked color buffer.
     WeakPtr<RenderSurface> linkedRenderTarget_;
     /// Linked depth buffer.
@@ -157,5 +154,4 @@ private:
     /// Multisampled resolve dirty flag.
     bool resolveDirty_;
 };
-
 }

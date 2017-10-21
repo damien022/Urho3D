@@ -23,8 +23,8 @@
 #include "../Precompiled.h"
 
 #include "../Core/Context.h"
-#include "../Input/InputEvents.h"
 #include "../IO/Log.h"
+#include "../Input/InputEvents.h"
 #include "../UI/CheckBox.h"
 #include "../UI/ListView.h"
 #include "../UI/Text.h"
@@ -35,40 +35,21 @@
 
 namespace Urho3D
 {
-
-static const char* highlightModes[] =
-{
-    "Never",
-    "Focus",
-    "Always",
-    nullptr
-};
+static const char* highlightModes[] = {"Never", "Focus", "Always", nullptr};
 
 static const StringHash expandedHash("Expanded");
 
 extern const char* UI_CATEGORY;
 
-bool GetItemExpanded(UIElement* item)
-{
-    return item ? item->GetVar(expandedHash).GetBool() : false;
-}
+bool GetItemExpanded(UIElement* item) { return item ? item->GetVar(expandedHash).GetBool() : false; }
 
-void SetItemExpanded(UIElement* item, bool enable)
-{
-    item->SetVar(expandedHash, enable);
-}
+void SetItemExpanded(UIElement* item, bool enable) { item->SetVar(expandedHash, enable); }
 
 static const StringHash hierarchyParentHash("HierarchyParent");
 
-bool GetItemHierarchyParent(UIElement* item)
-{
-    return item ? item->GetVar(hierarchyParentHash).GetBool() : false;
-}
+bool GetItemHierarchyParent(UIElement* item) { return item ? item->GetVar(hierarchyParentHash).GetBool() : false; }
 
-void SetItemHierarchyParent(UIElement* item, bool enable)
-{
-    item->SetVar(hierarchyParentHash, enable);
-}
+void SetItemHierarchyParent(UIElement* item, bool enable) { item->SetVar(hierarchyParentHash, enable); }
 
 /// Hierarchy container (used by ListView internally when in hierarchy mode).
 class HierarchyContainer : public UIElement
@@ -77,13 +58,14 @@ class HierarchyContainer : public UIElement
 
 public:
     /// Construct.
-    HierarchyContainer(Context* context, ListView* listView, UIElement* overlayContainer) :
-        UIElement(context),
-        listView_(listView),
-        overlayContainer_(overlayContainer)
+    HierarchyContainer(Context* context, ListView* listView, UIElement* overlayContainer)
+        : UIElement(context)
+        , listView_(listView)
+        , overlayContainer_(overlayContainer)
     {
         SubscribeToEvent(this, E_LAYOUTUPDATED, URHO3D_HANDLER(HierarchyContainer, HandleLayoutUpdated));
-        SubscribeToEvent(overlayContainer->GetParent(), E_VIEWCHANGED, URHO3D_HANDLER(HierarchyContainer, HandleViewChanged));
+        SubscribeToEvent(overlayContainer->GetParent(), E_VIEWCHANGED,
+                         URHO3D_HANDLER(HierarchyContainer, HandleViewChanged));
         SubscribeToEvent(E_UIMOUSECLICK, URHO3D_HANDLER(HierarchyContainer, HandleUIMouseClick));
     }
 
@@ -130,8 +112,8 @@ public:
         UIElement* overlay = static_cast<UIElement*>(eventData[UIMouseClick::P_ELEMENT].GetPtr());
         if (overlay)
         {
-            const Vector<SharedPtr<UIElement> >& children = overlayContainer_->GetChildren();
-            Vector<SharedPtr<UIElement> >::ConstIterator i = children.Find(SharedPtr<UIElement>(overlay));
+            const Vector<SharedPtr<UIElement>>& children = overlayContainer_->GetChildren();
+            Vector<SharedPtr<UIElement>>::ConstIterator i = children.Find(SharedPtr<UIElement>(overlay));
             if (i != children.End())
                 listView_->ToggleExpand((unsigned)(i - children.Begin()));
         }
@@ -141,7 +123,8 @@ public:
     void InsertChild(unsigned index, UIElement* element)
     {
         // Insert the overlay at the same index position to the overlay container
-        CheckBox* overlay = static_cast<CheckBox*>(overlayContainer_->CreateChild(CheckBox::GetTypeStatic(), String::EMPTY, index));
+        CheckBox* overlay =
+            static_cast<CheckBox*>(overlayContainer_->CreateChild(CheckBox::GetTypeStatic(), String::EMPTY, index));
         overlay->SetStyle("HierarchyListViewOverlay");
         int baseIndent = listView_->GetBaseIndent();
         int indent = element->GetIndent() - baseIndent - 1;
@@ -159,19 +142,17 @@ private:
     UIElement* overlayContainer_;
 };
 
-void HierarchyContainer::RegisterObject(Context* context)
-{
-    URHO3D_COPY_BASE_ATTRIBUTES(UIElement);
-}
+void HierarchyContainer::RegisterObject(Context* context) { URHO3D_COPY_BASE_ATTRIBUTES(UIElement); }
 
-ListView::ListView(Context* context) :
-    ScrollView(context),
-    highlightMode_(HM_FOCUS),
-    multiselect_(false),
-    hierarchyMode_(true),    // Init to true here so that the setter below takes effect
-    baseIndent_(0),
-    clearSelectionOnDefocus_(false),
-    selectOnClickEnd_(false)
+ListView::ListView(Context* context)
+    : ScrollView(context)
+    , highlightMode_(HM_FOCUS)
+    , multiselect_(false)
+    , hierarchyMode_(true)
+    , // Init to true here so that the setter below takes effect
+    baseIndent_(0)
+    , clearSelectionOnDefocus_(false)
+    , selectOnClickEnd_(false)
 {
     resizeContentWidth_ = true;
 
@@ -186,9 +167,7 @@ ListView::ListView(Context* context) :
     UpdateUIClickSubscription();
 }
 
-ListView::~ListView()
-{
-}
+ListView::~ListView() {}
 
 void ListView::RegisterObject(Context* context)
 {
@@ -197,11 +176,13 @@ void ListView::RegisterObject(Context* context)
     HierarchyContainer::RegisterObject(context);
 
     URHO3D_COPY_BASE_ATTRIBUTES(ScrollView);
-    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Highlight Mode", GetHighlightMode, SetHighlightMode, HighlightMode, highlightModes, HM_FOCUS, AM_FILE);
+    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Highlight Mode", GetHighlightMode, SetHighlightMode, HighlightMode, highlightModes,
+                                   HM_FOCUS, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Multiselect", GetMultiselect, SetMultiselect, bool, false, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Hierarchy Mode", GetHierarchyMode, SetHierarchyMode, bool, false, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Base Indent", GetBaseIndent, SetBaseIndent, int, 0, AM_FILE);
-    URHO3D_ACCESSOR_ATTRIBUTE("Clear Sel. On Defocus", GetClearSelectionOnDefocus, SetClearSelectionOnDefocus, bool, false, AM_FILE);
+    URHO3D_ACCESSOR_ATTRIBUTE("Clear Sel. On Defocus", GetClearSelectionOnDefocus, SetClearSelectionOnDefocus, bool,
+                              false, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Select On Click End", GetSelectOnClickEnd, SetSelectOnClickEnd, bool, false, AM_FILE);
 }
 
@@ -258,33 +239,34 @@ void ListView::OnKey(int key, int buttons, int qualifiers)
             // Fallthru
 
         case KEY_PAGEDOWN:
+        {
+            // Convert page step to pixels and see how many items have to be skipped to reach that many pixels
+            if (selection == M_MAX_UNSIGNED)
+                selection = 0; // Assume as if first item is selected
+            int stepPixels =
+                ((int)(pageStep_ * scrollPanel_->GetHeight())) - contentElement_->GetChild(selection)->GetHeight();
+            unsigned newSelection = selection;
+            unsigned okSelection = selection;
+            unsigned invisible = 0;
+            while (newSelection < numItems)
             {
-                // Convert page step to pixels and see how many items have to be skipped to reach that many pixels
-                if (selection == M_MAX_UNSIGNED)
-                    selection = 0;      // Assume as if first item is selected
-                int stepPixels = ((int)(pageStep_ * scrollPanel_->GetHeight())) - contentElement_->GetChild(selection)->GetHeight();
-                unsigned newSelection = selection;
-                unsigned okSelection = selection;
-                unsigned invisible = 0;
-                while (newSelection < numItems)
+                UIElement* item = GetItem(newSelection);
+                int height = 0;
+                if (item->IsVisible())
                 {
-                    UIElement* item = GetItem(newSelection);
-                    int height = 0;
-                    if (item->IsVisible())
-                    {
-                        height = item->GetHeight();
-                        okSelection = newSelection;
-                    }
-                    else
-                        ++invisible;
-                    if (stepPixels < height)
-                        break;
-                    stepPixels -= height;
-                    newSelection += pageDirection;
+                    height = item->GetHeight();
+                    okSelection = newSelection;
                 }
-                delta = okSelection - selection - pageDirection * invisible;
+                else
+                    ++invisible;
+                if (stepPixels < height)
+                    break;
+                stepPixels -= height;
+                newSelection += pageDirection;
             }
-            break;
+            delta = okSelection - selection - pageDirection * invisible;
+        }
+        break;
 
         case KEY_HOME:
             delta = -(int)GetNumItems();
@@ -294,7 +276,8 @@ void ListView::OnKey(int key, int buttons, int qualifiers)
             delta = GetNumItems();
             break;
 
-        default: break;
+        default:
+            break;
         }
     }
 
@@ -323,10 +306,7 @@ void ListView::OnResize(const IntVector2& newSize, const IntVector2& delta)
         overlayContainer_->SetSize(scrollPanel_->GetSize());
 }
 
-void ListView::AddItem(UIElement* item)
-{
-    InsertItem(M_MAX_UNSIGNED, item);
-}
+void ListView::AddItem(UIElement* item) { InsertItem(M_MAX_UNSIGNED, item); }
 
 void ListView::InsertItem(unsigned index, UIElement* item, UIElement* parentItem)
 {
@@ -408,7 +388,7 @@ void ListView::RemoveItem(UIElement* item, unsigned index)
                 if (GetItemHierarchyParent(item))
                 {
                     int baseIndent = item->GetIndent();
-                    for (unsigned j = i + 1; ; ++j)
+                    for (unsigned j = i + 1;; ++j)
                     {
                         UIElement* childItem = GetItem(i + 1);
                         if (!childItem)
@@ -430,10 +410,11 @@ void ListView::RemoveItem(UIElement* item, unsigned index)
                 if (i > 0)
                 {
                     int baseIndent = item->GetIndent();
-                    UIElement* prevKin = GetItem(i - 1);        // Could be parent or sibling
+                    UIElement* prevKin = GetItem(i - 1); // Could be parent or sibling
                     if (prevKin->GetIndent() < baseIndent)
                     {
-                        UIElement* nextKin = GetItem(i + 1);    // Could be sibling or parent-sibling or 0 if index out of bound
+                        UIElement* nextKin =
+                            GetItem(i + 1); // Could be sibling or parent-sibling or 0 if index out of bound
                         if (!nextKin || nextKin->GetIndent() < baseIndent)
                         {
                             // If we reach here then the parent has no other children
@@ -464,10 +445,7 @@ void ListView::RemoveItem(UIElement* item, unsigned index)
     }
 }
 
-void ListView::RemoveItem(unsigned index)
-{
-    RemoveItem(GetItem(index), index);
-}
+void ListView::RemoveItem(unsigned index) { RemoveItem(GetItem(index), index); }
 
 void ListView::RemoveAllItems()
 {
@@ -669,10 +647,7 @@ void ListView::ChangeSelection(int delta, bool additive)
         SetSelections(indices);
 }
 
-void ListView::ClearSelection()
-{
-    SetSelections(PODVector<unsigned>());
-}
+void ListView::ClearSelection() { SetSelections(PODVector<unsigned>()); }
 
 void ListView::SetHighlightMode(HighlightMode mode)
 {
@@ -680,10 +655,7 @@ void ListView::SetHighlightMode(HighlightMode mode)
     UpdateSelectionEffect();
 }
 
-void ListView::SetMultiselect(bool enable)
-{
-    multiselect_ = enable;
-}
+void ListView::SetMultiselect(bool enable) { multiselect_ = enable; }
 
 void ListView::SetHierarchyMode(bool enable)
 {
@@ -801,15 +773,9 @@ void ListView::ToggleExpand(unsigned index, bool recursive)
     Expand(index, !GetItemExpanded(item), recursive);
 }
 
-unsigned ListView::GetNumItems() const
-{
-    return contentElement_->GetNumChildren();
-}
+unsigned ListView::GetNumItems() const { return contentElement_->GetNumChildren(); }
 
-UIElement* ListView::GetItem(unsigned index) const
-{
-    return contentElement_->GetChild(index);
-}
+UIElement* ListView::GetItem(unsigned index) const { return contentElement_->GetChild(index); }
 
 PODVector<UIElement*> ListView::GetItems() const
 {
@@ -827,7 +793,7 @@ unsigned ListView::FindItem(UIElement* item) const
     if (item->GetParent() != contentElement_)
         return M_MAX_UNSIGNED;
 
-    const Vector<SharedPtr<UIElement> >& children = contentElement_->GetChildren();
+    const Vector<SharedPtr<UIElement>>& children = contentElement_->GetChildren();
 
     // Binary search for list item based on screen coordinate Y
     if (contentElement_->GetLayoutMode() == LM_VERTICAL && item->GetHeight())
@@ -865,10 +831,7 @@ unsigned ListView::GetSelection() const
         return GetSelections().Front();
 }
 
-UIElement* ListView::GetSelectedItem() const
-{
-    return contentElement_->GetChild(GetSelection());
-}
+UIElement* ListView::GetSelectedItem() const { return contentElement_->GetChild(GetSelection()); }
 
 PODVector<UIElement*> ListView::GetSelectedItems() const
 {
@@ -899,32 +862,26 @@ void ListView::CopySelectedItemsToClipboard() const
     GetSubsystem<UI>()->SetClipboardText(selectedText);
 }
 
-bool ListView::IsSelected(unsigned index) const
-{
-    return selections_.Contains(index);
-}
+bool ListView::IsSelected(unsigned index) const { return selections_.Contains(index); }
 
-bool ListView::IsExpanded(unsigned index) const
-{
-    return GetItemExpanded(contentElement_->GetChild(index));
-}
+bool ListView::IsExpanded(unsigned index) const { return GetItemExpanded(contentElement_->GetChild(index)); }
 
 bool ListView::FilterImplicitAttributes(XMLElement& dest) const
 {
     if (!ScrollView::FilterImplicitAttributes(dest))
         return false;
 
-    XMLElement childElem = dest.GetChild("element");    // Horizontal scroll bar
+    XMLElement childElem = dest.GetChild("element"); // Horizontal scroll bar
     if (!childElem)
         return false;
-    childElem = childElem.GetNext("element");           // Vertical scroll bar
+    childElem = childElem.GetNext("element"); // Vertical scroll bar
     if (!childElem)
         return false;
-    childElem = childElem.GetNext("element");           // Scroll panel
+    childElem = childElem.GetNext("element"); // Scroll panel
     if (!childElem)
         return false;
 
-    XMLElement containerElem = childElem.GetChild("element");   // Item container
+    XMLElement containerElem = childElem.GetChild("element"); // Item container
     if (!containerElem)
         return false;
     if (!RemoveChildXML(containerElem, "Name", "LV_ItemContainer"))
@@ -938,7 +895,7 @@ bool ListView::FilterImplicitAttributes(XMLElement& dest) const
 
     if (hierarchyMode_)
     {
-        containerElem = childElem.GetNext("element");           // Overlay container
+        containerElem = childElem.GetNext("element"); // Overlay container
         if (!containerElem)
             return false;
         if (!RemoveChildXML(containerElem, "Name", "LV_OverlayContainer"))
@@ -967,10 +924,7 @@ void ListView::UpdateSelectionEffect()
     }
 }
 
-void ListView::EnsureItemVisibility(unsigned index)
-{
-    EnsureItemVisibility(GetItem(index));
-}
+void ListView::EnsureItemVisibility(unsigned index) { EnsureItemVisibility(GetItem(index)); }
 
 void ListView::EnsureItemVisibility(UIElement* item)
 {
@@ -981,7 +935,7 @@ void ListView::EnsureItemVisibility(UIElement* item)
     IntVector2 currentOffset = item->GetPosition() - newView;
     const IntRect& clipBorder = scrollPanel_->GetClipBorder();
     IntVector2 windowSize(scrollPanel_->GetWidth() - clipBorder.left_ - clipBorder.right_,
-        scrollPanel_->GetHeight() - clipBorder.top_ - clipBorder.bottom_);
+                          scrollPanel_->GetHeight() - clipBorder.top_ - clipBorder.bottom_);
 
     if (currentOffset.y_ < 0)
         newView.y_ += currentOffset.y_;
@@ -1102,7 +1056,6 @@ void ListView::HandleUIMouseDoubleClick(StringHash eventType, VariantMap& eventD
     SendEvent(E_ITEMDOUBLECLICKED, clickEventData);
 }
 
-
 void ListView::HandleItemFocusChanged(StringHash eventType, VariantMap& eventData)
 {
     using namespace FocusChanged;
@@ -1134,7 +1087,7 @@ void ListView::UpdateUIClickSubscription()
 {
     UnsubscribeFromEvent(E_UIMOUSECLICK);
     UnsubscribeFromEvent(E_UIMOUSECLICKEND);
-    SubscribeToEvent(selectOnClickEnd_ ? E_UIMOUSECLICKEND : E_UIMOUSECLICK, URHO3D_HANDLER(ListView, HandleUIMouseClick));
+    SubscribeToEvent(selectOnClickEnd_ ? E_UIMOUSECLICKEND : E_UIMOUSECLICK,
+                     URHO3D_HANDLER(ListView, HandleUIMouseClick));
 }
-
 }

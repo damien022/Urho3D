@@ -25,8 +25,8 @@
 #include <Urho3D/Audio/Sound.h>
 #include <Urho3D/Audio/SoundSource.h>
 #include <Urho3D/Engine/Engine.h>
-#include <Urho3D/Input/Input.h>
 #include <Urho3D/IO/Log.h>
+#include <Urho3D/Input/Input.h>
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Scene/Scene.h>
 #include <Urho3D/UI/Button.h>
@@ -44,23 +44,15 @@
 static const StringHash VAR_SOUNDRESOURCE("SoundResource");
 static const unsigned NUM_SOUNDS = 3;
 
-static String soundNames[] = {
-    "Fist",
-    "Explosion",
-    "Power-up"
-};
+static String soundNames[] = {"Fist", "Explosion", "Power-up"};
 
-static String soundResourceNames[] = {
-    "Sounds/PlayerFistHit.wav",
-    "Sounds/BigExplosion.wav",
-    "Sounds/Powerup.wav"
-};
+static String soundResourceNames[] = {"Sounds/PlayerFistHit.wav", "Sounds/BigExplosion.wav", "Sounds/Powerup.wav"};
 
 URHO3D_DEFINE_APPLICATION_MAIN(SoundEffects)
 
-SoundEffects::SoundEffects(Context* context) :
-    Sample(context),
-    musicSource_(nullptr)
+SoundEffects::SoundEffects(Context* context)
+    : Sample(context)
+    , musicSource_(nullptr)
 {
 }
 
@@ -76,7 +68,8 @@ void SoundEffects::Start()
     // Execute base class startup
     Sample::Start();
 
-    // Create a scene which will not be actually rendered, but is used to hold SoundSource components while they play sounds
+    // Create a scene which will not be actually rendered, but is used to hold SoundSource components while they play
+    // sounds
     scene_ = new Scene(context_);
 
     // Create music sound source

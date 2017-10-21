@@ -23,23 +23,22 @@
 #include "ProgressBar.h"
 
 #include "../Core/Context.h"
-#include "../Input/InputEvents.h"
 #include "../IO/Log.h"
+#include "../Input/InputEvents.h"
 #include "UIEvents.h"
 
 namespace Urho3D
 {
-
 extern const char* orientations[];
 extern const char* UI_CATEGORY;
 
-ProgressBar::ProgressBar(Context * context) :
-        BorderImage(context),
-        orientation_(O_HORIZONTAL),
-        loadingPercentStyle_("Text"),
-        range_(1.0f),
-        value_(0.0f),
-        showPercentText_(true)
+ProgressBar::ProgressBar(Context* context)
+    : BorderImage(context)
+    , orientation_(O_HORIZONTAL)
+    , loadingPercentStyle_("Text")
+    , range_(1.0f)
+    , value_(0.0f)
+    , showPercentText_(true)
 {
     SetEnabled(false);
     SetEditable(false);
@@ -53,26 +52,22 @@ ProgressBar::ProgressBar(Context * context) :
     UpdateProgressBar();
 }
 
-ProgressBar::~ProgressBar()
-{
-}
+ProgressBar::~ProgressBar() {}
 
-void ProgressBar::RegisterObject(Context * context)
+void ProgressBar::RegisterObject(Context* context)
 {
     context->RegisterFactory<ProgressBar>(UI_CATEGORY);
 
     URHO3D_COPY_BASE_ATTRIBUTES(BorderImage);
     URHO3D_UPDATE_ATTRIBUTE_DEFAULT_VALUE("Is Enabled", true);
-    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Orientation", GetOrientation, SetOrientation, Orientation, orientations, O_HORIZONTAL, AM_FILE);
+    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Orientation", GetOrientation, SetOrientation, Orientation, orientations,
+                                   O_HORIZONTAL, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Range", GetRange, SetRange, float, 1.0f, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Value", GetValue, SetValue, float, 0.0f, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Show Percent Text", GetShowPercentText, SetShowPercentText, bool, true, AM_FILE);
 }
 
-void ProgressBar::OnResize(const IntVector2& /*newSize*/, const IntVector2& /*delta*/)
-{
-    UpdateProgressBar();
-}
+void ProgressBar::OnResize(const IntVector2& /*newSize*/, const IntVector2& /*delta*/) { UpdateProgressBar(); }
 
 void ProgressBar::SetOrientation(Orientation type)
 {
@@ -107,10 +102,7 @@ void ProgressBar::SetValue(float value)
     }
 }
 
-void ProgressBar::ChangeValue(float delta)
-{
-    SetValue(value_ + delta);
-}
+void ProgressBar::ChangeValue(float delta) { SetValue(value_ + delta); }
 
 void ProgressBar::SetShowPercentText(bool enable)
 {
@@ -118,7 +110,7 @@ void ProgressBar::SetShowPercentText(bool enable)
     loadingText_->SetVisible(showPercentText_);
 }
 
-bool ProgressBar::FilterImplicitAttributes(XMLElement &dest) const
+bool ProgressBar::FilterImplicitAttributes(XMLElement& dest) const
 {
     if (!BorderImage::FilterImplicitAttributes(dest))
         return false;
@@ -140,21 +132,20 @@ bool ProgressBar::FilterImplicitAttributes(XMLElement &dest) const
 
 void ProgressBar::UpdateProgressBar()
 {
-    const IntRect &border = knob_->GetBorder();
+    const IntRect& border = knob_->GetBorder();
 
     if (range_ > 0.0f)
     {
         if (orientation_ == O_HORIZONTAL)
         {
-            int loadingBarLength = (int) Max((float) GetWidth() * value_ / range_,
-                                             (float) (border.left_ + border.right_));
+            int loadingBarLength = (int)Max((float)GetWidth() * value_ / range_, (float)(border.left_ + border.right_));
             knob_->SetSize(loadingBarLength, GetHeight());
             knob_->SetPosition(Clamp(0, 0, GetWidth() - knob_->GetWidth()), 0);
         }
         else
         {
-            int loadingBarLength = (int) Max((float) GetHeight() * value_ / range_,
-                                             (float) (border.top_ + border.bottom_));
+            int loadingBarLength =
+                (int)Max((float)GetHeight() * value_ / range_, (float)(border.top_ + border.bottom_));
             knob_->SetSize(GetWidth(), loadingBarLength);
             knob_->SetPosition(0, Clamp(0, 0, GetHeight() - knob_->GetHeight()));
         }
@@ -170,5 +161,4 @@ void ProgressBar::UpdateProgressBar()
     loadingText_->SetAlignment(HA_CENTER, VA_CENTER);
     loadingText_->SetText(Urho3D::ToString("%d %%", (int)((value_ / range_) * 100.0f + 0.5f)));
 }
-
 }

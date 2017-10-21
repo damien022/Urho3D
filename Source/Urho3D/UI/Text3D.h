@@ -29,7 +29,6 @@
 
 namespace Urho3D
 {
-
 class Text;
 
 /// 3D text component.
@@ -47,7 +46,8 @@ public:
 
     /// Apply attribute changes that can not be applied immediately.
     virtual void ApplyAttributes() override;
-    /// Calculate distance and prepare batches for rendering. May be called from worker thread(s), possibly re-entrantly.
+    /// Calculate distance and prepare batches for rendering. May be called from worker thread(s), possibly
+    /// re-entrantly.
     virtual void UpdateBatches(const FrameInfo& frame) override;
     /// Prepare geometry for rendering. Called from a worker thread if possible (no GPU update.)
     virtual void UpdateGeometry(const FrameInfo& frame) override;
@@ -74,7 +74,8 @@ public:
     void SetTextAlignment(HorizontalAlignment align);
     /// Set row spacing, 1.0 for original font spacing.
     void SetRowSpacing(float spacing);
-    /// Set wordwrap. In wordwrap mode the text element will respect its current width. Otherwise it resizes itself freely.
+    /// Set wordwrap. In wordwrap mode the text element will respect its current width. Otherwise it resizes itself
+    /// freely.
     void SetWordwrap(bool enable);
     /// Set text effect.
     void SetTextEffect(TextEffect textEffect);
@@ -96,7 +97,8 @@ public:
     void SetColor(Corner corner, const Color& color);
     /// Set opacity.
     void SetOpacity(float opacity);
-    /// Set whether text has fixed size on screen (pixel-perfect) regardless of distance to camera. Works best when combined with face camera rotation. Default false.
+    /// Set whether text has fixed size on screen (pixel-perfect) regardless of distance to camera. Works best when
+    /// combined with face camera rotation. Default false.
     void SetFixedScreenSize(bool enable);
     /// Set how the text should rotate in relation to the camera. Default is to not rotate (FC_NONE.)
     void SetFaceCameraMode(FaceCameraMode mode);
@@ -181,15 +183,16 @@ protected:
     void MarkTextDirty();
     /// Update text %UI batches.
     void UpdateTextBatches();
-    /// Create materials for text rendering. May only be called from the main thread. Text %UI batches must be up-to-date.
+    /// Create materials for text rendering. May only be called from the main thread. Text %UI batches must be
+    /// up-to-date.
     void UpdateTextMaterials(bool forceUpdate = false);
     /// Recalculate camera facing and fixed screen size.
     void CalculateFixedScreenSize(const FrameInfo& frame);
-    
+
     /// Internally used text element.
     Text text_;
     /// Geometries.
-    Vector<SharedPtr<Geometry> > geometries_;
+    Vector<SharedPtr<Geometry>> geometries_;
     /// Vertex buffer.
     SharedPtr<VertexBuffer> vertexBuffer_;
     /// Material to use as a base for the text material(s).
@@ -215,6 +218,4 @@ protected:
     /// Font texture data lost flag.
     bool fontDataLost_;
 };
-
 }
-

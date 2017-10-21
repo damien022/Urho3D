@@ -22,9 +22,9 @@
 
 #include "../IK/IKSolver.h"
 #include "../IK/IKConstraint.h"
-#include "../IK/IKEvents.h"
-#include "../IK/IKEffector.h"
 #include "../IK/IKConverters.h"
+#include "../IK/IKEffector.h"
+#include "../IK/IKEvents.h"
 
 #include "../Core/Context.h"
 #include "../Core/Profiler.h"
@@ -41,27 +41,26 @@
 
 namespace Urho3D
 {
-
 extern const char* IK_CATEGORY;
 
 // ----------------------------------------------------------------------------
-IKSolver::IKSolver(Context* context) :
-    Component(context),
-    solver_(nullptr),
-    algorithm_(FABRIK),
-    features_(AUTO_SOLVE | JOINT_ROTATIONS | UPDATE_ACTIVE_POSE),
-    chainTreesNeedUpdating_(false),
-    treeNeedsRebuild(true),
-    solverTreeValid_(false)
+IKSolver::IKSolver(Context* context)
+    : Component(context)
+    , solver_(nullptr)
+    , algorithm_(FABRIK)
+    , features_(AUTO_SOLVE | JOINT_ROTATIONS | UPDATE_ACTIVE_POSE)
+    , chainTreesNeedUpdating_(false)
+    , treeNeedsRebuild(true)
+    , solverTreeValid_(false)
 {
     context_->RequireIK();
 
     SetAlgorithm(FABRIK);
 
-    SubscribeToEvent(E_COMPONENTADDED,   URHO3D_HANDLER(IKSolver, HandleComponentAdded));
+    SubscribeToEvent(E_COMPONENTADDED, URHO3D_HANDLER(IKSolver, HandleComponentAdded));
     SubscribeToEvent(E_COMPONENTREMOVED, URHO3D_HANDLER(IKSolver, HandleComponentRemoved));
-    SubscribeToEvent(E_NODEADDED,        URHO3D_HANDLER(IKSolver, HandleNodeAdded));
-    SubscribeToEvent(E_NODEREMOVED,      URHO3D_HANDLER(IKSolver, HandleNodeRemoved));
+    SubscribeToEvent(E_NODEADDED, URHO3D_HANDLER(IKSolver, HandleNodeAdded));
+    SubscribeToEvent(E_NODEREMOVED, URHO3D_HANDLER(IKSolver, HandleNodeRemoved));
 }
 
 // ----------------------------------------------------------------------------
@@ -81,34 +80,30 @@ void IKSolver::RegisterObject(Context* context)
 {
     context->RegisterFactory<IKSolver>(IK_CATEGORY);
 
-    static const char* algorithmNames[] = {
-        "1 Bone",
-        "2 Bone",
-        "FABRIK",
-        /* not implemented,
-        "MSD (Mass/Spring/Damper)",
-        "Jacobian Inverse",
-        "Jacobian Transpose",*/
-        nullptr
-    };
+    static const char* algorithmNames[] = {"1 Bone", "2 Bone", "FABRIK",
+                                           /* not implemented,
+                                           "MSD (Mass/Spring/Damper)",
+                                           "Jacobian Inverse",
+                                           "Jacobian Transpose",*/
+                                           nullptr};
 
-    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Algorithm", GetAlgorithm, SetAlgorithm, Algorithm, algorithmNames, FABRIK, AM_DEFAULT);
+    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Algorithm", GetAlgorithm, SetAlgorithm, Algorithm, algorithmNames, FABRIK,
+                                   AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Max Iterations", GetMaximumIterations, SetMaximumIterations, unsigned, 20, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Convergence Tolerance", GetTolerance, SetTolerance, float, 0.001, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Joint Rotations", GetJOINT_ROTATIONS, SetJOINT_ROTATIONS, bool, true, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Target Rotations", GetTARGET_ROTATIONS, SetTARGET_ROTATIONS, bool, false, AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Update Original Pose", GetUPDATE_ORIGINAL_POSE, SetUPDATE_ORIGINAL_POSE, bool, false, AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Update Active Pose", GetUPDATE_ACTIVE_POSE, SetUPDATE_ACTIVE_POSE, bool, true, AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Update Original Pose", GetUPDATE_ORIGINAL_POSE, SetUPDATE_ORIGINAL_POSE, bool, false,
+                              AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Update Active Pose", GetUPDATE_ACTIVE_POSE, SetUPDATE_ACTIVE_POSE, bool, true,
+                              AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Use Original Pose", GetUSE_ORIGINAL_POSE, SetUSE_ORIGINAL_POSE, bool, false, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Enable Constraints", GetCONSTRAINTS, SetCONSTRAINTS, bool, false, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Auto Solve", GetAUTO_SOLVE, SetAUTO_SOLVE, bool, true, AM_DEFAULT);
 }
 
 // ----------------------------------------------------------------------------
-IKSolver::Algorithm IKSolver::GetAlgorithm() const
-{
-    return algorithm_;
-}
+IKSolver::Algorithm IKSolver::GetAlgorithm() const { return algorithm_; }
 
 // ----------------------------------------------------------------------------
 void IKSolver::SetAlgorithm(IKSolver::Algorithm algorithm)
@@ -133,9 +128,15 @@ void IKSolver::SetAlgorithm(IKSolver::Algorithm algorithm)
 
     switch (algorithm_)
     {
-        case ONE_BONE : solver_ = ik_solver_create(SOLVER_ONE_BONE); break;
-        case TWO_BONE : solver_ = ik_solver_create(SOLVER_TWO_BONE); break;
-        case FABRIK   : solver_ = ik_solver_create(SOLVER_FABRIK);   break;
+    case ONE_BONE:
+        solver_ = ik_solver_create(SOLVER_ONE_BONE);
+        break;
+    case TWO_BONE:
+        solver_ = ik_solver_create(SOLVER_TWO_BONE);
+        break;
+    case FABRIK:
+        solver_ = ik_solver_create(SOLVER_FABRIK);
+        break;
         /*case MSD      : solver_ = ik_solver_create(SOLVER_MSD);      break;*/
     }
 
@@ -146,42 +147,44 @@ void IKSolver::SetAlgorithm(IKSolver::Algorithm algorithm)
 }
 
 // ----------------------------------------------------------------------------
-bool IKSolver::GetFeature(Feature feature) const
-{
-    return (features_ & feature) != 0;
-}
+bool IKSolver::GetFeature(Feature feature) const { return (features_ & feature) != 0; }
 
 // ----------------------------------------------------------------------------
 void IKSolver::SetFeature(Feature feature, bool enable)
 {
     switch (feature)
     {
-        case CONSTRAINTS:
-        {
-            solver_->flags &= ~SOLVER_ENABLE_CONSTRAINTS;
-            if (enable)
-                solver_->flags |= SOLVER_ENABLE_CONSTRAINTS;
-        } break;
+    case CONSTRAINTS:
+    {
+        solver_->flags &= ~SOLVER_ENABLE_CONSTRAINTS;
+        if (enable)
+            solver_->flags |= SOLVER_ENABLE_CONSTRAINTS;
+    }
+    break;
 
-        case TARGET_ROTATIONS:
-        {
-            solver_->flags &= ~SOLVER_CALCULATE_TARGET_ROTATIONS;
-            if (enable)
-                solver_->flags |= SOLVER_CALCULATE_TARGET_ROTATIONS;
-        } break;
+    case TARGET_ROTATIONS:
+    {
+        solver_->flags &= ~SOLVER_CALCULATE_TARGET_ROTATIONS;
+        if (enable)
+            solver_->flags |= SOLVER_CALCULATE_TARGET_ROTATIONS;
+    }
+    break;
 
-        case AUTO_SOLVE:
-        {
-            if (((features_ & AUTO_SOLVE) != 0) == enable)
-                break;
+    case AUTO_SOLVE:
+    {
+        if (((features_ & AUTO_SOLVE) != 0) == enable)
+            break;
 
-            if (enable)
-                SubscribeToEvent(GetScene(), E_SCENEDRAWABLEUPDATEFINISHED, URHO3D_HANDLER(IKSolver, HandleSceneDrawableUpdateFinished));
-            else
-                UnsubscribeFromEvent(GetScene(), E_SCENEDRAWABLEUPDATEFINISHED);
-        } break;
+        if (enable)
+            SubscribeToEvent(GetScene(), E_SCENEDRAWABLEUPDATEFINISHED,
+                             URHO3D_HANDLER(IKSolver, HandleSceneDrawableUpdateFinished));
+        else
+            UnsubscribeFromEvent(GetScene(), E_SCENEDRAWABLEUPDATEFINISHED);
+    }
+    break;
 
-        default: break;
+    default:
+        break;
     }
 
     features_ &= ~feature;
@@ -190,22 +193,13 @@ void IKSolver::SetFeature(Feature feature, bool enable)
 }
 
 // ----------------------------------------------------------------------------
-unsigned IKSolver::GetMaximumIterations() const
-{
-    return solver_->max_iterations;
-}
+unsigned IKSolver::GetMaximumIterations() const { return solver_->max_iterations; }
 
 // ----------------------------------------------------------------------------
-void IKSolver::SetMaximumIterations(unsigned iterations)
-{
-    solver_->max_iterations = iterations;
-}
+void IKSolver::SetMaximumIterations(unsigned iterations) { solver_->max_iterations = iterations; }
 
 // ----------------------------------------------------------------------------
-float IKSolver::GetTolerance() const
-{
-    return solver_->tolerance;
-}
+float IKSolver::GetTolerance() const { return solver_->tolerance; }
 
 // ----------------------------------------------------------------------------
 void IKSolver::SetTolerance(float tolerance)
@@ -236,7 +230,9 @@ ik_node_t* IKSolver::CreateIKNodeFromUrhoNode(const Node* node)
     {
 #ifdef DEBUG
         if (effector->ikEffectorNode_ != NULL)
-            URHO3D_LOGWARNINGF("[ik] IKEffector (attached to node \"%s\") has a reference to a possibly invalid internal effector. Should be NULL.", effector->GetNode()->GetName().CString());
+            URHO3D_LOGWARNINGF("[ik] IKEffector (attached to node \"%s\") has a reference to a possibly invalid "
+                               "internal effector. Should be NULL.",
+                               effector->GetNode()->GetName().CString());
 #endif
         ik_effector_t* ikEffector = ik_effector_create();
         ik_node_attach_effector(ikNode, ikEffector); // ownership of effector
@@ -251,7 +247,9 @@ ik_node_t* IKSolver::CreateIKNodeFromUrhoNode(const Node* node)
     {
 #ifdef DEBUG
         if (constraint->ikConstraintNode_ != NULL)
-            URHO3D_LOGWARNINGF("[ik] IKConstraint (attached to node \"%s\") has a reference to a possibly invalid internal constraint. Should be NULL.", constraint->GetNode()->GetName().CString());
+            URHO3D_LOGWARNINGF("[ik] IKConstraint (attached to node \"%s\") has a reference to a possibly invalid "
+                               "internal constraint. Should be NULL.",
+                               constraint->GetNode()->GetName().CString());
 #endif
 
         constraint->SetIKConstraintNode(ikNode);
@@ -271,7 +269,7 @@ void IKSolver::DestroyTree()
 // ----------------------------------------------------------------------------
 void IKSolver::RebuildTree()
 {
-    assert (node_ != nullptr);
+    assert(node_ != nullptr);
 
     // Destroy current tree and set a new root node
     DestroyTree();
@@ -334,7 +332,7 @@ bool IKSolver::BuildTreeToEffector(IKEffector* effector)
 
         // Assert the assumptions made (described in the beginning of this function)
         assert(iterNode != nullptr);
-        assert (iterNode->HasComponent<IKSolver>() == false || iterNode == node_);
+        assert(iterNode->HasComponent<IKSolver>() == false || iterNode == node_);
     }
 
     while (missingNodes.Size() > 0)
@@ -384,16 +382,10 @@ void IKSolver::RebuildChainTrees()
 }
 
 // ----------------------------------------------------------------------------
-void IKSolver::RecalculateSegmentLengths()
-{
-    ik_solver_recalculate_segment_lengths(solver_);
-}
+void IKSolver::RecalculateSegmentLengths() { ik_solver_recalculate_segment_lengths(solver_); }
 
 // ----------------------------------------------------------------------------
-void IKSolver::CalculateJointRotations()
-{
-    ik_solver_calculate_joint_rotations(solver_);
-}
+void IKSolver::CalculateJointRotations() { ik_solver_calculate_joint_rotations(solver_); }
 
 // ----------------------------------------------------------------------------
 void IKSolver::Solve()
@@ -438,10 +430,7 @@ static void ApplyInitialPoseToSceneCallback(ik_node_t* ikNode)
     node->SetWorldRotation(QuatIK2Urho(&ikNode->original_rotation));
     node->SetWorldPosition(Vec3IK2Urho(&ikNode->original_position));
 }
-void IKSolver::ApplyOriginalPoseToScene()
-{
-    ik_solver_iterate_tree(solver_, ApplyInitialPoseToSceneCallback);
-}
+void IKSolver::ApplyOriginalPoseToScene() { ik_solver_iterate_tree(solver_, ApplyInitialPoseToSceneCallback); }
 
 // ----------------------------------------------------------------------------
 static void ApplySceneToInitialPoseCallback(ik_node_t* ikNode)
@@ -450,10 +439,7 @@ static void ApplySceneToInitialPoseCallback(ik_node_t* ikNode)
     ikNode->original_rotation = QuatUrho2IK(node->GetWorldRotation());
     ikNode->original_position = Vec3Urho2IK(node->GetWorldPosition());
 }
-void IKSolver::ApplySceneToOriginalPose()
-{
-    ik_solver_iterate_tree(solver_, ApplySceneToInitialPoseCallback);
-}
+void IKSolver::ApplySceneToOriginalPose() { ik_solver_iterate_tree(solver_, ApplySceneToInitialPoseCallback); }
 
 // ----------------------------------------------------------------------------
 static void ApplyActivePoseToSceneCallback(ik_node_t* ikNode)
@@ -462,10 +448,7 @@ static void ApplyActivePoseToSceneCallback(ik_node_t* ikNode)
     node->SetWorldRotation(QuatIK2Urho(&ikNode->rotation));
     node->SetWorldPosition(Vec3IK2Urho(&ikNode->position));
 }
-void IKSolver::ApplyActivePoseToScene()
-{
-    ik_solver_iterate_tree(solver_, ApplyActivePoseToSceneCallback);
-}
+void IKSolver::ApplyActivePoseToScene() { ik_solver_iterate_tree(solver_, ApplyActivePoseToSceneCallback); }
 
 // ----------------------------------------------------------------------------
 static void ApplySceneToActivePoseCallback(ik_node_t* ikNode)
@@ -474,34 +457,19 @@ static void ApplySceneToActivePoseCallback(ik_node_t* ikNode)
     ikNode->rotation = QuatUrho2IK(node->GetWorldRotation());
     ikNode->position = Vec3Urho2IK(node->GetWorldPosition());
 }
-void IKSolver::ApplySceneToActivePose()
-{
-    ik_solver_iterate_tree(solver_, ApplySceneToActivePoseCallback);
-}
+void IKSolver::ApplySceneToActivePose() { ik_solver_iterate_tree(solver_, ApplySceneToActivePoseCallback); }
 
 // ----------------------------------------------------------------------------
-void IKSolver::ApplyOriginalPoseToActivePose()
-{
-    ik_solver_reset_to_original_pose(solver_);
-}
+void IKSolver::ApplyOriginalPoseToActivePose() { ik_solver_reset_to_original_pose(solver_); }
 
 // ----------------------------------------------------------------------------
-void IKSolver::MarkChainsNeedUpdating()
-{
-    chainTreesNeedUpdating_ = true;
-}
+void IKSolver::MarkChainsNeedUpdating() { chainTreesNeedUpdating_ = true; }
 
 // ----------------------------------------------------------------------------
-void IKSolver::MarkTreeNeedsRebuild()
-{
-    treeNeedsRebuild = true;
-}
+void IKSolver::MarkTreeNeedsRebuild() { treeNeedsRebuild = true; }
 
 // ----------------------------------------------------------------------------
-bool IKSolver::IsSolverTreeValid() const
-{
-    return solverTreeValid_;
-}
+bool IKSolver::IsSolverTreeValid() const { return solverTreeValid_; }
 
 // ----------------------------------------------------------------------------
 /*
@@ -519,7 +487,8 @@ bool IKSolver::IsSolverTreeValid() const
 void IKSolver::OnSceneSet(Scene* scene)
 {
     if (features_ & AUTO_SOLVE)
-        SubscribeToEvent(scene, E_SCENEDRAWABLEUPDATEFINISHED, URHO3D_HANDLER(IKSolver, HandleSceneDrawableUpdateFinished));
+        SubscribeToEvent(scene, E_SCENEDRAWABLEUPDATEFINISHED,
+                         URHO3D_HANDLER(IKSolver, HandleSceneDrawableUpdateFinished));
 }
 
 // ----------------------------------------------------------------------------
@@ -553,7 +522,6 @@ void IKSolver::HandleComponentAdded(StringHash eventType, VariantMap& eventData)
             IKSolver* parentSolver = iterNode->GetComponent<IKSolver>();
             if (parentSolver != nullptr)
                 parentSolver->MarkTreeNeedsRebuild();
-
         }
 
         return; // No need to continue processing effectors or constraints
@@ -608,7 +576,6 @@ void IKSolver::HandleComponentRemoved(StringHash eventType, VariantMap& eventDat
             IKSolver* parentSolver = iterNode->GetComponent<IKSolver>();
             if (parentSolver != nullptr)
                 parentSolver->MarkTreeNeedsRebuild();
-
         }
 
         return; // No need to continue processing effectors or constraints
@@ -720,10 +687,7 @@ void IKSolver::HandleNodeRemoved(StringHash eventType, VariantMap& eventData)
 }
 
 // ----------------------------------------------------------------------------
-void IKSolver::HandleSceneDrawableUpdateFinished(StringHash eventType, VariantMap& eventData)
-{
-    Solve();
-}
+void IKSolver::HandleSceneDrawableUpdateFinished(StringHash eventType, VariantMap& eventData) { Solve(); }
 
 // ----------------------------------------------------------------------------
 void IKSolver::DrawDebugGeometry(bool depthTest)
@@ -741,86 +705,55 @@ void IKSolver::DrawDebugGeometry(DebugRenderer* debug, bool depthTest)
         (*it)->DrawDebugGeometry(debug, depthTest);
 
     ORDERED_VECTOR_FOR_EACH(&solver_->effector_nodes_list, ik_node_t*, pnode)
-        ik_effector_t* effector = (*pnode)->effector;
+    ik_effector_t* effector = (*pnode)->effector;
 
-        // Calculate average length of all segments so we can determine the radius
-        // of the debug spheres to draw
-        int chainLength = effector->chain_length == 0 ? -1 : effector->chain_length;
-        ik_node_t* a = *pnode;
-        ik_node_t* b = a->parent;
-        float averageLength = 0.0f;
-        unsigned numberOfSegments = 0;
-        while (b && chainLength-- != 0)
-        {
-            vec3_t v = a->original_position;
-            vec3_sub_vec3(v.f, b->original_position.f);
-            averageLength += vec3_length(v.f);
-            ++numberOfSegments;
-            a = b;
-            b = b->parent;
-        }
-        averageLength /= numberOfSegments;
+    // Calculate average length of all segments so we can determine the radius
+    // of the debug spheres to draw
+    int chainLength = effector->chain_length == 0 ? -1 : effector->chain_length;
+    ik_node_t* a = *pnode;
+    ik_node_t* b = a->parent;
+    float averageLength = 0.0f;
+    unsigned numberOfSegments = 0;
+    while (b && chainLength-- != 0)
+    {
+        vec3_t v = a->original_position;
+        vec3_sub_vec3(v.f, b->original_position.f);
+        averageLength += vec3_length(v.f);
+        ++numberOfSegments;
+        a = b;
+        b = b->parent;
+    }
+    averageLength /= numberOfSegments;
 
-        // connect all chained nodes together with lines
-        chainLength = effector->chain_length == 0 ? -1 : effector->chain_length;
-        a = *pnode;
-        b = a->parent;
-        debug->AddSphere(
-            Sphere(Vec3IK2Urho(&a->original_position), averageLength * 0.1f),
-            Color(0, 0, 255),
-            depthTest
-        );
-        debug->AddSphere(
-            Sphere(Vec3IK2Urho(&a->position), averageLength * 0.1f),
-            Color(255, 128, 0),
-            depthTest
-        );
-        while (b && chainLength-- != 0)
-        {
-            debug->AddLine(
-                Vec3IK2Urho(&a->original_position),
-                Vec3IK2Urho(&b->original_position),
-                Color(0, 255, 255),
-                depthTest
-            );
-            debug->AddSphere(
-                Sphere(Vec3IK2Urho(&b->original_position), averageLength * 0.1f),
-                Color(0, 0, 255),
-                depthTest
-            );
-            debug->AddLine(
-                Vec3IK2Urho(&a->position),
-                Vec3IK2Urho(&b->position),
-                Color(255, 0, 0),
-                depthTest
-            );
-            debug->AddSphere(
-                Sphere(Vec3IK2Urho(&b->position), averageLength * 0.1f),
-                Color(255, 128, 0),
-                depthTest
-            );
-            a = b;
-            b = b->parent;
-        }
+    // connect all chained nodes together with lines
+    chainLength = effector->chain_length == 0 ? -1 : effector->chain_length;
+    a = *pnode;
+    b = a->parent;
+    debug->AddSphere(Sphere(Vec3IK2Urho(&a->original_position), averageLength * 0.1f), Color(0, 0, 255), depthTest);
+    debug->AddSphere(Sphere(Vec3IK2Urho(&a->position), averageLength * 0.1f), Color(255, 128, 0), depthTest);
+    while (b && chainLength-- != 0)
+    {
+        debug->AddLine(Vec3IK2Urho(&a->original_position), Vec3IK2Urho(&b->original_position), Color(0, 255, 255),
+                       depthTest);
+        debug->AddSphere(Sphere(Vec3IK2Urho(&b->original_position), averageLength * 0.1f), Color(0, 0, 255), depthTest);
+        debug->AddLine(Vec3IK2Urho(&a->position), Vec3IK2Urho(&b->position), Color(255, 0, 0), depthTest);
+        debug->AddSphere(Sphere(Vec3IK2Urho(&b->position), averageLength * 0.1f), Color(255, 128, 0), depthTest);
+        a = b;
+        b = b->parent;
+    }
     ORDERED_VECTOR_END_EACH
 }
 
-// ----------------------------------------------------------------------------
-// Need these wrapper functions flags of GetFeature/SetFeature can be correctly
-// exposed to the editor
-// ----------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------
+    // Need these wrapper functions flags of GetFeature/SetFeature can be correctly
+    // exposed to the editor
+    // ----------------------------------------------------------------------------
 
-#define DEF_FEATURE_GETTER(feature_name) \
-bool IKSolver::Get##feature_name() const \
-{                                        \
-    return GetFeature(feature_name);     \
-}
+#define DEF_FEATURE_GETTER(feature_name)                                                                               \
+    bool IKSolver::Get##feature_name() const { return GetFeature(feature_name); }
 
-#define DEF_FEATURE_SETTER(feature_name)      \
-void IKSolver::Set##feature_name(bool enable) \
-{                                             \
-    SetFeature(feature_name, enable);         \
-}
+#define DEF_FEATURE_SETTER(feature_name)                                                                               \
+    void IKSolver::Set##feature_name(bool enable) { SetFeature(feature_name, enable); }
 
 DEF_FEATURE_GETTER(JOINT_ROTATIONS)
 DEF_FEATURE_GETTER(TARGET_ROTATIONS)

@@ -27,9 +27,9 @@
 #include "../Graphics/DebugRenderer.h"
 #include "../IO/Log.h"
 #include "../IO/MemoryBuffer.h"
+#include "../Navigation/CrowdAgent.h"
 #include "../Navigation/NavigationEvents.h"
 #include "../Navigation/NavigationMesh.h"
-#include "../Navigation/CrowdAgent.h"
 #include "../Scene/Node.h"
 #include "../Scene/Scene.h"
 
@@ -40,7 +40,6 @@
 
 namespace Urho3D
 {
-
 extern const char* NAVIGATION_CATEGORY;
 
 static const CrowdAgentRequestedTarget DEFAULT_AGENT_REQUEST_TARGET_TYPE = CA_REQUESTEDTARGET_NONE;
@@ -53,54 +52,36 @@ static const NavigationPushiness DEFAULT_AGENT_NAVIGATION_PUSHINESS = NAVIGATION
 
 static const unsigned SCOPE_NAVIGATION_QUALITY_PARAMS = 1;
 static const unsigned SCOPE_NAVIGATION_PUSHINESS_PARAMS = 2;
-static const unsigned SCOPE_BASE_PARAMS = M_MAX_UNSIGNED & ~SCOPE_NAVIGATION_QUALITY_PARAMS & ~SCOPE_NAVIGATION_PUSHINESS_PARAMS;
+static const unsigned SCOPE_BASE_PARAMS =
+    M_MAX_UNSIGNED & ~SCOPE_NAVIGATION_QUALITY_PARAMS & ~SCOPE_NAVIGATION_PUSHINESS_PARAMS;
 
-static const char* crowdAgentRequestedTargetTypeNames[] = {
-    "None",
-    "Position",
-    "Velocity",
-    nullptr
-};
+static const char* crowdAgentRequestedTargetTypeNames[] = {"None", "Position", "Velocity", nullptr};
 
-static const char* crowdAgentAvoidanceQualityNames[] = {
-    "Low",
-    "Medium",
-    "High",
-    nullptr
-};
+static const char* crowdAgentAvoidanceQualityNames[] = {"Low", "Medium", "High", nullptr};
 
-static const char* crowdAgentPushinessNames[] = {
-    "Low",
-    "Medium",
-    "High",
-    "None",
-    nullptr
-};
+static const char* crowdAgentPushinessNames[] = {"Low", "Medium", "High", "None", nullptr};
 
-CrowdAgent::CrowdAgent(Context* context) :
-    Component(context),
-    agentCrowdId_(-1),
-    requestedTargetType_(DEFAULT_AGENT_REQUEST_TARGET_TYPE),
-    updateNodePosition_(true),
-    maxAccel_(DEFAULT_AGENT_MAX_ACCEL),
-    maxSpeed_(DEFAULT_AGENT_MAX_SPEED),
-    radius_(0.0f),
-    height_(0.0f),
-    queryFilterType_(DEFAULT_AGENT_QUERY_FILTER_TYPE),
-    obstacleAvoidanceType_(DEFAULT_AGENT_OBSTACLE_AVOIDANCE_TYPE),
-    navQuality_(DEFAULT_AGENT_AVOIDANCE_QUALITY),
-    navPushiness_(DEFAULT_AGENT_NAVIGATION_PUSHINESS),
-    previousTargetState_(CA_TARGET_NONE),
-    previousAgentState_(CA_STATE_WALKING),
-    ignoreTransformChanges_(false)
+CrowdAgent::CrowdAgent(Context* context)
+    : Component(context)
+    , agentCrowdId_(-1)
+    , requestedTargetType_(DEFAULT_AGENT_REQUEST_TARGET_TYPE)
+    , updateNodePosition_(true)
+    , maxAccel_(DEFAULT_AGENT_MAX_ACCEL)
+    , maxSpeed_(DEFAULT_AGENT_MAX_SPEED)
+    , radius_(0.0f)
+    , height_(0.0f)
+    , queryFilterType_(DEFAULT_AGENT_QUERY_FILTER_TYPE)
+    , obstacleAvoidanceType_(DEFAULT_AGENT_OBSTACLE_AVOIDANCE_TYPE)
+    , navQuality_(DEFAULT_AGENT_AVOIDANCE_QUALITY)
+    , navPushiness_(DEFAULT_AGENT_NAVIGATION_PUSHINESS)
+    , previousTargetState_(CA_TARGET_NONE)
+    , previousAgentState_(CA_STATE_WALKING)
+    , ignoreTransformChanges_(false)
 {
     SubscribeToEvent(E_NAVIGATION_TILE_ADDED, URHO3D_HANDLER(CrowdAgent, HandleNavigationTileAdded));
 }
 
-CrowdAgent::~CrowdAgent()
-{
-    RemoveAgentFromCrowd();
-}
+CrowdAgent::~CrowdAgent() { RemoveAgentFromCrowd(); }
 
 void CrowdAgent::RegisterObject(Context* context)
 {
@@ -109,16 +90,20 @@ void CrowdAgent::RegisterObject(Context* context)
     URHO3D_ATTRIBUTE("Target Position", Vector3, targetPosition_, Vector3::ZERO, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Target Velocity", Vector3, targetVelocity_, Vector3::ZERO, AM_DEFAULT);
     URHO3D_ENUM_ATTRIBUTE("Requested Target Type", requestedTargetType_, crowdAgentRequestedTargetTypeNames,
-        DEFAULT_AGENT_REQUEST_TARGET_TYPE, AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Update Node Position", GetUpdateNodePosition, SetUpdateNodePosition, bool, true, AM_DEFAULT);
+                          DEFAULT_AGENT_REQUEST_TARGET_TYPE, AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Update Node Position", GetUpdateNodePosition, SetUpdateNodePosition, bool, true,
+                              AM_DEFAULT);
     URHO3D_ATTRIBUTE("Max Accel", float, maxAccel_, DEFAULT_AGENT_MAX_ACCEL, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Max Speed", float, maxSpeed_, DEFAULT_AGENT_MAX_SPEED, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Radius", float, radius_, 0.0f, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Height", float, height_, 0.0f, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Query Filter Type", unsigned, queryFilterType_, DEFAULT_AGENT_QUERY_FILTER_TYPE, AM_DEFAULT);
-    URHO3D_ATTRIBUTE("Obstacle Avoidance Type", unsigned, obstacleAvoidanceType_, DEFAULT_AGENT_OBSTACLE_AVOIDANCE_TYPE, AM_DEFAULT);
-    URHO3D_ENUM_ATTRIBUTE("Navigation Pushiness", navPushiness_, crowdAgentPushinessNames, DEFAULT_AGENT_NAVIGATION_PUSHINESS, AM_DEFAULT);
-    URHO3D_ENUM_ATTRIBUTE("Navigation Quality", navQuality_, crowdAgentAvoidanceQualityNames, DEFAULT_AGENT_AVOIDANCE_QUALITY, AM_DEFAULT);
+    URHO3D_ATTRIBUTE("Obstacle Avoidance Type", unsigned, obstacleAvoidanceType_, DEFAULT_AGENT_OBSTACLE_AVOIDANCE_TYPE,
+                     AM_DEFAULT);
+    URHO3D_ENUM_ATTRIBUTE("Navigation Pushiness", navPushiness_, crowdAgentPushinessNames,
+                          DEFAULT_AGENT_NAVIGATION_PUSHINESS, AM_DEFAULT);
+    URHO3D_ENUM_ATTRIBUTE("Navigation Quality", navQuality_, crowdAgentAvoidanceQualityNames,
+                          DEFAULT_AGENT_AVOIDANCE_QUALITY, AM_DEFAULT);
 }
 
 void CrowdAgent::ApplyAttributes()
@@ -199,27 +184,22 @@ void CrowdAgent::UpdateParameters(unsigned scope)
             switch (navQuality_)
             {
             case NAVIGATIONQUALITY_LOW:
-                params.updateFlags = 0
-                                     | DT_CROWD_OPTIMIZE_VIS
-                                     | DT_CROWD_ANTICIPATE_TURNS;
+                params.updateFlags = 0 | DT_CROWD_OPTIMIZE_VIS | DT_CROWD_ANTICIPATE_TURNS;
                 break;
 
             case NAVIGATIONQUALITY_MEDIUM:
-                params.updateFlags = 0
-                                     | DT_CROWD_OPTIMIZE_TOPO
-                                     | DT_CROWD_OPTIMIZE_VIS
-                                     | DT_CROWD_ANTICIPATE_TURNS
-                                     | DT_CROWD_SEPARATION;
+                params.updateFlags = 0 | DT_CROWD_OPTIMIZE_TOPO | DT_CROWD_OPTIMIZE_VIS | DT_CROWD_ANTICIPATE_TURNS |
+                                     DT_CROWD_SEPARATION;
                 break;
 
             case NAVIGATIONQUALITY_HIGH:
                 params.updateFlags = 0
                                      // Path finding
-                                     | DT_CROWD_OPTIMIZE_TOPO
-                                     | DT_CROWD_OPTIMIZE_VIS
+                                     | DT_CROWD_OPTIMIZE_TOPO |
+                                     DT_CROWD_OPTIMIZE_VIS
                                      // Steering
-                                     | DT_CROWD_ANTICIPATE_TURNS
-                                     | DT_CROWD_SEPARATION
+                                     | DT_CROWD_ANTICIPATE_TURNS |
+                                     DT_CROWD_SEPARATION
                                      // Velocity planning
                                      | DT_CROWD_OBSTACLE_AVOIDANCE;
                 break;
@@ -333,7 +313,7 @@ void CrowdAgent::SetTargetPosition(const Vector3& position)
 
         if (!IsInCrowd())
             AddAgentToCrowd();
-        if (IsInCrowd())   // Make sure the previous method call is successful
+        if (IsInCrowd()) // Make sure the previous method call is successful
         {
             dtPolyRef nearestRef;
             Vector3 nearestPos = crowdManager_->FindNearestPoint(position, queryFilterType_, &nearestRef);
@@ -422,8 +402,8 @@ void CrowdAgent::SetQueryFilterType(unsigned queryFilterType)
     {
         if (queryFilterType >= DT_CROWD_MAX_QUERY_FILTER_TYPE)
         {
-            URHO3D_LOGERRORF("The specified filter type index (%d) exceeds the maximum allowed value (%d)", queryFilterType,
-                DT_CROWD_MAX_QUERY_FILTER_TYPE);
+            URHO3D_LOGERRORF("The specified filter type index (%d) exceeds the maximum allowed value (%d)",
+                             queryFilterType, DT_CROWD_MAX_QUERY_FILTER_TYPE);
             return;
         }
 
@@ -440,7 +420,7 @@ void CrowdAgent::SetObstacleAvoidanceType(unsigned obstacleAvoidanceType)
         if (obstacleAvoidanceType >= DT_CROWD_MAX_OBSTAVOIDANCE_PARAMS)
         {
             URHO3D_LOGERRORF("The specified obstacle avoidance type index (%d) exceeds the maximum allowed value (%d)",
-                obstacleAvoidanceType, DT_CROWD_MAX_OBSTAVOIDANCE_PARAMS);
+                             obstacleAvoidanceType, DT_CROWD_MAX_OBSTAVOIDANCE_PARAMS);
             return;
         }
 
@@ -504,19 +484,16 @@ bool CrowdAgent::HasArrived() const
 {
     // Is the agent at or near the end of its path and within its own radius of the goal?
     const dtCrowdAgent* agent = GetDetourCrowdAgent();
-    return agent && (!agent->ncorners || (agent->cornerFlags[agent->ncorners - 1] & DT_STRAIGHTPATH_END &&
-                                          dtVdist2D(agent->npos, &agent->cornerVerts[(agent->ncorners - 1) * 3]) <=
-                                          agent->params.radius));
+    return agent && (!agent->ncorners ||
+                     (agent->cornerFlags[agent->ncorners - 1] & DT_STRAIGHTPATH_END &&
+                      dtVdist2D(agent->npos, &agent->cornerVerts[(agent->ncorners - 1) * 3]) <= agent->params.radius));
 }
 
-bool CrowdAgent::IsInCrowd() const
-{
-    return crowdManager_ && agentCrowdId_ != -1;
-}
+bool CrowdAgent::IsInCrowd() const { return crowdManager_ && agentCrowdId_ != -1; }
 
 void CrowdAgent::OnCrowdUpdate(dtCrowdAgent* ag, float dt)
 {
-    assert (ag);
+    assert(ag);
     if (node_)
     {
         // Use pointer to self to check for destruction after sending events
@@ -634,7 +611,8 @@ void CrowdAgent::OnMarkedDirty(Node* node)
             {
                 agentPos = nodePos;
 
-                // If the node has been externally altered, provide the opportunity for DetourCrowd to reevaluate the crowd agent
+                // If the node has been externally altered, provide the opportunity for DetourCrowd to reevaluate the
+                // crowd agent
                 if (agent->state == CA_STATE_INVALID)
                     agent->state = CA_STATE_WALKING;
             }
@@ -665,5 +643,4 @@ void CrowdAgent::HandleNavigationTileAdded(StringHash eventType, VariantMap& eve
         AddAgentToCrowd();
     }
 }
-
 }

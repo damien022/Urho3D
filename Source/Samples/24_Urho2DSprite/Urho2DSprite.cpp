@@ -20,7 +20,6 @@
 // THE SOFTWARE.
 //
 
-
 #include <Urho3D/Core/CoreEvents.h>
 #include <Urho3D/Engine/Engine.h>
 #include <Urho3D/Graphics/Camera.h>
@@ -48,8 +47,8 @@ static const StringHash VAR_ROTATESPEED("RotateSpeed");
 
 URHO3D_DEFINE_APPLICATION_MAIN(Urho2DSprite)
 
-Urho2DSprite::Urho2DSprite(Context* context) :
-    Sample(context)
+Urho2DSprite::Urho2DSprite(Context* context)
+    : Sample(context)
 {
 }
 

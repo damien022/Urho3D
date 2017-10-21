@@ -59,7 +59,6 @@
 
 namespace Urho3D
 {
-
 void Graphics::SetExternalWindow(void* window)
 {
     if (!window_)
@@ -90,10 +89,7 @@ void Graphics::SetWindowPosition(const IntVector2& position)
         position_ = position; // Sets as initial position for OpenWindow()
 }
 
-void Graphics::SetWindowPosition(int x, int y)
-{
-    SetWindowPosition(IntVector2(x, y));
-}
+void Graphics::SetWindowPosition(int x, int y) { SetWindowPosition(IntVector2(x, y)); }
 
 void Graphics::SetOrientations(const String& orientations)
 {
@@ -103,7 +99,8 @@ void Graphics::SetOrientations(const String& orientations)
 
 bool Graphics::ToggleFullscreen()
 {
-    return SetMode(width_, height_, !fullscreen_, borderless_, resizable_, highDPI_, vsync_, tripleBuffer_, multiSample_, monitor_, refreshRate_);
+    return SetMode(width_, height_, !fullscreen_, borderless_, resizable_, highDPI_, vsync_, tripleBuffer_,
+                   multiSample_, monitor_, refreshRate_);
 }
 
 void Graphics::SetShaderParameter(StringHash param, const Variant& value)
@@ -152,12 +149,12 @@ void Graphics::SetShaderParameter(StringHash param, const Variant& value)
         break;
 
     case VAR_BUFFER:
-        {
-            const PODVector<unsigned char>& buffer = value.GetBuffer();
-            if (buffer.Size() >= sizeof(float))
-                SetShaderParameter(param, reinterpret_cast<const float*>(&buffer[0]), buffer.Size() / sizeof(float));
-        }
-        break;
+    {
+        const PODVector<unsigned char>& buffer = value.GetBuffer();
+        if (buffer.Size() >= sizeof(float))
+            SetShaderParameter(param, reinterpret_cast<const float*>(&buffer[0]), buffer.Size() / sizeof(float));
+    }
+    break;
 
     default:
         // Unsupported parameter type, do nothing
@@ -218,10 +215,7 @@ IntVector2 Graphics::GetDesktopResolution(int monitor) const
 #endif
 }
 
-int Graphics::GetMonitorCount() const
-{
-    return SDL_GetNumVideoDisplays();
-}
+int Graphics::GetMonitorCount() const { return SDL_GetNumVideoDisplays(); }
 
 void Graphics::Maximize()
 {
@@ -239,15 +233,9 @@ void Graphics::Minimize()
     SDL_MinimizeWindow(window_);
 }
 
-void Graphics::BeginDumpShaders(const String& fileName)
-{
-    shaderPrecache_ = new ShaderPrecache(context_, fileName);
-}
+void Graphics::BeginDumpShaders(const String& fileName) { shaderPrecache_ = new ShaderPrecache(context_, fileName); }
 
-void Graphics::EndDumpShaders()
-{
-    shaderPrecache_.Reset();
-}
+void Graphics::EndDumpShaders() { shaderPrecache_.Reset(); }
 
 void Graphics::PrecacheShaders(Deserializer& source)
 {
@@ -399,15 +387,9 @@ void RegisterGraphicsLibrary(Context* context)
     Zone::RegisterObject(context);
 }
 
-int Graphics::GetCurrentMonitor()
-{
-    return SDL_GetWindowDisplayIndex((SDL_Window*) this->GetSDLWindow());
-}
+int Graphics::GetCurrentMonitor() { return SDL_GetWindowDisplayIndex((SDL_Window*)this->GetSDLWindow()); }
 
-int Graphics::GetNumMonitors()
-{
-    return SDL_GetNumVideoDisplays();
-}
+int Graphics::GetNumMonitors() { return SDL_GetNumVideoDisplays(); }
 
 bool Graphics::GetMaximized()
 {
@@ -429,5 +411,4 @@ void Graphics::RaiseWindow()
     if (window_)
         SDL_RaiseWindow(window_);
 }
-
 }

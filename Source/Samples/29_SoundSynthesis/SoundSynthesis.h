@@ -26,10 +26,8 @@
 
 namespace Urho3D
 {
-
 class Node;
 class BufferedSoundStream;
-
 }
 
 /// Sound synthesis example.
@@ -50,31 +48,38 @@ public:
 
 protected:
     /// Return XML patch instructions for screen joystick layout for a specific sample app, if any.
-    virtual String GetScreenJoystickPatchString() const override { return
-        "<patch>"
-        "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button2']]\">"
-        "        <attribute name=\"Is Visible\" value=\"false\" />"
-        "    </add>"
-        "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Hat0']]\">"
-        "        <attribute name=\"Is Visible\" value=\"false\" />"
-        "    </add>"
-        "    <remove sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]/attribute[@name='Is Visible']\" />"
-        "    <replace sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]/element[./attribute[@name='Name' and @value='Label']]/attribute[@name='Text']/@value\">Up</replace>"
-        "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]\">"
-        "        <element type=\"Text\">"
-        "            <attribute name=\"Name\" value=\"KeyBinding\" />"
-        "            <attribute name=\"Text\" value=\"UP\" />"
-        "        </element>"
-        "    </add>"
-        "    <remove sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]/attribute[@name='Is Visible']\" />"
-        "    <replace sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]/element[./attribute[@name='Name' and @value='Label']]/attribute[@name='Text']/@value\">Down</replace>"
-        "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]\">"
-        "        <element type=\"Text\">"
-        "            <attribute name=\"Name\" value=\"KeyBinding\" />"
-        "            <attribute name=\"Text\" value=\"DOWN\" />"
-        "        </element>"
-        "    </add>"
-        "</patch>";
+    virtual String GetScreenJoystickPatchString() const override
+    {
+        return "<patch>"
+               "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button2']]\">"
+               "        <attribute name=\"Is Visible\" value=\"false\" />"
+               "    </add>"
+               "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Hat0']]\">"
+               "        <attribute name=\"Is Visible\" value=\"false\" />"
+               "    </add>"
+               "    <remove sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]/attribute[@name='Is "
+               "Visible']\" />"
+               "    <replace sel=\"/element/element[./attribute[@name='Name' and "
+               "@value='Button0']]/element[./attribute[@name='Name' and "
+               "@value='Label']]/attribute[@name='Text']/@value\">Up</replace>"
+               "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]\">"
+               "        <element type=\"Text\">"
+               "            <attribute name=\"Name\" value=\"KeyBinding\" />"
+               "            <attribute name=\"Text\" value=\"UP\" />"
+               "        </element>"
+               "    </add>"
+               "    <remove sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]/attribute[@name='Is "
+               "Visible']\" />"
+               "    <replace sel=\"/element/element[./attribute[@name='Name' and "
+               "@value='Button1']]/element[./attribute[@name='Name' and "
+               "@value='Label']]/attribute[@name='Text']/@value\">Down</replace>"
+               "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]\">"
+               "        <element type=\"Text\">"
+               "            <attribute name=\"Name\" value=\"KeyBinding\" />"
+               "            <attribute name=\"Text\" value=\"DOWN\" />"
+               "        </element>"
+               "    </add>"
+               "</patch>";
     }
 
 private:

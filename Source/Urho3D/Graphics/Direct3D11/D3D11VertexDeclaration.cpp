@@ -33,20 +33,12 @@
 
 namespace Urho3D
 {
+static const DXGI_FORMAT d3dElementFormats[] = {
+    DXGI_FORMAT_R32_SINT,           DXGI_FORMAT_R32_FLOAT,     DXGI_FORMAT_R32G32_FLOAT,  DXGI_FORMAT_R32G32B32_FLOAT,
+    DXGI_FORMAT_R32G32B32A32_FLOAT, DXGI_FORMAT_R8G8B8A8_UINT, DXGI_FORMAT_R8G8B8A8_UNORM};
 
-static const DXGI_FORMAT d3dElementFormats[] =
-{
-    DXGI_FORMAT_R32_SINT,
-    DXGI_FORMAT_R32_FLOAT,
-    DXGI_FORMAT_R32G32_FLOAT,
-    DXGI_FORMAT_R32G32B32_FLOAT,
-    DXGI_FORMAT_R32G32B32A32_FLOAT,
-    DXGI_FORMAT_R8G8B8A8_UINT,
-    DXGI_FORMAT_R8G8B8A8_UNORM
-};
-
-VertexDeclaration::VertexDeclaration(Graphics* graphics, ShaderVariation* vertexShader, VertexBuffer** vertexBuffers) :
-    inputLayout_(nullptr)
+VertexDeclaration::VertexDeclaration(Graphics* graphics, ShaderVariation* vertexShader, VertexBuffer** vertexBuffers)
+    : inputLayout_(nullptr)
 {
     PODVector<D3D11_INPUT_ELEMENT_DESC> elementDescs;
     unsigned prevBufferDescs = 0;
@@ -72,7 +64,8 @@ VertexDeclaration::VertexDeclaration(Graphics* graphics, ShaderVariation* vertex
                     isExisting = true;
                     elementDescs[k].InputSlot = i;
                     elementDescs[k].AlignedByteOffset = srcElement.offset_;
-                    elementDescs[k].InputSlotClass = srcElement.perInstance_ ? D3D11_INPUT_PER_INSTANCE_DATA : D3D11_INPUT_PER_VERTEX_DATA;
+                    elementDescs[k].InputSlotClass =
+                        srcElement.perInstance_ ? D3D11_INPUT_PER_INSTANCE_DATA : D3D11_INPUT_PER_VERTEX_DATA;
                     elementDescs[k].InstanceDataStepRate = srcElement.perInstance_ ? 1 : 0;
                     break;
                 }
@@ -87,7 +80,8 @@ VertexDeclaration::VertexDeclaration(Graphics* graphics, ShaderVariation* vertex
             newDesc.Format = d3dElementFormats[srcElement.type_];
             newDesc.InputSlot = (UINT)i;
             newDesc.AlignedByteOffset = srcElement.offset_;
-            newDesc.InputSlotClass = srcElement.perInstance_ ? D3D11_INPUT_PER_INSTANCE_DATA : D3D11_INPUT_PER_VERTEX_DATA;
+            newDesc.InputSlotClass =
+                srcElement.perInstance_ ? D3D11_INPUT_PER_INSTANCE_DATA : D3D11_INPUT_PER_VERTEX_DATA;
             newDesc.InstanceDataStepRate = srcElement.perInstance_ ? 1 : 0;
             elementDescs.Push(newDesc);
         }
@@ -100,19 +94,15 @@ VertexDeclaration::VertexDeclaration(Graphics* graphics, ShaderVariation* vertex
 
     const PODVector<unsigned char>& byteCode = vertexShader->GetByteCode();
 
-    HRESULT hr = graphics->GetImpl()->GetDevice()->CreateInputLayout(&elementDescs[0], (UINT)elementDescs.Size(), &byteCode[0],
-        byteCode.Size(), (ID3D11InputLayout**)&inputLayout_);
+    HRESULT hr = graphics->GetImpl()->GetDevice()->CreateInputLayout(
+        &elementDescs[0], (UINT)elementDescs.Size(), &byteCode[0], byteCode.Size(), (ID3D11InputLayout**)&inputLayout_);
     if (FAILED(hr))
     {
         URHO3D_SAFE_RELEASE(inputLayout_);
         URHO3D_LOGERRORF("Failed to create input layout for shader %s due to missing vertex element(s) (HRESULT %x)",
-            vertexShader->GetFullName().CString(), (unsigned)hr);
+                         vertexShader->GetFullName().CString(), (unsigned)hr);
     }
 }
 
-VertexDeclaration::~VertexDeclaration()
-{
-    URHO3D_SAFE_RELEASE(inputLayout_);
-}
-
+VertexDeclaration::~VertexDeclaration() { URHO3D_SAFE_RELEASE(inputLayout_); }
 }

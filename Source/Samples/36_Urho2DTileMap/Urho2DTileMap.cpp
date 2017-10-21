@@ -21,17 +21,17 @@
 //
 
 #include <Urho3D/Core/CoreEvents.h>
-#include <Urho3D/Graphics/Camera.h>
 #include <Urho3D/Engine/Engine.h>
-#include <Urho3D/UI/Font.h>
+#include <Urho3D/Graphics/Camera.h>
 #include <Urho3D/Graphics/Graphics.h>
-#include <Urho3D/Input/Input.h>
 #include <Urho3D/Graphics/Octree.h>
 #include <Urho3D/Graphics/Renderer.h>
+#include <Urho3D/Input/Input.h>
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Scene/Scene.h>
-#include <Urho3D/Urho2D/StaticSprite2D.h>
+#include <Urho3D/UI/Font.h>
 #include <Urho3D/UI/Text.h>
+#include <Urho3D/Urho2D/StaticSprite2D.h>
 #include <Urho3D/Urho2D/TileMap2D.h>
 #include <Urho3D/Urho2D/TileMapLayer2D.h>
 #include <Urho3D/Urho2D/TmxFile2D.h>
@@ -42,8 +42,8 @@
 
 URHO3D_DEFINE_APPLICATION_MAIN(Urho2DTileMap)
 
-Urho2DTileMap::Urho2DTileMap(Context* context) :
-    Sample(context)
+Urho2DTileMap::Urho2DTileMap(Context* context)
+    : Sample(context)
 {
 }
 
@@ -86,7 +86,11 @@ void Urho2DTileMap::CreateScene()
 
     Graphics* graphics = GetSubsystem<Graphics>();
     camera->SetOrthoSize((float)graphics->GetHeight() * PIXEL_SIZE);
-    camera->SetZoom(1.0f * Min((float)graphics->GetWidth() / 1280.0f, (float)graphics->GetHeight() / 800.0f)); // Set zoom according to user's resolution to ensure full visibility (initial zoom (1.0) is set for full visibility at 1280x800 resolution)
+    camera->SetZoom(1.0f * Min((float)graphics->GetWidth() / 1280.0f,
+                               (float)graphics->GetHeight() / 800.0f)); // Set zoom according to user's resolution to
+                                                                        // ensure full visibility (initial zoom (1.0) is
+                                                                        // set for full visibility at 1280x800
+                                                                        // resolution)
 
     ResourceCache* cache = GetSubsystem<ResourceCache>();
     // Get tmx file
@@ -115,7 +119,8 @@ void Urho2DTileMap::CreateInstructions()
 
     // Construct new Text object, set string to display and font to use
     Text* instructionText = ui->GetRoot()->CreateChild<Text>();
-    instructionText->SetText("Use WASD keys to move, use PageUp PageDown keys to zoom.\n LMB to remove a tile, RMB to swap grass and water.");
+    instructionText->SetText("Use WASD keys to move, use PageUp PageDown keys to zoom.\n LMB to remove a tile, RMB to "
+                             "swap grass and water.");
     instructionText->SetFont(cache->GetResource<Font>("Fonts/Anonymous Pro.ttf"), 15);
 
     // Position the text relative to the screen center
@@ -202,7 +207,8 @@ void Urho2DTileMap::HandleMouseButtonDown(StringHash eventType, VariantMap& even
     int x, y;
     if (map->PositionToTileIndex(x, y, pos))
     {
-        // Get tile's sprite. Note that layer.GetTile(x, y).sprite is read-only, so we get the sprite through tile's node
+        // Get tile's sprite. Note that layer.GetTile(x, y).sprite is read-only, so we get the sprite through tile's
+        // node
         Node* n = layer->GetTileNode(x, y);
         if (!n)
             return;
@@ -211,11 +217,15 @@ void Urho2DTileMap::HandleMouseButtonDown(StringHash eventType, VariantMap& even
         if (input->GetMouseButtonDown(MOUSEB_RIGHT))
         {
             // Swap grass and water
-            if (layer->GetTile(x, y)->GetGid() < 9) // First 8 sprites in the "isometric_grass_and_water.png" tileset are mostly grass and from 9 to 24 they are mostly water
+            if (layer->GetTile(x, y)->GetGid() < 9) // First 8 sprites in the "isometric_grass_and_water.png" tileset
+                                                    // are mostly grass and from 9 to 24 they are mostly water
                 sprite->SetSprite(layer->GetTile(0, 0)->GetSprite()); // Replace grass by water sprite used in top tile
-            else sprite->SetSprite(layer->GetTile(24, 24)->GetSprite()); // Replace water by grass sprite used in bottom tile
+            else
+                sprite->SetSprite(
+                    layer->GetTile(24, 24)->GetSprite()); // Replace water by grass sprite used in bottom tile
         }
-        else sprite->SetSprite(nullptr); // 'Remove' sprite
+        else
+            sprite->SetSprite(nullptr); // 'Remove' sprite
     }
 }
 
@@ -224,7 +234,8 @@ Vector2 Urho2DTileMap::GetMousePositionXY()
     Input* input = GetSubsystem<Input>();
     Graphics* graphics = GetSubsystem<Graphics>();
     Camera* camera = cameraNode_->GetComponent<Camera>();
-    Vector3 screenPoint = Vector3((float)input->GetMousePosition().x_ / graphics->GetWidth(), (float)input->GetMousePosition().y_ / graphics->GetHeight(), 10.0f);
+    Vector3 screenPoint = Vector3((float)input->GetMousePosition().x_ / graphics->GetWidth(),
+                                  (float)input->GetMousePosition().y_ / graphics->GetHeight(), 10.0f);
     Vector3 worldPoint = camera->ScreenToWorldPoint(screenPoint);
     return Vector2(worldPoint.x_, worldPoint.y_);
 }

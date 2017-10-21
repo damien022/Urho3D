@@ -31,17 +31,14 @@
 
 namespace Urho3D
 {
-
 extern const char* URHO2D_CATEGORY;
 
-ConstraintGear2D::ConstraintGear2D(Context* context) :
-    Constraint2D(context)
+ConstraintGear2D::ConstraintGear2D(Context* context)
+    : Constraint2D(context)
 {
 }
 
-ConstraintGear2D::~ConstraintGear2D()
-{
-}
+ConstraintGear2D::~ConstraintGear2D() {}
 
 void ConstraintGear2D::RegisterObject(Context* context)
 {
@@ -126,5 +123,4 @@ b2JointDef* ConstraintGear2D::GetJointDef()
 
     return &jointDef_;
 }
-
 }

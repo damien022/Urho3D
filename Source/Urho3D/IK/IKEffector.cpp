@@ -20,43 +20,39 @@
 // THE SOFTWARE.
 //
 
+#include "../IK/IKEffector.h"
 #include "../Core/Context.h"
 #include "../Graphics/DebugRenderer.h"
 #include "../IK/IKConverters.h"
-#include "../IK/IKEffector.h"
 #include "../IK/IKEvents.h"
 #include "../IK/IKSolver.h"
-#include "../Scene/SceneEvents.h"
 #include "../IO/Log.h"
+#include "../Scene/SceneEvents.h"
 
-#include <ik/node.h>
 #include <ik/effector.h>
+#include <ik/node.h>
 #include <ik/solver.h>
 #include <ik/util.h>
 
 namespace Urho3D
 {
-
 extern const char* IK_CATEGORY;
 
 // ----------------------------------------------------------------------------
-IKEffector::IKEffector(Context* context) :
-    Component(context),
-    ikEffectorNode_(nullptr),
-    chainLength_(0),
-    weight_(1.0f),
-    rotationWeight_(1.0),
-    rotationDecay_(0.25),
-    features_(0)
+IKEffector::IKEffector(Context* context)
+    : Component(context)
+    , ikEffectorNode_(nullptr)
+    , chainLength_(0)
+    , weight_(1.0f)
+    , rotationWeight_(1.0)
+    , rotationDecay_(0.25)
+    , features_(0)
 {
     URHO3D_LOGDEBUG("IKEffector created");
 }
 
 // ----------------------------------------------------------------------------
-IKEffector::~IKEffector()
-{
-    URHO3D_LOGDEBUG("IKEffector destroyed");
-}
+IKEffector::~IKEffector() { URHO3D_LOGDEBUG("IKEffector destroyed"); }
 
 // ----------------------------------------------------------------------------
 void IKEffector::RegisterObject(Context* context)
@@ -65,20 +61,20 @@ void IKEffector::RegisterObject(Context* context)
 
     URHO3D_ACCESSOR_ATTRIBUTE("Target Node", GetTargetName, SetTargetName, String, String::EMPTY, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Chain Length", GetChainLength, SetChainLength, unsigned, 0, AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Target Position", GetTargetPosition, SetTargetPosition, Vector3, Vector3::ZERO, AM_DEFAULT);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Target Rotation", GetTargetRotationEuler, SetTargetRotationEuler, Vector3, Vector3::ZERO, AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Target Position", GetTargetPosition, SetTargetPosition, Vector3, Vector3::ZERO,
+                              AM_DEFAULT);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Target Rotation", GetTargetRotationEuler, SetTargetRotationEuler, Vector3,
+                                    Vector3::ZERO, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Weight", GetWeight, SetWeight, float, 1.0, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Rotation Weight", GetRotationWeight, SetRotationWeight, float, 1.0, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Rotation Decay", GetRotationDecay, SetRotationDecay, float, 0.25, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Nlerp Weight", GetWEIGHT_NLERP, SetWEIGHT_NLERP, bool, false, AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Inherit Parent Rotation", GetINHERIT_PARENT_ROTATION, SetINHERIT_PARENT_ROTATION, bool, false, AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Inherit Parent Rotation", GetINHERIT_PARENT_ROTATION, SetINHERIT_PARENT_ROTATION, bool,
+                              false, AM_DEFAULT);
 }
 
 // ----------------------------------------------------------------------------
-Node* IKEffector::GetTargetNode() const
-{
-    return targetNode_;
-}
+Node* IKEffector::GetTargetNode() const { return targetNode_; }
 
 // ----------------------------------------------------------------------------
 void IKEffector::SetTargetNode(Node* targetNode)
@@ -86,8 +82,8 @@ void IKEffector::SetTargetNode(Node* targetNode)
     using namespace IKEffectorTargetChanged;
 
     VariantMap& eventData = GetEventDataMap();
-    eventData[P_EFFECTORNODE] = node_;       // The effector node that has changed targets
-    eventData[P_TARGETNODE]   = targetNode_; // The new target node. NOTE: Can be NULL (means no target)
+    eventData[P_EFFECTORNODE] = node_;     // The effector node that has changed targets
+    eventData[P_TARGETNODE] = targetNode_; // The new target node. NOTE: Can be NULL (means no target)
     SendEvent(E_IKEFFECTORTARGETCHANGED, eventData);
 
     // Finally change the target node
@@ -96,10 +92,7 @@ void IKEffector::SetTargetNode(Node* targetNode)
 }
 
 // ----------------------------------------------------------------------------
-const String& IKEffector::GetTargetName() const
-{
-    return targetName_;
-}
+const String& IKEffector::GetTargetName() const { return targetName_; }
 
 // ----------------------------------------------------------------------------
 void IKEffector::SetTargetName(const String& nodeName)
@@ -109,10 +102,7 @@ void IKEffector::SetTargetName(const String& nodeName)
 }
 
 // ----------------------------------------------------------------------------
-const Vector3& IKEffector::GetTargetPosition() const
-{
-    return targetPosition_;
-}
+const Vector3& IKEffector::GetTargetPosition() const { return targetPosition_; }
 
 // ----------------------------------------------------------------------------
 void IKEffector::SetTargetPosition(const Vector3& targetPosition)
@@ -123,10 +113,7 @@ void IKEffector::SetTargetPosition(const Vector3& targetPosition)
 }
 
 // ----------------------------------------------------------------------------
-const Quaternion& IKEffector::GetTargetRotation() const
-{
-    return targetRotation_;
-}
+const Quaternion& IKEffector::GetTargetRotation() const { return targetRotation_; }
 
 // ----------------------------------------------------------------------------
 void IKEffector::SetTargetRotation(const Quaternion& targetRotation)
@@ -137,10 +124,7 @@ void IKEffector::SetTargetRotation(const Quaternion& targetRotation)
 }
 
 // ----------------------------------------------------------------------------
-Vector3 IKEffector::GetTargetRotationEuler() const
-{
-    return targetRotation_.EulerAngles();
-}
+Vector3 IKEffector::GetTargetRotationEuler() const { return targetRotation_.EulerAngles(); }
 
 // ----------------------------------------------------------------------------
 void IKEffector::SetTargetRotationEuler(const Vector3& targetRotation)
@@ -149,10 +133,7 @@ void IKEffector::SetTargetRotationEuler(const Vector3& targetRotation)
 }
 
 // ----------------------------------------------------------------------------
-unsigned int IKEffector::GetChainLength() const
-{
-    return chainLength_;
-}
+unsigned int IKEffector::GetChainLength() const { return chainLength_; }
 
 // ----------------------------------------------------------------------------
 void IKEffector::SetChainLength(unsigned chainLength)
@@ -166,10 +147,7 @@ void IKEffector::SetChainLength(unsigned chainLength)
 }
 
 // ----------------------------------------------------------------------------
-float IKEffector::GetWeight() const
-{
-    return weight_;
-}
+float IKEffector::GetWeight() const { return weight_; }
 
 // ----------------------------------------------------------------------------
 void IKEffector::SetWeight(float weight)
@@ -180,10 +158,7 @@ void IKEffector::SetWeight(float weight)
 }
 
 // ----------------------------------------------------------------------------
-float IKEffector::GetRotationWeight() const
-{
-    return rotationWeight_;
-}
+float IKEffector::GetRotationWeight() const { return rotationWeight_; }
 
 // ----------------------------------------------------------------------------
 void IKEffector::SetRotationWeight(float weight)
@@ -197,10 +172,7 @@ void IKEffector::SetRotationWeight(float weight)
 }
 
 // ----------------------------------------------------------------------------
-float IKEffector::GetRotationDecay() const
-{
-    return rotationDecay_;
-}
+float IKEffector::GetRotationDecay() const { return rotationDecay_; }
 
 // ----------------------------------------------------------------------------
 void IKEffector::SetRotationDecay(float decay)
@@ -218,18 +190,19 @@ void IKEffector::SetFeature(Feature feature, bool enable)
 {
     switch (feature)
     {
-        case WEIGHT_NLERP:
+    case WEIGHT_NLERP:
+    {
+        if (ikEffectorNode_ != nullptr)
         {
-            if (ikEffectorNode_ != nullptr)
-            {
-                ikEffectorNode_->effector->flags &= ~EFFECTOR_WEIGHT_NLERP;
-                if (enable)
-                    ikEffectorNode_->effector->flags |= EFFECTOR_WEIGHT_NLERP;
-            }
-        } break;
+            ikEffectorNode_->effector->flags &= ~EFFECTOR_WEIGHT_NLERP;
+            if (enable)
+                ikEffectorNode_->effector->flags |= EFFECTOR_WEIGHT_NLERP;
+        }
+    }
+    break;
 
-        case INHERIT_PARENT_ROTATION:
-            break;
+    case INHERIT_PARENT_ROTATION:
+        break;
     }
 
     features_ &= ~feature;
@@ -238,10 +211,7 @@ void IKEffector::SetFeature(Feature feature, bool enable)
 }
 
 // ----------------------------------------------------------------------------
-bool IKEffector::GetFeature(Feature feature) const
-{
-    return (features_ & feature) != 0;
-}
+bool IKEffector::GetFeature(Feature feature) const { return (features_ & feature) != 0; }
 
 // ----------------------------------------------------------------------------
 void IKEffector::UpdateTargetNodePosition()
@@ -293,24 +263,11 @@ void IKEffector::DrawDebugGeometry(DebugRenderer* debug, bool depthTest)
     chainLength = chainLength_ == 0 ? -1 : chainLength_;
     a = node_;
     Node* b = a->GetParent();
-    debug->AddSphere(
-        Sphere(a->GetWorldPosition(), averageLength * 0.1f),
-        Color::YELLOW,
-        depthTest
-    );
+    debug->AddSphere(Sphere(a->GetWorldPosition(), averageLength * 0.1f), Color::YELLOW, depthTest);
     while (b && b != terminationNode->GetParent() && chainLength-- != 0)
     {
-        debug->AddLine(
-            a->GetWorldPosition(),
-            b->GetWorldPosition(),
-            Color::WHITE,
-            depthTest
-        );
-        debug->AddSphere(
-            Sphere(b->GetWorldPosition(), averageLength * 0.1f),
-            Color::YELLOW,
-            depthTest
-        );
+        debug->AddLine(a->GetWorldPosition(), b->GetWorldPosition(), Color::WHITE, depthTest);
+        debug->AddSphere(Sphere(b->GetWorldPosition(), averageLength * 0.1f), Color::YELLOW, depthTest);
         a = b;
         b = b->GetParent();
     }
@@ -340,33 +297,23 @@ void IKEffector::SetIKEffectorNode(ik_node_t* effectorNode)
 }
 
 // ----------------------------------------------------------------------------
-void IKEffector::SetIKSolver(IKSolver* solver)
-{
-    solver_ = solver;
-}
+void IKEffector::SetIKSolver(IKSolver* solver) { solver_ = solver; }
 
-// ----------------------------------------------------------------------------
-// Need these wrapper functions flags of GetFeature/SetFeature can be correctly
-// exposed to the editor
-// ----------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------
+    // Need these wrapper functions flags of GetFeature/SetFeature can be correctly
+    // exposed to the editor
+    // ----------------------------------------------------------------------------
 
-#define DEF_FEATURE_GETTER(feature_name)   \
-bool IKEffector::Get##feature_name() const \
-{                                          \
-    return GetFeature(feature_name);       \
-}
+#define DEF_FEATURE_GETTER(feature_name)                                                                               \
+    bool IKEffector::Get##feature_name() const { return GetFeature(feature_name); }
 
-#define DEF_FEATURE_SETTER(feature_name)        \
-void IKEffector::Set##feature_name(bool enable) \
-{                                               \
-    SetFeature(feature_name, enable);           \
-}
+#define DEF_FEATURE_SETTER(feature_name)                                                                               \
+    void IKEffector::Set##feature_name(bool enable) { SetFeature(feature_name, enable); }
 
 DEF_FEATURE_GETTER(WEIGHT_NLERP)
 DEF_FEATURE_GETTER(INHERIT_PARENT_ROTATION)
 
 DEF_FEATURE_SETTER(WEIGHT_NLERP)
 DEF_FEATURE_SETTER(INHERIT_PARENT_ROTATION)
-
 
 } // namespace Urho3D

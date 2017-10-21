@@ -23,14 +23,15 @@ int main(int argc, char** argv)
     String ogreImporterName = fileSystem->GetProgramDir() + "OgreImporter";
 
     printf("\n\nOgreBatchConverter requires OgreImporter.exe on same directory");
-    printf("\nSearching Ogre file in Xml format in %s\n" ,currentDir.CString());
+    printf("\nSearching Ogre file in Xml format in %s\n", currentDir.CString());
     fileSystem->ScanDir(files, currentDir, "*.xml", SCAN_FILES, true);
     printf("\nFound %d files\n", files.Size());
-    #ifdef WIN32
-    if (files.Size()) fileSystem->SystemCommand("pause");
-    #endif
+#ifdef WIN32
+    if (files.Size())
+        fileSystem->SystemCommand("pause");
+#endif
 
-    for (unsigned i = 0 ; i < files.Size(); i++)
+    for (unsigned i = 0; i < files.Size(); i++)
     {
         Vector<String> cmdArgs;
         cmdArgs.Push(files[i]);
@@ -46,10 +47,9 @@ int main(int argc, char** argv)
     }
 
     printf("\nExit\n");
-    #ifdef WIN32
+#ifdef WIN32
     fileSystem->SystemCommand("pause");
-    #endif
+#endif
 
     return 0;
 }
-

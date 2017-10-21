@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// 2D rope constraint component.
 class URHO3D_API ConstraintRope2D : public Constraint2D
 {
@@ -67,5 +66,4 @@ private:
     /// Other body anchor.
     Vector2 otherBodyAnchor_;
 };
-
 }

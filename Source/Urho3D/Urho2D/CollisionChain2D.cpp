@@ -32,19 +32,16 @@
 
 namespace Urho3D
 {
-
 extern const char* URHO2D_CATEGORY;
 
-CollisionChain2D::CollisionChain2D(Context* context) :
-    CollisionShape2D(context),
-    loop_(false)
+CollisionChain2D::CollisionChain2D(Context* context)
+    : CollisionShape2D(context)
+    , loop_(false)
 {
     fixtureDef_.shape = &chainShape_;
 }
 
-CollisionChain2D::~CollisionChain2D()
-{
-}
+CollisionChain2D::~CollisionChain2D() {}
 
 void CollisionChain2D::RegisterObject(Context* context)
 {
@@ -53,7 +50,8 @@ void CollisionChain2D::RegisterObject(Context* context)
     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Loop", GetLoop, SetLoop, bool, false, AM_DEFAULT);
     URHO3D_COPY_BASE_ATTRIBUTES(CollisionShape2D);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Vertices", GetVerticesAttr, SetVerticesAttr, PODVector<unsigned char>, Variant::emptyBuffer, AM_FILE);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Vertices", GetVerticesAttr, SetVerticesAttr, PODVector<unsigned char>,
+                                    Variant::emptyBuffer, AM_FILE);
 }
 
 void CollisionChain2D::SetLoop(bool loop)
@@ -67,10 +65,7 @@ void CollisionChain2D::SetLoop(bool loop)
     RecreateFixture();
 }
 
-void CollisionChain2D::SetVertexCount(unsigned count)
-{
-    vertices_.Resize(count);
-}
+void CollisionChain2D::SetVertexCount(unsigned count) { vertices_.Resize(count); }
 
 void CollisionChain2D::SetVertex(unsigned index, const Vector2& vertex)
 {
@@ -118,10 +113,7 @@ PODVector<unsigned char> CollisionChain2D::GetVerticesAttr() const
     return ret.GetBuffer();
 }
 
-void CollisionChain2D::ApplyNodeWorldScale()
-{
-    RecreateFixture();
-}
+void CollisionChain2D::ApplyNodeWorldScale() { RecreateFixture(); }
 
 void CollisionChain2D::RecreateFixture()
 {
@@ -135,7 +127,7 @@ void CollisionChain2D::RecreateFixture()
     for (unsigned i = 0; i < count; ++i)
         b2Vertices[i] = ToB2Vec2(vertices_[i] * worldScale);
 
-	chainShape_.Clear();
+    chainShape_.Clear();
     if (loop_)
         chainShape_.CreateLoop(&b2Vertices[0], count);
     else
@@ -143,5 +135,4 @@ void CollisionChain2D::RecreateFixture()
 
     CreateFixture();
 }
-
 }

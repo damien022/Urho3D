@@ -30,7 +30,6 @@
 
 namespace Urho3D
 {
-
 class Material;
 class Pass;
 class Scene;
@@ -64,7 +63,8 @@ struct TechniqueEntry
 
     /// Technique.
     SharedPtr<Technique> technique_;
-    /// Original technique, in case the material adds shader compilation defines. The modified clones are requested from it.
+    /// Original technique, in case the material adds shader compilation defines. The modified clones are requested from
+    /// it.
     SharedPtr<Technique> original_;
     /// Quality level.
     int qualityLevel_;
@@ -77,8 +77,8 @@ class ShaderParameterAnimationInfo : public ValueAnimationInfo
 {
 public:
     /// Construct.
-    ShaderParameterAnimationInfo
-        (Material* material, const String& name, ValueAnimation* attributeAnimation, WrapMode wrapMode, float speed);
+    ShaderParameterAnimationInfo(Material* material, const String& name, ValueAnimation* attributeAnimation,
+                                 WrapMode wrapMode, float speed);
     /// Copy construct.
     ShaderParameterAnimationInfo(const ShaderParameterAnimationInfo& other);
     /// Destruct.
@@ -97,10 +97,7 @@ private:
 };
 
 /// TextureUnit hash function.
-template <> inline unsigned MakeHash(const TextureUnit& value)
-{
-    return (unsigned)value;
-}
+template <> inline unsigned MakeHash(const TextureUnit& value) { return (unsigned)value; }
 
 /// Describes how to render 3D geometries.
 class URHO3D_API Material : public Resource
@@ -136,15 +133,17 @@ public:
     void SetNumTechniques(unsigned num);
     /// Set technique.
     void SetTechnique(unsigned index, Technique* tech, unsigned qualityLevel = 0, float lodDistance = 0.0f);
-    /// Set additional vertex shader defines. Separate multiple defines with spaces. Setting defines at the material level causes technique(s) to be cloned as necessary.
+    /// Set additional vertex shader defines. Separate multiple defines with spaces. Setting defines at the material
+    /// level causes technique(s) to be cloned as necessary.
     void SetVertexShaderDefines(const String& defines);
-    /// Set additional pixel shader defines. Separate multiple defines with spaces. Setting defines at the material level causes technique(s) to be cloned as necessary.
+    /// Set additional pixel shader defines. Separate multiple defines with spaces. Setting defines at the material
+    /// level causes technique(s) to be cloned as necessary.
     void SetPixelShaderDefines(const String& defines);
     /// Set shader parameter.
     void SetShaderParameter(const String& name, const Variant& value);
     /// Set shader parameter animation.
-    void
-        SetShaderParameterAnimation(const String& name, ValueAnimation* animation, WrapMode wrapMode = WM_LOOP, float speed = 1.0f);
+    void SetShaderParameterAnimation(const String& name, ValueAnimation* animation, WrapMode wrapMode = WM_LOOP,
+                                     float speed = 1.0f);
     /// Set shader parameter animation wrap mode.
     void SetShaderParameterAnimationWrapMode(const String& name, WrapMode wrapMode);
     /// Set shader parameter animation speed.
@@ -159,19 +158,23 @@ public:
     void SetCullMode(CullMode mode);
     /// Set culling mode for shadows.
     void SetShadowCullMode(CullMode mode);
-    /// Set polygon fill mode. Interacts with the camera's fill mode setting so that the "least filled" mode will be used.
+    /// Set polygon fill mode. Interacts with the camera's fill mode setting so that the "least filled" mode will be
+    /// used.
     void SetFillMode(FillMode mode);
-    /// Set depth bias parameters for depth write and compare. Note that the normal offset parameter is not used and will not be saved, as it affects only shadow map sampling during light rendering.
+    /// Set depth bias parameters for depth write and compare. Note that the normal offset parameter is not used and
+    /// will not be saved, as it affects only shadow map sampling during light rendering.
     void SetDepthBias(const BiasParameters& parameters);
     /// Set alpha-to-coverage mode on all passes.
     void SetAlphaToCoverage(bool enable);
     /// Set line antialiasing on/off. Has effect only on models that consist of line lists.
     void SetLineAntiAlias(bool enable);
-    /// Set 8-bit render order within pass. Default 128. Lower values will render earlier and higher values later, taking precedence over e.g. state and distance sorting.
+    /// Set 8-bit render order within pass. Default 128. Lower values will render earlier and higher values later,
+    /// taking precedence over e.g. state and distance sorting.
     void SetRenderOrder(unsigned char order);
     /// Set whether to use in occlusion rendering. Default true.
     void SetOcclusion(bool enable);
-    /// Associate the material with a scene to ensure that shader parameter animation happens in sync with scene update, respecting the scene time scale. If no scene is set, the global update events will be used.
+    /// Associate the material with a scene to ensure that shader parameter animation happens in sync with scene update,
+    /// respecting the scene time scale. If no scene is set, the global update events will be used.
     void SetScene(Scene* scene);
     /// Remove shader parameter.
     void RemoveShaderParameter(const String& name);
@@ -200,7 +203,7 @@ public:
     Texture* GetTexture(TextureUnit unit) const;
 
     /// Return all textures.
-    const HashMap<TextureUnit, SharedPtr<Texture> >& GetTextures() const { return textures_; }
+    const HashMap<TextureUnit, SharedPtr<Texture>>& GetTextures() const { return textures_; }
 
     /// Return additional vertex shader defines.
     const String& GetVertexShaderDefines() const { return vertexShaderDefines_; }
@@ -239,7 +242,7 @@ public:
 
     /// Return render order.
     unsigned char GetRenderOrder() const { return renderOrder_; }
-    
+
     /// Return last auxiliary view rendered frame number.
     unsigned GetAuxViewFrameNumber() const { return auxViewFrameNumber_; }
 
@@ -284,11 +287,11 @@ private:
     /// Techniques.
     Vector<TechniqueEntry> techniques_;
     /// Textures.
-    HashMap<TextureUnit, SharedPtr<Texture> > textures_;
+    HashMap<TextureUnit, SharedPtr<Texture>> textures_;
     /// %Shader parameters.
     HashMap<StringHash, MaterialShaderParameter> shaderParameters_;
     /// %Shader parameters animation infos.
-    HashMap<StringHash, SharedPtr<ShaderParameterAnimationInfo> > shaderParameterAnimationInfos_;
+    HashMap<StringHash, SharedPtr<ShaderParameterAnimationInfo>> shaderParameterAnimationInfos_;
     /// Vertex shader defines.
     String vertexShaderDefines_;
     /// Pixel shader defines.
@@ -317,7 +320,8 @@ private:
     bool specular_;
     /// Flag for whether is subscribed to animation updates.
     bool subscribed_;
-    /// Flag to suppress parameter hash and memory use recalculation when setting multiple shader parameters (loading or resetting the material.)
+    /// Flag to suppress parameter hash and memory use recalculation when setting multiple shader parameters (loading or
+    /// resetting the material.)
     bool batchedParameterUpdate_;
     /// XML file used while loading.
     SharedPtr<XMLFile> loadXMLFile_;
@@ -326,5 +330,4 @@ private:
     /// Associated scene for shader parameter animation updates.
     WeakPtr<Scene> scene_;
 };
-
 }

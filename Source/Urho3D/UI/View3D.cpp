@@ -30,20 +30,19 @@
 #include "../Graphics/Texture2D.h"
 #include "../Graphics/Zone.h"
 #include "../Scene/Scene.h"
-#include "../UI/View3D.h"
 #include "../UI/UI.h"
 #include "../UI/UIEvents.h"
+#include "../UI/View3D.h"
 
 namespace Urho3D
 {
-
 extern const char* UI_CATEGORY;
 
-View3D::View3D(Context* context) :
-    Window(context),
-    ownScene_(true),
-    rttFormat_(Graphics::GetRGBFormat()),
-    autoUpdate_(true)
+View3D::View3D(Context* context)
+    : Window(context)
+    , ownScene_(true)
+    , rttFormat_(Graphics::GetRGBFormat())
+    , autoUpdate_(true)
 {
     renderTexture_ = new Texture2D(context_);
     depthTexture_ = new Texture2D(context_);
@@ -56,10 +55,7 @@ View3D::View3D(Context* context) :
     SubscribeToEvent(E_RENDERSURFACEUPDATE, URHO3D_HANDLER(View3D, HandleRenderSurfaceUpdate));
 }
 
-View3D::~View3D()
-{
-    ResetScene();
-}
+View3D::~View3D() { ResetScene(); }
 
 void View3D::RegisterObject(Context* context)
 {
@@ -116,10 +112,7 @@ void View3D::SetFormat(unsigned format)
     }
 }
 
-void View3D::SetAutoUpdate(bool enable)
-{
-    autoUpdate_ = enable;
-}
+void View3D::SetAutoUpdate(bool enable) { autoUpdate_ = enable; }
 
 void View3D::QueueUpdate()
 {
@@ -128,30 +121,15 @@ void View3D::QueueUpdate()
         surface->QueueUpdate();
 }
 
-Scene* View3D::GetScene() const
-{
-    return scene_;
-}
+Scene* View3D::GetScene() const { return scene_; }
 
-Node* View3D::GetCameraNode() const
-{
-    return cameraNode_;
-}
+Node* View3D::GetCameraNode() const { return cameraNode_; }
 
-Texture2D* View3D::GetRenderTexture() const
-{
-    return renderTexture_;
-}
+Texture2D* View3D::GetRenderTexture() const { return renderTexture_; }
 
-Texture2D* View3D::GetDepthTexture() const
-{
-    return depthTexture_;
-}
+Texture2D* View3D::GetDepthTexture() const { return depthTexture_; }
 
-Viewport* View3D::GetViewport() const
-{
-    return viewport_;
-}
+Viewport* View3D::GetViewport() const { return viewport_; }
 
 void View3D::ResetScene()
 {
@@ -174,5 +152,4 @@ void View3D::HandleRenderSurfaceUpdate(StringHash eventType, VariantMap& eventDa
     if (autoUpdate_ && IsVisibleEffective())
         QueueUpdate();
 }
-
 }

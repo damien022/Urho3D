@@ -21,26 +21,24 @@
 //
 #pragma once
 
-
-#include "Urho3D/Core/Object.h"
-#include "Urho3D/Math/StringHash.h"
-#include "Urho3D/Container/HashMap.h"
-#include "Urho3D/Graphics/VertexBuffer.h"
-#include "Urho3D/Graphics/IndexBuffer.h"
-#include "Urho3D/Math/Matrix4.h"
-#include "Urho3D/Graphics/Texture2D.h"
 #include "SystemUIEvents.h"
+#include "Urho3D/Container/HashMap.h"
+#include "Urho3D/Core/Object.h"
+#include "Urho3D/Graphics/IndexBuffer.h"
+#include "Urho3D/Graphics/Texture2D.h"
+#include "Urho3D/Graphics/VertexBuffer.h"
+#include "Urho3D/Math/Matrix4.h"
+#include "Urho3D/Math/StringHash.h"
 
 #include <ImGui/imgui.h>
 namespace ui = ImGui;
 
-
 namespace Urho3D
 {
-
 class URHO3D_API SystemUI : public Object
 {
-URHO3D_OBJECT(SystemUI, Object);
+    URHO3D_OBJECT(SystemUI, Object);
+
 public:
     /// Construct.
     explicit SystemUI(Context* context);
@@ -56,18 +54,18 @@ public:
     /// Add font to imgui subsystem.
     /// \param fontPath a string pointing to TTF font resource.
     /// \param size a font size. If 0 then size of last font is used.
-    /// \param ranges optional ranges of font that should be used. Parameter is array of {start1, stop1, ..., startN, stopN, 0}.
-    /// \param merge set to true if new font should be merged to last active font.
-    /// \return ImFont instance that may be used for setting current font when drawing GUI.
+    /// \param ranges optional ranges of font that should be used. Parameter is array of {start1, stop1, ..., startN,
+    /// stopN, 0}. \param merge set to true if new font should be merged to last active font. \return ImFont instance
+    /// that may be used for setting current font when drawing GUI.
     ImFont* AddFont(const String& fontPath, float size = 0, const unsigned short* ranges = nullptr, bool merge = false);
     /// Add font to imgui subsystem.
     /// \param fontPath a string pointing to TTF font resource.
     /// \param size a font size. If 0 then size of last font is used.
-    /// \param ranges optional ranges of font that should be used. Parameter is std::initializer_list of {start1, stop1, ..., startN, stopN, 0}.
-    /// \param merge set to true if new font should be merged to last active font.
-    /// \return ImFont instance that may be used for setting current font when drawing GUI.
+    /// \param ranges optional ranges of font that should be used. Parameter is std::initializer_list of {start1, stop1,
+    /// ..., startN, stopN, 0}. \param merge set to true if new font should be merged to last active font. \return
+    /// ImFont instance that may be used for setting current font when drawing GUI.
     ImFont* AddFont(const String& fontPath, float size = 0, const std::initializer_list<unsigned short>& ranges = {},
-        bool merge = false);
+                    bool merge = false);
     /// Apply built-in system ui style.
     /// \param darkStyle enables dark style, otherwise it is a light style.
     /// \param alpha value between 0.0f - 1.0f
@@ -98,5 +96,4 @@ inline ImVec2 ToImGui(IntVector2 vec) { return {(float)vec.x_, (float)vec.y_}; }
 inline ImVec2 ToImGui(Vector2 vec) { return {vec.x_, vec.y_}; };
 /// Convert ImVec2 to IntVector2.
 inline IntVector2 ToIntVector2(const ImVec2& vec) { return {(int)Round(vec.x), (int)Round(vec.y)}; }
-
 }

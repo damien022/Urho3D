@@ -28,7 +28,6 @@
 
 namespace Urho3D
 {
-
 class RigidBody2D;
 
 /// 2D collision shape component.
@@ -115,5 +114,4 @@ protected:
     /// Cached world scale.
     Vector3 cachedWorldScale_;
 };
-
 }

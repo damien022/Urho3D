@@ -40,7 +40,6 @@ struct rcPolyMeshDetail;
 
 namespace Urho3D
 {
-
 /// Navigation area stub.
 struct URHO3D_API NavAreaStub
 {
@@ -115,5 +114,4 @@ struct DynamicNavBuildData : public NavBuildData
     /// Allocator from DynamicNavigationMesh instance.
     dtTileCacheAlloc* alloc_;
 };
-
 }

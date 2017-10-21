@@ -22,17 +22,16 @@
 
 #pragma once
 
-#include "../Core/Attribute.h"
 #include "../Container/HashMap.h"
 #include "../Container/HashSet.h"
 #include "../Container/Ptr.h"
+#include "../Core/Attribute.h"
 #include "../Math/StringHash.h"
 
 #include <cstring>
 
 namespace Urho3D
 {
-
 static const unsigned MAX_NETWORK_ATTRIBUTES = 64;
 
 class Component;
@@ -49,15 +48,15 @@ struct SceneReplicationState;
 struct URHO3D_API DirtyBits
 {
     /// Construct empty.
-    DirtyBits() :
-        count_(0)
+    DirtyBits()
+        : count_(0)
     {
         memset(data_, 0, MAX_NETWORK_ATTRIBUTES / 8);
     }
 
     /// Copy-construct.
-    DirtyBits(const DirtyBits& bits) :
-        count_(bits.count_)
+    DirtyBits(const DirtyBits& bits)
+        : count_(bits.count_)
     {
         memcpy(data_, bits.data_, MAX_NETWORK_ATTRIBUTES / 8);
     }
@@ -125,8 +124,8 @@ struct URHO3D_API DirtyBits
 struct URHO3D_API NetworkState
 {
     /// Construct with defaults.
-    NetworkState() :
-        interceptMask_(0)
+    NetworkState()
+        : interceptMask_(0)
     {
     }
 
@@ -166,10 +165,10 @@ struct URHO3D_API ComponentReplicationState : public ReplicationState
 struct URHO3D_API NodeReplicationState : public ReplicationState
 {
     /// Construct.
-    NodeReplicationState() :
-        ReplicationState(),
-        priorityAcc_(0.0f),
-        markedDirty_(false)
+    NodeReplicationState()
+        : ReplicationState()
+        , priorityAcc_(0.0f)
+        , markedDirty_(false)
     {
     }
 
@@ -203,5 +202,4 @@ struct URHO3D_API SceneReplicationState : public ReplicationState
         dirtyNodes_.Clear();
     }
 };
-
 }

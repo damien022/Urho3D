@@ -29,10 +29,10 @@
 #include "../IO/File.h"
 #include "../IO/Log.h"
 #include "../IO/PackageFile.h"
+#include "../Resource/JSONFile.h"
 #include "../Resource/ResourceCache.h"
 #include "../Resource/ResourceEvents.h"
 #include "../Resource/XMLFile.h"
-#include "../Resource/JSONFile.h"
 #include "../Scene/Component.h"
 #include "../Scene/ObjectAnimation.h"
 #include "../Scene/ReplicationState.h"
@@ -47,7 +47,6 @@
 
 namespace Urho3D
 {
-
 const char* SCENE_CATEGORY = "Scene";
 const char* LOGIC_CATEGORY = "Logic";
 const char* SUBSYSTEM_CATEGORY = "Subsystem";
@@ -55,21 +54,21 @@ const char* SUBSYSTEM_CATEGORY = "Subsystem";
 static const float DEFAULT_SMOOTHING_CONSTANT = 50.0f;
 static const float DEFAULT_SNAP_THRESHOLD = 5.0f;
 
-Scene::Scene(Context* context) :
-    Node(context),
-    replicatedNodeID_(FIRST_REPLICATED_ID),
-    replicatedComponentID_(FIRST_REPLICATED_ID),
-    localNodeID_(FIRST_LOCAL_ID),
-    localComponentID_(FIRST_LOCAL_ID),
-    checksum_(0),
-    asyncLoadingMs_(5),
-    timeScale_(1.0f),
-    elapsedTime_(0),
-    smoothingConstant_(DEFAULT_SMOOTHING_CONSTANT),
-    snapThreshold_(DEFAULT_SNAP_THRESHOLD),
-    updateEnabled_(true),
-    asyncLoading_(false),
-    threadedUpdate_(false)
+Scene::Scene(Context* context)
+    : Node(context)
+    , replicatedNodeID_(FIRST_REPLICATED_ID)
+    , replicatedComponentID_(FIRST_REPLICATED_ID)
+    , localNodeID_(FIRST_LOCAL_ID)
+    , localComponentID_(FIRST_LOCAL_ID)
+    , checksum_(0)
+    , asyncLoadingMs_(5)
+    , timeScale_(1.0f)
+    , elapsedTime_(0)
+    , smoothingConstant_(DEFAULT_SMOOTHING_CONSTANT)
+    , snapThreshold_(DEFAULT_SNAP_THRESHOLD)
+    , updateEnabled_(true)
+    , asyncLoading_(false)
+    , threadedUpdate_(false)
 {
     // Assign an ID to self so that nodes can refer to this node as a parent
     SetID(GetFreeNodeID(REPLICATED));
@@ -81,8 +80,8 @@ Scene::Scene(Context* context) :
 
 Scene::~Scene()
 {
-    // Remove root-level components first, so that scene subsystems such as the octree destroy themselves. This will speed up
-    // the removal of child nodes' components
+    // Remove root-level components first, so that scene subsystems such as the octree destroy themselves. This will
+    // speed up the removal of child nodes' components
     RemoveAllComponents();
     RemoveAllChildren();
 
@@ -99,16 +98,20 @@ void Scene::RegisterObject(Context* context)
 
     URHO3D_ACCESSOR_ATTRIBUTE("Name", GetName, SetName, String, String::EMPTY, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Time Scale", GetTimeScale, SetTimeScale, float, 1.0f, AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Smoothing Constant", GetSmoothingConstant, SetSmoothingConstant, float, DEFAULT_SMOOTHING_CONSTANT,
-        AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Snap Threshold", GetSnapThreshold, SetSnapThreshold, float, DEFAULT_SNAP_THRESHOLD, AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Smoothing Constant", GetSmoothingConstant, SetSmoothingConstant, float,
+                              DEFAULT_SMOOTHING_CONSTANT, AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Snap Threshold", GetSnapThreshold, SetSnapThreshold, float, DEFAULT_SNAP_THRESHOLD,
+                              AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Elapsed Time", GetElapsedTime, SetElapsedTime, float, 0.0f, AM_FILE);
     URHO3D_ATTRIBUTE("Next Replicated Node ID", unsigned, replicatedNodeID_, FIRST_REPLICATED_ID, AM_FILE | AM_NOEDIT);
-    URHO3D_ATTRIBUTE("Next Replicated Component ID", unsigned, replicatedComponentID_, FIRST_REPLICATED_ID, AM_FILE | AM_NOEDIT);
+    URHO3D_ATTRIBUTE("Next Replicated Component ID", unsigned, replicatedComponentID_, FIRST_REPLICATED_ID,
+                     AM_FILE | AM_NOEDIT);
     URHO3D_ATTRIBUTE("Next Local Node ID", unsigned, localNodeID_, FIRST_LOCAL_ID, AM_FILE | AM_NOEDIT);
     URHO3D_ATTRIBUTE("Next Local Component ID", unsigned, localComponentID_, FIRST_LOCAL_ID, AM_FILE | AM_NOEDIT);
-    URHO3D_ATTRIBUTE("Variables", VariantMap, vars_, Variant::emptyVariantMap, AM_FILE); // Network replication of vars uses custom data
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Variable Names", GetVarNamesAttr, SetVarNamesAttr, String, String::EMPTY, AM_FILE | AM_NOEDIT);
+    URHO3D_ATTRIBUTE("Variables", VariantMap, vars_, Variant::emptyVariantMap,
+                     AM_FILE); // Network replication of vars uses custom data
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Variable Names", GetVarNamesAttr, SetVarNamesAttr, String, String::EMPTY,
+                                    AM_FILE | AM_NOEDIT);
 }
 
 bool Scene::Load(Deserializer& source, bool setInstanceDefault)
@@ -339,7 +342,8 @@ bool Scene::LoadAsync(File* file, LoadMode mode)
     asyncLoading_ = true;
     asyncProgress_.file_ = file;
     asyncProgress_.mode_ = mode;
-    asyncProgress_.loadedNodes_ = asyncProgress_.totalNodes_ = asyncProgress_.loadedResources_ = asyncProgress_.totalResources_ = 0;
+    asyncProgress_.loadedNodes_ = asyncProgress_.totalNodes_ = asyncProgress_.loadedResources_ =
+        asyncProgress_.totalResources_ = 0;
     asyncProgress_.resources_.Clear();
 
     if (mode > LOAD_RESOURCES_ONLY)
@@ -403,7 +407,8 @@ bool Scene::LoadAsyncXML(File* file, LoadMode mode)
     asyncProgress_.xmlFile_ = xml;
     asyncProgress_.file_ = file;
     asyncProgress_.mode_ = mode;
-    asyncProgress_.loadedNodes_ = asyncProgress_.totalNodes_ = asyncProgress_.loadedResources_ = asyncProgress_.totalResources_ = 0;
+    asyncProgress_.loadedNodes_ = asyncProgress_.totalNodes_ = asyncProgress_.loadedResources_ =
+        asyncProgress_.totalResources_ = 0;
     asyncProgress_.resources_.Clear();
 
     if (mode > LOAD_RESOURCES_ONLY)
@@ -472,7 +477,8 @@ bool Scene::LoadAsyncJSON(File* file, LoadMode mode)
     asyncProgress_.jsonFile_ = json;
     asyncProgress_.file_ = file;
     asyncProgress_.mode_ = mode;
-    asyncProgress_.loadedNodes_ = asyncProgress_.totalNodes_ = asyncProgress_.loadedResources_ = asyncProgress_.totalResources_ = 0;
+    asyncProgress_.loadedNodes_ = asyncProgress_.totalNodes_ = asyncProgress_.loadedResources_ =
+        asyncProgress_.totalResources_ = 0;
     asyncProgress_.resources_.Clear();
 
     if (mode > LOAD_RESOURCES_ONLY)
@@ -548,7 +554,8 @@ Node* Scene::Instantiate(Deserializer& source, const Vector3& position, const Qu
     }
 }
 
-Node* Scene::InstantiateXML(const XMLElement& source, const Vector3& position, const Quaternion& rotation, CreateMode mode)
+Node* Scene::InstantiateXML(const XMLElement& source, const Vector3& position, const Quaternion& rotation,
+                            CreateMode mode)
 {
     URHO3D_PROFILE(InstantiateXML);
 
@@ -571,7 +578,8 @@ Node* Scene::InstantiateXML(const XMLElement& source, const Vector3& position, c
     }
 }
 
-Node* Scene::InstantiateJSON(const JSONValue& source, const Vector3& position, const Quaternion& rotation, CreateMode mode)
+Node* Scene::InstantiateJSON(const JSONValue& source, const Vector3& position, const Quaternion& rotation,
+                             CreateMode mode)
 {
     URHO3D_PROFILE(InstantiateJSON);
 
@@ -641,10 +649,7 @@ void Scene::Clear(bool clearReplicated, bool clearLocal)
     }
 }
 
-void Scene::SetUpdateEnabled(bool enable)
-{
-    updateEnabled_ = enable;
-}
+void Scene::SetUpdateEnabled(bool enable) { updateEnabled_ = enable; }
 
 void Scene::SetTimeScale(float scale)
 {
@@ -664,15 +669,9 @@ void Scene::SetSnapThreshold(float threshold)
     Node::MarkNetworkUpdate();
 }
 
-void Scene::SetAsyncLoadingMs(int ms)
-{
-    asyncLoadingMs_ = Max(ms, 1);
-}
+void Scene::SetAsyncLoadingMs(int ms) { asyncLoadingMs_ = Max(ms, 1); }
 
-void Scene::SetElapsedTime(float time)
-{
-    elapsedTime_ = time;
-}
+void Scene::SetElapsedTime(float time) { elapsedTime_ = time; }
 
 void Scene::AddRequiredPackageFile(PackageFile* package)
 {
@@ -683,25 +682,13 @@ void Scene::AddRequiredPackageFile(PackageFile* package)
     requiredPackageFiles_.Push(SharedPtr<PackageFile>(package));
 }
 
-void Scene::ClearRequiredPackageFiles()
-{
-    requiredPackageFiles_.Clear();
-}
+void Scene::ClearRequiredPackageFiles() { requiredPackageFiles_.Clear(); }
 
-void Scene::RegisterVar(const String& name)
-{
-    varNames_[name] = name;
-}
+void Scene::RegisterVar(const String& name) { varNames_[name] = name; }
 
-void Scene::UnregisterVar(const String& name)
-{
-    varNames_.Erase(name);
-}
+void Scene::UnregisterVar(const String& name) { varNames_.Erase(name); }
 
-void Scene::UnregisterAllVars()
-{
-    varNames_.Clear();
-}
+void Scene::UnregisterAllVars() { varNames_.Clear(); }
 
 Node* Scene::GetNode(unsigned id) const
 {
@@ -720,7 +707,7 @@ Node* Scene::GetNode(unsigned id) const
 bool Scene::GetNodesWithTag(PODVector<Node*>& dest, const String& tag) const
 {
     dest.Clear();
-    HashMap<StringHash, PODVector<Node*> >::ConstIterator it = taggedNodes_.Find(tag);
+    HashMap<StringHash, PODVector<Node*>>::ConstIterator it = taggedNodes_.Find(tag);
     if (it != taggedNodes_.End())
     {
         dest = it->second_;
@@ -746,9 +733,10 @@ Component* Scene::GetComponent(unsigned id) const
 
 float Scene::GetAsyncProgress() const
 {
-    return !asyncLoading_ || asyncProgress_.totalNodes_ + asyncProgress_.totalResources_ == 0 ? 1.0f :
-        (float)(asyncProgress_.loadedNodes_ + asyncProgress_.loadedResources_) /
-        (float)(asyncProgress_.totalNodes_ + asyncProgress_.totalResources_);
+    return !asyncLoading_ || asyncProgress_.totalNodes_ + asyncProgress_.totalResources_ == 0
+               ? 1.0f
+               : (float)(asyncProgress_.loadedNodes_ + asyncProgress_.loadedResources_) /
+                     (float)(asyncProgress_.totalNodes_ + asyncProgress_.totalResources_);
 }
 
 const String& Scene::GetVarName(StringHash hash) const
@@ -783,7 +771,8 @@ void Scene::Update(float timeStep)
     // Update scene attribute animation.
     SendEvent(E_ATTRIBUTEANIMATIONUPDATE, eventData);
 
-    // Update scene subsystems. If a physics world is present, it will be updated, triggering fixed timestep logic updates
+    // Update scene subsystems. If a physics world is present, it will be updated, triggering fixed timestep logic
+    // updates
     SendEvent(E_SCENESUBSYSTEMUPDATE, eventData);
 
     // Update transform smoothing
@@ -811,7 +800,8 @@ void Scene::Update(float timeStep)
 
 void Scene::BeginThreadedUpdate()
 {
-    // Check the work queue subsystem whether it actually has created worker threads. If not, do not enter threaded mode.
+    // Check the work queue subsystem whether it actually has created worker threads. If not, do not enter threaded
+    // mode.
     if (GetSubsystem<WorkQueue>()->GetNumThreads())
         threadedUpdate_ = true;
 }
@@ -827,7 +817,8 @@ void Scene::EndThreadedUpdate()
     {
         URHO3D_PROFILE(EndThreadedUpdate);
 
-        for (PODVector<Component*>::ConstIterator i = delayedDirtyComponents_.Begin(); i != delayedDirtyComponents_.End(); ++i)
+        for (PODVector<Component*>::ConstIterator i = delayedDirtyComponents_.Begin();
+             i != delayedDirtyComponents_.End(); ++i)
             (*i)->OnMarkedDirty((*i)->GetNode());
         delayedDirtyComponents_.Clear();
     }
@@ -958,23 +949,17 @@ void Scene::NodeAdded(Node* node)
     }
 
     // Add already created components and child nodes now
-    const Vector<SharedPtr<Component> >& components = node->GetComponents();
-    for (Vector<SharedPtr<Component> >::ConstIterator i = components.Begin(); i != components.End(); ++i)
+    const Vector<SharedPtr<Component>>& components = node->GetComponents();
+    for (Vector<SharedPtr<Component>>::ConstIterator i = components.Begin(); i != components.End(); ++i)
         ComponentAdded(*i);
-    const Vector<SharedPtr<Node> >& children = node->GetChildren();
-    for (Vector<SharedPtr<Node> >::ConstIterator i = children.Begin(); i != children.End(); ++i)
+    const Vector<SharedPtr<Node>>& children = node->GetChildren();
+    for (Vector<SharedPtr<Node>>::ConstIterator i = children.Begin(); i != children.End(); ++i)
         NodeAdded(*i);
 }
 
-void Scene::NodeTagAdded(Node* node, const String& tag)
-{
-    taggedNodes_[tag].Push(node);
-}
+void Scene::NodeTagAdded(Node* node, const String& tag) { taggedNodes_[tag].Push(node); }
 
-void Scene::NodeTagRemoved(Node* node, const String& tag)
-{
-    taggedNodes_[tag].Remove(node);
-}
+void Scene::NodeTagRemoved(Node* node, const String& tag) { taggedNodes_[tag].Remove(node); }
 
 void Scene::NodeRemoved(Node* node)
 {
@@ -1001,11 +986,11 @@ void Scene::NodeRemoved(Node* node)
     }
 
     // Remove components and child nodes as well
-    const Vector<SharedPtr<Component> >& components = node->GetComponents();
-    for (Vector<SharedPtr<Component> >::ConstIterator i = components.Begin(); i != components.End(); ++i)
+    const Vector<SharedPtr<Component>>& components = node->GetComponents();
+    for (Vector<SharedPtr<Component>>::ConstIterator i = components.Begin(); i != components.End(); ++i)
         ComponentRemoved(*i);
-    const Vector<SharedPtr<Node> >& children = node->GetChildren();
-    for (Vector<SharedPtr<Node> >::ConstIterator i = children.Begin(); i != children.End(); ++i)
+    const Vector<SharedPtr<Node>>& children = node->GetChildren();
+    for (Vector<SharedPtr<Node>>::ConstIterator i = children.Begin(); i != children.End(); ++i)
         NodeRemoved(*i);
 }
 
@@ -1115,7 +1100,8 @@ void Scene::CleanupConnection(Connection* connection)
     for (HashMap<unsigned, Node*>::Iterator i = replicatedNodes_.Begin(); i != replicatedNodes_.End(); ++i)
         i->second_->CleanupConnection(connection);
 
-    for (HashMap<unsigned, Component*>::Iterator i = replicatedComponents_.Begin(); i != replicatedComponents_.End(); ++i)
+    for (HashMap<unsigned, Component*>::Iterator i = replicatedComponents_.Begin(); i != replicatedComponents_.End();
+         ++i)
         i->second_->CleanupConnection(connection);
 }
 
@@ -1204,7 +1190,6 @@ void Scene::UpdateAsyncLoading()
             return;
         }
 
-
         // Read one child node with its full sub-hierarchy either from binary, JSON, or XML
         /// \todo Works poorly in scenes where one root-level child node contains all content
         if (asyncProgress_.xmlFile_)
@@ -1217,9 +1202,10 @@ void Scene::UpdateAsyncLoading()
         }
         else if (asyncProgress_.jsonFile_) // Load from JSON
         {
-            const JSONValue& childValue = asyncProgress_.jsonFile_->GetRoot().Get("children").GetArray().At(asyncProgress_.jsonIndex_);
+            const JSONValue& childValue =
+                asyncProgress_.jsonFile_->GetRoot().Get("children").GetArray().At(asyncProgress_.jsonIndex_);
 
-            unsigned nodeID =childValue.Get("id").GetUInt();
+            unsigned nodeID = childValue.Get("id").GetUInt();
             Node* newNode = CreateChild(nodeID, nodeID < FIRST_LOCAL_ID ? REPLICATED : LOCAL);
             resolver_.AddNode(nodeID, newNode);
             newNode->LoadJSON(childValue, resolver_);
@@ -1291,15 +1277,16 @@ void Scene::FinishSaving(Serializer* dest) const
 
 void Scene::PreloadResources(File* file, bool isSceneFile)
 {
-    // If not threaded, can not background load resources, so rather load synchronously later when needed
+// If not threaded, can not background load resources, so rather load synchronously later when needed
 #ifdef URHO3D_THREADING
     ResourceCache* cache = GetSubsystem<ResourceCache>();
 
     // Read node ID (not needed)
-    /*unsigned nodeID = */file->ReadUInt();
+    /*unsigned nodeID = */ file->ReadUInt();
 
     // Read Node or Scene attributes; these do not include any resources
-    const Vector<AttributeInfo>* attributes = context_->GetAttributes(isSceneFile ? Scene::GetTypeStatic() : Node::GetTypeStatic());
+    const Vector<AttributeInfo>* attributes =
+        context_->GetAttributes(isSceneFile ? Scene::GetTypeStatic() : Node::GetTypeStatic());
     assert(attributes);
 
     for (unsigned i = 0; i < attributes->Size(); ++i)
@@ -1307,7 +1294,7 @@ void Scene::PreloadResources(File* file, bool isSceneFile)
         const AttributeInfo& attr = attributes->At(i);
         if (!(attr.mode_ & AM_FILE))
             continue;
-        /*Variant varValue = */file->ReadVariant(attr.type_);
+        /*Variant varValue = */ file->ReadVariant(attr.type_);
     }
 
     // Read component attributes
@@ -1317,7 +1304,7 @@ void Scene::PreloadResources(File* file, bool isSceneFile)
         VectorBuffer compBuffer(*file, file->ReadVLE());
         StringHash compType = compBuffer.ReadStringHash();
         // Read component ID (not needed)
-        /*unsigned compID = */compBuffer.ReadUInt();
+        /*unsigned compID = */ compBuffer.ReadUInt();
 
         attributes = context_->GetAttributes(compType);
         if (attributes)
@@ -1331,7 +1318,8 @@ void Scene::PreloadResources(File* file, bool isSceneFile)
                 if (attr.type_ == VAR_RESOURCEREF)
                 {
                     const ResourceRef& ref = varValue.GetResourceRef();
-                    // Sanitate resource name beforehand so that when we get the background load event, the name matches exactly
+                    // Sanitate resource name beforehand so that when we get the background load event, the name matches
+                    // exactly
                     String name = cache->SanitateResourceName(ref.name_);
                     bool success = cache->BackgroundLoadResource(ref.type_, name);
                     if (success)
@@ -1367,7 +1355,7 @@ void Scene::PreloadResources(File* file, bool isSceneFile)
 
 void Scene::PreloadResourcesXML(const XMLElement& element)
 {
-    // If not threaded, can not background load resources, so rather load synchronously later when needed
+// If not threaded, can not background load resources, so rather load synchronously later when needed
 #ifdef URHO3D_THREADING
     ResourceCache* cache = GetSubsystem<ResourceCache>();
 
@@ -1447,7 +1435,7 @@ void Scene::PreloadResourcesXML(const XMLElement& element)
 
 void Scene::PreloadResourcesJSON(const JSONValue& value)
 {
-    // If not threaded, can not background load resources, so rather load synchronously later when needed
+// If not threaded, can not background load resources, so rather load synchronously later when needed
 #ifdef URHO3D_THREADING
     ResourceCache* cache = GetSubsystem<ResourceCache>();
 
@@ -1491,7 +1479,8 @@ void Scene::PreloadResourcesJSON(const JSONValue& value)
                         }
                         else if (attr.type_ == VAR_RESOURCEREFLIST)
                         {
-                            ResourceRefList refList = attrVal.Get("value").GetVariantValue(attr.type_).GetResourceRefList();
+                            ResourceRefList refList =
+                                attrVal.Get("value").GetVariantValue(attr.type_).GetResourceRefList();
                             for (unsigned k = 0; k < refList.names_.Size(); ++k)
                             {
                                 String name = cache->SanitateResourceName(refList.names_[k]);
@@ -1513,10 +1502,8 @@ void Scene::PreloadResourcesJSON(const JSONValue& value)
                         --attempts;
                     }
                 }
-
             }
         }
-
     }
 
     JSONArray childrenArray = value.Get("children").GetArray();
@@ -1538,5 +1525,4 @@ void RegisterSceneLibrary(Context* context)
     UnknownComponent::RegisterObject(context);
     SplinePath::RegisterObject(context);
 }
-
 }

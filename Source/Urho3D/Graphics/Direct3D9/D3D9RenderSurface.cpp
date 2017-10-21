@@ -25,21 +25,20 @@
 #include "../../Graphics/Camera.h"
 #include "../../Graphics/Graphics.h"
 #include "../../Graphics/GraphicsImpl.h"
-#include "../../Graphics/Renderer.h"
 #include "../../Graphics/RenderSurface.h"
+#include "../../Graphics/Renderer.h"
 #include "../../Graphics/Texture.h"
 
 #include "../../DebugNew.h"
 
 namespace Urho3D
 {
-
-RenderSurface::RenderSurface(Texture* parentTexture) :
-    parentTexture_(parentTexture),
-    surface_(nullptr),
-    updateMode_(SURFACE_UPDATEVISIBLE),
-    updateQueued_(false),
-    resolveDirty_(false)
+RenderSurface::RenderSurface(Texture* parentTexture)
+    : parentTexture_(parentTexture)
+    , surface_(nullptr)
+    , updateMode_(SURFACE_UPDATEVISIBLE)
+    , updateQueued_(false)
+    , resolveDirty_(false)
 {
 }
 
@@ -71,5 +70,4 @@ void RenderSurface::OnDeviceLost()
 {
     // No-op on Direct3D
 }
-
 }

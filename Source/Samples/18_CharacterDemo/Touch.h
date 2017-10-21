@@ -28,7 +28,7 @@ using namespace Urho3D;
 
 namespace Urho3D
 {
-    class Controls;
+class Controls;
 }
 
 const float CAMERA_MIN_DIST = 1.0f;
@@ -66,4 +66,3 @@ public:
     /// Gyroscope on/off flag.
     bool useGyroscope_;
 };
-

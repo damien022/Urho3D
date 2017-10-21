@@ -36,7 +36,6 @@
 
 namespace Urho3D
 {
-
 class Context;
 
 /// Registers all IK systems to the specified context.

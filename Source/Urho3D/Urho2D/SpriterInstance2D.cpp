@@ -31,15 +31,13 @@
 
 namespace Urho3D
 {
-
 namespace Spriter
 {
-
-SpriterInstance::SpriterInstance(Component* owner, SpriterData* spriteData) : 
-    owner_(owner),
-    spriterData_(spriteData),
-    entity_(nullptr),
-    animation_(nullptr)
+SpriterInstance::SpriterInstance(Component* owner, SpriterData* spriteData)
+    : owner_(owner)
+    , spriterData_(spriteData)
+    , entity_(nullptr)
+    , animation_(nullptr)
 {
 }
 
@@ -80,7 +78,7 @@ bool SpriterInstance::SetEntity(const String& entityName)
     }
 
     return false;
-}   
+}
 
 bool SpriterInstance::SetAnimation(int index, LoopMode loopMode)
 {
@@ -113,10 +111,7 @@ bool SpriterInstance::SetAnimation(const String& animationName, LoopMode loopMod
     return false;
 }
 
-void SpriterInstance::setSpatialInfo(const SpatialInfo& spatialInfo)
-{
-    this->spatialInfo_ = spatialInfo;
-}
+void SpriterInstance::setSpatialInfo(const SpatialInfo& spatialInfo) { this->spatialInfo_ = spatialInfo; }
 
 void SpriterInstance::setSpatialInfo(float x, float y, float angle, float scaleX, float scaleY)
 {
@@ -159,7 +154,7 @@ void SpriterInstance::Update(float deltaTime)
                 eventData[P_ANIMATION] = animation_;
                 eventData[P_NAME] = animation_->name_;
                 eventData[P_LOOPED] = looping_;
-    
+
                 senderNode->SendEvent(E_ANIMATIONFINISHED, eventData);
             }
         }
@@ -194,7 +189,7 @@ void SpriterInstance::OnSetAnimation(Animation* animation, LoopMode loopMode)
         else
             looping_ = false;
     }
-    
+
     currentTime_ = 0.0f;
     Clear();
 }
@@ -220,7 +215,7 @@ void SpriterInstance::UpdateTimelineKeys()
     {
         Ref* ref = mainlineKey_->objectRefs_[i];
         SpriteTimelineKey* timelineKey = (SpriteTimelineKey*)GetTimelineKey(ref);
-        
+
         if (ref->parent_ >= 0)
         {
             timelineKey->info_ = timelineKey->info_.UnmapFromParent(timelineKeys_[ref->parent_]->info_);
@@ -229,7 +224,7 @@ void SpriterInstance::UpdateTimelineKeys()
         {
             timelineKey->info_ = timelineKey->info_.UnmapFromParent(spatialInfo_);
         }
-        
+
         timelineKey->zIndex_ = ref->zIndex_;
 
         timelineKeys_.Push(timelineKey);
@@ -281,7 +276,7 @@ TimelineKey* SpriterInstance::GetTimelineKey(Ref* ref) const
     }
 
     TimelineKey* nextTimelineKey = timeline->keys_[nextTimelineKeyIndex];
-    
+
     float nextTimelineKeyTime = nextTimelineKey->time_;
     if (nextTimelineKey->time_ < timelineKey->time_)
     {
@@ -307,7 +302,5 @@ void SpriterInstance::Clear()
         timelineKeys_.Clear();
     }
 }
-
 }
-
 }

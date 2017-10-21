@@ -20,8 +20,8 @@
 // THE SOFTWARE.
 //
 
-#include <Urho3D/Core/Context.h>
 #include <Urho3D/Container/ArrayPtr.h>
+#include <Urho3D/Core/Context.h>
 #include <Urho3D/Core/ProcessUtils.h>
 #include <Urho3D/IO/File.h>
 #include <Urho3D/IO/FileSystem.h>
@@ -57,11 +57,7 @@ bool compress_ = false;
 bool quiet_ = false;
 unsigned blockSize_ = COMPRESSED_BLOCK_SIZE;
 
-String ignoreExtensions_[] = {
-    ".bak",
-    ".rule",
-    ""
-};
+String ignoreExtensions_[] = {".bak", ".rule", ""};
 
 int main(int argc, char** argv);
 void Run(const Vector<String>& arguments);
@@ -73,11 +69,11 @@ int main(int argc, char** argv)
 {
     Vector<String> arguments;
 
-    #ifdef WIN32
+#ifdef WIN32
     arguments = ParseArguments(GetCommandLineW());
-    #else
+#else
     arguments = ParseArguments(argc, argv);
-    #endif
+#endif
 
     Run(arguments);
     return 0;
@@ -86,20 +82,18 @@ int main(int argc, char** argv)
 void Run(const Vector<String>& arguments)
 {
     if (arguments.Size() < 2)
-        ErrorExit(
-            "Usage: PackageTool <directory to process> <package name> [basepath] [options]\n"
-            "\n"
-            "Options:\n"
-            "-c      Enable package file LZ4 compression\n"
-            "-q      Enable quiet mode\n"
-            "\n"
-            "Basepath is an optional prefix that will be added to the file entries.\n\n"
-            "Alternative output usage: PackageTool <output option> <package name>\n"
-            "Output option:\n"
-            "-i      Output package file information\n"
-            "-l      Output file names (including their paths) contained in the package\n"
-            "-L      Similar to -l but also output compression ratio (compressed package file only)\n"
-        );
+        ErrorExit("Usage: PackageTool <directory to process> <package name> [basepath] [options]\n"
+                  "\n"
+                  "Options:\n"
+                  "-c      Enable package file LZ4 compression\n"
+                  "-q      Enable quiet mode\n"
+                  "\n"
+                  "Basepath is an optional prefix that will be added to the file entries.\n\n"
+                  "Alternative output usage: PackageTool <output option> <package name>\n"
+                  "Output option:\n"
+                  "-i      Output package file information\n"
+                  "-l      Output file names (including their paths) contained in the package\n"
+                  "-L      Similar to -l but also output compression ratio (compressed package file only)\n");
 
     const String& dirName = arguments[0];
     const String& packageName = arguments[1];
@@ -179,24 +173,24 @@ void Run(const Vector<String>& arguments)
             outputCompressionRatio = true;
             // Fallthrough
         case 'l':
+        {
+            const HashMap<String, PackageEntry>& entries = packageFile->GetEntries();
+            for (HashMap<String, PackageEntry>::ConstIterator i = entries.Begin(); i != entries.End();)
             {
-                const HashMap<String, PackageEntry>& entries = packageFile->GetEntries();
-                for (HashMap<String, PackageEntry>::ConstIterator i = entries.Begin(); i != entries.End();)
+                HashMap<String, PackageEntry>::ConstIterator current = i++;
+                String fileEntry(current->first_);
+                if (outputCompressionRatio)
                 {
-                    HashMap<String, PackageEntry>::ConstIterator current = i++;
-                    String fileEntry(current->first_);
-                    if (outputCompressionRatio)
-                    {
-                        unsigned compressedSize =
-                            (i == entries.End() ? packageFile->GetTotalSize() - sizeof(unsigned) : i->second_.offset_) -
-                            current->second_.offset_;
-                        fileEntry.AppendWithFormat("\tin: %u\tout: %u\tratio: %f", current->second_.size_, compressedSize,
-                            compressedSize ? 1.f * current->second_.size_ / compressedSize : 0.f);
-                    }
-                    PrintLine(fileEntry);
+                    unsigned compressedSize =
+                        (i == entries.End() ? packageFile->GetTotalSize() - sizeof(unsigned) : i->second_.offset_) -
+                        current->second_.offset_;
+                    fileEntry.AppendWithFormat("\tin: %u\tout: %u\tratio: %f", current->second_.size_, compressedSize,
+                                               compressedSize ? 1.f * current->second_.size_ / compressedSize : 0.f);
                 }
+                PrintLine(fileEntry);
             }
-            break;
+        }
+        break;
         default:
             ErrorExit("Unrecognized output option");
         }
@@ -286,7 +280,8 @@ void WritePackageFile(const String& fileName, const String& rootDir)
                 if (pos + unpackedSize > dataSize)
                     unpackedSize = dataSize - pos;
 
-                unsigned packedSize = (unsigned)LZ4_compress_HC((const char*)&buffer[pos], (char*)compressBuffer.Get(), unpackedSize, LZ4_compressBound(unpackedSize), 0);
+                unsigned packedSize = (unsigned)LZ4_compress_HC((const char*)&buffer[pos], (char*)compressBuffer.Get(),
+                                                                unpackedSize, LZ4_compressBound(unpackedSize), 0);
                 if (!packedSize)
                     ErrorExit("LZ4 compression failed for file " + entries_[i].name_ + " at offset " + String(pos));
 
@@ -302,7 +297,7 @@ void WritePackageFile(const String& fileName, const String& rootDir)
                 unsigned totalPackedBytes = dest.GetSize() - lastOffset;
                 String fileEntry(entries_[i].name_);
                 fileEntry.AppendWithFormat("\tin: %u\tout: %u\tratio: %f", dataSize, totalPackedBytes,
-                    totalPackedBytes ? 1.f * dataSize / totalPackedBytes : 0.f);
+                                           totalPackedBytes ? 1.f * dataSize / totalPackedBytes : 0.f);
                 PrintLine(fileEntry);
             }
         }

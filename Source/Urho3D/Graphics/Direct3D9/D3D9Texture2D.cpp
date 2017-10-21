@@ -29,8 +29,8 @@
 #include "../../Graphics/GraphicsImpl.h"
 #include "../../Graphics/Renderer.h"
 #include "../../Graphics/Texture2D.h"
-#include "../../IO/Log.h"
 #include "../../IO/FileSystem.h"
+#include "../../IO/Log.h"
 #include "../../Resource/ResourceCache.h"
 #include "../../Resource/XMLFile.h"
 
@@ -38,7 +38,6 @@
 
 namespace Urho3D
 {
-
 void Texture2D::OnDeviceLost()
 {
     if (usage_ > TEXTURE_STATIC)
@@ -138,7 +137,8 @@ bool Texture2D::SetData(unsigned level, int x, int y, int width, int height, con
     if (level == 0 && x == 0 && y == 0 && width == levelWidth && height == levelHeight && usage_ > TEXTURE_STATIC)
         flags |= D3DLOCK_DISCARD;
 
-    HRESULT hr = ((IDirect3DTexture9*)object_.ptr_)->LockRect(level, &d3dLockedRect, (flags & D3DLOCK_DISCARD) ? nullptr : &d3dRect, flags);
+    HRESULT hr = ((IDirect3DTexture9*)object_.ptr_)
+                     ->LockRect(level, &d3dLockedRect, (flags & D3DLOCK_DISCARD) ? nullptr : &d3dRect, flags);
     if (FAILED(hr))
     {
         URHO3D_LOGD3DERROR("Could not lock texture", hr);
@@ -232,7 +232,8 @@ bool Texture2D::SetData(Image* image, bool useAlpha)
         // Discard unnecessary mip levels
         for (unsigned i = 0; i < mipsToSkip_[quality]; ++i)
         {
-            mipImage = image->GetNextLevel(); image = mipImage;
+            mipImage = image->GetNextLevel();
+            image = mipImage;
             levelData = image->GetData();
             levelWidth = image->GetWidth();
             levelHeight = image->GetHeight();
@@ -257,11 +258,12 @@ bool Texture2D::SetData(Image* image, bool useAlpha)
             break;
 
         default:
-            assert(false);  // Should never reach here
+            assert(false); // Should never reach here
             break;
         }
 
-        // If image was previously compressed, reset number of requested levels to avoid error if level count is too high for new size
+        // If image was previously compressed, reset number of requested levels to avoid error if level count is too
+        // high for new size
         if (IsCompressed() && requestedLevels_ > 1)
             requestedLevels_ = 0;
         SetSize(levelWidth, levelHeight, format);
@@ -273,7 +275,8 @@ bool Texture2D::SetData(Image* image, bool useAlpha)
 
             if (i < levels_ - 1)
             {
-                mipImage = image->GetNextLevel(); image = mipImage;
+                mipImage = image->GetNextLevel();
+                image = mipImage;
                 levelData = image->GetData();
                 levelWidth = image->GetWidth();
                 levelHeight = image->GetHeight();
@@ -392,7 +395,7 @@ bool Texture2D::GetData(unsigned level, void* dest) const
 
         IDirect3DDevice9* device = graphics_->GetImpl()->GetDevice();
         HRESULT hr = device->CreateOffscreenPlainSurface((UINT)width_, (UINT)height_, (D3DFORMAT)format_,
-            D3DPOOL_SYSTEMMEM, &offscreenSurface, nullptr);
+                                                         D3DPOOL_SYSTEMMEM, &offscreenSurface, nullptr);
         if (FAILED(hr))
         {
             URHO3D_LOGD3DERROR("Could not create surface for getting rendertarget data", hr);
@@ -400,7 +403,7 @@ bool Texture2D::GetData(unsigned level, void* dest) const
             URHO3D_SAFE_RELEASE(resolveSurface);
             return false;
         }
-        
+
         if (resolveSurface)
             hr = device->GetRenderTargetData(resolveSurface, offscreenSurface);
         else
@@ -549,7 +552,7 @@ bool Texture2D::Create()
     if (multiSample_ > 1)
     {
         // Fall back to non-multisampled if unsupported multisampling mode
-        if (!impl->CheckMultiSampleSupport((D3DFORMAT)format_,  multiSample_))
+        if (!impl->CheckMultiSampleSupport((D3DFORMAT)format_, multiSample_))
         {
             multiSample_ = 1;
             autoResolve_ = false;
@@ -559,18 +562,13 @@ bool Texture2D::Create()
     IDirect3DDevice9* device = graphics_->GetImpl()->GetDevice();
     // If creating a depth-stencil texture, and it is not supported, create a depth-stencil surface instead
     // Multisampled surfaces need also to be created this way
-    if (usage_ == TEXTURE_DEPTHSTENCIL && (multiSample_ > 1 || !graphics_->GetImpl()->CheckFormatSupport((D3DFORMAT)format_, 
-        d3dUsage, D3DRTYPE_TEXTURE)))
+    if (usage_ == TEXTURE_DEPTHSTENCIL &&
+        (multiSample_ > 1 || !graphics_->GetImpl()->CheckFormatSupport((D3DFORMAT)format_, d3dUsage, D3DRTYPE_TEXTURE)))
     {
         HRESULT hr = device->CreateDepthStencilSurface(
-            (UINT)width_,
-            (UINT)height_,
-            (D3DFORMAT)format_,
-            (multiSample_ > 1) ? (D3DMULTISAMPLE_TYPE)multiSample_ : D3DMULTISAMPLE_NONE,
-            0,
-            FALSE,
-            (IDirect3DSurface9**)&renderSurface_->surface_,
-            nullptr);
+            (UINT)width_, (UINT)height_, (D3DFORMAT)format_,
+            (multiSample_ > 1) ? (D3DMULTISAMPLE_TYPE)multiSample_ : D3DMULTISAMPLE_NONE, 0, FALSE,
+            (IDirect3DSurface9**)&renderSurface_->surface_, nullptr);
         if (FAILED(hr))
         {
             URHO3D_LOGD3DERROR("Could not create depth-stencil surface", hr);
@@ -582,15 +580,9 @@ bool Texture2D::Create()
     }
     else
     {
-        HRESULT hr = graphics_->GetImpl()->GetDevice()->CreateTexture(
-            (UINT)width_,
-            (UINT)height_,
-            requestedLevels_,
-            d3dUsage,
-            (D3DFORMAT)format_,
-            (D3DPOOL)pool,
-            (IDirect3DTexture9**)&object_,
-            nullptr);
+        HRESULT hr = graphics_->GetImpl()->GetDevice()->CreateTexture((UINT)width_, (UINT)height_, requestedLevels_,
+                                                                      d3dUsage, (D3DFORMAT)format_, (D3DPOOL)pool,
+                                                                      (IDirect3DTexture9**)&object_, nullptr);
         if (FAILED(hr))
         {
             URHO3D_LOGD3DERROR("Could not create texture", hr);
@@ -603,15 +595,9 @@ bool Texture2D::Create()
         // Create the multisampled rendertarget for rendering to if necessary
         if (usage_ == TEXTURE_RENDERTARGET && multiSample_ > 1)
         {
-            HRESULT hr = device->CreateRenderTarget(
-                (UINT)width_,
-                (UINT)height_,
-                (D3DFORMAT)format_,
-                (D3DMULTISAMPLE_TYPE)multiSample_,
-                0,
-                FALSE,
-                (IDirect3DSurface9**)&renderSurface_->surface_,
-                nullptr);
+            HRESULT hr = device->CreateRenderTarget((UINT)width_, (UINT)height_, (D3DFORMAT)format_,
+                                                    (D3DMULTISAMPLE_TYPE)multiSample_, 0, FALSE,
+                                                    (IDirect3DSurface9**)&renderSurface_->surface_, nullptr);
             if (FAILED(hr))
             {
                 URHO3D_LOGD3DERROR("Could not create multisampled rendertarget surface", hr);
@@ -634,5 +620,4 @@ bool Texture2D::Create()
 
     return true;
 }
-
 }

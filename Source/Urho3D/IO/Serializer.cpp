@@ -28,97 +28,43 @@
 
 namespace Urho3D
 {
-
 static const float q = 32767.0f;
 
-Serializer::~Serializer()
-{
-}
+Serializer::~Serializer() {}
 
-bool Serializer::WriteInt64(long long value)
-{
-    return Write(&value, sizeof value) == sizeof value;
-}
+bool Serializer::WriteInt64(long long value) { return Write(&value, sizeof value) == sizeof value; }
 
-bool Serializer::WriteInt(int value)
-{
-    return Write(&value, sizeof value) == sizeof value;
-}
+bool Serializer::WriteInt(int value) { return Write(&value, sizeof value) == sizeof value; }
 
-bool Serializer::WriteShort(short value)
-{
-    return Write(&value, sizeof value) == sizeof value;
-}
+bool Serializer::WriteShort(short value) { return Write(&value, sizeof value) == sizeof value; }
 
-bool Serializer::WriteByte(signed char value)
-{
-    return Write(&value, sizeof value) == sizeof value;
-}
+bool Serializer::WriteByte(signed char value) { return Write(&value, sizeof value) == sizeof value; }
 
-bool Serializer::WriteUInt64(unsigned long long value)
-{
-    return Write(&value, sizeof value) == sizeof value;
-}
+bool Serializer::WriteUInt64(unsigned long long value) { return Write(&value, sizeof value) == sizeof value; }
 
-bool Serializer::WriteUInt(unsigned value)
-{
-    return Write(&value, sizeof value) == sizeof value;
-}
+bool Serializer::WriteUInt(unsigned value) { return Write(&value, sizeof value) == sizeof value; }
 
-bool Serializer::WriteUShort(unsigned short value)
-{
-    return Write(&value, sizeof value) == sizeof value;
-}
+bool Serializer::WriteUShort(unsigned short value) { return Write(&value, sizeof value) == sizeof value; }
 
-bool Serializer::WriteUByte(unsigned char value)
-{
-    return Write(&value, sizeof value) == sizeof value;
-}
+bool Serializer::WriteUByte(unsigned char value) { return Write(&value, sizeof value) == sizeof value; }
 
-bool Serializer::WriteBool(bool value)
-{
-    return WriteUByte((unsigned char)(value ? 1 : 0)) == 1;
-}
+bool Serializer::WriteBool(bool value) { return WriteUByte((unsigned char)(value ? 1 : 0)) == 1; }
 
-bool Serializer::WriteFloat(float value)
-{
-    return Write(&value, sizeof value) == sizeof value;
-}
+bool Serializer::WriteFloat(float value) { return Write(&value, sizeof value) == sizeof value; }
 
-bool Serializer::WriteDouble(double value)
-{
-    return Write(&value, sizeof value) == sizeof value;
-}
+bool Serializer::WriteDouble(double value) { return Write(&value, sizeof value) == sizeof value; }
 
-bool Serializer::WriteIntRect(const IntRect& value)
-{
-    return Write(value.Data(), sizeof value) == sizeof value;
-}
+bool Serializer::WriteIntRect(const IntRect& value) { return Write(value.Data(), sizeof value) == sizeof value; }
 
-bool Serializer::WriteIntVector2(const IntVector2& value)
-{
-    return Write(value.Data(), sizeof value) == sizeof value;
-}
+bool Serializer::WriteIntVector2(const IntVector2& value) { return Write(value.Data(), sizeof value) == sizeof value; }
 
-bool Serializer::WriteIntVector3(const IntVector3& value)
-{
-    return Write(value.Data(), sizeof value) == sizeof value;
-}
+bool Serializer::WriteIntVector3(const IntVector3& value) { return Write(value.Data(), sizeof value) == sizeof value; }
 
-bool Serializer::WriteRect(const Rect& value)
-{
-    return Write(value.Data(), sizeof value) == sizeof value;
-}
+bool Serializer::WriteRect(const Rect& value) { return Write(value.Data(), sizeof value) == sizeof value; }
 
-bool Serializer::WriteVector2(const Vector2& value)
-{
-    return Write(value.Data(), sizeof value) == sizeof value;
-}
+bool Serializer::WriteVector2(const Vector2& value) { return Write(value.Data(), sizeof value) == sizeof value; }
 
-bool Serializer::WriteVector3(const Vector3& value)
-{
-    return Write(value.Data(), sizeof value) == sizeof value;
-}
+bool Serializer::WriteVector3(const Vector3& value) { return Write(value.Data(), sizeof value) == sizeof value; }
 
 bool Serializer::WritePackedVector3(const Vector3& value, float maxAbsCoord)
 {
@@ -131,15 +77,9 @@ bool Serializer::WritePackedVector3(const Vector3& value, float maxAbsCoord)
     return Write(&coords[0], sizeof coords) == sizeof coords;
 }
 
-bool Serializer::WriteVector4(const Vector4& value)
-{
-    return Write(value.Data(), sizeof value) == sizeof value;
-}
+bool Serializer::WriteVector4(const Vector4& value) { return Write(value.Data(), sizeof value) == sizeof value; }
 
-bool Serializer::WriteQuaternion(const Quaternion& value)
-{
-    return Write(value.Data(), sizeof value) == sizeof value;
-}
+bool Serializer::WriteQuaternion(const Quaternion& value) { return Write(value.Data(), sizeof value) == sizeof value; }
 
 bool Serializer::WritePackedQuaternion(const Quaternion& value)
 {
@@ -153,25 +93,13 @@ bool Serializer::WritePackedQuaternion(const Quaternion& value)
     return Write(&coords[0], sizeof coords) == sizeof coords;
 }
 
-bool Serializer::WriteMatrix3(const Matrix3& value)
-{
-    return Write(value.Data(), sizeof value) == sizeof value;
-}
+bool Serializer::WriteMatrix3(const Matrix3& value) { return Write(value.Data(), sizeof value) == sizeof value; }
 
-bool Serializer::WriteMatrix3x4(const Matrix3x4& value)
-{
-    return Write(value.Data(), sizeof value) == sizeof value;
-}
+bool Serializer::WriteMatrix3x4(const Matrix3x4& value) { return Write(value.Data(), sizeof value) == sizeof value; }
 
-bool Serializer::WriteMatrix4(const Matrix4& value)
-{
-    return Write(value.Data(), sizeof value) == sizeof value;
-}
+bool Serializer::WriteMatrix4(const Matrix4& value) { return Write(value.Data(), sizeof value) == sizeof value; }
 
-bool Serializer::WriteColor(const Color& value)
-{
-    return Write(value.Data(), sizeof value) == sizeof value;
-}
+bool Serializer::WriteColor(const Color& value) { return Write(value.Data(), sizeof value) == sizeof value; }
 
 bool Serializer::WriteBoundingBox(const BoundingBox& value)
 {
@@ -200,10 +128,7 @@ bool Serializer::WriteFileID(const String& value)
     return success;
 }
 
-bool Serializer::WriteStringHash(const StringHash& value)
-{
-    return WriteUInt(value.Value());
-}
+bool Serializer::WriteStringHash(const StringHash& value) { return WriteUInt(value.Value()); }
 
 bool Serializer::WriteBuffer(const PODVector<unsigned char>& value)
 {
@@ -393,10 +318,7 @@ bool Serializer::WriteVLE(unsigned value)
     }
 }
 
-bool Serializer::WriteNetID(unsigned value)
-{
-    return Write(&value, 3) == 3;
-}
+bool Serializer::WriteNetID(unsigned value) { return Write(&value, 3) == 3; }
 
 bool Serializer::WriteLine(const String& value)
 {
@@ -406,5 +328,4 @@ bool Serializer::WriteLine(const String& value)
     success &= WriteUByte(10);
     return success;
 }
-
 }

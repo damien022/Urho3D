@@ -27,7 +27,6 @@
 
 namespace Urho3D
 {
-
 /// Attribute shown only in the editor, but not serialized.
 static const unsigned AM_EDIT = 0x0;
 /// Attribute used for file serialization.
@@ -65,63 +64,64 @@ public:
 struct AttributeInfo
 {
     /// Construct empty.
-    AttributeInfo() :
-        type_(VAR_NONE),
-        offset_(0),
-        enumNames_(nullptr),
-        mode_(AM_DEFAULT),
-        ptr_(nullptr)
+    AttributeInfo()
+        : type_(VAR_NONE)
+        , offset_(0)
+        , enumNames_(nullptr)
+        , mode_(AM_DEFAULT)
+        , ptr_(nullptr)
     {
     }
 
     /// Construct offset attribute.
-    AttributeInfo(VariantType type, const char* name, size_t offset, const Variant& defaultValue, unsigned mode) :
-        type_(type),
-        name_(name),
-        offset_((unsigned)offset),
-        enumNames_(nullptr),
-        defaultValue_(defaultValue),
-        mode_(mode),
-        ptr_(nullptr)
+    AttributeInfo(VariantType type, const char* name, size_t offset, const Variant& defaultValue, unsigned mode)
+        : type_(type)
+        , name_(name)
+        , offset_((unsigned)offset)
+        , enumNames_(nullptr)
+        , defaultValue_(defaultValue)
+        , mode_(mode)
+        , ptr_(nullptr)
     {
     }
 
     /// Construct offset enum attribute.
-    AttributeInfo(const char* name, size_t offset, const char** enumNames, const Variant& defaultValue, unsigned mode) :
-        type_(VAR_INT),
-        name_(name),
-        offset_((unsigned)offset),
-        enumNames_(enumNames),
-        defaultValue_(defaultValue),
-        mode_(mode),
-        ptr_(nullptr)
+    AttributeInfo(const char* name, size_t offset, const char** enumNames, const Variant& defaultValue, unsigned mode)
+        : type_(VAR_INT)
+        , name_(name)
+        , offset_((unsigned)offset)
+        , enumNames_(enumNames)
+        , defaultValue_(defaultValue)
+        , mode_(mode)
+        , ptr_(nullptr)
     {
     }
 
     /// Construct accessor attribute.
-    AttributeInfo(VariantType type, const char* name, AttributeAccessor* accessor, const Variant& defaultValue, unsigned mode) :
-        type_(type),
-        name_(name),
-        offset_(0),
-        enumNames_(nullptr),
-        accessor_(accessor),
-        defaultValue_(defaultValue),
-        mode_(mode),
-        ptr_(nullptr)
+    AttributeInfo(VariantType type, const char* name, AttributeAccessor* accessor, const Variant& defaultValue,
+                  unsigned mode)
+        : type_(type)
+        , name_(name)
+        , offset_(0)
+        , enumNames_(nullptr)
+        , accessor_(accessor)
+        , defaultValue_(defaultValue)
+        , mode_(mode)
+        , ptr_(nullptr)
     {
     }
 
     /// Construct accessor enum attribute.
     AttributeInfo(const char* name, AttributeAccessor* accessor, const char** enumNames, const Variant& defaultValue,
-        unsigned mode) :
-        type_(VAR_INT),
-        name_(name),
-        offset_(0),
-        enumNames_(enumNames),
-        accessor_(accessor),
-        defaultValue_(defaultValue),
-        mode_(mode),
-        ptr_(nullptr)
+                  unsigned mode)
+        : type_(VAR_INT)
+        , name_(name)
+        , offset_(0)
+        , enumNames_(enumNames)
+        , accessor_(accessor)
+        , defaultValue_(defaultValue)
+        , mode_(mode)
+        , ptr_(nullptr)
     {
     }
 
@@ -133,10 +133,7 @@ struct AttributeInfo
     }
 
     /// Get attribute metadata of specified type.
-    template <class T> T GetMetadata(const StringHash& key) const
-    {
-        return GetMetadata(key).Get<T>();
-    }
+    template <class T> T GetMetadata(const StringHash& key) const { return GetMetadata(key).Get<T>(); }
 
     /// Attribute type.
     VariantType type_;
@@ -162,6 +159,7 @@ struct AttributeInfo
 struct AttributeHandle
 {
     friend class Context;
+
 private:
     /// Construct default.
     AttributeHandle() = default;
@@ -171,6 +169,7 @@ private:
     AttributeInfo* attributeInfo_ = nullptr;
     /// Network attribute info.
     AttributeInfo* networkAttributeInfo_ = nullptr;
+
 public:
     /// Set metadata.
     AttributeHandle& SetMetadata(StringHash key, const Variant& value)
@@ -182,5 +181,4 @@ public:
         return *this;
     }
 };
-
 }

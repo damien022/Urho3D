@@ -37,12 +37,11 @@
 #include "../../DebugNew.h"
 
 #ifdef _MSC_VER
-#pragma warning(disable:4355)
+#pragma warning(disable : 4355)
 #endif
 
 namespace Urho3D
 {
-
 void TextureCube::OnDeviceLost()
 {
     if (usage_ > TEXTURE_STATIC)
@@ -145,8 +144,9 @@ bool TextureCube::SetData(CubeMapFace face, unsigned level, int x, int y, int wi
     if (level == 0 && x == 0 && y == 0 && width == levelWidth && height == levelHeight && usage_ > TEXTURE_STATIC)
         flags |= D3DLOCK_DISCARD;
 
-    HRESULT hr = ((IDirect3DCubeTexture9*)object_.ptr_)->LockRect((D3DCUBEMAP_FACES)face, level, &d3dLockedRect,
-        (flags & D3DLOCK_DISCARD) ? nullptr : &d3dRect, flags);
+    HRESULT hr = ((IDirect3DCubeTexture9*)object_.ptr_)
+                     ->LockRect((D3DCUBEMAP_FACES)face, level, &d3dLockedRect,
+                                (flags & D3DLOCK_DISCARD) ? nullptr : &d3dRect, flags);
     if (FAILED(hr))
     {
         URHO3D_LOGD3DERROR("Could not lock texture", hr);
@@ -255,7 +255,8 @@ bool TextureCube::SetData(CubeMapFace face, Image* image, bool useAlpha)
         // Discard unnecessary mip levels
         for (unsigned i = 0; i < mipsToSkip_[quality]; ++i)
         {
-            mipImage = image->GetNextLevel(); image = mipImage;
+            mipImage = image->GetNextLevel();
+            image = mipImage;
             levelData = image->GetData();
             levelWidth = image->GetWidth();
             levelHeight = image->GetHeight();
@@ -280,14 +281,15 @@ bool TextureCube::SetData(CubeMapFace face, Image* image, bool useAlpha)
             break;
 
         default:
-            assert(false);  // Should never reach here
+            assert(false); // Should never reach here
             break;
         }
 
         // Create the texture when face 0 is being loaded, check that rest of the faces are same size & format
         if (!face)
         {
-            // If image was previously compressed, reset number of requested levels to avoid error if level count is too high for new size
+            // If image was previously compressed, reset number of requested levels to avoid error if level count is too
+            // high for new size
             if (IsCompressed() && requestedLevels_ > 1)
                 requestedLevels_ = 0;
             SetSize(levelWidth, format);
@@ -313,7 +315,8 @@ bool TextureCube::SetData(CubeMapFace face, Image* image, bool useAlpha)
 
             if (i < levels_ - 1)
             {
-                mipImage = image->GetNextLevel(); image = mipImage;
+                mipImage = image->GetNextLevel();
+                image = mipImage;
                 levelData = image->GetData();
                 levelWidth = image->GetWidth();
                 levelHeight = image->GetHeight();
@@ -449,8 +452,8 @@ bool TextureCube::GetData(CubeMapFace face, unsigned level, void* dest) const
         IDirect3DSurface9* resolveSurface = nullptr;
         if (multiSample_ > 1)
         {
-            HRESULT hr = ((IDirect3DCubeTexture9*)object_.ptr_)->GetCubeMapSurface((D3DCUBEMAP_FACES)face, 0,
-                (IDirect3DSurface9**)&resolveSurface);
+            HRESULT hr = ((IDirect3DCubeTexture9*)object_.ptr_)
+                             ->GetCubeMapSurface((D3DCUBEMAP_FACES)face, 0, (IDirect3DSurface9**)&resolveSurface);
             if (FAILED(hr))
             {
                 URHO3D_LOGD3DERROR("Could not get surface of the resolve texture", hr);
@@ -460,7 +463,8 @@ bool TextureCube::GetData(CubeMapFace face, unsigned level, void* dest) const
         }
 
         IDirect3DDevice9* device = graphics_->GetImpl()->GetDevice();
-        HRESULT hr = device->CreateOffscreenPlainSurface((UINT)width_, (UINT)height_, (D3DFORMAT)format_, D3DPOOL_SYSTEMMEM, &offscreenSurface, nullptr);
+        HRESULT hr = device->CreateOffscreenPlainSurface((UINT)width_, (UINT)height_, (D3DFORMAT)format_,
+                                                         D3DPOOL_SYSTEMMEM, &offscreenSurface, nullptr);
         if (FAILED(hr))
         {
             URHO3D_LOGD3DERROR("Could not create surface for getting rendertarget data", hr);
@@ -490,7 +494,8 @@ bool TextureCube::GetData(CubeMapFace face, unsigned level, void* dest) const
     }
     else
     {
-        HRESULT hr = ((IDirect3DCubeTexture9*)object_.ptr_)->LockRect((D3DCUBEMAP_FACES)face, level, &d3dLockedRect, &d3dRect, D3DLOCK_READONLY);
+        HRESULT hr = ((IDirect3DCubeTexture9*)object_.ptr_)
+                         ->LockRect((D3DCUBEMAP_FACES)face, level, &d3dLockedRect, &d3dRect, D3DLOCK_READONLY);
         if (FAILED(hr))
         {
             URHO3D_LOGD3DERROR("Could not lock texture", hr);
@@ -613,14 +618,8 @@ bool TextureCube::Create()
     }
 
     IDirect3DDevice9* device = graphics_->GetImpl()->GetDevice();
-    HRESULT hr = device->CreateCubeTexture(
-        (UINT)width_,
-        requestedLevels_,
-        d3dUsage,
-        (D3DFORMAT)format_,
-        (D3DPOOL)pool,
-        (IDirect3DCubeTexture9**)&object_.ptr_,
-        nullptr);
+    HRESULT hr = device->CreateCubeTexture((UINT)width_, requestedLevels_, d3dUsage, (D3DFORMAT)format_, (D3DPOOL)pool,
+                                           (IDirect3DCubeTexture9**)&object_.ptr_, nullptr);
     if (FAILED(hr))
     {
         URHO3D_LOGD3DERROR("Could not create cube texture", hr);
@@ -637,15 +636,9 @@ bool TextureCube::Create()
             if (multiSample_ > 1)
             {
                 // Create the multisampled face rendertarget if necessary
-                HRESULT hr = device->CreateRenderTarget(
-                    (UINT)width_,
-                    (UINT)height_,
-                    (D3DFORMAT)format_,
-                    (D3DMULTISAMPLE_TYPE)multiSample_,
-                    0,
-                    FALSE,
-                    (IDirect3DSurface9**)&renderSurfaces_[i]->surface_,
-                    nullptr);
+                HRESULT hr = device->CreateRenderTarget((UINT)width_, (UINT)height_, (D3DFORMAT)format_,
+                                                        (D3DMULTISAMPLE_TYPE)multiSample_, 0, FALSE,
+                                                        (IDirect3DSurface9**)&renderSurfaces_[i]->surface_, nullptr);
                 if (FAILED(hr))
                 {
                     URHO3D_LOGD3DERROR("Could not create multisampled rendertarget surface", hr);
@@ -655,8 +648,9 @@ bool TextureCube::Create()
             }
             else
             {
-                hr = ((IDirect3DCubeTexture9*)object_.ptr_)->GetCubeMapSurface((D3DCUBEMAP_FACES)i, 0,
-                    (IDirect3DSurface9**)&renderSurfaces_[i]->surface_);
+                hr =
+                    ((IDirect3DCubeTexture9*)object_.ptr_)
+                        ->GetCubeMapSurface((D3DCUBEMAP_FACES)i, 0, (IDirect3DSurface9**)&renderSurfaces_[i]->surface_);
                 if (FAILED(hr))
                 {
                     URHO3D_LOGD3DERROR("Could not get rendertarget surface", hr);
@@ -669,5 +663,4 @@ bool TextureCube::Create()
 
     return true;
 }
-
 }

@@ -26,17 +26,16 @@
 
 #include <cassert>
 #include <cstring>
-#include <new>
 #include <initializer_list>
+#include <new>
 
 #ifdef _MSC_VER
 #pragma warning(push)
-#pragma warning(disable:6293)
+#pragma warning(disable : 6293)
 #endif
 
 namespace Urho3D
 {
-
 /// %Vector template class.
 template <class T> class Vector : public VectorBase
 {
@@ -46,15 +45,10 @@ public:
     using ConstIterator = RandomAccessConstIterator<T>;
 
     /// Construct empty.
-    Vector()
-    {
-    }
+    Vector() {}
 
     /// Construct with initial size.
-    explicit Vector(unsigned size)
-    {
-        Resize(size);
-    }
+    explicit Vector(unsigned size) { Resize(size); }
 
     /// Construct with initial size and default value.
     Vector(unsigned size, const T& value)
@@ -65,18 +59,13 @@ public:
     }
 
     /// Construct with initial data.
-    Vector(const T* data, unsigned size)
-    {
-        InsertElements(0, data, data + size);
-    }
+    Vector(const T* data, unsigned size) { InsertElements(0, data, data + size); }
 
     /// Construct from another vector.
-    Vector(const Vector<T>& vector)
-    {
-        *this = vector;
-    }
+    Vector(const Vector<T>& vector) { *this = vector; }
     /// Aggregate initialization constructor.
-    Vector(const std::initializer_list<T>& list) : Vector()
+    Vector(const std::initializer_list<T>& list)
+        : Vector()
     {
         for (auto it = list.begin(); it != list.end(); it++)
         {
@@ -91,7 +80,7 @@ public:
     }
 
     /// Assign from another vector.
-    Vector<T>& operator =(const Vector<T>& rhs)
+    Vector<T>& operator=(const Vector<T>& rhs)
     {
         // In case of self-assignment do nothing
         if (&rhs != this)
@@ -103,21 +92,21 @@ public:
     }
 
     /// Add-assign an element.
-    Vector<T>& operator +=(const T& rhs)
+    Vector<T>& operator+=(const T& rhs)
     {
         Push(rhs);
         return *this;
     }
 
     /// Add-assign another vector.
-    Vector<T>& operator +=(const Vector<T>& rhs)
+    Vector<T>& operator+=(const Vector<T>& rhs)
     {
         Push(rhs);
         return *this;
     }
 
     /// Add an element.
-    Vector<T> operator +(const T& rhs) const
+    Vector<T> operator+(const T& rhs) const
     {
         Vector<T> ret(*this);
         ret.Push(rhs);
@@ -125,7 +114,7 @@ public:
     }
 
     /// Add another vector.
-    Vector<T> operator +(const Vector<T>& rhs) const
+    Vector<T> operator+(const Vector<T>& rhs) const
     {
         Vector<T> ret(*this);
         ret.Push(rhs);
@@ -133,7 +122,7 @@ public:
     }
 
     /// Test for equality with another vector.
-    bool operator ==(const Vector<T>& rhs) const
+    bool operator==(const Vector<T>& rhs) const
     {
         if (rhs.size_ != size_)
             return false;
@@ -150,7 +139,7 @@ public:
     }
 
     /// Test for inequality with another vector.
-    bool operator !=(const Vector<T>& rhs) const
+    bool operator!=(const Vector<T>& rhs) const
     {
         if (rhs.size_ != size_)
             return true;
@@ -167,14 +156,14 @@ public:
     }
 
     /// Return element at index.
-    T& operator [](unsigned index)
+    T& operator[](unsigned index)
     {
         assert(index < size_);
         return Buffer()[index];
     }
 
     /// Return const element at index.
-    const T& operator [](unsigned index) const
+    const T& operator[](unsigned index) const
     {
         assert(index < size_);
         return Buffer()[index];
@@ -194,12 +183,9 @@ public:
         return Buffer()[index];
     }
 
-    /// Add an element at the end.
+        /// Add an element at the end.
 #ifndef COVERITY_SCAN_MODEL
-    void Push(const T& value)
-    {
-        InsertElements(size_, &value, &value + 1);
-    }
+    void Push(const T& value) { InsertElements(size_, &value, &value + 1); }
 #else
     // FIXME: Attempt had been made to use this model in the Coverity-Scan model file without any success
     // Probably because the model had generated a different mangled name than the one used by static analyzer
@@ -221,16 +207,10 @@ public:
     }
 
     /// Insert an element at position.
-    void Insert(unsigned pos, const T& value)
-    {
-        InsertElements(pos, &value, &value + 1);
-    }
+    void Insert(unsigned pos, const T& value) { InsertElements(pos, &value, &value + 1); }
 
     /// Insert another vector at position.
-    void Insert(unsigned pos, const Vector<T>& vector)
-    {
-        InsertElements(pos, vector.Begin(), vector.End());
-    }
+    void Insert(unsigned pos, const Vector<T>& vector) { InsertElements(pos, vector.Begin(), vector.End()); }
 
     /// Insert an element by iterator.
     Iterator Insert(const Iterator& dest, const T& value)
@@ -283,7 +263,8 @@ public:
         unsigned trailingCount = size_ - shiftStartIndex;
         if (trailingCount <= length)
         {
-            // We're removing more elements from the array than exist past the end of the range being removed, so perform a normal shift and destroy
+            // We're removing more elements from the array than exist past the end of the range being removed, so
+            // perform a normal shift and destroy
             MoveRange(pos, shiftStartIndex, trailingCount);
         }
         else
@@ -347,7 +328,11 @@ public:
     void Clear() { Resize(0); }
 
     /// Resize the vector.
-    void Resize(unsigned newSize) { Vector<T> tempBuffer; Resize(newSize, 0, tempBuffer); }
+    void Resize(unsigned newSize)
+    {
+        Vector<T> tempBuffer;
+        Resize(newSize, 0, tempBuffer);
+    }
 
     /// Resize the vector and fill new elements with default value.
     void Resize(unsigned newSize, const T& value)
@@ -406,10 +391,7 @@ public:
     }
 
     /// Return index of value in vector, or size if not found.
-    unsigned IndexOf(const T& value) const
-    {
-        return Find(value) - Begin();
-    }
+    unsigned IndexOf(const T& value) const { return Find(value) - Begin(); }
 
     /// Return whether contains a specific value.
     bool Contains(const T& value) const { return Find(value) != End(); }
@@ -467,7 +449,8 @@ public:
     T* Buffer() const { return reinterpret_cast<T*>(buffer_); }
 
 private:
-    /// Resize the vector and create/remove new elements as necessary. Current buffer will be stored in tempBuffer in case of reallocation.
+    /// Resize the vector and create/remove new elements as necessary. Current buffer will be stored in tempBuffer in
+    /// case of reallocation.
     void Resize(unsigned newSize, const T* src, Vector<T>& tempBuffer)
     {
         // If size shrinks, destruct the removed elements
@@ -546,12 +529,12 @@ private:
         if (!src)
         {
             for (unsigned i = 0; i < count; ++i)
-                new(dest + i) T();
+                new (dest + i) T();
         }
         else
         {
             for (unsigned i = 0; i < count; ++i)
-                new(dest + i) T(*(src + i));
+                new (dest + i) T(*(src + i));
         }
     }
 
@@ -573,7 +556,8 @@ private:
     }
 };
 
-/// %Vector template class for POD types. Does not call constructors or destructors and uses block move. Is intentionally (for performance reasons) unsafe for self-insertion.
+/// %Vector template class for POD types. Does not call constructors or destructors and uses block move. Is
+/// intentionally (for performance reasons) unsafe for self-insertion.
 template <class T> class PODVector : public VectorBase
 {
 public:
@@ -582,15 +566,10 @@ public:
     using ConstIterator = RandomAccessConstIterator<T>;
 
     /// Construct empty.
-    PODVector()
-    {
-    }
+    PODVector() {}
 
     /// Construct with initial size.
-    explicit PODVector(unsigned size)
-    {
-        Resize(size);
-    }
+    explicit PODVector(unsigned size) { Resize(size); }
 
     /// Construct with initial size and default value.
     PODVector(unsigned size, const T& value)
@@ -608,12 +587,10 @@ public:
     }
 
     /// Construct from another vector.
-    PODVector(const PODVector<T>& vector)
-    {
-        *this = vector;
-    }
+    PODVector(const PODVector<T>& vector) { *this = vector; }
     /// Aggregate initialization constructor.
-    PODVector(const std::initializer_list<T>& list) : PODVector()
+    PODVector(const std::initializer_list<T>& list)
+        : PODVector()
     {
         for (auto it = list.begin(); it != list.end(); it++)
         {
@@ -621,13 +598,10 @@ public:
         }
     }
     /// Destruct.
-    ~PODVector()
-    {
-        delete[] buffer_;
-    }
+    ~PODVector() { delete[] buffer_; }
 
     /// Assign from another vector.
-    PODVector<T>& operator =(const PODVector<T>& rhs)
+    PODVector<T>& operator=(const PODVector<T>& rhs)
     {
         // In case of self-assignment do nothing
         if (&rhs != this)
@@ -639,21 +613,21 @@ public:
     }
 
     /// Add-assign an element.
-    PODVector<T>& operator +=(const T& rhs)
+    PODVector<T>& operator+=(const T& rhs)
     {
         Push(rhs);
         return *this;
     }
 
     /// Add-assign another vector.
-    PODVector<T>& operator +=(const PODVector<T>& rhs)
+    PODVector<T>& operator+=(const PODVector<T>& rhs)
     {
         Push(rhs);
         return *this;
     }
 
     /// Add an element.
-    PODVector<T> operator +(const T& rhs) const
+    PODVector<T> operator+(const T& rhs) const
     {
         PODVector<T> ret(*this);
         ret.Push(rhs);
@@ -661,7 +635,7 @@ public:
     }
 
     /// Add another vector.
-    PODVector<T> operator +(const PODVector<T>& rhs) const
+    PODVector<T> operator+(const PODVector<T>& rhs) const
     {
         PODVector<T> ret(*this);
         ret.Push(rhs);
@@ -669,7 +643,7 @@ public:
     }
 
     /// Test for equality with another vector.
-    bool operator ==(const PODVector<T>& rhs) const
+    bool operator==(const PODVector<T>& rhs) const
     {
         if (rhs.size_ != size_)
             return false;
@@ -686,7 +660,7 @@ public:
     }
 
     /// Test for inequality with another vector.
-    bool operator !=(const PODVector<T>& rhs) const
+    bool operator!=(const PODVector<T>& rhs) const
     {
         if (rhs.size_ != size_)
             return true;
@@ -703,14 +677,14 @@ public:
     }
 
     /// Return element at index.
-    T& operator [](unsigned index)
+    T& operator[](unsigned index)
     {
         assert(index < size_);
         return Buffer()[index];
     }
 
     /// Return const element at index.
-    const T& operator [](unsigned index) const
+    const T& operator[](unsigned index) const
     {
         assert(index < size_);
         return Buffer()[index];
@@ -878,7 +852,8 @@ public:
         unsigned trailingCount = size_ - shiftStartIndex;
         if (trailingCount <= length)
         {
-            // We're removing more elements from the array than exist past the end of the range being removed, so perform a normal shift and destroy
+            // We're removing more elements from the array than exist past the end of the range being removed, so
+            // perform a normal shift and destroy
             MoveRange(pos, shiftStartIndex, trailingCount);
         }
         else
@@ -990,10 +965,7 @@ public:
     }
 
     /// Return index of value in vector, or size if not found.
-    unsigned IndexOf(const T& value) const
-    {
-        return Find(value) - Begin();
-    }
+    unsigned IndexOf(const T& value) const { return Find(value) - Begin(); }
 
     /// Return whether contains a specific value.
     bool Contains(const T& value) const { return Find(value) != End(); }
@@ -1066,14 +1038,16 @@ template <class T> typename Urho3D::Vector<T>::Iterator begin(Urho3D::Vector<T>&
 
 template <class T> typename Urho3D::Vector<T>::Iterator end(Urho3D::Vector<T>& v) { return v.End(); }
 
-template <class T> typename Urho3D::PODVector<T>::ConstIterator begin(const Urho3D::PODVector<T>& v) { return v.Begin(); }
+template <class T> typename Urho3D::PODVector<T>::ConstIterator begin(const Urho3D::PODVector<T>& v)
+{
+    return v.Begin();
+}
 
 template <class T> typename Urho3D::PODVector<T>::ConstIterator end(const Urho3D::PODVector<T>& v) { return v.End(); }
 
 template <class T> typename Urho3D::PODVector<T>::Iterator begin(Urho3D::PODVector<T>& v) { return v.Begin(); }
 
 template <class T> typename Urho3D::PODVector<T>::Iterator end(Urho3D::PODVector<T>& v) { return v.End(); }
-
 }
 
 #ifdef _MSC_VER

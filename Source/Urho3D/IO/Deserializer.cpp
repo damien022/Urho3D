@@ -28,39 +28,27 @@
 
 namespace Urho3D
 {
-
 static const float invQ = 1.0f / 32767.0f;
 
-Deserializer::Deserializer() :
-    position_(0),
-    size_(0)
+Deserializer::Deserializer()
+    : position_(0)
+    , size_(0)
 {
 }
 
-Deserializer::Deserializer(unsigned size) :
-    position_(0),
-    size_(size)
+Deserializer::Deserializer(unsigned size)
+    : position_(0)
+    , size_(size)
 {
 }
 
-Deserializer::~Deserializer()
-{
-}
+Deserializer::~Deserializer() {}
 
-unsigned Deserializer::SeekRelative(int delta)
-{
-    return Seek(GetPosition() + delta);
-}
+unsigned Deserializer::SeekRelative(int delta) { return Seek(GetPosition() + delta); }
 
-const String& Deserializer::GetName() const
-{
-    return String::EMPTY;
-}
+const String& Deserializer::GetName() const { return String::EMPTY; }
 
-unsigned Deserializer::GetChecksum()
-{
-    return 0;
-}
+unsigned Deserializer::GetChecksum() { return 0; }
 
 long long Deserializer::ReadInt64()
 {
@@ -118,10 +106,7 @@ unsigned char Deserializer::ReadUByte()
     return ret;
 }
 
-bool Deserializer::ReadBool()
-{
-    return ReadUByte() != 0;
-}
+bool Deserializer::ReadBool() { return ReadUByte() != 0; }
 
 float Deserializer::ReadFloat()
 {
@@ -270,10 +255,7 @@ String Deserializer::ReadFileID()
     return ret;
 }
 
-StringHash Deserializer::ReadStringHash()
-{
-    return StringHash(ReadUInt());
-}
+StringHash Deserializer::ReadStringHash() { return StringHash(ReadUInt()); }
 
 PODVector<unsigned char> Deserializer::ReadBuffer()
 {
@@ -485,5 +467,4 @@ String Deserializer::ReadLine()
 
     return ret;
 }
-
 }

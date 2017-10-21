@@ -20,20 +20,19 @@
 // THE SOFTWARE.
 //
 
-#include "../IO/Log.h"
-#include "../Core/CoreEvents.h"
 #include "../Core/Tasks.h"
-
+#include "../Core/CoreEvents.h"
+#include "../IO/Log.h"
 
 #if defined(_CPPUNWIND) || defined(__cpp_exceptions)
-#   define URHO3D_TASKS_USE_EXCEPTIONS
+#define URHO3D_TASKS_USE_EXCEPTIONS
 #endif
 
 #ifdef _WIN32
-#   include <windows.h>
+#include <windows.h>
 #else
-#   include <ucontext.h>
-#   include <csetjmp>
+#include <csetjmp>
+#include <ucontext.h>
 
 // Windows fiber API implementation for unix operating systems.
 
@@ -41,16 +40,13 @@
 #define FIBER_FLAG_FLOAT_SWITCH 0
 #define WINAPI
 
-typedef void(*LPFIBER_START_ROUTINE)(void*);
+typedef void (*LPFIBER_START_ROUTINE)(void*);
 
 /// Internal fiber context data.
 struct FiberContext
 {
     /// Destruct.
-    ~FiberContext()
-    {
-        delete[] stack_;
-    }
+    ~FiberContext() { delete[] stack_; }
 
     /// Current fiber context, used for switching in mid of execution.
     jmp_buf currentContext_{};
@@ -62,7 +58,8 @@ struct FiberContext
 struct FiberStartContext
 {
     FiberContext* fiber_;
-    /// Initial fiber context, used for switching to a fiber very first time. It is responsible for setting newly allocated stack in a platform-independent way.
+    /// Initial fiber context, used for switching to a fiber very first time. It is responsible for setting newly
+    /// allocated stack in a platform-independent way.
     ucontext_t fiberContext_;
     /// Context for resuming from fiber execution first time.
     ucontext_t resumeContext_;
@@ -95,7 +92,7 @@ void _FiberSetup(void* p)
     }
     // SwitchToFiber() was just called, execute actual fiber.
     context.taskFunction_(context.taskParameter_);
-    assert(false);  // On windows returning from a fiber causes a thread to exit, therefore this should never be reached.
+    assert(false); // On windows returning from a fiber causes a thread to exit, therefore this should never be reached.
 }
 
 void* ConvertThreadToFiberEx(void* parameter, unsigned flags)
@@ -107,7 +104,7 @@ void* ConvertThreadToFiberEx(void* parameter, unsigned flags)
     return threadFiberContext_.mainThreadFiber_;
 }
 
-void* CreateFiberEx(unsigned stackSize, unsigned _, unsigned flags, void(*startAddress)(void*), void* parameter)
+void* CreateFiberEx(unsigned stackSize, unsigned _, unsigned flags, void (*startAddress)(void*), void* parameter)
 {
     (void)(_);
     (void)(flags);
@@ -122,7 +119,8 @@ void* CreateFiberEx(unsigned stackSize, unsigned _, unsigned flags, void(*startA
     startContext.fiberContext_.uc_stack.ss_sp = startContext.fiber_->stack_;
     startContext.fiberContext_.uc_link = nullptr;
     makecontext(&startContext.fiberContext_, reinterpret_cast<void (*)()>(_FiberSetup), 1, &startContext);
-    // Immediately switch to a fiber. Fiber will not execute just yet, but it will set up state for SwitchToFiber() to work.
+    // Immediately switch to a fiber. Fiber will not execute just yet, but it will set up state for SwitchToFiber() to
+    // work.
     swapcontext(&startContext.resumeContext_, &startContext.fiberContext_);
     return startContext.fiber_;
 }
@@ -151,7 +149,6 @@ void DeleteFiber(void* fiber)
 
 namespace Urho3D
 {
-
 thread_local struct
 {
     /// Thread fiber, used to store context of thread so fibers can resume execution to it.
@@ -160,8 +157,11 @@ thread_local struct
     Task* currentTask_ = nullptr;
 } taskData_;
 
-/// Exception which causes task termination. Intentionally does not inherit std::exception to prevent user catching termination request.
-class TerminateTaskException { };
+/// Exception which causes task termination. Intentionally does not inherit std::exception to prevent user catching
+/// termination request.
+class TerminateTaskException
+{
+};
 
 Task::~Task()
 {
@@ -179,10 +179,7 @@ bool Task::IsReady()
     return true;
 }
 
-void Task::ExecuteTaskWrapper(void* parameter)
-{
-    static_cast<Task*>(parameter)->ExecuteTask();
-}
+void Task::ExecuteTaskWrapper(void* parameter) { static_cast<Task*>(parameter)->ExecuteTask(); }
 
 void Task::ExecuteTask()
 {
@@ -256,10 +253,12 @@ Task::Task(const std::function<void()>& taskFunction, unsigned int stackSize)
     taskProc_ = taskFunction;
     // On x86 Windows ExecuteTaskWrapper should be stdcall, but is cdecl instead. Invalid calling convention is not a
     // problem because ExecuteTaskWrapper never returns. This saves us exposing platform quirks in the header.
-    fiber_ = CreateFiberEx(stackSize, stackSize, FIBER_FLAG_FLOAT_SWITCH, (LPFIBER_START_ROUTINE)&ExecuteTaskWrapper, this);
+    fiber_ =
+        CreateFiberEx(stackSize, stackSize, FIBER_FLAG_FLOAT_SWITCH, (LPFIBER_START_ROUTINE)&ExecuteTaskWrapper, this);
 }
 
-TaskScheduler::TaskScheduler(Context* context) : Object(context)
+TaskScheduler::TaskScheduler(Context* context)
+    : Object(context)
 {
     // Initialize task for current thread.
     Task::GetThreadTask();
@@ -295,10 +294,7 @@ void TaskScheduler::ExecuteTasks()
     }
 }
 
-unsigned TaskScheduler::GetActiveTaskCount() const
-{
-    return tasks_.Size();
-}
+unsigned TaskScheduler::GetActiveTaskCount() const { return tasks_.Size(); }
 
 void TaskScheduler::ExecuteAllTasks()
 {
@@ -310,12 +306,10 @@ void TaskScheduler::ExecuteAllTasks()
     }
 }
 
-void SuspendTask(float time)
-{
-    taskData_.currentTask_->Suspend(time);
-}
+void SuspendTask(float time) { taskData_.currentTask_->Suspend(time); }
 
-Tasks::Tasks(Context* context) : Object(context)
+Tasks::Tasks(Context* context)
+    : Object(context)
 {
 }
 
@@ -348,9 +342,8 @@ void Tasks::ExecuteTasks(StringHash eventType)
 unsigned Tasks::GetActiveTaskCount() const
 {
     unsigned activeTasks = 0;
-    for (const auto& scheduler: taskSchedulers_)
+    for (const auto& scheduler : taskSchedulers_)
         activeTasks += scheduler.second_->GetActiveTaskCount();
     return activeTasks;
 }
-
 }

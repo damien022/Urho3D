@@ -33,19 +33,8 @@
 
 namespace Urho3D
 {
-
-const char* ShaderVariation::elementSemanticNames[] =
-{
-    "POS",
-    "NORMAL",
-    "BINORMAL",
-    "TANGENT",
-    "TEXCOORD",
-    "COLOR",
-    "BLENDWEIGHT",
-    "BLENDINDICES",
-    "OBJECTINDEX"
-};
+const char* ShaderVariation::elementSemanticNames[] = {"POS",   "NORMAL",      "BINORMAL",     "TANGENT",    "TEXCOORD",
+                                                       "COLOR", "BLENDWEIGHT", "BLENDINDICES", "OBJECTINDEX"};
 
 void ShaderVariation::OnDeviceLost()
 {
@@ -187,9 +176,5 @@ bool ShaderVariation::Create()
     return object_.name_ != 0;
 }
 
-void ShaderVariation::SetDefines(const String& defines)
-{
-    defines_ = defines;
-}
-
+void ShaderVariation::SetDefines(const String& defines) { defines_ = defines; }
 }

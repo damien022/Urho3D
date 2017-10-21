@@ -24,13 +24,12 @@
 
 #include "../Container/Vector.h"
 
+#include <cctype>
 #include <cstdarg>
 #include <cstring>
-#include <cctype>
 
 namespace Urho3D
 {
-
 static const int CONVERSION_BUFFER_LENGTH = 128;
 static const int MATRIX_CONVERSION_BUFFER_LENGTH = 256;
 
@@ -44,64 +43,64 @@ public:
     using ConstIterator = RandomAccessConstIterator<char>;
 
     /// Construct empty.
-    String() :
-        length_(0),
-        capacity_(0),
-        buffer_(&endZero)
+    String()
+        : length_(0)
+        , capacity_(0)
+        , buffer_(&endZero)
     {
     }
 
     /// Construct from another string.
-    String(const String& str) :
-        length_(0),
-        capacity_(0),
-        buffer_(&endZero)
+    String(const String& str)
+        : length_(0)
+        , capacity_(0)
+        , buffer_(&endZero)
     {
         *this = str;
     }
 
     /// Construct from a C string.
-    String(const char* str) :
-        length_(0),
-        capacity_(0),
-        buffer_(&endZero)
+    String(const char* str)
+        : length_(0)
+        , capacity_(0)
+        , buffer_(&endZero)
     {
         *this = str;
     }
 
     /// Construct from a C string.
-    String(char* str) :
-        length_(0),
-        capacity_(0),
-        buffer_(&endZero)
+    String(char* str)
+        : length_(0)
+        , capacity_(0)
+        , buffer_(&endZero)
     {
         *this = (const char*)str;
     }
 
     /// Construct from a char array and length.
-    String(const char* str, unsigned length) :
-        length_(0),
-        capacity_(0),
-        buffer_(&endZero)
+    String(const char* str, unsigned length)
+        : length_(0)
+        , capacity_(0)
+        , buffer_(&endZero)
     {
         Resize(length);
         CopyChars(buffer_, str, length);
     }
 
     /// Construct from a null-terminated wide character array.
-    String(const wchar_t* str) :
-        length_(0),
-        capacity_(0),
-        buffer_(&endZero)
+    String(const wchar_t* str)
+        : length_(0)
+        , capacity_(0)
+        , buffer_(&endZero)
     {
         SetUTF8FromWChar(str);
     }
 
     /// Construct from a null-terminated wide character array.
-    String(wchar_t* str) :
-        length_(0),
-        capacity_(0),
-        buffer_(&endZero)
+    String(wchar_t* str)
+        : length_(0)
+        , capacity_(0)
+        , buffer_(&endZero)
     {
         SetUTF8FromWChar(str);
     }
@@ -137,10 +136,11 @@ public:
     explicit String(char value, unsigned length);
 
     /// Construct from a convertable value.
-    template <class T> explicit String(const T& value) :
-        length_(0),
-        capacity_(0),
-        buffer_(&endZero)
+    template <class T>
+    explicit String(const T& value)
+        : length_(0)
+        , capacity_(0)
+        , buffer_(&endZero)
     {
         *this = value.ToString();
     }
@@ -153,7 +153,7 @@ public:
     }
 
     /// Assign a string.
-    String& operator =(const String& rhs)
+    String& operator=(const String& rhs)
     {
         Resize(rhs.length_);
         CopyChars(buffer_, rhs.buffer_, rhs.length_);
@@ -162,7 +162,7 @@ public:
     }
 
     /// Assign a C string.
-    String& operator =(const char* rhs)
+    String& operator=(const char* rhs)
     {
         unsigned rhsLength = CStringLength(rhs);
         Resize(rhsLength);
@@ -172,7 +172,7 @@ public:
     }
 
     /// Add-assign a string.
-    String& operator +=(const String& rhs)
+    String& operator+=(const String& rhs)
     {
         unsigned oldLength = length_;
         Resize(length_ + rhs.length_);
@@ -182,7 +182,7 @@ public:
     }
 
     /// Add-assign a C string.
-    String& operator +=(const char* rhs)
+    String& operator+=(const char* rhs)
     {
         unsigned rhsLength = CStringLength(rhs);
         unsigned oldLength = length_;
@@ -193,7 +193,7 @@ public:
     }
 
     /// Add-assign a character.
-    String& operator +=(char rhs)
+    String& operator+=(char rhs)
     {
         unsigned oldLength = length_;
         Resize(length_ + 1);
@@ -203,31 +203,31 @@ public:
     }
 
     /// Add-assign (concatenate as string) an integer.
-    String& operator +=(int rhs);
+    String& operator+=(int rhs);
     /// Add-assign (concatenate as string) a short integer.
-    String& operator +=(short rhs);
+    String& operator+=(short rhs);
     /// Add-assign (concatenate as string) a long integer.
-    String& operator +=(long rhs);
+    String& operator+=(long rhs);
     /// Add-assign (concatenate as string) a long long integer.
-    String& operator +=(long long rhs);
+    String& operator+=(long long rhs);
     /// Add-assign (concatenate as string) an unsigned integer.
-    String& operator +=(unsigned rhs);
+    String& operator+=(unsigned rhs);
     /// Add-assign (concatenate as string) a short unsigned integer.
-    String& operator +=(unsigned short rhs);
+    String& operator+=(unsigned short rhs);
     /// Add-assign (concatenate as string) a long unsigned integer.
-    String& operator +=(unsigned long rhs);
+    String& operator+=(unsigned long rhs);
     /// Add-assign (concatenate as string) a long long unsigned integer.
-    String& operator +=(unsigned long long rhs);
+    String& operator+=(unsigned long long rhs);
     /// Add-assign (concatenate as string) a float.
-    String& operator +=(float rhs);
+    String& operator+=(float rhs);
     /// Add-assign (concatenate as string) a bool.
-    String& operator +=(bool rhs);
+    String& operator+=(bool rhs);
 
     /// Add-assign (concatenate as string) an arbitrary type.
-    template <class T> String operator +=(const T& rhs) { return *this += rhs.ToString(); }
+    template <class T> String operator+=(const T& rhs) { return *this += rhs.ToString(); }
 
     /// Add a string.
-    String operator +(const String& rhs) const
+    String operator+(const String& rhs) const
     {
         String ret;
         ret.Resize(length_ + rhs.length_);
@@ -238,7 +238,7 @@ public:
     }
 
     /// Add a C string.
-    String operator +(const char* rhs) const
+    String operator+(const char* rhs) const
     {
         unsigned rhsLength = CStringLength(rhs);
         String ret;
@@ -250,38 +250,38 @@ public:
     }
 
     /// Test for equality with another string.
-    bool operator ==(const String& rhs) const { return strcmp(CString(), rhs.CString()) == 0; }
+    bool operator==(const String& rhs) const { return strcmp(CString(), rhs.CString()) == 0; }
 
     /// Test for inequality with another string.
-    bool operator !=(const String& rhs) const { return strcmp(CString(), rhs.CString()) != 0; }
+    bool operator!=(const String& rhs) const { return strcmp(CString(), rhs.CString()) != 0; }
 
     /// Test if string is less than another string.
-    bool operator <(const String& rhs) const { return strcmp(CString(), rhs.CString()) < 0; }
+    bool operator<(const String& rhs) const { return strcmp(CString(), rhs.CString()) < 0; }
 
     /// Test if string is greater than another string.
-    bool operator >(const String& rhs) const { return strcmp(CString(), rhs.CString()) > 0; }
+    bool operator>(const String& rhs) const { return strcmp(CString(), rhs.CString()) > 0; }
 
     /// Test for equality with a C string.
-    bool operator ==(const char* rhs) const { return strcmp(CString(), rhs) == 0; }
+    bool operator==(const char* rhs) const { return strcmp(CString(), rhs) == 0; }
 
     /// Test for inequality with a C string.
-    bool operator !=(const char* rhs) const { return strcmp(CString(), rhs) != 0; }
+    bool operator!=(const char* rhs) const { return strcmp(CString(), rhs) != 0; }
 
     /// Test if string is less than a C string.
-    bool operator <(const char* rhs) const { return strcmp(CString(), rhs) < 0; }
+    bool operator<(const char* rhs) const { return strcmp(CString(), rhs) < 0; }
 
     /// Test if string is greater than a C string.
-    bool operator >(const char* rhs) const { return strcmp(CString(), rhs) > 0; }
+    bool operator>(const char* rhs) const { return strcmp(CString(), rhs) > 0; }
 
     /// Return char at index.
-    char& operator [](unsigned index)
+    char& operator[](unsigned index)
     {
         assert(index < length_);
         return buffer_[index];
     }
 
     /// Return const char at index.
-    const char& operator [](unsigned index) const
+    const char& operator[](unsigned index) const
     {
         assert(index < length_);
         return buffer_[index];
@@ -526,7 +526,7 @@ private:
 };
 
 /// Add a string to a C string.
-inline String operator +(const char* lhs, const String& rhs)
+inline String operator+(const char* lhs, const String& rhs)
 {
     String ret(lhs);
     ret += rhs;
@@ -534,7 +534,7 @@ inline String operator +(const char* lhs, const String& rhs)
 }
 
 /// Add a string to a wide char C string.
-inline String operator +(const wchar_t* lhs, const String& rhs)
+inline String operator+(const wchar_t* lhs, const String& rhs)
 {
     String ret(lhs);
     ret += rhs;
@@ -553,14 +553,14 @@ public:
     ~WString();
 
     /// Return char at index.
-    wchar_t& operator [](unsigned index)
+    wchar_t& operator[](unsigned index)
     {
         assert(index < length_);
         return buffer_[index];
     }
 
     /// Return const char at index.
-    const wchar_t& operator [](unsigned index) const
+    const wchar_t& operator[](unsigned index) const
     {
         assert(index < length_);
         return buffer_[index];
@@ -598,5 +598,4 @@ private:
     /// String buffer, null if not allocated.
     wchar_t* buffer_;
 };
-
 }

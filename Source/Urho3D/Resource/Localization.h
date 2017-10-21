@@ -27,7 +27,6 @@
 
 namespace Urho3D
 {
-
 /// %Localization subsystem. Stores all the strings in all languages.
 class URHO3D_API Localization : public Object
 {
@@ -55,7 +54,8 @@ public:
     void SetLanguage(int index);
     /// Set current language.
     void SetLanguage(const String& language);
-    /// Return a string in the current language. Returns String::EMPTY if id is empty. Returns id if translation is not found and logs a warning.
+    /// Return a string in the current language. Returns String::EMPTY if id is empty. Returns id if translation is not
+    /// found and logs a warning.
     String Get(const String& id);
     /// Clear all loaded strings.
     void Reset();
@@ -70,7 +70,6 @@ private:
     /// Index of current language.
     int languageIndex_;
     /// Storage strings: <Language <StringId, Value> >.
-    HashMap<StringHash, HashMap<StringHash, String> > strings_;
+    HashMap<StringHash, HashMap<StringHash, String>> strings_;
 };
-
 }

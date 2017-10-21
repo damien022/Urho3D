@@ -28,7 +28,6 @@
 
 namespace Urho3D
 {
-
 void SinCos(float angle, float& sin, float& cos)
 {
     float angleRadians = angle * M_DEGTORAD;
@@ -41,5 +40,4 @@ void SinCos(float angle, float& sin, float& cos)
     cos = cosf(angleRadians);
 #endif
 }
-
 }

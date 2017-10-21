@@ -31,28 +31,26 @@
 
 namespace Urho3D
 {
-
 extern const char* URHO2D_CATEGORY;
 
-ConstraintRope2D::ConstraintRope2D(Context* context) :
-    Constraint2D(context),
-    ownerBodyAnchor_(Vector2::ZERO),
-    otherBodyAnchor_(Vector2::ZERO)
-{
-
-}
-
-ConstraintRope2D::~ConstraintRope2D()
+ConstraintRope2D::ConstraintRope2D(Context* context)
+    : Constraint2D(context)
+    , ownerBodyAnchor_(Vector2::ZERO)
+    , otherBodyAnchor_(Vector2::ZERO)
 {
 }
+
+ConstraintRope2D::~ConstraintRope2D() {}
 
 void ConstraintRope2D::RegisterObject(Context* context)
 {
     context->RegisterFactory<ConstraintRope2D>(URHO2D_CATEGORY);
 
     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Owner Body Anchor", GetOwnerBodyAnchor, SetOwnerBodyAnchor, Vector2, Vector2::ZERO, AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Other Body Anchor", GetOtherBodyAnchor, SetOtherBodyAnchor, Vector2, Vector2::ZERO, AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Owner Body Anchor", GetOwnerBodyAnchor, SetOwnerBodyAnchor, Vector2, Vector2::ZERO,
+                              AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Other Body Anchor", GetOtherBodyAnchor, SetOtherBodyAnchor, Vector2, Vector2::ZERO,
+                              AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Max Length", GetMaxLength, SetMaxLength, float, 0.0f, AM_DEFAULT);
     URHO3D_COPY_BASE_ATTRIBUTES(Constraint2D);
 }
@@ -111,5 +109,4 @@ b2JointDef* ConstraintRope2D::GetJointDef()
 
     return &jointDef_;
 }
-
 }

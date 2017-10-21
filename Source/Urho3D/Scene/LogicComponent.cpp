@@ -32,39 +32,25 @@
 
 namespace Urho3D
 {
-
-LogicComponent::LogicComponent(Context* context) :
-    Component(context),
-    updateEventMask_(USE_UPDATE | USE_POSTUPDATE | USE_FIXEDUPDATE | USE_FIXEDPOSTUPDATE),
-    currentEventMask_(0),
-    delayedStartCalled_(false)
+LogicComponent::LogicComponent(Context* context)
+    : Component(context)
+    , updateEventMask_(USE_UPDATE | USE_POSTUPDATE | USE_FIXEDUPDATE | USE_FIXEDPOSTUPDATE)
+    , currentEventMask_(0)
+    , delayedStartCalled_(false)
 {
 }
 
-LogicComponent::~LogicComponent()
-{
-}
+LogicComponent::~LogicComponent() {}
 
-void LogicComponent::OnSetEnabled()
-{
-    UpdateEventSubscription();
-}
+void LogicComponent::OnSetEnabled() { UpdateEventSubscription(); }
 
-void LogicComponent::Update(float timeStep)
-{
-}
+void LogicComponent::Update(float timeStep) {}
 
-void LogicComponent::PostUpdate(float timeStep)
-{
-}
+void LogicComponent::PostUpdate(float timeStep) {}
 
-void LogicComponent::FixedUpdate(float timeStep)
-{
-}
+void LogicComponent::FixedUpdate(float timeStep) {}
 
-void LogicComponent::FixedPostUpdate(float timeStep)
-{
-}
+void LogicComponent::FixedPostUpdate(float timeStep) {}
 
 void LogicComponent::SetUpdateEventMask(unsigned char mask)
 {
@@ -225,5 +211,4 @@ void LogicComponent::HandlePhysicsPostStep(StringHash eventType, VariantMap& eve
 }
 
 #endif
-
 }

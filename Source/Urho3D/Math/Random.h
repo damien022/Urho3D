@@ -30,7 +30,6 @@
 
 namespace Urho3D
 {
-
 /// Set the random seed. The default seed is 1.
 URHO3D_API void SetRandomSeed(unsigned seed);
 /// Return the current random seed.
@@ -39,5 +38,4 @@ URHO3D_API unsigned GetRandomSeed();
 URHO3D_API int Rand();
 /// Return a standard normal distributed number.
 URHO3D_API float RandStandardNormal();
-
 }

@@ -28,10 +28,5 @@
 
 namespace Urho3D
 {
-
-unsigned char* VectorBase::AllocateBuffer(unsigned size)
-{
-    return new unsigned char[size];
-}
-
+unsigned char* VectorBase::AllocateBuffer(unsigned size) { return new unsigned char[size]; }
 }

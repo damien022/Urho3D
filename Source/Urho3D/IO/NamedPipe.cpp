@@ -23,15 +23,15 @@
 #include "../Precompiled.h"
 
 #include "../Core/Profiler.h"
-#include "../IO/NamedPipe.h"
 #include "../IO/Log.h"
+#include "../IO/NamedPipe.h"
 
 #ifdef _WIN32
 #include <windows.h>
 #else
 #include <fcntl.h>
-#include <sys/stat.h>
 #include <signal.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #endif
 
@@ -39,43 +39,38 @@
 
 namespace Urho3D
 {
-
 static const unsigned PIPE_BUFFER_SIZE = 65536;
 
-NamedPipe::NamedPipe(Context* context) :
-    Object(context),
-    isServer_(false),
+NamedPipe::NamedPipe(Context* context)
+    : Object(context)
+    , isServer_(false)
+    ,
 #ifdef _WIN32
     handle_(INVALID_HANDLE_VALUE)
 #else
-    readHandle_(-1),
-    writeHandle_(-1)
+    readHandle_(-1)
+    , writeHandle_(-1)
 #endif
 {
 }
 
-NamedPipe::NamedPipe(Context* context, const String& pipeName, bool isServer) :
-    Object(context),
-    isServer_(false),
+NamedPipe::NamedPipe(Context* context, const String& pipeName, bool isServer)
+    : Object(context)
+    , isServer_(false)
+    ,
 #ifdef _WIN32
     handle_(INVALID_HANDLE_VALUE)
 #else
-    readHandle_(-1),
-    writeHandle_(-1)
+    readHandle_(-1)
+    , writeHandle_(-1)
 #endif
 {
     Open(pipeName, isServer);
 }
 
-NamedPipe::~NamedPipe()
-{
-    Close();
-}
+NamedPipe::~NamedPipe() { Close(); }
 
-unsigned NamedPipe::Seek(unsigned position)
-{
-    return 0;
-}
+unsigned NamedPipe::Seek(unsigned position) { return 0; }
 
 #ifdef _WIN32
 
@@ -91,15 +86,9 @@ bool NamedPipe::Open(const String& pipeName, bool isServer)
 
     if (isServer)
     {
-        handle_ = CreateNamedPipeW(WString(pipePath + pipeName).CString(),
-            PIPE_ACCESS_DUPLEX,
-            PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_NOWAIT,
-            1,
-            PIPE_BUFFER_SIZE,
-            PIPE_BUFFER_SIZE,
-            0,
-            nullptr
-        );
+        handle_ = CreateNamedPipeW(WString(pipePath + pipeName).CString(), PIPE_ACCESS_DUPLEX,
+                                   PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_NOWAIT, 1, PIPE_BUFFER_SIZE,
+                                   PIPE_BUFFER_SIZE, 0, nullptr);
 
         if (handle_ == INVALID_HANDLE_VALUE)
         {
@@ -116,15 +105,8 @@ bool NamedPipe::Open(const String& pipeName, bool isServer)
     }
     else
     {
-        handle_ = CreateFileW(
-            WString(pipePath + pipeName).CString(),
-            GENERIC_READ | GENERIC_WRITE,
-            0,
-            nullptr,
-            OPEN_EXISTING,
-            0,
-            nullptr
-        );
+        handle_ = CreateFileW(WString(pipePath + pipeName).CString(), GENERIC_READ | GENERIC_WRITE, 0, nullptr,
+                              OPEN_EXISTING, 0, nullptr);
 
         if (handle_ == INVALID_HANDLE_VALUE)
         {
@@ -184,10 +166,7 @@ void NamedPipe::Close()
     }
 }
 
-bool NamedPipe::IsOpen() const
-{
-    return handle_ != INVALID_HANDLE_VALUE;
-}
+bool NamedPipe::IsOpen() const { return handle_ != INVALID_HANDLE_VALUE; }
 
 bool NamedPipe::IsEof() const
 {
@@ -205,7 +184,12 @@ bool NamedPipe::IsEof() const
 
 static const String pipePath("/tmp/");
 
-#define SAFE_CLOSE(handle) if (handle != -1) { close(handle); handle = -1; }
+#define SAFE_CLOSE(handle)                                                                                             \
+    if (handle != -1)                                                                                                  \
+    {                                                                                                                  \
+        close(handle);                                                                                                 \
+        handle = -1;                                                                                                   \
+    }
 
 bool NamedPipe::Open(const String& pipeName, bool isServer)
 {
@@ -341,10 +325,7 @@ void NamedPipe::Close()
     }
 }
 
-bool NamedPipe::IsOpen() const
-{
-    return readHandle_ != -1 || writeHandle_ != -1;
-}
+bool NamedPipe::IsOpen() const { return readHandle_ != -1 || writeHandle_ != -1; }
 
 bool NamedPipe::IsEof() const
 {
@@ -377,5 +358,4 @@ bool NamedPipe::IsEof() const
 #endif
 }
 #endif
-
 }

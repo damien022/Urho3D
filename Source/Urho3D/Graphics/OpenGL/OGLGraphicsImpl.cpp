@@ -29,25 +29,23 @@
 
 namespace Urho3D
 {
-
-GraphicsImpl::GraphicsImpl() :
-    context_(nullptr),
-    systemFBO_(0),
-    activeTexture_(0),
-    enabledVertexAttributes_(0),
-    usedVertexAttributes_(0),
-    instancingVertexAttributes_(0),
-    vertexAttributes_(nullptr),
-    boundFBO_(0),
-    boundVBO_(0),
-    boundUBO_(0),
-    resolveSrcFBO_(0),
-    resolveDestFBO_(0),
-    pixelFormat_(0),
-    fboDirty_(false),
-    vertexBuffersDirty_(false),
-    shaderProgram_(nullptr)
+GraphicsImpl::GraphicsImpl()
+    : context_(nullptr)
+    , systemFBO_(0)
+    , activeTexture_(0)
+    , enabledVertexAttributes_(0)
+    , usedVertexAttributes_(0)
+    , instancingVertexAttributes_(0)
+    , vertexAttributes_(nullptr)
+    , boundFBO_(0)
+    , boundVBO_(0)
+    , boundUBO_(0)
+    , resolveSrcFBO_(0)
+    , resolveDestFBO_(0)
+    , pixelFormat_(0)
+    , fboDirty_(false)
+    , vertexBuffersDirty_(false)
+    , shaderProgram_(nullptr)
 {
 }
-
 }

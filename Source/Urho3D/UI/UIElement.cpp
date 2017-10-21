@@ -22,10 +22,10 @@
 
 #include "../Precompiled.h"
 
-#include "../Core/Context.h"
-#include "../Core/CoreEvents.h"
 #include "../Container/HashSet.h"
 #include "../Container/Sort.h"
+#include "../Core/Context.h"
+#include "../Core/CoreEvents.h"
 #include "../IO/Log.h"
 #include "../Resource/ResourceCache.h"
 #include "../Scene/ObjectAnimation.h"
@@ -38,50 +38,15 @@
 
 namespace Urho3D
 {
+const char* horizontalAlignments[] = {"Left", "Center", "Right", "Custom", nullptr};
 
-const char* horizontalAlignments[] =
-{
-    "Left",
-    "Center",
-    "Right",
-    "Custom",
-    nullptr
-};
+const char* verticalAlignments[] = {"Top", "Center", "Bottom", "Custom", nullptr};
 
-const char* verticalAlignments[] =
-{
-    "Top",
-    "Center",
-    "Bottom",
-    "Custom",
-    nullptr
-};
+static const char* focusModes[] = {"NotFocusable", "ResetFocus", "Focusable", "FocusableDefocusable", nullptr};
 
-static const char* focusModes[] =
-{
-    "NotFocusable",
-    "ResetFocus",
-    "Focusable",
-    "FocusableDefocusable",
-    nullptr
-};
+static const char* dragDropModes[] = {"Disabled", "Source", "Target", "SourceAndTarget", nullptr};
 
-static const char* dragDropModes[] =
-{
-    "Disabled",
-    "Source",
-    "Target",
-    "SourceAndTarget",
-    nullptr
-};
-
-static const char* layoutModes[] =
-{
-    "Free",
-    "Horizontal",
-    "Vertical",
-    nullptr
-};
+static const char* layoutModes[] = {"Free", "Horizontal", "Vertical", nullptr};
 
 extern const char* UI_CATEGORY;
 
@@ -92,54 +57,54 @@ static bool CompareUIElements(const UIElement* lhs, const UIElement* rhs)
 
 XPathQuery UIElement::styleXPathQuery_("/elements/element[@type=$typeName]", "typeName:String");
 
-UIElement::UIElement(Context* context) :
-    Animatable(context),
-    parent_(nullptr),
-    clipBorder_(IntRect::ZERO),
-    priority_(0),
-    bringToFront_(false),
-    bringToBack_(true),
-    clipChildren_(false),
-    sortChildren_(true),
-    useDerivedOpacity_(true),
-    editable_(true),
-    selected_(false),
-    visible_(true),
-    hovering_(false),
-    internal_(false),
-    focusMode_(FM_NOTFOCUSABLE),
-    dragDropMode_(DD_DISABLED),
-    layoutMode_(LM_FREE),
-    layoutSpacing_(0),
-    layoutBorder_(IntRect::ZERO),
-    layoutFlexScale_(Vector2::ONE),
-    resizeNestingLevel_(0),
-    layoutNestingLevel_(0),
-    layoutElementMaxSize_(0),
-    indent_(0),
-    indentSpacing_(16),
-    position_(IntVector2::ZERO),
-    positionDirty_(true),
-    dragButtonCombo_(0),
-    dragButtonCount_(0),
-    size_(IntVector2::ZERO),
-    minSize_(IntVector2::ZERO),
-    maxSize_(M_MAX_INT, M_MAX_INT),
-    childOffset_(IntVector2::ZERO),
-    opacity_(1.0f),
-    opacityDirty_(true),
-    derivedColorDirty_(true),
-    sortOrderDirty_(false),
-    colorGradient_(false),
-    traversalMode_(TM_BREADTH_FIRST),
-    elementEventSender_(false),
-    anchorMin_(Vector2::ZERO),
-    anchorMax_(Vector2::ZERO),
-    minOffset_(IntVector2::ZERO),
-    maxOffset_(IntVector2::ZERO),
-    enableAnchor_(false),
-    pivot_(std::numeric_limits<float>::max(), std::numeric_limits<float>::max()),
-    pivotSet_(false)
+UIElement::UIElement(Context* context)
+    : Animatable(context)
+    , parent_(nullptr)
+    , clipBorder_(IntRect::ZERO)
+    , priority_(0)
+    , bringToFront_(false)
+    , bringToBack_(true)
+    , clipChildren_(false)
+    , sortChildren_(true)
+    , useDerivedOpacity_(true)
+    , editable_(true)
+    , selected_(false)
+    , visible_(true)
+    , hovering_(false)
+    , internal_(false)
+    , focusMode_(FM_NOTFOCUSABLE)
+    , dragDropMode_(DD_DISABLED)
+    , layoutMode_(LM_FREE)
+    , layoutSpacing_(0)
+    , layoutBorder_(IntRect::ZERO)
+    , layoutFlexScale_(Vector2::ONE)
+    , resizeNestingLevel_(0)
+    , layoutNestingLevel_(0)
+    , layoutElementMaxSize_(0)
+    , indent_(0)
+    , indentSpacing_(16)
+    , position_(IntVector2::ZERO)
+    , positionDirty_(true)
+    , dragButtonCombo_(0)
+    , dragButtonCount_(0)
+    , size_(IntVector2::ZERO)
+    , minSize_(IntVector2::ZERO)
+    , maxSize_(M_MAX_INT, M_MAX_INT)
+    , childOffset_(IntVector2::ZERO)
+    , opacity_(1.0f)
+    , opacityDirty_(true)
+    , derivedColorDirty_(true)
+    , sortOrderDirty_(false)
+    , colorGradient_(false)
+    , traversalMode_(TM_BREADTH_FIRST)
+    , elementEventSender_(false)
+    , anchorMin_(Vector2::ZERO)
+    , anchorMax_(Vector2::ZERO)
+    , minOffset_(IntVector2::ZERO)
+    , maxOffset_(IntVector2::ZERO)
+    , enableAnchor_(false)
+    , pivot_(std::numeric_limits<float>::max(), std::numeric_limits<float>::max())
+    , pivotSet_(false)
 {
     SetEnabled(false);
 }
@@ -147,7 +112,7 @@ UIElement::UIElement(Context* context) :
 UIElement::~UIElement()
 {
     // If child elements have outside references, detach them
-    for (Vector<SharedPtr<UIElement> >::Iterator i = children_.Begin(); i < children_.End(); ++i)
+    for (Vector<SharedPtr<UIElement>>::Iterator i = children_.Begin(); i < children_.End(); ++i)
     {
         if (i->Refs() > 1)
             (*i)->Detach();
@@ -162,16 +127,18 @@ void UIElement::RegisterObject(Context* context)
     URHO3D_ACCESSOR_ATTRIBUTE("Position", GetPosition, SetPosition, IntVector2, IntVector2::ZERO, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Size", GetSize, SetSize, IntVector2, IntVector2::ZERO, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Min Size", GetMinSize, SetMinSize, IntVector2, IntVector2::ZERO, AM_FILE);
-    URHO3D_ACCESSOR_ATTRIBUTE("Max Size", GetMaxSize, SetMaxSize, IntVector2, IntVector2(M_MAX_INT, M_MAX_INT), AM_FILE);
-    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Horiz Alignment", GetHorizontalAlignment, SetHorizontalAlignment, HorizontalAlignment,
-        horizontalAlignments, HA_LEFT, AM_FILEREADONLY);
-    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Vert Alignment", GetVerticalAlignment, SetVerticalAlignment, VerticalAlignment, verticalAlignments,
-        VA_TOP, AM_FILEREADONLY);
+    URHO3D_ACCESSOR_ATTRIBUTE("Max Size", GetMaxSize, SetMaxSize, IntVector2, IntVector2(M_MAX_INT, M_MAX_INT),
+                              AM_FILE);
+    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Horiz Alignment", GetHorizontalAlignment, SetHorizontalAlignment,
+                                   HorizontalAlignment, horizontalAlignments, HA_LEFT, AM_FILEREADONLY);
+    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Vert Alignment", GetVerticalAlignment, SetVerticalAlignment, VerticalAlignment,
+                                   verticalAlignments, VA_TOP, AM_FILEREADONLY);
     URHO3D_ACCESSOR_ATTRIBUTE("Min Anchor", GetMinAnchor, SetMinAnchor, Vector2, Vector2::ZERO, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Max Anchor", GetMaxAnchor, SetMaxAnchor, Vector2, Vector2::ZERO, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Min Offset", GetMinOffset, SetMinOffset, IntVector2, IntVector2::ZERO, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Max Offset", GetMaxOffset, SetMaxOffset, IntVector2, IntVector2::ZERO, AM_FILE);
-    URHO3D_ACCESSOR_ATTRIBUTE("Pivot", GetPivot, SetPivot, Vector2, Vector2(std::numeric_limits<float>::max(), std::numeric_limits<float>::max()), AM_FILE);
+    URHO3D_ACCESSOR_ATTRIBUTE("Pivot", GetPivot, SetPivot, Vector2,
+                              Vector2(std::numeric_limits<float>::max(), std::numeric_limits<float>::max()), AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Enable Anchor", GetEnableAnchor, SetEnableAnchor, bool, false, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Clip Border", GetClipBorder, SetClipBorder, IntRect, IntRect::ZERO, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Priority", GetPriority, SetPriority, int, 0, AM_FILE);
@@ -189,12 +156,16 @@ void UIElement::RegisterObject(Context* context)
     URHO3D_ACCESSOR_ATTRIBUTE("Bring To Back", GetBringToBack, SetBringToBack, bool, true, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Clip Children", GetClipChildren, SetClipChildren, bool, false, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Use Derived Opacity", GetUseDerivedOpacity, SetUseDerivedOpacity, bool, true, AM_FILE);
-    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Focus Mode", GetFocusMode, SetFocusMode, FocusMode, focusModes, FM_NOTFOCUSABLE, AM_FILE);
-    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Drag And Drop Mode", GetDragDropMode, SetDragDropMode, unsigned, dragDropModes, DD_DISABLED, AM_FILE);
-    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Layout Mode", GetLayoutMode, SetLayoutMode, LayoutMode, layoutModes, LM_FREE, AM_FILE);
+    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Focus Mode", GetFocusMode, SetFocusMode, FocusMode, focusModes, FM_NOTFOCUSABLE,
+                                   AM_FILE);
+    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Drag And Drop Mode", GetDragDropMode, SetDragDropMode, unsigned, dragDropModes,
+                                   DD_DISABLED, AM_FILE);
+    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Layout Mode", GetLayoutMode, SetLayoutMode, LayoutMode, layoutModes, LM_FREE,
+                                   AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Layout Spacing", GetLayoutSpacing, SetLayoutSpacing, int, 0, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Layout Border", GetLayoutBorder, SetLayoutBorder, IntRect, IntRect::ZERO, AM_FILE);
-    URHO3D_ACCESSOR_ATTRIBUTE("Layout Flex Scale", GetLayoutFlexScale, SetLayoutFlexScale, Vector2, Vector2::ONE, AM_FILE);
+    URHO3D_ACCESSOR_ATTRIBUTE("Layout Flex Scale", GetLayoutFlexScale, SetLayoutFlexScale, Vector2, Vector2::ONE,
+                              AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Indent", GetIndent, SetIndent, int, 0, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Indent Spacing", GetIndentSpacing, SetIndentSpacing, int, 16, AM_FILE);
     URHO3D_ATTRIBUTE("Variables", VariantMap, vars_, Variant::emptyVariantMap, AM_FILE);
@@ -237,7 +208,8 @@ bool UIElement::LoadXML(const XMLElement& source, XMLFile* styleFile, bool setIn
                 URHO3D_LOGDEBUGF("Style file %s loaded automatically.", defaultStyleFileName.CString());
             }
             else
-                URHO3D_LOGWARNINGF("Style file %s could not be loaded, using default style instead.", defaultStyleFileName.CString());
+                URHO3D_LOGWARNINGF("Style file %s could not be loaded, using default style instead.",
+                                   defaultStyleFileName.CString());
         }
     }
 
@@ -253,7 +225,8 @@ bool UIElement::LoadXML(const XMLElement& source, XMLFile* styleFile, bool setIn
 
         SetStyle(styleName, styleFile);
     }
-    // The 'style' attribute value in the style file cannot be equals to original's applied style to prevent infinite loop
+    // The 'style' attribute value in the style file cannot be equals to original's applied style to prevent infinite
+    // loop
     else if (!styleName.Empty() && styleName != appliedStyle_)
     {
         // Attempt to use the default style file
@@ -303,7 +276,8 @@ bool UIElement::LoadXML(const XMLElement& source, XMLFile* styleFile, bool setIn
             }
 
             if (!child)
-                URHO3D_LOGWARNING("Could not find matching internal child element of type " + typeName + " in " + GetTypeName());
+                URHO3D_LOGWARNING("Could not find matching internal child element of type " + typeName + " in " +
+                                  GetTypeName());
         }
 
         if (child)
@@ -406,9 +380,7 @@ bool UIElement::SaveXML(XMLElement& dest) const
     return FilterAttributes(dest);
 }
 
-void UIElement::Update(float timeStep)
-{
-}
+void UIElement::Update(float timeStep) {}
 
 void UIElement::GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData, const IntRect& currentScissor)
 {
@@ -416,7 +388,8 @@ void UIElement::GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertex
     hovering_ = false;
 }
 
-void UIElement::GetDebugDrawBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData, const IntRect& currentScissor)
+void UIElement::GetDebugDrawBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData,
+                                    const IntRect& currentScissor)
 {
     UIBatch batch(this, BLEND_ALPHA, currentScissor, nullptr, &vertexData);
 
@@ -488,56 +461,45 @@ const IntVector2& UIElement::GetScreenPosition() const
     return screenPosition_;
 }
 
-void UIElement::OnHover(const IntVector2& position, const IntVector2& screenPosition, int buttons, int qualifiers, Cursor* cursor)
+void UIElement::OnHover(const IntVector2& position, const IntVector2& screenPosition, int buttons, int qualifiers,
+                        Cursor* cursor)
 {
     hovering_ = true;
 }
 
 void UIElement::OnDragBegin(const IntVector2& position, const IntVector2& screenPosition, int buttons, int qualifiers,
-    Cursor* cursor)
+                            Cursor* cursor)
 {
     dragButtonCombo_ = buttons;
     dragButtonCount_ = CountSetBits((unsigned)dragButtonCombo_);
 }
 
-void UIElement::OnDragMove(const IntVector2& position, const IntVector2& screenPosition, const IntVector2& deltaPos, int buttons,
-    int qualifiers, Cursor* cursor)
+void UIElement::OnDragMove(const IntVector2& position, const IntVector2& screenPosition, const IntVector2& deltaPos,
+                           int buttons, int qualifiers, Cursor* cursor)
 {
 }
 
 void UIElement::OnDragEnd(const IntVector2& position, const IntVector2& screenPosition, int dragButtons, int buttons,
-    Cursor* cursor)
+                          Cursor* cursor)
 {
     dragButtonCombo_ = 0;
     dragButtonCount_ = 0;
 }
 
 void UIElement::OnDragCancel(const IntVector2& position, const IntVector2& screenPosition, int dragButtons, int buttons,
-    Cursor* cursor)
+                             Cursor* cursor)
 {
     dragButtonCombo_ = 0;
     dragButtonCount_ = 0;
 }
 
-bool UIElement::OnDragDropTest(UIElement* source)
-{
-    return true;
-}
+bool UIElement::OnDragDropTest(UIElement* source) { return true; }
 
-bool UIElement::OnDragDropFinish(UIElement* source)
-{
-    return true;
-}
+bool UIElement::OnDragDropFinish(UIElement* source) { return true; }
 
-IntVector2 UIElement::ScreenToElement(const IntVector2& screenPosition)
-{
-    return screenPosition - GetScreenPosition();
-}
+IntVector2 UIElement::ScreenToElement(const IntVector2& screenPosition) { return screenPosition - GetScreenPosition(); }
 
-IntVector2 UIElement::ElementToScreen(const IntVector2& position)
-{
-    return position + GetScreenPosition();
-}
+IntVector2 UIElement::ElementToScreen(const IntVector2& position) { return position + GetScreenPosition(); }
 
 bool UIElement::LoadXML(Deserializer& source)
 {
@@ -610,10 +572,7 @@ void UIElement::SetPosition(const IntVector2& position)
     }
 }
 
-void UIElement::SetPosition(int x, int y)
-{
-    SetPosition(IntVector2(x, y));
-}
+void UIElement::SetPosition(int x, int y) { SetPosition(IntVector2(x, y)); }
 
 void UIElement::SetSize(const IntVector2& size)
 {
@@ -655,20 +614,11 @@ void UIElement::SetSize(const IntVector2& size)
     --resizeNestingLevel_;
 }
 
-void UIElement::SetSize(int width, int height)
-{
-    SetSize(IntVector2(width, height));
-}
+void UIElement::SetSize(int width, int height) { SetSize(IntVector2(width, height)); }
 
-void UIElement::SetWidth(int width)
-{
-    SetSize(IntVector2(width, size_.y_));
-}
+void UIElement::SetWidth(int width) { SetSize(IntVector2(width, size_.y_)); }
 
-void UIElement::SetHeight(int height)
-{
-    SetSize(IntVector2(size_.x_, height));
-}
+void UIElement::SetHeight(int height) { SetSize(IntVector2(size_.x_, height)); }
 
 void UIElement::SetMinSize(const IntVector2& minSize)
 {
@@ -677,20 +627,11 @@ void UIElement::SetMinSize(const IntVector2& minSize)
     SetSize(size_);
 }
 
-void UIElement::SetMinSize(int width, int height)
-{
-    SetMinSize(IntVector2(width, height));
-}
+void UIElement::SetMinSize(int width, int height) { SetMinSize(IntVector2(width, height)); }
 
-void UIElement::SetMinWidth(int width)
-{
-    SetMinSize(IntVector2(width, minSize_.y_));
-}
+void UIElement::SetMinWidth(int width) { SetMinSize(IntVector2(width, minSize_.y_)); }
 
-void UIElement::SetMinHeight(int height)
-{
-    SetMinSize(IntVector2(minSize_.x_, height));
-}
+void UIElement::SetMinHeight(int height) { SetMinSize(IntVector2(minSize_.x_, height)); }
 
 void UIElement::SetMaxSize(const IntVector2& maxSize)
 {
@@ -699,20 +640,11 @@ void UIElement::SetMaxSize(const IntVector2& maxSize)
     SetSize(size_);
 }
 
-void UIElement::SetMaxSize(int width, int height)
-{
-    SetMaxSize(IntVector2(width, height));
-}
+void UIElement::SetMaxSize(int width, int height) { SetMaxSize(IntVector2(width, height)); }
 
-void UIElement::SetMaxWidth(int width)
-{
-    SetMaxSize(IntVector2(width, maxSize_.y_));
-}
+void UIElement::SetMaxWidth(int width) { SetMaxSize(IntVector2(width, maxSize_.y_)); }
 
-void UIElement::SetMaxHeight(int height)
-{
-    SetMaxSize(IntVector2(maxSize_.x_, height));
-}
+void UIElement::SetMaxHeight(int height) { SetMaxSize(IntVector2(maxSize_.x_, height)); }
 
 void UIElement::SetFixedSize(const IntVector2& size)
 {
@@ -720,10 +652,7 @@ void UIElement::SetFixedSize(const IntVector2& size)
     SetSize(size);
 }
 
-void UIElement::SetFixedSize(int width, int height)
-{
-    SetFixedSize(IntVector2(width, height));
-}
+void UIElement::SetFixedSize(int width, int height) { SetFixedSize(IntVector2(width, height)); }
 
 void UIElement::SetFixedWidth(int width)
 {
@@ -846,10 +775,7 @@ void UIElement::SetMinAnchor(const Vector2& anchor)
     }
 }
 
-void UIElement::SetMinAnchor(float x, float y)
-{
-    SetMinAnchor(Vector2(x, y));
-}
+void UIElement::SetMinAnchor(float x, float y) { SetMinAnchor(Vector2(x, y)); }
 
 void UIElement::SetMaxAnchor(const Vector2& anchor)
 {
@@ -861,10 +787,7 @@ void UIElement::SetMaxAnchor(const Vector2& anchor)
     }
 }
 
-void UIElement::SetMaxAnchor(float x, float y)
-{
-    SetMaxAnchor(Vector2(x, y));
-}
+void UIElement::SetMaxAnchor(float x, float y) { SetMaxAnchor(Vector2(x, y)); }
 
 void UIElement::SetPivot(const Vector2& pivot)
 {
@@ -876,10 +799,7 @@ void UIElement::SetPivot(const Vector2& pivot)
     }
 }
 
-void UIElement::SetPivot(float x, float y)
-{
-    SetPivot(Vector2(x, y));
-}
+void UIElement::SetPivot(float x, float y) { SetPivot(Vector2(x, y)); }
 
 void UIElement::SetClipBorder(const IntRect& rect)
 {
@@ -926,20 +846,11 @@ void UIElement::SetOpacity(float opacity)
     MarkDirty();
 }
 
-void UIElement::SetBringToFront(bool enable)
-{
-    bringToFront_ = enable;
-}
+void UIElement::SetBringToFront(bool enable) { bringToFront_ = enable; }
 
-void UIElement::SetBringToBack(bool enable)
-{
-    bringToBack_ = enable;
-}
+void UIElement::SetBringToBack(bool enable) { bringToBack_ = enable; }
 
-void UIElement::SetClipChildren(bool enable)
-{
-    clipChildren_ = enable;
-}
+void UIElement::SetClipChildren(bool enable) { clipChildren_ = enable; }
 
 void UIElement::SetSortChildren(bool enable)
 {
@@ -949,10 +860,7 @@ void UIElement::SetSortChildren(bool enable)
     sortChildren_ = enable;
 }
 
-void UIElement::SetUseDerivedOpacity(bool enable)
-{
-    useDerivedOpacity_ = enable;
-}
+void UIElement::SetUseDerivedOpacity(bool enable) { useDerivedOpacity_ = enable; }
 
 void UIElement::SetEnabled(bool enable)
 {
@@ -964,7 +872,7 @@ void UIElement::SetDeepEnabled(bool enable)
 {
     enabled_ = enable;
 
-    for (Vector<SharedPtr<UIElement> >::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
+    for (Vector<SharedPtr<UIElement>>::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
         (*i)->SetDeepEnabled(enable);
 }
 
@@ -972,7 +880,7 @@ void UIElement::ResetDeepEnabled()
 {
     enabled_ = enabledPrev_;
 
-    for (Vector<SharedPtr<UIElement> >::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
+    for (Vector<SharedPtr<UIElement>>::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
         (*i)->ResetDeepEnabled();
 }
 
@@ -981,7 +889,7 @@ void UIElement::SetEnabledRecursive(bool enable)
     enabled_ = enable;
     enabledPrev_ = enable;
 
-    for (Vector<SharedPtr<UIElement> >::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
+    for (Vector<SharedPtr<UIElement>>::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
         (*i)->SetEnabledRecursive(enable);
 }
 
@@ -991,10 +899,7 @@ void UIElement::SetEditable(bool enable)
     OnSetEditable();
 }
 
-void UIElement::SetFocusMode(FocusMode mode)
-{
-    focusMode_ = mode;
-}
+void UIElement::SetFocusMode(FocusMode mode) { focusMode_ = mode; }
 
 void UIElement::SetFocus(bool enable)
 {
@@ -1019,10 +924,7 @@ void UIElement::SetFocus(bool enable)
     }
 }
 
-void UIElement::SetSelected(bool enable)
-{
-    selected_ = enable;
-}
+void UIElement::SetSelected(bool enable) { selected_ = enable; }
 
 void UIElement::SetVisible(bool enable)
 {
@@ -1056,10 +958,7 @@ void UIElement::SetVisible(bool enable)
     }
 }
 
-void UIElement::SetDragDropMode(unsigned mode)
-{
-    dragDropMode_ = mode;
-}
+void UIElement::SetDragDropMode(unsigned mode) { dragDropMode_ = mode; }
 
 bool UIElement::SetStyle(const String& styleName, XMLFile* file)
 {
@@ -1098,15 +997,9 @@ bool UIElement::SetStyle(const XMLElement& element)
     return LoadXML(element, true);
 }
 
-bool UIElement::SetStyleAuto(XMLFile* file)
-{
-    return SetStyle(String::EMPTY, file);
-}
+bool UIElement::SetStyleAuto(XMLFile* file) { return SetStyle(String::EMPTY, file); }
 
-void UIElement::SetDefaultStyle(XMLFile* style)
-{
-    defaultStyle_ = style;
-}
+void UIElement::SetDefaultStyle(XMLFile* style) { defaultStyle_ = style; }
 
 void UIElement::SetLayout(LayoutMode mode, int spacing, const IntRect& border)
 {
@@ -1192,8 +1085,8 @@ void UIElement::UpdateLayout()
             minChildHeight = Max(minChildHeight, children_[i]->GetEffectiveMinSize().y_);
         }
 
-        CalculateLayout(positions, sizes, minSizes, maxSizes, flexScales, GetWidth(), layoutBorder_.left_, layoutBorder_.right_,
-            layoutSpacing_);
+        CalculateLayout(positions, sizes, minSizes, maxSizes, flexScales, GetWidth(), layoutBorder_.left_,
+                        layoutBorder_.right_, layoutSpacing_);
 
         int width = CalculateLayoutParentSize(sizes, layoutBorder_.left_, layoutBorder_.right_, layoutSpacing_);
         int height = Max(GetHeight(), minChildHeight + layoutBorder_.top_ + layoutBorder_.bottom_);
@@ -1231,8 +1124,8 @@ void UIElement::UpdateLayout()
             minChildWidth = Max(minChildWidth, children_[i]->GetEffectiveMinSize().x_ + children_[i]->GetIndentWidth());
         }
 
-        CalculateLayout(positions, sizes, minSizes, maxSizes, flexScales, GetHeight(), layoutBorder_.top_, layoutBorder_.bottom_,
-            layoutSpacing_);
+        CalculateLayout(positions, sizes, minSizes, maxSizes, flexScales, GetHeight(), layoutBorder_.top_,
+                        layoutBorder_.bottom_, layoutSpacing_);
 
         int height = CalculateLayoutParentSize(sizes, layoutBorder_.top_, layoutBorder_.bottom_, layoutSpacing_);
         int width = Max(GetWidth(), minChildWidth + layoutBorder_.left_ + layoutBorder_.right_);
@@ -1271,15 +1164,9 @@ void UIElement::UpdateLayout()
     EnableLayoutUpdate();
 }
 
-void UIElement::DisableLayoutUpdate()
-{
-    ++layoutNestingLevel_;
-}
+void UIElement::DisableLayoutUpdate() { ++layoutNestingLevel_; }
 
-void UIElement::EnableLayoutUpdate()
-{
-    --layoutNestingLevel_;
-}
+void UIElement::EnableLayoutUpdate() { --layoutNestingLevel_; }
 
 void UIElement::BringToFront()
 {
@@ -1301,8 +1188,8 @@ void UIElement::BringToFront()
     HashSet<int> usedPriorities;
 
     int maxPriority = M_MIN_INT;
-    const Vector<SharedPtr<UIElement> >& rootChildren = root->GetChildren();
-    for (Vector<SharedPtr<UIElement> >::ConstIterator i = rootChildren.Begin(); i != rootChildren.End(); ++i)
+    const Vector<SharedPtr<UIElement>>& rootChildren = root->GetChildren();
+    for (Vector<SharedPtr<UIElement>>::ConstIterator i = rootChildren.Begin(); i != rootChildren.End(); ++i)
     {
         UIElement* other = *i;
         if (other->IsEnabled() && other->bringToBack_ && other != ptr)
@@ -1324,12 +1211,13 @@ void UIElement::BringToFront()
         while (usedPriorities.Contains(minPriority))
             --minPriority;
 
-        for (Vector<SharedPtr<UIElement> >::ConstIterator i = rootChildren.Begin(); i != rootChildren.End(); ++i)
+        for (Vector<SharedPtr<UIElement>>::ConstIterator i = rootChildren.Begin(); i != rootChildren.End(); ++i)
         {
             UIElement* other = *i;
             int priority = other->GetPriority();
 
-            if (other->IsEnabled() && other->bringToBack_ && other != ptr && priority >= minPriority && priority <= maxPriority)
+            if (other->IsEnabled() && other->bringToBack_ && other != ptr && priority >= minPriority &&
+                priority <= maxPriority)
                 other->SetPriority(priority - 1);
         }
     }
@@ -1352,10 +1240,7 @@ UIElement* UIElement::CreateChild(StringHash type, const String& name, unsigned 
     return newElement;
 }
 
-void UIElement::AddChild(UIElement* element)
-{
-    InsertChild(M_MAX_UNSIGNED, element);
-}
+void UIElement::AddChild(UIElement* element) { InsertChild(M_MAX_UNSIGNED, element); }
 
 void UIElement::InsertChild(unsigned index, UIElement* element)
 {
@@ -1464,7 +1349,7 @@ void UIElement::RemoveAllChildren()
     UIElement* root = GetRoot();
     UIElement* sender = Refs() > 0 ? GetElementEventSender() : nullptr;
 
-    for (Vector<SharedPtr<UIElement> >::Iterator i = children_.Begin(); i < children_.End();)
+    for (Vector<SharedPtr<UIElement>>::Iterator i = children_.Begin(); i < children_.End();)
     {
         // Send change event if not already being destroyed
         if (sender)
@@ -1493,7 +1378,7 @@ void UIElement::Remove()
 
 unsigned UIElement::FindChild(UIElement* element) const
 {
-    Vector<SharedPtr<UIElement> >::ConstIterator i = children_.Find(SharedPtr<UIElement>(element));
+    Vector<SharedPtr<UIElement>>::ConstIterator i = children_.Find(SharedPtr<UIElement>(element));
     return i != children_.End() ? (unsigned)(i - children_.Begin()) : M_MAX_UNSIGNED;
 }
 
@@ -1503,25 +1388,13 @@ void UIElement::SetParent(UIElement* parent, unsigned index)
         parent->InsertChild(index, this);
 }
 
-void UIElement::SetVar(StringHash key, const Variant& value)
-{
-    vars_[key] = value;
-}
+void UIElement::SetVar(StringHash key, const Variant& value) { vars_[key] = value; }
 
-void UIElement::SetInternal(bool enable)
-{
-    internal_ = enable;
-}
+void UIElement::SetInternal(bool enable) { internal_ = enable; }
 
-void UIElement::SetTraversalMode(TraversalMode traversalMode)
-{
-    traversalMode_ = traversalMode;
-}
+void UIElement::SetTraversalMode(TraversalMode traversalMode) { traversalMode_ = traversalMode; }
 
-void UIElement::SetElementEventSender(bool flag)
-{
-    elementEventSender_ = flag;
-}
+void UIElement::SetElementEventSender(bool flag) { elementEventSender_ = flag; }
 
 void UIElement::SetTags(const StringVector& tags)
 {
@@ -1549,15 +1422,9 @@ void UIElement::AddTags(const StringVector& tags)
         AddTag(tags[i]);
 }
 
-bool UIElement::RemoveTag(const String& tag)
-{
-    return tags_.Remove(tag);
-}
+bool UIElement::RemoveTag(const String& tag) { return tags_.Remove(tag); }
 
-void UIElement::RemoveAllTags()
-{
-    tags_.Clear();
-}
+void UIElement::RemoveAllTags() { tags_.Clear(); }
 
 HorizontalAlignment UIElement::GetHorizontalAlignment() const
 {
@@ -1655,7 +1522,7 @@ void UIElement::GetChildren(PODVector<UIElement*>& dest, bool recursive) const
     if (!recursive)
     {
         dest.Reserve(children_.Size());
-        for (Vector<SharedPtr<UIElement> >::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
+        for (Vector<SharedPtr<UIElement>>::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
             dest.Push(*i);
     }
     else
@@ -1669,21 +1536,18 @@ unsigned UIElement::GetNumChildren(bool recursive) const
     else
     {
         unsigned allChildren = children_.Size();
-        for (Vector<SharedPtr<UIElement> >::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
+        for (Vector<SharedPtr<UIElement>>::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
             allChildren += (*i)->GetNumChildren(true);
 
         return allChildren;
     }
 }
 
-UIElement* UIElement::GetChild(unsigned index) const
-{
-    return index < children_.Size() ? children_[index] : nullptr;
-}
+UIElement* UIElement::GetChild(unsigned index) const { return index < children_.Size() ? children_[index] : nullptr; }
 
 UIElement* UIElement::GetChild(const String& name, bool recursive) const
 {
-    for (Vector<SharedPtr<UIElement> >::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
+    for (Vector<SharedPtr<UIElement>>::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
     {
         if ((*i)->name_ == name)
             return *i;
@@ -1701,7 +1565,7 @@ UIElement* UIElement::GetChild(const String& name, bool recursive) const
 
 UIElement* UIElement::GetChild(const StringHash& key, const Variant& value, bool recursive) const
 {
-    for (Vector<SharedPtr<UIElement> >::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
+    for (Vector<SharedPtr<UIElement>>::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
     {
         const Variant& varValue = (*i)->GetVar(key);
         if (value != Variant::EMPTY ? varValue == value : varValue != Variant::EMPTY)
@@ -1746,10 +1610,7 @@ const Variant& UIElement::GetVar(const StringHash& key) const
     return i != vars_.End() ? i->second_ : Variant::EMPTY;
 }
 
-bool UIElement::HasTag(const String& tag) const
-{
-    return tags_.Contains(tag);
-}
+bool UIElement::HasTag(const String& tag) const { return tags_.Contains(tag); }
 
 void UIElement::GetChildrenWithTag(PODVector<UIElement*>& dest, const String& tag, bool recursive) const
 {
@@ -1757,7 +1618,7 @@ void UIElement::GetChildrenWithTag(PODVector<UIElement*>& dest, const String& ta
 
     if (!recursive)
     {
-        for (Vector<SharedPtr<UIElement> >::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
+        for (Vector<SharedPtr<UIElement>>::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
         {
             UIElement* element = *i;
             if (element->HasTag(tag))
@@ -1777,7 +1638,7 @@ PODVector<UIElement*> UIElement::GetChildrenWithTag(const String& tag, bool recu
 
 void UIElement::GetChildrenWithTagRecursive(PODVector<UIElement*>& dest, const String& tag) const
 {
-    for (Vector<SharedPtr<UIElement> >::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
+    for (Vector<SharedPtr<UIElement>>::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
     {
         UIElement* element = *i;
         if (element->HasTag(tag))
@@ -1805,7 +1666,7 @@ bool UIElement::IsInsideCombined(IntVector2 position, bool isScreen)
 
     IntRect combined = GetCombinedScreenRect();
     return position.x_ >= combined.left_ && position.y_ >= combined.top_ && position.x_ < combined.right_ &&
-        position.y_ < combined.bottom_;
+           position.y_ < combined.bottom_;
 }
 
 IntRect UIElement::GetCombinedScreenRect()
@@ -1815,7 +1676,7 @@ IntRect UIElement::GetCombinedScreenRect()
 
     if (!clipChildren_)
     {
-        for (Vector<SharedPtr<UIElement> >::Iterator i = children_.Begin(); i != children_.End(); ++i)
+        for (Vector<SharedPtr<UIElement>>::Iterator i = children_.Begin(); i != children_.End(); ++i)
         {
             IntRect childCombined((*i)->GetCombinedScreenRect());
 
@@ -1850,15 +1711,12 @@ void UIElement::SetChildOffset(const IntVector2& offset)
     if (offset != childOffset_)
     {
         childOffset_ = offset;
-        for (Vector<SharedPtr<UIElement> >::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
+        for (Vector<SharedPtr<UIElement>>::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
             (*i)->MarkDirty();
     }
 }
 
-void UIElement::SetHovering(bool enable)
-{
-    hovering_ = enable;
-}
+void UIElement::SetHovering(bool enable) { hovering_ = enable; }
 
 void UIElement::AdjustScissor(IntRect& currentScissor)
 {
@@ -1878,7 +1736,7 @@ void UIElement::AdjustScissor(IntRect& currentScissor)
 }
 
 void UIElement::GetBatchesWithOffset(IntVector2& offset, PODVector<UIBatch>& batches, PODVector<float>& vertexData,
-    IntRect currentScissor)
+                                     IntRect currentScissor)
 {
     Vector2 floatOffset((float)offset.x_, (float)offset.y_);
     unsigned initialSize = vertexData.Size();
@@ -1891,7 +1749,7 @@ void UIElement::GetBatchesWithOffset(IntVector2& offset, PODVector<UIBatch>& bat
     }
 
     AdjustScissor(currentScissor);
-    for (Vector<SharedPtr<UIElement> >::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
+    for (Vector<SharedPtr<UIElement>>::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
     {
         if ((*i)->IsVisible())
             (*i)->GetBatchesWithOffset(offset, batches, vertexData, currentScissor);
@@ -1986,7 +1844,7 @@ void UIElement::MarkDirty()
     opacityDirty_ = true;
     derivedColorDirty_ = true;
 
-    for (Vector<SharedPtr<UIElement> >::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
+    for (Vector<SharedPtr<UIElement>>::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
         (*i)->MarkDirty();
 }
 
@@ -2003,8 +1861,8 @@ bool UIElement::RemoveChildXML(XMLElement& parent, const String& name) const
 
 bool UIElement::RemoveChildXML(XMLElement& parent, const String& name, const String& value) const
 {
-    static XPathQuery matchXPathQuery
-        ("./attribute[@name=$attributeName and @value=$attributeValue]", "attributeName:String, attributeValue:String");
+    static XPathQuery matchXPathQuery("./attribute[@name=$attributeName and @value=$attributeValue]",
+                                      "attributeName:String, attributeValue:String");
 
     if (!matchXPathQuery.SetVariable("attributeName", name))
         return false;
@@ -2048,7 +1906,8 @@ bool UIElement::FilterUIStyleAttributes(XMLElement& dest, const XMLElement& styl
         childElem = childElem.GetNext("element");
     }
 
-    // Remove style attribute when it is the same as its type, however, if it is an internal element then replace it to "none" instead
+    // Remove style attribute when it is the same as its type, however, if it is an internal element then replace it to
+    // "none" instead
     if (!dest.GetAttribute("style").Empty() && dest.GetAttribute("style") == dest.GetAttribute("type"))
     {
         if (internal_)
@@ -2090,8 +1949,10 @@ void UIElement::UpdateAnchoring()
     if (parent_ && enableAnchor_)
     {
         IntVector2 newSize;
-        newSize.x_ = (int)(parent_->size_.x_ * Clamp(anchorMax_.x_ - anchorMin_.x_, 0.0f, 1.0f)) + maxOffset_.x_ - minOffset_.x_;
-        newSize.y_ = (int)(parent_->size_.y_ * Clamp(anchorMax_.y_ - anchorMin_.y_, 0.0f, 1.0f)) + maxOffset_.y_ - minOffset_.y_;
+        newSize.x_ =
+            (int)(parent_->size_.x_ * Clamp(anchorMax_.x_ - anchorMin_.x_, 0.0f, 1.0f)) + maxOffset_.x_ - minOffset_.x_;
+        newSize.y_ =
+            (int)(parent_->size_.y_ * Clamp(anchorMax_.y_ - anchorMin_.y_, 0.0f, 1.0f)) + maxOffset_.y_ - minOffset_.y_;
 
         if (position_ != minOffset_)
             SetPosition(minOffset_);
@@ -2102,7 +1963,7 @@ void UIElement::UpdateAnchoring()
 
 void UIElement::GetChildrenRecursive(PODVector<UIElement*>& dest) const
 {
-    for (Vector<SharedPtr<UIElement> >::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
+    for (Vector<SharedPtr<UIElement>>::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
     {
         UIElement* element = *i;
         dest.Push(element);
@@ -2117,7 +1978,8 @@ void UIElement::ApplyStyleRecursive(UIElement* element)
     if (!element->appliedStyle_.Empty() && element->appliedStyleFile_.Get() != element->GetDefaultStyle())
     {
         element->SetStyle(element->appliedStyle_);
-        for (Vector<SharedPtr<UIElement> >::ConstIterator i = element->children_.Begin(); i != element->children_.End(); ++i)
+        for (Vector<SharedPtr<UIElement>>::ConstIterator i = element->children_.Begin(); i != element->children_.End();
+             ++i)
             element->ApplyStyleRecursive(*i);
     }
 }
@@ -2140,7 +2002,8 @@ int UIElement::CalculateLayoutParentSize(const PODVector<int>& sizes, int begin,
 }
 
 void UIElement::CalculateLayout(PODVector<int>& positions, PODVector<int>& sizes, const PODVector<int>& minSizes,
-    const PODVector<int>& maxSizes, const PODVector<float>& flexScales, int targetSize, int begin, int end, int spacing)
+                                const PODVector<int>& maxSizes, const PODVector<float>& flexScales, int targetSize,
+                                int begin, int end, int spacing)
 {
     unsigned numChildren = sizes.Size();
     if (!numChildren)
@@ -2275,7 +2138,7 @@ void UIElement::Detach()
 
 void UIElement::VerifyChildAlignment()
 {
-    for (Vector<SharedPtr<UIElement> >::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
+    for (Vector<SharedPtr<UIElement>>::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
     {
         // Reapply child alignments. If they are illegal compared to layout, they will be set left/top as neded
         (*i)->SetHorizontalAlignment((*i)->GetHorizontalAlignment());
@@ -2289,5 +2152,4 @@ void UIElement::HandlePostUpdate(StringHash eventType, VariantMap& eventData)
 
     UpdateAttributeAnimations(eventData[P_TIMESTEP].GetFloat());
 }
-
 }

@@ -37,12 +37,11 @@
 #include "../../DebugNew.h"
 
 #ifdef _MSC_VER
-#pragma warning(disable:4355)
+#pragma warning(disable : 4355)
 #endif
 
 namespace Urho3D
 {
-
 void Texture2DArray::OnDeviceLost()
 {
     // No-op on Direct3D11
@@ -137,8 +136,8 @@ bool Texture2DArray::SetData(unsigned layer, unsigned level, int x, int y, int w
         D3D11_MAPPED_SUBRESOURCE mappedData;
         mappedData.pData = nullptr;
 
-        HRESULT hr = graphics_->GetImpl()->GetDeviceContext()->Map((ID3D11Resource*)object_.ptr_, subResource, D3D11_MAP_WRITE_DISCARD, 0,
-            &mappedData);
+        HRESULT hr = graphics_->GetImpl()->GetDeviceContext()->Map((ID3D11Resource*)object_.ptr_, subResource,
+                                                                   D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
         if (FAILED(hr) || !mappedData.pData)
         {
             URHO3D_LOGD3DERROR("Failed to map texture for update", hr);
@@ -147,7 +146,8 @@ bool Texture2DArray::SetData(unsigned layer, unsigned level, int x, int y, int w
         else
         {
             for (int row = 0; row < height; ++row)
-                memcpy((unsigned char*)mappedData.pData + (row + y) * mappedData.RowPitch + rowStart, src + row * rowSize, rowSize);
+                memcpy((unsigned char*)mappedData.pData + (row + y) * mappedData.RowPitch + rowStart,
+                       src + row * rowSize, rowSize);
             graphics_->GetImpl()->GetDeviceContext()->Unmap((ID3D11Resource*)object_.ptr_, subResource);
         }
     }
@@ -161,8 +161,8 @@ bool Texture2DArray::SetData(unsigned layer, unsigned level, int x, int y, int w
         destBox.front = 0;
         destBox.back = 1;
 
-        graphics_->GetImpl()->GetDeviceContext()->UpdateSubresource((ID3D11Resource*)object_.ptr_, subResource, &destBox, data,
-            rowSize, 0);
+        graphics_->GetImpl()->GetDeviceContext()->UpdateSubresource((ID3D11Resource*)object_.ptr_, subResource,
+                                                                    &destBox, data, rowSize, 0);
     }
 
     return true;
@@ -209,7 +209,8 @@ bool Texture2DArray::SetData(unsigned layer, Image* image, bool useAlpha)
         unsigned components = image->GetComponents();
         if ((components == 1 && !useAlpha) || components == 2 || components == 3)
         {
-            mipImage = image->ConvertToRGBA(); image = mipImage;
+            mipImage = image->ConvertToRGBA();
+            image = mipImage;
             if (!image)
                 return false;
             components = image->GetComponents();
@@ -223,7 +224,8 @@ bool Texture2DArray::SetData(unsigned layer, Image* image, bool useAlpha)
         // Discard unnecessary mip levels
         for (unsigned i = 0; i < mipsToSkip_[quality]; ++i)
         {
-            mipImage = image->GetNextLevel(); image = mipImage;
+            mipImage = image->GetNextLevel();
+            image = mipImage;
             levelData = image->GetData();
             levelWidth = image->GetWidth();
             levelHeight = image->GetHeight();
@@ -239,13 +241,15 @@ bool Texture2DArray::SetData(unsigned layer, Image* image, bool useAlpha)
             format = Graphics::GetRGBAFormat();
             break;
 
-        default: break;
+        default:
+            break;
         }
 
         // Create the texture array when layer 0 is being loaded, check that rest of the layers are same size & format
         if (!layer)
         {
-            // If image was previously compressed, reset number of requested levels to avoid error if level count is too high for new size
+            // If image was previously compressed, reset number of requested levels to avoid error if level count is too
+            // high for new size
             if (IsCompressed() && requestedLevels_ > 1)
                 requestedLevels_ = 0;
             // Create the texture array (the number of layers must have been already set)
@@ -272,7 +276,8 @@ bool Texture2DArray::SetData(unsigned layer, Image* image, bool useAlpha)
 
             if (i < levels_ - 1)
             {
-                mipImage = image->GetNextLevel(); image = mipImage;
+                mipImage = image->GetNextLevel();
+                image = mipImage;
                 levelData = image->GetData();
                 levelWidth = image->GetWidth();
                 levelHeight = image->GetHeight();
@@ -407,15 +412,16 @@ bool Texture2DArray::GetData(unsigned layer, unsigned level, void* dest) const
     srcBox.bottom = (UINT)levelHeight;
     srcBox.front = 0;
     srcBox.back = 1;
-    graphics_->GetImpl()->GetDeviceContext()->CopySubresourceRegion(stagingTexture, 0, 0, 0, 0, (ID3D11Resource*)object_.ptr_,
-        srcSubResource, &srcBox);
+    graphics_->GetImpl()->GetDeviceContext()->CopySubresourceRegion(
+        stagingTexture, 0, 0, 0, 0, (ID3D11Resource*)object_.ptr_, srcSubResource, &srcBox);
 
     D3D11_MAPPED_SUBRESOURCE mappedData;
     mappedData.pData = nullptr;
     unsigned rowSize = GetRowDataSize(levelWidth);
     unsigned numRows = (unsigned)(IsCompressed() ? (levelHeight + 3) >> 2 : levelHeight);
 
-    hr = graphics_->GetImpl()->GetDeviceContext()->Map((ID3D11Resource*)stagingTexture, 0, D3D11_MAP_READ, 0, &mappedData);
+    hr = graphics_->GetImpl()->GetDeviceContext()->Map((ID3D11Resource*)stagingTexture, 0, D3D11_MAP_READ, 0,
+                                                       &mappedData);
     if (FAILED(hr) || !mappedData.pData)
     {
         URHO3D_LOGD3DERROR("Failed to map staging texture for GetData", hr);
@@ -425,7 +431,8 @@ bool Texture2DArray::GetData(unsigned layer, unsigned level, void* dest) const
     else
     {
         for (unsigned row = 0; row < numRows; ++row)
-            memcpy((unsigned char*)dest + row * rowSize, (unsigned char*)mappedData.pData + row * mappedData.RowPitch, rowSize);
+            memcpy((unsigned char*)dest + row * rowSize, (unsigned char*)mappedData.pData + row * mappedData.RowPitch,
+                   rowSize);
         graphics_->GetImpl()->GetDeviceContext()->Unmap((ID3D11Resource*)stagingTexture, 0);
         URHO3D_SAFE_RELEASE(stagingTexture);
         return true;
@@ -490,7 +497,7 @@ bool Texture2DArray::Create()
     }
 
     hr = graphics_->GetImpl()->GetDevice()->CreateShaderResourceView((ID3D11Resource*)object_.ptr_, &srvDesc,
-        (ID3D11ShaderResourceView**)&shaderResourceView_);
+                                                                     (ID3D11ShaderResourceView**)&shaderResourceView_);
     if (FAILED(hr))
     {
         URHO3D_LOGD3DERROR("Failed to create shader resource view for texture array", hr);
@@ -516,7 +523,8 @@ bool Texture2DArray::Create()
             renderTargetViewDesc.Texture2DArray.FirstArraySlice = 0;
         }
 
-        hr = graphics_->GetImpl()->GetDevice()->CreateRenderTargetView((ID3D11Resource*)object_.ptr_, &renderTargetViewDesc,
+        hr = graphics_->GetImpl()->GetDevice()->CreateRenderTargetView(
+            (ID3D11Resource*)object_.ptr_, &renderTargetViewDesc,
             (ID3D11RenderTargetView**)&renderSurface_->renderTargetView_);
 
         if (FAILED(hr))
@@ -529,5 +537,4 @@ bool Texture2DArray::Create()
 
     return true;
 }
-
 }

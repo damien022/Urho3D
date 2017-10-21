@@ -30,7 +30,6 @@
 
 namespace Urho3D
 {
-
 enum InterpolationMode
 {
     /// Bezier interpolation.
@@ -39,7 +38,8 @@ enum InterpolationMode
     CATMULL_ROM_CURVE,
     /// Linear interpolation.
     LINEAR_CURVE,
-    /// Catmull-Rom full path interpolation. Start and end knots are duplicated or looped as necessary to move through the full path.
+    /// Catmull-Rom full path interpolation. Start and end knots are duplicated or looped as necessary to move through
+    /// the full path.
     CATMULL_ROM_FULL_CURVE
 };
 
@@ -57,23 +57,20 @@ public:
     Spline(const Spline& rhs);
 
     /// Copy operator.
-    void operator =(const Spline& rhs)
+    void operator=(const Spline& rhs)
     {
         knots_ = rhs.knots_;
         interpolationMode_ = rhs.interpolationMode_;
     }
 
     /// Equality operator.
-    bool operator ==(const Spline& rhs) const
+    bool operator==(const Spline& rhs) const
     {
         return (knots_ == rhs.knots_ && interpolationMode_ == rhs.interpolationMode_);
     }
 
     /// Inequality operator.
-    bool operator !=(const Spline& rhs) const
-    {
-        return !(*this == rhs);
-    }
+    bool operator!=(const Spline& rhs) const { return !(*this == rhs); }
 
     /// Return the interpolation mode.
     InterpolationMode GetInterpolationMode() const { return interpolationMode_; }
@@ -124,5 +121,4 @@ private:
     /// Knots on the spline.
     VariantVector knots_;
 };
-
 }

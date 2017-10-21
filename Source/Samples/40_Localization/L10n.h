@@ -55,5 +55,3 @@ private:
     void HandleChangeLangButtonPressed(StringHash eventType, VariantMap& eventData);
     void HandleQuitButtonPressed(StringHash eventType, VariantMap& eventData);
 };
-
-

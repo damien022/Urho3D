@@ -31,7 +31,6 @@
 
 namespace Urho3D
 {
-
 class Geometry;
 class IndexBuffer;
 class Graphics;
@@ -127,10 +126,10 @@ public:
     /// Set local-space bounding box.
     void SetBoundingBox(const BoundingBox& box);
     /// Set vertex buffers and their morph ranges.
-    bool SetVertexBuffers(const Vector<SharedPtr<VertexBuffer> >& buffers, const PODVector<unsigned>& morphRangeStarts,
-        const PODVector<unsigned>& morphRangeCounts);
+    bool SetVertexBuffers(const Vector<SharedPtr<VertexBuffer>>& buffers, const PODVector<unsigned>& morphRangeStarts,
+                          const PODVector<unsigned>& morphRangeCounts);
     /// Set index buffers.
-    bool SetIndexBuffers(const Vector<SharedPtr<IndexBuffer> >& buffers);
+    bool SetIndexBuffers(const Vector<SharedPtr<IndexBuffer>>& buffers);
     /// Set number of geometries.
     void SetNumGeometries(unsigned num);
     /// Set number of LOD levels in a geometry.
@@ -142,10 +141,11 @@ public:
     /// Set skeleton.
     void SetSkeleton(const Skeleton& skeleton);
     /// Set bone mappings when model has more bones than the skinning shader can handle.
-    void SetGeometryBoneMappings(const Vector<PODVector<unsigned> >& mappings);
+    void SetGeometryBoneMappings(const Vector<PODVector<unsigned>>& mappings);
     /// Set vertex morphs.
     void SetMorphs(const Vector<ModelMorph>& morphs);
-    /// Clone the model. The geometry data is deep-copied and can be modified in the clone without affecting the original.
+    /// Clone the model. The geometry data is deep-copied and can be modified in the clone without affecting the
+    /// original.
     SharedPtr<Model> Clone(const String& cloneName = String::EMPTY) const;
 
     /// Return bounding box.
@@ -155,10 +155,10 @@ public:
     Skeleton& GetSkeleton() { return skeleton_; }
 
     /// Return vertex buffers.
-    const Vector<SharedPtr<VertexBuffer> >& GetVertexBuffers() const { return vertexBuffers_; }
+    const Vector<SharedPtr<VertexBuffer>>& GetVertexBuffers() const { return vertexBuffers_; }
 
     /// Return index buffers.
-    const Vector<SharedPtr<IndexBuffer> >& GetIndexBuffers() const { return indexBuffers_; }
+    const Vector<SharedPtr<IndexBuffer>>& GetIndexBuffers() const { return indexBuffers_; }
 
     /// Return number of geometries.
     unsigned GetNumGeometries() const { return geometries_.Size(); }
@@ -167,7 +167,7 @@ public:
     unsigned GetNumGeometryLodLevels(unsigned index) const;
 
     /// Return geometry pointers.
-    const Vector<Vector<SharedPtr<Geometry> > >& GetGeometries() const { return geometries_; }
+    const Vector<Vector<SharedPtr<Geometry>>>& GetGeometries() const { return geometries_; }
 
     /// Return geometry center points.
     const PODVector<Vector3>& GetGeometryCenters() const { return geometryCenters_; }
@@ -182,7 +182,7 @@ public:
     }
 
     /// Return geometery bone mappings.
-    const Vector<PODVector<unsigned> >& GetGeometryBoneMappings() const { return geometryBoneMappings_; }
+    const Vector<PODVector<unsigned>>& GetGeometryBoneMappings() const { return geometryBoneMappings_; }
 
     /// Return vertex morphs.
     const Vector<ModelMorph>& GetMorphs() const { return morphs_; }
@@ -207,13 +207,13 @@ private:
     /// Skeleton.
     Skeleton skeleton_;
     /// Vertex buffers.
-    Vector<SharedPtr<VertexBuffer> > vertexBuffers_;
+    Vector<SharedPtr<VertexBuffer>> vertexBuffers_;
     /// Index buffers.
-    Vector<SharedPtr<IndexBuffer> > indexBuffers_;
+    Vector<SharedPtr<IndexBuffer>> indexBuffers_;
     /// Geometries.
-    Vector<Vector<SharedPtr<Geometry> > > geometries_;
+    Vector<Vector<SharedPtr<Geometry>>> geometries_;
     /// Geometry bone mappings.
-    Vector<PODVector<unsigned> > geometryBoneMappings_;
+    Vector<PODVector<unsigned>> geometryBoneMappings_;
     /// Geometry centers.
     PODVector<Vector3> geometryCenters_;
     /// Vertex morphs.
@@ -227,7 +227,6 @@ private:
     /// Index buffer data for asynchronous loading.
     Vector<IndexBufferDesc> loadIBData_;
     /// Geometry definitions for asynchronous loading.
-    Vector<PODVector<GeometryDesc> > loadGeometries_;
+    Vector<PODVector<GeometryDesc>> loadGeometries_;
 };
-
 }

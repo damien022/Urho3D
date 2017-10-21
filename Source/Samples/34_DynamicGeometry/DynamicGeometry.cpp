@@ -34,8 +34,8 @@
 #include <Urho3D/Graphics/StaticModel.h>
 #include <Urho3D/Graphics/VertexBuffer.h>
 #include <Urho3D/Graphics/Zone.h>
-#include <Urho3D/Input/Input.h>
 #include <Urho3D/IO/Log.h>
+#include <Urho3D/Input/Input.h>
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Scene/Scene.h>
 #include <Urho3D/UI/Font.h>
@@ -48,10 +48,10 @@
 
 URHO3D_DEFINE_APPLICATION_MAIN(DynamicGeometry)
 
-DynamicGeometry::DynamicGeometry(Context* context) :
-    Sample(context),
-    animate_(true),
-    time_(0.0f)
+DynamicGeometry::DynamicGeometry(Context* context)
+    : Sample(context)
+    , animate_(true)
+    , time_(0.0f)
 {
 }
 
@@ -165,41 +165,26 @@ void DynamicGeometry::CreateScene()
     {
         const unsigned numVertices = 18;
 
-        float vertexData[] = {
-            // Position             Normal
-            0.0f, 0.5f, 0.0f,       0.0f, 0.0f, 0.0f,
-            0.5f, -0.5f, 0.5f,      0.0f, 0.0f, 0.0f,
-            0.5f, -0.5f, -0.5f,     0.0f, 0.0f, 0.0f,
+        float vertexData[] = {// Position             Normal
+                              0.0f, 0.5f,  0.0f,  0.0f,  0.0f,  0.0f,  0.5f,  -0.5f, 0.5f,
+                              0.0f, 0.0f,  0.0f,  0.5f,  -0.5f, -0.5f, 0.0f,  0.0f,  0.0f,
 
-            0.0f, 0.5f, 0.0f,       0.0f, 0.0f, 0.0f,
-            -0.5f, -0.5f, 0.5f,     0.0f, 0.0f, 0.0f,
-            0.5f, -0.5f, 0.5f,      0.0f, 0.0f, 0.0f,
+                              0.0f, 0.5f,  0.0f,  0.0f,  0.0f,  0.0f,  -0.5f, -0.5f, 0.5f,
+                              0.0f, 0.0f,  0.0f,  0.5f,  -0.5f, 0.5f,  0.0f,  0.0f,  0.0f,
 
-            0.0f, 0.5f, 0.0f,       0.0f, 0.0f, 0.0f,
-            -0.5f, -0.5f, -0.5f,    0.0f, 0.0f, 0.0f,
-            -0.5f, -0.5f, 0.5f,     0.0f, 0.0f, 0.0f,
+                              0.0f, 0.5f,  0.0f,  0.0f,  0.0f,  0.0f,  -0.5f, -0.5f, -0.5f,
+                              0.0f, 0.0f,  0.0f,  -0.5f, -0.5f, 0.5f,  0.0f,  0.0f,  0.0f,
 
-            0.0f, 0.5f, 0.0f,       0.0f, 0.0f, 0.0f,
-            0.5f, -0.5f, -0.5f,     0.0f, 0.0f, 0.0f,
-            -0.5f, -0.5f, -0.5f,    0.0f, 0.0f, 0.0f,
+                              0.0f, 0.5f,  0.0f,  0.0f,  0.0f,  0.0f,  0.5f,  -0.5f, -0.5f,
+                              0.0f, 0.0f,  0.0f,  -0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  0.0f,
 
-            0.5f, -0.5f, -0.5f,     0.0f, 0.0f, 0.0f,
-            0.5f, -0.5f, 0.5f,      0.0f, 0.0f, 0.0f,
-            -0.5f, -0.5f, 0.5f,     0.0f, 0.0f, 0.0f,
+                              0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  0.0f,  0.5f,  -0.5f, 0.5f,
+                              0.0f, 0.0f,  0.0f,  -0.5f, -0.5f, 0.5f,  0.0f,  0.0f,  0.0f,
 
-            0.5f, -0.5f, -0.5f,     0.0f, 0.0f, 0.0f,
-            -0.5f, -0.5f, 0.5f,     0.0f, 0.0f, 0.0f,
-            -0.5f, -0.5f, -0.5f,    0.0f, 0.0f, 0.0f
-        };
+                              0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  0.0f,  -0.5f, -0.5f, 0.5f,
+                              0.0f, 0.0f,  0.0f,  -0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  0.0f};
 
-        const unsigned short indexData[] = {
-            0, 1, 2,
-            3, 4, 5,
-            6, 7, 8,
-            9, 10, 11,
-            12, 13, 14,
-            15, 16, 17
-        };
+        const unsigned short indexData[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
 
         // Calculate face normals now
         for (unsigned i = 0; i < numVertices; i += 3)
@@ -243,12 +228,14 @@ void DynamicGeometry::CreateScene()
         fromScratchModel->SetGeometry(0, 0, geom);
         fromScratchModel->SetBoundingBox(BoundingBox(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.5f, 0.5f, 0.5f)));
 
-        // Though not necessary to render, the vertex & index buffers must be listed in the model so that it can be saved properly
-        Vector<SharedPtr<VertexBuffer> > vertexBuffers;
-        Vector<SharedPtr<IndexBuffer> > indexBuffers;
+        // Though not necessary to render, the vertex & index buffers must be listed in the model so that it can be
+        // saved properly
+        Vector<SharedPtr<VertexBuffer>> vertexBuffers;
+        Vector<SharedPtr<IndexBuffer>> indexBuffers;
         vertexBuffers.Push(vb);
         indexBuffers.Push(ib);
-        // Morph ranges could also be not defined. Here we simply define a zero range (no morphing) for the vertex buffer
+        // Morph ranges could also be not defined. Here we simply define a zero range (no morphing) for the vertex
+        // buffer
         PODVector<unsigned> morphRangeStarts;
         PODVector<unsigned> morphRangeCounts;
         morphRangeStarts.Push(0);
@@ -276,10 +263,8 @@ void DynamicGeometry::CreateInstructions()
 
     // Construct new Text object, set string to display and font to use
     Text* instructionText = ui->GetRoot()->CreateChild<Text>();
-    instructionText->SetText(
-        "Use WASD keys and mouse/touch to move\n"
-        "Space to toggle animation"
-    );
+    instructionText->SetText("Use WASD keys and mouse/touch to move\n"
+                             "Space to toggle animation");
     instructionText->SetFont(cache->GetResource<Font>("Fonts/Anonymous Pro.ttf"), 15);
     // The text has multiple rows. Center them in relation to each other
     instructionText->SetTextAlignment(HA_CENTER);

@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// 2D revolute constraint component.
 class URHO3D_API ConstraintRevolute2D : public Constraint2D
 {
@@ -85,5 +84,4 @@ private:
     /// Anchor.
     Vector2 anchor_;
 };
-
 }

@@ -29,25 +29,20 @@
 
 namespace Urho3D
 {
-
 extern const char* interpolationModeNames[];
 extern const char* LOGIC_CATEGORY;
 
-static const StringVector controlPointsStructureElementNames =
-{
-    "Control Point Count",
-    "   NodeID"
-};
+static const StringVector controlPointsStructureElementNames = {"Control Point Count", "   NodeID"};
 
-SplinePath::SplinePath(Context* context) :
-    Component(context),
-    spline_(BEZIER_CURVE),
-    speed_(1.f),
-    elapsedTime_(0.f),
-    traveled_(0.f),
-    length_(0.f),
-    dirty_(false),
-    controlledIdAttr_(0)
+SplinePath::SplinePath(Context* context)
+    : Component(context)
+    , spline_(BEZIER_CURVE)
+    , speed_(1.f)
+    , elapsedTime_(0.f)
+    , traveled_(0.f)
+    , length_(0.f)
+    , dirty_(false)
+    , controlledIdAttr_(0)
 {
     UpdateNodeIds();
 }
@@ -57,13 +52,13 @@ void SplinePath::RegisterObject(Context* context)
     context->RegisterFactory<SplinePath>(LOGIC_CATEGORY);
 
     URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Interpolation Mode", GetInterpolationMode, SetInterpolationMode, InterpolationMode,
-        interpolationModeNames, BEZIER_CURVE, AM_FILE);
+                                   interpolationModeNames, BEZIER_CURVE, AM_FILE);
     URHO3D_ATTRIBUTE("Speed", float, speed_, 1.f, AM_FILE);
     URHO3D_ATTRIBUTE("Traveled", float, traveled_, 0.f, AM_FILE | AM_NOEDIT);
     URHO3D_ATTRIBUTE("Elapsed Time", float, elapsedTime_, 0.f, AM_FILE | AM_NOEDIT);
     URHO3D_ACCESSOR_ATTRIBUTE("Controlled", GetControlledIdAttr, SetControlledIdAttr, unsigned, 0, AM_FILE | AM_NODEID);
-    URHO3D_ACCESSOR_ATTRIBUTE("Control Points", GetControlPointIdsAttr, SetControlPointIdsAttr,
-        VariantVector, Variant::emptyVariantVector, AM_FILE | AM_NODEIDVECTOR)
+    URHO3D_ACCESSOR_ATTRIBUTE("Control Points", GetControlPointIdsAttr, SetControlPointIdsAttr, VariantVector,
+                              Variant::emptyVariantVector, AM_FILE | AM_NODEIDVECTOR)
         .SetMetadata(AttributeMetadata::P_VECTOR_STRUCT_ELEMENTS, controlPointsStructureElementNames);
 }
 
@@ -128,7 +123,7 @@ void SplinePath::DrawDebugGeometry(DebugRenderer* debug, bool depthTest)
             }
         }
 
-        for (Vector<WeakPtr<Node> >::ConstIterator i = controlPoints_.Begin(); i != controlPoints_.End(); ++i)
+        for (Vector<WeakPtr<Node>>::ConstIterator i = controlPoints_.Begin(); i != controlPoints_.End(); ++i)
             debug->AddNode(*i);
 
         if (controlledNode_)
@@ -214,10 +209,7 @@ void SplinePath::SetPosition(float factor)
     traveled_ = t;
 }
 
-Vector3 SplinePath::GetPoint(float factor) const
-{
-    return spline_.GetPoint(factor).GetVector3();
-}
+Vector3 SplinePath::GetPoint(float factor) const { return spline_.GetPoint(factor).GetVector3(); }
 
 void SplinePath::Move(float timeStep)
 {
@@ -226,7 +218,8 @@ void SplinePath::Move(float timeStep)
 
     elapsedTime_ += timeStep;
 
-    // Calculate where we should be on the spline based on length, speed and time. If that is less than the set traveled_ don't move till caught up.
+    // Calculate where we should be on the spline based on length, speed and time. If that is less than the set
+    // traveled_ don't move till caught up.
     float distanceCovered = elapsedTime_ * speed_;
     traveled_ = distanceCovered / length_;
 
@@ -353,5 +346,4 @@ void SplinePath::CalculateLength()
         a = b;
     }
 }
-
 }

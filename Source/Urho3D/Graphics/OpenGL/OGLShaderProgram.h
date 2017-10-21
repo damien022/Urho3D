@@ -30,7 +30,6 @@
 
 namespace Urho3D
 {
-
 class ConstantBuffer;
 class Graphics;
 
@@ -68,7 +67,10 @@ public:
     const String& GetLinkerOutput() const { return linkerOutput_; }
 
     /// Return semantic to vertex attributes location mappings used by the shader.
-    const HashMap<Pair<unsigned char, unsigned char>, unsigned>& GetVertexAttributes() const { return vertexAttributes_; }
+    const HashMap<Pair<unsigned char, unsigned char>, unsigned>& GetVertexAttributes() const
+    {
+        return vertexAttributes_;
+    }
 
     /// Return attribute location use bitmask.
     unsigned GetUsedVertexAttributes() const { return usedVertexAttributes_; }
@@ -76,7 +78,8 @@ public:
     /// Return all constant buffers.
     const SharedPtr<ConstantBuffer>* GetConstantBuffers() const { return &constantBuffers_[0]; }
 
-    /// Check whether a shader parameter group needs update. Does not actually check whether parameters exist in the shaders.
+    /// Check whether a shader parameter group needs update. Does not actually check whether parameters exist in the
+    /// shaders.
     bool NeedParameterUpdate(ShaderParameterGroup group, const void* source);
     /// Clear a parameter source. Affects only the current shader program if appropriate.
     void ClearParameterSource(ShaderParameterGroup group);
@@ -113,5 +116,4 @@ private:
     /// Remembered global shader parameter sources for constant buffer mode.
     static const void* globalParameterSources[MAX_SHADER_PARAMETER_GROUPS];
 };
-
 }

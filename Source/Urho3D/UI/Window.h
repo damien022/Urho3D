@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// %Window movement and resizing modes.
 enum WindowDragMode
 {
@@ -56,23 +55,24 @@ public:
     static void RegisterObject(Context* context);
 
     /// Return UI rendering batches.
-    virtual void GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData, const IntRect& currentScissor) override;
+    virtual void GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData,
+                            const IntRect& currentScissor) override;
 
     /// React to mouse hover.
-    virtual void OnHover(const IntVector2& position, const IntVector2& screenPosition, int buttons, int qualifiers, Cursor* cursor) override;
+    virtual void OnHover(const IntVector2& position, const IntVector2& screenPosition, int buttons, int qualifiers,
+                         Cursor* cursor) override;
     /// React to mouse drag begin.
-    virtual void
-        OnDragBegin(const IntVector2& position, const IntVector2& screenPosition, int buttons, int qualifiers, Cursor* cursor) override;
+    virtual void OnDragBegin(const IntVector2& position, const IntVector2& screenPosition, int buttons, int qualifiers,
+                             Cursor* cursor) override;
     /// React to mouse drag motion.
-    virtual void OnDragMove
-        (const IntVector2& position, const IntVector2& screenPosition, const IntVector2& deltaPos, int buttons, int qualifiers,
-            Cursor* cursor) override;
+    virtual void OnDragMove(const IntVector2& position, const IntVector2& screenPosition, const IntVector2& deltaPos,
+                            int buttons, int qualifiers, Cursor* cursor) override;
     /// React to mouse drag end.
-    virtual void
-        OnDragEnd(const IntVector2& position, const IntVector2& screenPosition, int dragButtons, int buttons, Cursor* cursor) override;
+    virtual void OnDragEnd(const IntVector2& position, const IntVector2& screenPosition, int dragButtons, int buttons,
+                           Cursor* cursor) override;
     /// React to mouse drag cancel.
-    virtual void
-        OnDragCancel(const IntVector2& position, const IntVector2& screenPosition, int dragButtons, int buttons, Cursor* cursor) override;
+    virtual void OnDragCancel(const IntVector2& position, const IntVector2& screenPosition, int dragButtons,
+                              int buttons, Cursor* cursor) override;
 
     /// Set whether can be moved.
     void SetMovable(bool enable);
@@ -84,7 +84,8 @@ public:
     void SetFixedHeightResizing(bool enable);
     /// Set resize area width at edges.
     void SetResizeBorder(const IntRect& rect);
-    /// Set modal flag. When the modal flag is set, the focused window needs to be dismissed first to allow other UI elements to gain focus.
+    /// Set modal flag. When the modal flag is set, the focused window needs to be dismissed first to allow other UI
+    /// elements to gain focus.
     void SetModal(bool modal);
     /// Set modal shade color.
     void SetModalShadeColor(const Color& color);
@@ -164,5 +165,4 @@ protected:
     /// Modal frame size, used when modal flag is set.
     IntVector2 modalFrameSize_;
 };
-
 }

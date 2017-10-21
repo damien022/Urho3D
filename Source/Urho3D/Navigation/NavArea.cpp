@@ -30,7 +30,6 @@
 
 namespace Urho3D
 {
-
 static const unsigned MAX_NAV_AREA_ID = 255;
 static const Vector3 DEFAULT_BOUNDING_BOX_MIN(-10.0f, -10.0f, -10.0f);
 static const Vector3 DEFAULT_BOUNDING_BOX_MAX(10.0f, 10.0f, 10.0f);
@@ -38,16 +37,14 @@ static const unsigned DEFAULT_AREA_ID = 0;
 
 extern const char* NAVIGATION_CATEGORY;
 
-NavArea::NavArea(Context* context) :
-    Component(context),
-    areaID_(DEFAULT_AREA_ID),
-    boundingBox_(DEFAULT_BOUNDING_BOX_MIN, DEFAULT_BOUNDING_BOX_MAX)
+NavArea::NavArea(Context* context)
+    : Component(context)
+    , areaID_(DEFAULT_AREA_ID)
+    , boundingBox_(DEFAULT_BOUNDING_BOX_MIN, DEFAULT_BOUNDING_BOX_MAX)
 {
 }
 
-NavArea::~NavArea()
-{
-}
+NavArea::~NavArea() {}
 
 void NavArea::RegisterObject(Context* context)
 {
@@ -84,5 +81,4 @@ void NavArea::DrawDebugGeometry(DebugRenderer* debug, bool depthTest)
         debug->AddBoundingBox(boundingBox_, mat, Color(0.0f, 1.0f, 0.0f, 0.15f), true, true);
     }
 }
-
 }

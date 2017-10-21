@@ -37,13 +37,12 @@
 #include "../Scene/SceneEvents.h"
 #include "../Scene/SmoothedTransform.h"
 
+#include <Bullet/BulletCollision/CollisionShapes/btCompoundShape.h>
 #include <Bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
 #include <Bullet/BulletDynamics/Dynamics/btRigidBody.h>
-#include <Bullet/BulletCollision/CollisionShapes/btCompoundShape.h>
 
 namespace Urho3D
 {
-
 static const float DEFAULT_MASS = 0.0f;
 static const float DEFAULT_FRICTION = 0.5f;
 static const float DEFAULT_RESTITUTION = 0.0f;
@@ -51,33 +50,27 @@ static const float DEFAULT_ROLLING_FRICTION = 0.0f;
 static const unsigned DEFAULT_COLLISION_LAYER = 0x1;
 static const unsigned DEFAULT_COLLISION_MASK = M_MAX_UNSIGNED;
 
-static const char* collisionEventModeNames[] =
-{
-    "Never",
-    "When Active",
-    "Always",
-    nullptr
-};
+static const char* collisionEventModeNames[] = {"Never", "When Active", "Always", nullptr};
 
 extern const char* PHYSICS_CATEGORY;
 
-RigidBody::RigidBody(Context* context) :
-    Component(context),
-    gravityOverride_(Vector3::ZERO),
-    centerOfMass_(Vector3::ZERO),
-    mass_(DEFAULT_MASS),
-    collisionLayer_(DEFAULT_COLLISION_LAYER),
-    collisionMask_(DEFAULT_COLLISION_MASK),
-    collisionEventMode_(COLLISION_ACTIVE),
-    lastPosition_(Vector3::ZERO),
-    lastRotation_(Quaternion::IDENTITY),
-    kinematic_(false),
-    trigger_(false),
-    useGravity_(true),
-    readdBody_(false),
-    inWorld_(false),
-    enableMassUpdate_(true),
-    hasSimulated_(false)
+RigidBody::RigidBody(Context* context)
+    : Component(context)
+    , gravityOverride_(Vector3::ZERO)
+    , centerOfMass_(Vector3::ZERO)
+    , mass_(DEFAULT_MASS)
+    , collisionLayer_(DEFAULT_COLLISION_LAYER)
+    , collisionMask_(DEFAULT_COLLISION_MASK)
+    , collisionEventMode_(COLLISION_ACTIVE)
+    , lastPosition_(Vector3::ZERO)
+    , lastRotation_(Quaternion::IDENTITY)
+    , kinematic_(false)
+    , trigger_(false)
+    , useGravity_(true)
+    , readdBody_(false)
+    , inWorld_(false)
+    , enableMassUpdate_(true)
+    , hasSimulated_(false)
 {
     compoundShape_ = new btCompoundShape();
     shiftedCompoundShape_ = new btCompoundShape();
@@ -96,36 +89,47 @@ void RigidBody::RegisterObject(Context* context)
     context->RegisterFactory<RigidBody>(PHYSICS_CATEGORY);
 
     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Physics Rotation", GetRotation, SetRotation, Quaternion, Quaternion::IDENTITY, AM_FILE | AM_NOEDIT);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Physics Position", GetPosition, SetPosition, Vector3, Vector3::ZERO, AM_FILE | AM_NOEDIT);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Physics Rotation", GetRotation, SetRotation, Quaternion, Quaternion::IDENTITY,
+                                    AM_FILE | AM_NOEDIT);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Physics Position", GetPosition, SetPosition, Vector3, Vector3::ZERO,
+                                    AM_FILE | AM_NOEDIT);
     URHO3D_ATTRIBUTE("Mass", float, mass_, DEFAULT_MASS, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Friction", GetFriction, SetFriction, float, DEFAULT_FRICTION, AM_DEFAULT);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Anisotropic Friction", GetAnisotropicFriction, SetAnisotropicFriction, Vector3, Vector3::ONE,
-        AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Rolling Friction", GetRollingFriction, SetRollingFriction, float, DEFAULT_ROLLING_FRICTION, AM_DEFAULT);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Anisotropic Friction", GetAnisotropicFriction, SetAnisotropicFriction, Vector3,
+                                    Vector3::ONE, AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Rolling Friction", GetRollingFriction, SetRollingFriction, float,
+                              DEFAULT_ROLLING_FRICTION, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Restitution", GetRestitution, SetRestitution, float, DEFAULT_RESTITUTION, AM_DEFAULT);
     URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Linear Velocity", GetLinearVelocity, SetLinearVelocity, Vector3, Vector3::ZERO,
-        AM_DEFAULT | AM_LATESTDATA);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Angular Velocity", GetAngularVelocity, SetAngularVelocity, Vector3, Vector3::ZERO, AM_FILE);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Linear Factor", GetLinearFactor, SetLinearFactor, Vector3, Vector3::ONE, AM_DEFAULT);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Angular Factor", GetAngularFactor, SetAngularFactor, Vector3, Vector3::ONE, AM_DEFAULT);
+                                    AM_DEFAULT | AM_LATESTDATA);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Angular Velocity", GetAngularVelocity, SetAngularVelocity, Vector3, Vector3::ZERO,
+                                    AM_FILE);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Linear Factor", GetLinearFactor, SetLinearFactor, Vector3, Vector3::ONE,
+                                    AM_DEFAULT);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Angular Factor", GetAngularFactor, SetAngularFactor, Vector3, Vector3::ONE,
+                                    AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Linear Damping", GetLinearDamping, SetLinearDamping, float, 0.0f, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Angular Damping", GetAngularDamping, SetAngularDamping, float, 0.0f, AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Linear Rest Threshold", GetLinearRestThreshold, SetLinearRestThreshold, float, 0.8f, AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Angular Rest Threshold", GetAngularRestThreshold, SetAngularRestThreshold, float, 1.0f, AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Linear Rest Threshold", GetLinearRestThreshold, SetLinearRestThreshold, float, 0.8f,
+                              AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Angular Rest Threshold", GetAngularRestThreshold, SetAngularRestThreshold, float, 1.0f,
+                              AM_DEFAULT);
     URHO3D_ATTRIBUTE("Collision Layer", int, collisionLayer_, DEFAULT_COLLISION_LAYER, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Collision Mask", int, collisionMask_, DEFAULT_COLLISION_MASK, AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Contact Threshold", GetContactProcessingThreshold, SetContactProcessingThreshold, float, BT_LARGE_FLOAT,
-        AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Contact Threshold", GetContactProcessingThreshold, SetContactProcessingThreshold, float,
+                              BT_LARGE_FLOAT, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("CCD Radius", GetCcdRadius, SetCcdRadius, float, 0.0f, AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("CCD Motion Threshold", GetCcdMotionThreshold, SetCcdMotionThreshold, float, 0.0f, AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Network Angular Velocity", GetNetAngularVelocityAttr, SetNetAngularVelocityAttr, PODVector<unsigned char>,
-        Variant::emptyBuffer, AM_NET | AM_LATESTDATA | AM_NOEDIT);
-    URHO3D_ENUM_ATTRIBUTE("Collision Event Mode", collisionEventMode_, collisionEventModeNames, COLLISION_ACTIVE, AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("CCD Motion Threshold", GetCcdMotionThreshold, SetCcdMotionThreshold, float, 0.0f,
+                              AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Network Angular Velocity", GetNetAngularVelocityAttr, SetNetAngularVelocityAttr,
+                              PODVector<unsigned char>, Variant::emptyBuffer, AM_NET | AM_LATESTDATA | AM_NOEDIT);
+    URHO3D_ENUM_ATTRIBUTE("Collision Event Mode", collisionEventMode_, collisionEventModeNames, COLLISION_ACTIVE,
+                          AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Use Gravity", GetUseGravity, SetUseGravity, bool, true, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Is Kinematic", bool, kinematic_, false, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Is Trigger", bool, trigger_, false, AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Gravity Override", GetGravityOverride, SetGravityOverride, Vector3, Vector3::ZERO, AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Gravity Override", GetGravityOverride, SetGravityOverride, Vector3, Vector3::ZERO,
+                              AM_DEFAULT);
 }
 
 void RigidBody::OnSetAttribute(const AttributeInfo& attr, const Variant& src)
@@ -210,8 +214,8 @@ void RigidBody::DrawDebugGeometry(DebugRenderer* debug, bool depthTest)
         physicsWorld_->SetDebugDepthTest(depthTest);
 
         btDiscreteDynamicsWorld* world = physicsWorld_->GetWorld();
-        world->debugDrawObject(body_->getWorldTransform(), shiftedCompoundShape_.Get(), IsActive() ? btVector3(1.0f, 1.0f, 1.0f) :
-            btVector3(0.0f, 1.0f, 0.0f));
+        world->debugDrawObject(body_->getWorldTransform(), shiftedCompoundShape_.Get(),
+                               IsActive() ? btVector3(1.0f, 1.0f, 1.0f) : btVector3(0.0f, 1.0f, 0.0f));
 
         physicsWorld_->SetDebugRenderer(nullptr);
     }
@@ -270,7 +274,7 @@ void RigidBody::SetRotation(const Quaternion& rotation)
                 interpTrans.setOrigin(worldTrans.getOrigin());
             body_->setInterpolationWorldTransform(interpTrans);
         }
-        
+
         body_->updateInertiaTensor();
 
         Activate();
@@ -591,10 +595,7 @@ void RigidBody::ReAddBodyToWorld()
         AddBodyToWorld();
 }
 
-void RigidBody::DisableMassUpdate()
-{
-    enableMassUpdate_ = false;
-}
+void RigidBody::DisableMassUpdate() { enableMassUpdate_ = false; }
 
 void RigidBody::EnableMassUpdate()
 {
@@ -621,90 +622,45 @@ Quaternion RigidBody::GetRotation() const
     return body_ ? ToQuaternion(body_->getWorldTransform().getRotation()) : Quaternion::IDENTITY;
 }
 
-Vector3 RigidBody::GetLinearVelocity() const
-{
-    return body_ ? ToVector3(body_->getLinearVelocity()) : Vector3::ZERO;
-}
+Vector3 RigidBody::GetLinearVelocity() const { return body_ ? ToVector3(body_->getLinearVelocity()) : Vector3::ZERO; }
 
-Vector3 RigidBody::GetLinearFactor() const
-{
-    return body_ ? ToVector3(body_->getLinearFactor()) : Vector3::ZERO;
-}
+Vector3 RigidBody::GetLinearFactor() const { return body_ ? ToVector3(body_->getLinearFactor()) : Vector3::ZERO; }
 
 Vector3 RigidBody::GetVelocityAtPoint(const Vector3& position) const
 {
     return body_ ? ToVector3(body_->getVelocityInLocalPoint(ToBtVector3(position - centerOfMass_))) : Vector3::ZERO;
 }
 
-float RigidBody::GetLinearRestThreshold() const
-{
-    return body_ ? body_->getLinearSleepingThreshold() : 0.0f;
-}
+float RigidBody::GetLinearRestThreshold() const { return body_ ? body_->getLinearSleepingThreshold() : 0.0f; }
 
-float RigidBody::GetLinearDamping() const
-{
-    return body_ ? body_->getLinearDamping() : 0.0f;
-}
+float RigidBody::GetLinearDamping() const { return body_ ? body_->getLinearDamping() : 0.0f; }
 
-Vector3 RigidBody::GetAngularVelocity() const
-{
-    return body_ ? ToVector3(body_->getAngularVelocity()) : Vector3::ZERO;
-}
+Vector3 RigidBody::GetAngularVelocity() const { return body_ ? ToVector3(body_->getAngularVelocity()) : Vector3::ZERO; }
 
-Vector3 RigidBody::GetAngularFactor() const
-{
-    return body_ ? ToVector3(body_->getAngularFactor()) : Vector3::ZERO;
-}
+Vector3 RigidBody::GetAngularFactor() const { return body_ ? ToVector3(body_->getAngularFactor()) : Vector3::ZERO; }
 
-float RigidBody::GetAngularRestThreshold() const
-{
-    return body_ ? body_->getAngularSleepingThreshold() : 0.0f;
-}
+float RigidBody::GetAngularRestThreshold() const { return body_ ? body_->getAngularSleepingThreshold() : 0.0f; }
 
-float RigidBody::GetAngularDamping() const
-{
-    return body_ ? body_->getAngularDamping() : 0.0f;
-}
+float RigidBody::GetAngularDamping() const { return body_ ? body_->getAngularDamping() : 0.0f; }
 
-float RigidBody::GetFriction() const
-{
-    return body_ ? body_->getFriction() : 0.0f;
-}
+float RigidBody::GetFriction() const { return body_ ? body_->getFriction() : 0.0f; }
 
 Vector3 RigidBody::GetAnisotropicFriction() const
 {
     return body_ ? ToVector3(body_->getAnisotropicFriction()) : Vector3::ZERO;
 }
 
-float RigidBody::GetRollingFriction() const
-{
-    return body_ ? body_->getRollingFriction() : 0.0f;
-}
+float RigidBody::GetRollingFriction() const { return body_ ? body_->getRollingFriction() : 0.0f; }
 
-float RigidBody::GetRestitution() const
-{
-    return body_ ? body_->getRestitution() : 0.0f;
-}
+float RigidBody::GetRestitution() const { return body_ ? body_->getRestitution() : 0.0f; }
 
-float RigidBody::GetContactProcessingThreshold() const
-{
-    return body_ ? body_->getContactProcessingThreshold() : 0.0f;
-}
+float RigidBody::GetContactProcessingThreshold() const { return body_ ? body_->getContactProcessingThreshold() : 0.0f; }
 
-float RigidBody::GetCcdRadius() const
-{
-    return body_ ? body_->getCcdSweptSphereRadius() : 0.0f;
-}
+float RigidBody::GetCcdRadius() const { return body_ ? body_->getCcdSweptSphereRadius() : 0.0f; }
 
-float RigidBody::GetCcdMotionThreshold() const
-{
-    return body_ ? body_->getCcdMotionThreshold() : 0.0f;
-}
+float RigidBody::GetCcdMotionThreshold() const { return body_ ? body_->getCcdMotionThreshold() : 0.0f; }
 
-bool RigidBody::IsActive() const
-{
-    return body_ ? body_->isActive() : false;
-}
+bool RigidBody::IsActive() const { return body_ ? body_->isActive() : false; }
 
 void RigidBody::GetCollidingBodies(PODVector<RigidBody*>& result) const
 {
@@ -790,7 +746,8 @@ void RigidBody::UpdateMass()
     btCollisionShape* oldCollisionShape = body_->getCollisionShape();
     body_->setCollisionShape(useCompound ? shiftedCompoundShape_.Get() : shiftedCompoundShape_->getChildShape(0));
 
-    // If we have one shape and this is a triangle mesh, we use a custom material callback in order to adjust internal edges
+    // If we have one shape and this is a triangle mesh, we use a custom material callback in order to adjust internal
+    // edges
     if (!useCompound && body_->getCollisionShape()->getShapeType() == SCALED_TRIANGLE_MESH_SHAPE_PROXYTYPE &&
         physicsWorld_->GetInternalEdge())
         body_->setCollisionFlags(body_->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
@@ -853,23 +810,22 @@ void RigidBody::UpdateGravity()
 
 void RigidBody::SetNetAngularVelocityAttr(const PODVector<unsigned char>& value)
 {
-    float maxVelocity = physicsWorld_ ? physicsWorld_->GetMaxNetworkAngularVelocity() : DEFAULT_MAX_NETWORK_ANGULAR_VELOCITY;
+    float maxVelocity =
+        physicsWorld_ ? physicsWorld_->GetMaxNetworkAngularVelocity() : DEFAULT_MAX_NETWORK_ANGULAR_VELOCITY;
     MemoryBuffer buf(value);
     SetAngularVelocity(buf.ReadPackedVector3(maxVelocity));
 }
 
 const PODVector<unsigned char>& RigidBody::GetNetAngularVelocityAttr() const
 {
-    float maxVelocity = physicsWorld_ ? physicsWorld_->GetMaxNetworkAngularVelocity() : DEFAULT_MAX_NETWORK_ANGULAR_VELOCITY;
+    float maxVelocity =
+        physicsWorld_ ? physicsWorld_->GetMaxNetworkAngularVelocity() : DEFAULT_MAX_NETWORK_ANGULAR_VELOCITY;
     attrBuffer_.Clear();
     attrBuffer_.WritePackedVector3(GetAngularVelocity(), maxVelocity);
     return attrBuffer_.GetBuffer();
 }
 
-void RigidBody::AddConstraint(Constraint* constraint)
-{
-    constraints_.Push(constraint);
-}
+void RigidBody::AddConstraint(Constraint* constraint) { constraints_.Push(constraint); }
 
 void RigidBody::RemoveConstraint(Constraint* constraint)
 {
@@ -896,12 +852,13 @@ void RigidBody::ReleaseBody()
 
 void RigidBody::OnMarkedDirty(Node* node)
 {
-    // If node transform changes, apply it back to the physics transform. However, do not do this when a SmoothedTransform
-    // is in use, because in that case the node transform will be constantly updated into smoothed, possibly non-physical
-    // states; rather follow the SmoothedTransform target transform directly
-    // Also, for kinematic objects Bullet asks the position from us, so we do not need to apply ourselves
-    // (exception: initial setting of transform)
-    if ((!kinematic_ || !hasSimulated_) && (!physicsWorld_ || !physicsWorld_->IsApplyingTransforms()) && !smoothedTransform_)
+    // If node transform changes, apply it back to the physics transform. However, do not do this when a
+    // SmoothedTransform is in use, because in that case the node transform will be constantly updated into smoothed,
+    // possibly non-physical states; rather follow the SmoothedTransform target transform directly Also, for kinematic
+    // objects Bullet asks the position from us, so we do not need to apply ourselves (exception: initial setting of
+    // transform)
+    if ((!kinematic_ || !hasSimulated_) && (!physicsWorld_ || !physicsWorld_->IsApplyingTransforms()) &&
+        !smoothedTransform_)
     {
         // Physics operations are not safe from worker threads
         Scene* scene = GetScene();
@@ -974,8 +931,8 @@ void RigidBody::AddBodyToWorld()
         body_ = new btRigidBody(mass_, this, shiftedCompoundShape_.Get(), localInertia);
         body_->setUserPointer(this);
 
-        // Check for existence of the SmoothedTransform component, which should be created by now in network client mode.
-        // If it exists, subscribe to its change events
+        // Check for existence of the SmoothedTransform component, which should be created by now in network client
+        // mode. If it exists, subscribe to its change events
         smoothedTransform_ = GetComponent<SmoothedTransform>();
         if (smoothedTransform_)
         {
@@ -990,8 +947,8 @@ void RigidBody::AddBodyToWorld()
         for (PODVector<CollisionShape*>::Iterator i = shapes.Begin(); i != shapes.End(); ++i)
             (*i)->NotifyRigidBody(false);
 
-        // Check if this node contains Constraint components that were waiting for the rigid body to be created, and signal them
-        // to create themselves now
+        // Check if this node contains Constraint components that were waiting for the rigid body to be created, and
+        // signal them to create themselves now
         PODVector<Constraint*> constraints;
         node_->GetComponents<Constraint>(constraints);
         for (PODVector<Constraint*>::Iterator i = constraints.Begin(); i != constraints.End(); ++i)
@@ -1054,5 +1011,4 @@ void RigidBody::HandleTargetRotation(StringHash eventType, VariantMap& eventData
     if (!physicsWorld_ || !physicsWorld_->IsApplyingTransforms())
         SetRotation(static_cast<SmoothedTransform*>(GetEventSender())->GetTargetWorldRotation());
 }
-
 }

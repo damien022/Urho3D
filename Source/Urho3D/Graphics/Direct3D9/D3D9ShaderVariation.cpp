@@ -31,14 +31,13 @@
 #include "../../IO/Log.h"
 #include "../../Resource/ResourceCache.h"
 
-#include <d3dcompiler.h>
 #include <MojoShader/mojoshader.h>
+#include <d3dcompiler.h>
 
 #include "../../DebugNew.h"
 
 namespace Urho3D
 {
-
 void CopyStrippedCode(PODVector<unsigned char>& byteCode, unsigned char* bufData, unsigned bufSize)
 {
     unsigned const D3DSIO_COMMENT = 0xFFFE;
@@ -108,9 +107,7 @@ bool ShaderVariation::Create()
     IDirect3DDevice9* device = graphics_->GetImpl()->GetDevice();
     if (type_ == VS)
     {
-        HRESULT hr = device->CreateVertexShader(
-            (const DWORD*)&byteCode_[0],
-            (IDirect3DVertexShader9**)&object_.ptr_);
+        HRESULT hr = device->CreateVertexShader((const DWORD*)&byteCode_[0], (IDirect3DVertexShader9**)&object_.ptr_);
         if (FAILED(hr))
         {
             URHO3D_SAFE_RELEASE(object_.ptr_);
@@ -119,9 +116,7 @@ bool ShaderVariation::Create()
     }
     else
     {
-        HRESULT hr = device->CreatePixelShader(
-            (const DWORD*)&byteCode_[0],
-            (IDirect3DPixelShader9**)&object_.ptr_);
+        HRESULT hr = device->CreatePixelShader((const DWORD*)&byteCode_[0], (IDirect3DPixelShader9**)&object_.ptr_);
         if (FAILED(hr))
         {
             URHO3D_SAFE_RELEASE(object_.ptr_);
@@ -163,10 +158,7 @@ void ShaderVariation::Release()
     parameters_.Clear();
 }
 
-void ShaderVariation::SetDefines(const String& defines)
-{
-    defines_ = defines;
-}
+void ShaderVariation::SetDefines(const String& defines) { defines_ = defines; }
 
 bool ShaderVariation::LoadByteCode(const String& binaryShaderName)
 {
@@ -178,7 +170,8 @@ bool ShaderVariation::LoadByteCode(const String& binaryShaderName)
     unsigned sourceTimeStamp = owner_->GetTimeStamp();
     // If source code is loaded from a package, its timestamp will be zero. Else check that binary is not older
     // than source
-    if (sourceTimeStamp && fileSystem->GetLastModifiedTime(cache->GetResourceFileName(binaryShaderName)) < sourceTimeStamp)
+    if (sourceTimeStamp &&
+        fileSystem->GetLastModifiedTime(cache->GetResourceFileName(binaryShaderName)) < sourceTimeStamp)
         return false;
 
     SharedPtr<File> file = cache->GetFile(binaryShaderName);
@@ -189,8 +182,8 @@ bool ShaderVariation::LoadByteCode(const String& binaryShaderName)
     }
 
     /// \todo Check that shader type and model match
-    /*unsigned short shaderType = */file->ReadUShort();
-    /*unsigned short shaderModel = */file->ReadUShort();
+    /*unsigned short shaderType = */ file->ReadUShort();
+    /*unsigned short shaderModel = */ file->ReadUShort();
 
     unsigned numParameters = file->ReadUInt();
     for (unsigned i = 0; i < numParameters; ++i)
@@ -210,7 +203,7 @@ bool ShaderVariation::LoadByteCode(const String& binaryShaderName)
     unsigned numTextureUnits = file->ReadUInt();
     for (unsigned i = 0; i < numTextureUnits; ++i)
     {
-        /*String unitName = */file->ReadString();
+        /*String unitName = */ file->ReadString();
         unsigned reg = file->ReadUByte();
 
         if (reg < MAX_TEXTURE_UNITS)
@@ -301,8 +294,8 @@ bool ShaderVariation::Compile()
     ID3DBlob* shaderCode = nullptr;
     ID3DBlob* errorMsgs = nullptr;
 
-    HRESULT hr = D3DCompile(sourceCode.CString(), sourceCode.Length(), owner_->GetName().CString(), &macros.Front(), nullptr,
-        entryPoint, profile, flags, 0, &shaderCode, &errorMsgs);
+    HRESULT hr = D3DCompile(sourceCode.CString(), sourceCode.Length(), owner_->GetName().CString(), &macros.Front(),
+                            nullptr, entryPoint, profile, flags, 0, &shaderCode, &errorMsgs);
     if (FAILED(hr))
     {
         // Do not include end zero unnecessarily
@@ -330,7 +323,8 @@ bool ShaderVariation::Compile()
 
 void ShaderVariation::ParseParameters(unsigned char* bufData, unsigned bufSize)
 {
-    MOJOSHADER_parseData const* parseData = MOJOSHADER_parse("bytecode", bufData, bufSize, nullptr, 0, nullptr, 0, nullptr, nullptr, nullptr);
+    MOJOSHADER_parseData const* parseData =
+        MOJOSHADER_parse("bytecode", bufData, bufSize, nullptr, 0, nullptr, 0, nullptr, nullptr, nullptr);
 
     for (int i = 0; i < parseData->symbol_count; i++)
     {
@@ -423,5 +417,4 @@ void ShaderVariation::SaveByteCode(const String& binaryShaderName)
     if (dataSize)
         file->Write(&byteCode_[0], dataSize);
 }
-
 }

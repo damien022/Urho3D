@@ -39,8 +39,8 @@ static const StringHash VAR_VELOCITY("Velocity");
 
 URHO3D_DEFINE_APPLICATION_MAIN(Sprites)
 
-Sprites::Sprites(Context* context) :
-    Sample(context)
+Sprites::Sprites(Context* context)
+    : Sample(context)
 {
 }
 

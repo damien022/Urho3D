@@ -29,7 +29,6 @@
 
 namespace Urho3D
 {
-
 /// Hardware vertex buffer.
 class URHO3D_API VertexBuffer : public Object, public GPUObject
 {
@@ -58,7 +57,8 @@ public:
     bool SetData(const void* data);
     /// Set a data range in the buffer. Optionally discard data outside the range.
     bool SetDataRange(const void* data, unsigned start, unsigned count, bool discard = false);
-    /// Lock the buffer for write-only editing. Return data pointer if successful. Optionally discard data outside the range.
+    /// Lock the buffer for write-only editing. Return data pointer if successful. Optionally discard data outside the
+    /// range.
     void* Lock(unsigned start, unsigned count, bool discard = false);
     /// Unlock the buffer and apply changes to the GPU buffer.
     void Unlock();
@@ -85,21 +85,37 @@ public:
     const VertexElement* GetElement(VertexElementSemantic semantic, unsigned char index = 0) const;
 
     /// Return vertex element with specific type, or null if does not exist.
-    const VertexElement* GetElement(VertexElementType type, VertexElementSemantic semantic, unsigned char index = 0) const;
+    const VertexElement* GetElement(VertexElementType type, VertexElementSemantic semantic,
+                                    unsigned char index = 0) const;
 
     /// Return whether has a specified element semantic.
-    bool HasElement(VertexElementSemantic semantic, unsigned char index = 0) const { return GetElement(semantic, index) != nullptr; }
+    bool HasElement(VertexElementSemantic semantic, unsigned char index = 0) const
+    {
+        return GetElement(semantic, index) != nullptr;
+    }
 
     /// Return whether has an element semantic with specific type.
-    bool HasElement(VertexElementType type, VertexElementSemantic semantic, unsigned char index = 0) const { return GetElement(type, semantic, index) != nullptr; }
+    bool HasElement(VertexElementType type, VertexElementSemantic semantic, unsigned char index = 0) const
+    {
+        return GetElement(type, semantic, index) != nullptr;
+    }
 
     /// Return offset of a element within vertex, or M_MAX_UNSIGNED if does not exist.
-    unsigned GetElementOffset(VertexElementSemantic semantic, unsigned char index = 0) const { const VertexElement* element = GetElement(semantic, index); return element ? element->offset_ : M_MAX_UNSIGNED; }
+    unsigned GetElementOffset(VertexElementSemantic semantic, unsigned char index = 0) const
+    {
+        const VertexElement* element = GetElement(semantic, index);
+        return element ? element->offset_ : M_MAX_UNSIGNED;
+    }
 
     /// Return offset of a element with specific type within vertex, or M_MAX_UNSIGNED if element does not exist.
-    unsigned GetElementOffset(VertexElementType type, VertexElementSemantic semantic, unsigned char index = 0) const { const VertexElement* element = GetElement(type, semantic, index); return element ? element->offset_ : M_MAX_UNSIGNED; }
+    unsigned GetElementOffset(VertexElementType type, VertexElementSemantic semantic, unsigned char index = 0) const
+    {
+        const VertexElement* element = GetElement(type, semantic, index);
+        return element ? element->offset_ : M_MAX_UNSIGNED;
+    }
 
-    /// Return legacy vertex element mask. Note that both semantic and type must match the legacy element for a mask bit to be set.
+    /// Return legacy vertex element mask. Note that both semantic and type must match the legacy element for a mask bit
+    /// to be set.
     unsigned GetElementMask() const { return elementMask_; }
 
     /// Return CPU memory shadow data.
@@ -112,13 +128,17 @@ public:
     unsigned long long GetBufferHash(unsigned streamIndex) { return elementHash_ << (streamIndex * 16); }
 
     /// Return element with specified type and semantic from a vertex element list, or null if does not exist.
-    static const VertexElement* GetElement(const PODVector<VertexElement>& elements, VertexElementType type, VertexElementSemantic semantic, unsigned char index = 0);
+    static const VertexElement* GetElement(const PODVector<VertexElement>& elements, VertexElementType type,
+                                           VertexElementSemantic semantic, unsigned char index = 0);
 
     /// Return whether element list has a specified element type and semantic.
-    static bool HasElement(const PODVector<VertexElement>& elements, VertexElementType type, VertexElementSemantic semantic, unsigned char index = 0);
+    static bool HasElement(const PODVector<VertexElement>& elements, VertexElementType type,
+                           VertexElementSemantic semantic, unsigned char index = 0);
 
-    /// Return element offset for specified type and semantic from a vertex element list, or M_MAX_UNSIGNED if does not exist.
-    static unsigned GetElementOffset(const PODVector<VertexElement>& elements, VertexElementType type, VertexElementSemantic semantic, unsigned char index = 0);
+    /// Return element offset for specified type and semantic from a vertex element list, or M_MAX_UNSIGNED if does not
+    /// exist.
+    static unsigned GetElementOffset(const PODVector<VertexElement>& elements, VertexElementType type,
+                                     VertexElementSemantic semantic, unsigned char index = 0);
 
     /// Return a vertex element list from a legacy element bitmask.
     static PODVector<VertexElement> GetElements(unsigned elementMask);
@@ -171,5 +191,4 @@ private:
     /// Discard lock flag. Used by OpenGL only.
     bool discardLock_;
 };
-
 }

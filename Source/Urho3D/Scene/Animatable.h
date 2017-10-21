@@ -28,7 +28,6 @@
 
 namespace Urho3D
 {
-
 class Animatable;
 class ValueAnimation;
 class AttributeAnimationInfo;
@@ -39,9 +38,8 @@ class AttributeAnimationInfo : public ValueAnimationInfo
 {
 public:
     /// Construct.
-    AttributeAnimationInfo
-        (Animatable* animatable, const AttributeInfo& attributeInfo, ValueAnimation* attributeAnimation, WrapMode wrapMode,
-            float speed);
+    AttributeAnimationInfo(Animatable* animatable, const AttributeInfo& attributeInfo,
+                           ValueAnimation* attributeAnimation, WrapMode wrapMode, float speed);
     /// Copy construct.
     AttributeAnimationInfo(const AttributeAnimationInfo& other);
     /// Destruct.
@@ -59,7 +57,8 @@ private:
     const AttributeInfo& attributeInfo_;
 };
 
-/// Base class for animatable object, an animatable object can be set animation on it's attributes, or can be set an object animation to it.
+/// Base class for animatable object, an animatable object can be set animation on it's attributes, or can be set an
+/// object animation to it.
 class URHO3D_API Animatable : public Serializable
 {
     URHO3D_OBJECT(Animatable, Serializable);
@@ -72,25 +71,28 @@ public:
     /// Register object factory.
     static void RegisterObject(Context* context);
 
-    /// Load from XML data. When setInstanceDefault is set to true, after setting the attribute value, store the value as instance's default value. Return true if successful.
+    /// Load from XML data. When setInstanceDefault is set to true, after setting the attribute value, store the value
+    /// as instance's default value. Return true if successful.
     virtual bool LoadXML(const XMLElement& source, bool setInstanceDefault = false) override;
     /// Save as XML data. Return true if successful.
     virtual bool SaveXML(XMLElement& dest) const override;
-    /// Load from JSON data. When setInstanceDefault is set to true, after setting the attribute value, store the value as instance's default value. Return true if successful.
+    /// Load from JSON data. When setInstanceDefault is set to true, after setting the attribute value, store the value
+    /// as instance's default value. Return true if successful.
     virtual bool LoadJSON(const JSONValue& source, bool setInstanceDefault = false) override;
     /// Save as JSON data. Return true if successful.
     virtual bool SaveJSON(JSONValue& dest) const override;
 
     /// Set automatic update of animation, default true.
     void SetAnimationEnabled(bool enable);
-    /// Set time position of all attribute animations or an object animation manually. Automatic update should be disabled in this case.
+    /// Set time position of all attribute animations or an object animation manually. Automatic update should be
+    /// disabled in this case.
     void SetAnimationTime(float time);
 
     /// Set object animation.
     void SetObjectAnimation(ObjectAnimation* objectAnimation);
     /// Set attribute animation.
-    void SetAttributeAnimation
-        (const String& name, ValueAnimation* attributeAnimation, WrapMode wrapMode = WM_LOOP, float speed = 1.0f);
+    void SetAttributeAnimation(const String& name, ValueAnimation* attributeAnimation, WrapMode wrapMode = WM_LOOP,
+                               float speed = 1.0f);
     /// Set attribute animation wrap mode.
     void SetAttributeAnimationWrapMode(const String& name, WrapMode wrapMode);
     /// Set attribute animation speed.
@@ -129,7 +131,8 @@ protected:
     /// Find target of an attribute animation from object hierarchy by name.
     virtual Animatable* FindAttributeAnimationTarget(const String& name, String& outName);
     /// Set object attribute animation internal.
-    void SetObjectAttributeAnimation(const String& name, ValueAnimation* attributeAnimation, WrapMode wrapMode, float speed);
+    void SetObjectAttributeAnimation(const String& name, ValueAnimation* attributeAnimation, WrapMode wrapMode,
+                                     float speed);
     /// Handle object animation added.
     void OnObjectAnimationAdded(ObjectAnimation* objectAnimation);
     /// Handle object animation removed.
@@ -152,7 +155,6 @@ protected:
     /// Animated network attribute set.
     HashSet<const AttributeInfo*> animatedNetworkAttributes_;
     /// Attribute animation infos.
-    HashMap<String, SharedPtr<AttributeAnimationInfo> > attributeAnimationInfos_;
+    HashMap<String, SharedPtr<AttributeAnimationInfo>> attributeAnimationInfos_;
 };
-
 }

@@ -28,7 +28,6 @@
 
 namespace Urho3D
 {
-
 /// Font hinting level (only used for FreeType fonts)
 enum FontHintLevel
 {
@@ -69,8 +68,8 @@ public:
     void SetCursor(Cursor* cursor);
     /// Set focused UI element.
     void SetFocusElement(UIElement* element, bool byKey = false);
-    /// Set modal element. Until all the modal elements are dismissed, all the inputs and events are only sent to them. Return true when successful.
-    /// Only the modal element can clear its modal status or when it is being destructed.
+    /// Set modal element. Until all the modal elements are dismissed, all the inputs and events are only sent to them.
+    /// Return true when successful. Only the modal element can clear its modal status or when it is being destructed.
     bool SetModalElement(UIElement* modalElement, bool enable);
     /// Clear the UI (excluding the cursor.)
     void Clear();
@@ -78,13 +77,17 @@ public:
     void Update(float timeStep);
     /// Update the UI for rendering. Called by HandleRenderUpdate().
     void RenderUpdate();
-    /// Render the UI. If renderUICommand is false (default), is assumed to be the default UI render to backbuffer called by Engine, and will be performed only once. Additional UI renders to a different rendertarget may be triggered from the renderpath.
+    /// Render the UI. If renderUICommand is false (default), is assumed to be the default UI render to backbuffer
+    /// called by Engine, and will be performed only once. Additional UI renders to a different rendertarget may be
+    /// triggered from the renderpath.
     void Render(bool renderUICommand = false);
     /// Debug draw a UI element.
     void DebugDraw(UIElement* element);
-    /// Load a UI layout from an XML file. Optionally specify another XML file for element style. Return the root element.
+    /// Load a UI layout from an XML file. Optionally specify another XML file for element style. Return the root
+    /// element.
     SharedPtr<UIElement> LoadLayout(Deserializer& source, XMLFile* styleFile = nullptr);
-    /// Load a UI layout from an XML file. Optionally specify another XML file for element style. Return the root element.
+    /// Load a UI layout from an XML file. Optionally specify another XML file for element style. Return the root
+    /// element.
     SharedPtr<UIElement> LoadLayout(XMLFile* file, XMLFile* styleFile = nullptr);
     /// Save a UI layout to an XML file. Return true if successful.
     bool SaveLayout(Serializer& dest, UIElement* element);
@@ -104,17 +107,21 @@ public:
     void SetNonFocusedMouseWheel(bool nonFocusedMouseWheel);
     /// Set whether to use system clipboard. Default false.
     void SetUseSystemClipboard(bool enable);
-    /// Set whether to show the on-screen keyboard (if supported) when a %LineEdit is focused. Default true on mobile devices.
+    /// Set whether to show the on-screen keyboard (if supported) when a %LineEdit is focused. Default true on mobile
+    /// devices.
     void SetUseScreenKeyboard(bool enable);
-    /// Set whether to use mutable (eraseable) glyphs to ensure a font face never expands to more than one texture. Default false.
+    /// Set whether to use mutable (eraseable) glyphs to ensure a font face never expands to more than one texture.
+    /// Default false.
     void SetUseMutableGlyphs(bool enable);
     /// Set whether to force font autohinting instead of using FreeType's TTF bytecode interpreter.
     void SetForceAutoHint(bool enable);
     /// Set the hinting level used by FreeType fonts.
     void SetFontHintLevel(FontHintLevel level);
-    /// Set the font subpixel threshold. Below this size, if the hint level is LIGHT or NONE, fonts will use subpixel positioning plus oversampling for higher-quality rendering. Has no effect at hint level NORMAL.
+    /// Set the font subpixel threshold. Below this size, if the hint level is LIGHT or NONE, fonts will use subpixel
+    /// positioning plus oversampling for higher-quality rendering. Has no effect at hint level NORMAL.
     void SetFontSubpixelThreshold(float threshold);
-    /// Set the oversampling (horizonal stretching) used to improve subpixel font rendering. Only affects fonts smaller than the subpixel limit.
+    /// Set the oversampling (horizonal stretching) used to improve subpixel font rendering. Only affects fonts smaller
+    /// than the subpixel limit.
     void SetFontOversampling(int oversampling);
     /// Set %UI scale. 1.0 is default (pixel perfect). Resize the root element to match.
     void SetScale(float scale);
@@ -122,7 +129,8 @@ public:
     void SetWidth(float width);
     /// Scale %UI to the specified height in pixels.
     void SetHeight(float height);
-    /// Set custom size of the root element. This disables automatic resizing of the root element according to window size. Set custom size 0,0 to return to automatic resizing.
+    /// Set custom size of the root element. This disables automatic resizing of the root element according to window
+    /// size. Set custom size 0,0 to return to automatic resizing.
     void SetCustomSize(const IntVector2& size);
     /// Set custom size of the root element.
     void SetCustomSize(int width, int height);
@@ -143,7 +151,7 @@ public:
     /// Return UI element at global screen coordinates. By default returns only input-enabled elements.
     UIElement* GetElementAt(int x, int y, bool enabledOnly = true);
     /// Get a child element at element's screen position relative to specified root element.
-    UIElement* GetElementAt(UIElement* root, const IntVector2& position, bool enabledOnly=true);
+    UIElement* GetElementAt(UIElement* root, const IntVector2& position, bool enabledOnly = true);
 
     /// Return focused element.
     UIElement* GetFocusElement() const { return focusElement_; }
@@ -194,10 +202,12 @@ public:
     /// Return the current FreeType font hinting level.
     FontHintLevel GetFontHintLevel() const { return fontHintLevel_; }
 
-    /// Get the font subpixel threshold. Below this size, if the hint level is LIGHT or NONE, fonts will use subpixel positioning plus oversampling for higher-quality rendering. Has no effect at hint level NORMAL.
+    /// Get the font subpixel threshold. Below this size, if the hint level is LIGHT or NONE, fonts will use subpixel
+    /// positioning plus oversampling for higher-quality rendering. Has no effect at hint level NORMAL.
     float GetFontSubpixelThreshold() const { return fontSubpixelThreshold_; }
 
-    /// Get the oversampling (horizonal stretching) used to improve subpixel font rendering. Only affects fonts smaller than the subpixel limit.
+    /// Get the oversampling (horizonal stretching) used to improve subpixel font rendering. Only affects fonts smaller
+    /// than the subpixel limit.
     int GetFontOversampling() const { return fontOversampling_; }
 
     /// Return true when UI has modal element(s).
@@ -209,7 +219,8 @@ public:
     /// Return current UI scale.
     float GetScale() const { return uiScale_; }
 
-    /// Return root element custom size. Returns 0,0 when custom size is not being used and automatic resizing according to window size is in use instead (default.)
+    /// Return root element custom size. Returns 0,0 when custom size is not being used and automatic resizing according
+    /// to window size is in use instead (default.)
     const IntVector2& GetCustomSize() const { return customSize_; }
 
     /// Register UIElement for being rendered into a texture.
@@ -242,7 +253,8 @@ private:
     /// Render UI batches to the current rendertarget. Geometry must have been uploaded first.
     void Render(VertexBuffer* buffer, const PODVector<UIBatch>& batches, unsigned batchStart, unsigned batchEnd);
     /// Generate batches from an UI element recursively. Skip the cursor element.
-    void GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData, UIElement* element, IntRect currentScissor);
+    void GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData, UIElement* element,
+                    IntRect currentScissor);
     /// Return UI element at global screen coordinates. Return position converted to element's screen coordinates.
     UIElement* GetElementAt(const IntVector2& position, bool enabledOnly, IntVector2* elementScreenPosition);
     /// Return UI element at screen position recursively.
@@ -258,20 +270,20 @@ private:
     /// Handle button or touch hover.
     void ProcessHover(const IntVector2& windowCursorPos, int buttons, int qualifiers, Cursor* cursor);
     /// Handle button or touch begin.
-    void
-        ProcessClickBegin(const IntVector2& windowCursorPos, int button, int buttons, int qualifiers, Cursor* cursor, bool cursorVisible);
+    void ProcessClickBegin(const IntVector2& windowCursorPos, int button, int buttons, int qualifiers, Cursor* cursor,
+                           bool cursorVisible);
     /// Handle button or touch end.
-    void ProcessClickEnd(const IntVector2& windowCursorPos, int button, int buttons, int qualifiers, Cursor* cursor, bool cursorVisible);
+    void ProcessClickEnd(const IntVector2& windowCursorPos, int button, int buttons, int qualifiers, Cursor* cursor,
+                         bool cursorVisible);
     /// Handle mouse or touch move.
-    void ProcessMove(const IntVector2& windowCursorPos, const IntVector2& cursorDeltaPos, int buttons, int qualifiers, Cursor* cursor,
-        bool cursorVisible);
+    void ProcessMove(const IntVector2& windowCursorPos, const IntVector2& cursorDeltaPos, int buttons, int qualifiers,
+                     Cursor* cursor, bool cursorVisible);
     /// Send a UI element drag or hover begin event.
-    void SendDragOrHoverEvent
-        (StringHash eventType, UIElement* element, const IntVector2& screenPos, const IntVector2& deltaPos, UI::DragData* dragData);
+    void SendDragOrHoverEvent(StringHash eventType, UIElement* element, const IntVector2& screenPos,
+                              const IntVector2& deltaPos, UI::DragData* dragData);
     /// Send a UI click or double click event.
-    void SendClickEvent
-        (StringHash eventType, UIElement* beginElement, UIElement* endElement, const IntVector2& pos, int button, int buttons,
-            int qualifiers);
+    void SendClickEvent(StringHash eventType, UIElement* beginElement, UIElement* endElement, const IntVector2& pos,
+                        int button, int buttons, int qualifiers);
     /// Handle screen mode event.
     void HandleScreenMode(StringHash eventType, VariantMap& eventData);
     /// Handle mouse button down event.
@@ -301,7 +313,8 @@ private:
     /// Handle a file being drag-dropped into the application window.
     void HandleDropFile(StringHash eventType, VariantMap& eventData);
     /// Remove drag data and return next iterator.
-    HashMap<WeakPtr<UIElement>, DragData*>::Iterator DragElementErase(HashMap<WeakPtr<UIElement>, DragData*>::Iterator dragElement);
+    HashMap<WeakPtr<UIElement>, DragData*>::Iterator
+    DragElementErase(HashMap<WeakPtr<UIElement>, DragData*>::Iterator dragElement);
     /// Handle clean up on a drag cancel.
     void ProcessDragCancel();
     /// Sum touch positions and return the begin position ready to send.
@@ -398,12 +411,11 @@ private:
     /// Root element custom size. 0,0 for automatic resizing (default.)
     IntVector2 customSize_;
     /// Elements that should be rendered to textures.
-    Vector<WeakPtr<UIComponent> > renderToTexture_;
+    Vector<WeakPtr<UIComponent>> renderToTexture_;
 
     friend class UIComponent;
 };
 
 /// Register UI library objects.
 void URHO3D_API RegisterUILibrary(Context* context);
-
 }

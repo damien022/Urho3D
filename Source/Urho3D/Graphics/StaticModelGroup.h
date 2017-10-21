@@ -26,8 +26,8 @@
 
 namespace Urho3D
 {
-
-/// Renders several object instances while culling and receiving light as one unit. Can be used as a CPU-side optimization, but note that also regular StaticModels will use instanced rendering if possible.
+/// Renders several object instances while culling and receiving light as one unit. Can be used as a CPU-side
+/// optimization, but note that also regular StaticModels will use instanced rendering if possible.
 class URHO3D_API StaticModelGroup : public StaticModel
 {
     URHO3D_OBJECT(StaticModelGroup, StaticModel);
@@ -44,7 +44,8 @@ public:
     virtual void ApplyAttributes() override;
     /// Process octree raycast. May be called from a worker thread.
     virtual void ProcessRayQuery(const RayOctreeQuery& query, PODVector<RayQueryResult>& results) override;
-    /// Calculate distance and prepare batches for rendering. May be called from worker thread(s), possibly re-entrantly.
+    /// Calculate distance and prepare batches for rendering. May be called from worker thread(s), possibly
+    /// re-entrantly.
     virtual void UpdateBatches(const FrameInfo& frame) override;
     /// Return number of occlusion geometry triangles.
     virtual unsigned GetNumOccluderTriangles() override;
@@ -83,7 +84,7 @@ private:
     void UpdateNodeIDs() const;
 
     /// Instance nodes.
-    Vector<WeakPtr<Node> > instanceNodes_;
+    Vector<WeakPtr<Node>> instanceNodes_;
     /// World transforms of valid (existing and visible) instances.
     PODVector<Matrix3x4> worldTransforms_;
     /// IDs of instance nodes for serialization.
@@ -95,5 +96,4 @@ private:
     /// Whether nodes have been manipulated by the API and node ID attribute should be refreshed.
     mutable bool nodeIDsDirty_;
 };
-
 }

@@ -28,8 +28,8 @@
 #include <ctime>
 
 #ifdef _WIN32
-#include <windows.h>
 #include <mmsystem.h>
+#include <windows.h>
 #elif __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
 #else
@@ -41,15 +41,14 @@
 
 namespace Urho3D
 {
-
 bool HiresTimer::supported(false);
 long long HiresTimer::frequency(1000);
 
-Time::Time(Context* context) :
-    Object(context),
-    frameNumber_(0),
-    timeStep_(0.0f),
-    timerPeriod_(0)
+Time::Time(Context* context)
+    : Object(context)
+    , frameNumber_(0)
+    , timeStep_(0.0f)
+    , timerPeriod_(0)
 {
 #ifdef _WIN32
     LARGE_INTEGER frequency;
@@ -64,10 +63,7 @@ Time::Time(Context* context) :
 #endif
 }
 
-Time::~Time()
-{
-    SetTimerPeriod(0);
-}
+Time::~Time() { SetTimerPeriod(0); }
 
 static unsigned Tick()
 {
@@ -94,7 +90,7 @@ static long long HiresTick()
     else
         return timeGetTime();
 #elif __EMSCRIPTEN__
-    return (unsigned)(emscripten_get_now()*1000.0);
+    return (unsigned)(emscripten_get_now() * 1000.0);
 #else
     struct timeval time;
     gettimeofday(&time, NULL);
@@ -146,20 +142,11 @@ void Time::SetTimerPeriod(unsigned mSec)
 #endif
 }
 
-float Time::GetElapsedTime()
-{
-    return elapsedTime_.GetMSec(false) / 1000.0f;
-}
+float Time::GetElapsedTime() { return elapsedTime_.GetMSec(false) / 1000.0f; }
 
-unsigned Time::GetSystemTime()
-{
-    return Tick();
-}
+unsigned Time::GetSystemTime() { return Tick(); }
 
-unsigned Time::GetTimeSinceEpoch()
-{
-    return (unsigned)time(nullptr);
-}
+unsigned Time::GetTimeSinceEpoch() { return (unsigned)time(nullptr); }
 
 String Time::GetTimeStamp()
 {
@@ -181,15 +168,9 @@ void Time::Sleep(unsigned mSec)
 #endif
 }
 
-float Time::GetFramesPerSecond() const
-{
-    return 1.0f / timeStep_;
-}
+float Time::GetFramesPerSecond() const { return 1.0f / timeStep_; }
 
-Timer::Timer()
-{
-    Reset();
-}
+Timer::Timer() { Reset(); }
 
 unsigned Timer::GetMSec(bool reset)
 {
@@ -201,15 +182,9 @@ unsigned Timer::GetMSec(bool reset)
     return elapsedTime;
 }
 
-void Timer::Reset()
-{
-    startTime_ = Tick();
-}
+void Timer::Reset() { startTime_ = Tick(); }
 
-HiresTimer::HiresTimer()
-{
-    Reset();
-}
+HiresTimer::HiresTimer() { Reset(); }
 
 long long HiresTimer::GetUSec(bool reset)
 {
@@ -226,9 +201,5 @@ long long HiresTimer::GetUSec(bool reset)
     return (elapsedTime * 1000000LL) / frequency;
 }
 
-void HiresTimer::Reset()
-{
-    startTime_ = HiresTick();
-}
-
+void HiresTimer::Reset() { startTime_ = HiresTick(); }
 }

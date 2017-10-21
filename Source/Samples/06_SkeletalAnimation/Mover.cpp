@@ -28,10 +28,10 @@
 
 #include <Urho3D/DebugNew.h>
 
-Mover::Mover(Context* context) :
-    LogicComponent(context),
-    moveSpeed_(0.0f),
-    rotationSpeed_(0.0f)
+Mover::Mover(Context* context)
+    : LogicComponent(context)
+    , moveSpeed_(0.0f)
+    , rotationSpeed_(0.0f)
 {
     // Only the scene update event is needed: unsubscribe from the rest for optimization
     SetUpdateEventMask(USE_UPDATE);
@@ -53,8 +53,8 @@ void Mover::Update(float timeStep)
     if (pos.x_ < bounds_.min_.x_ || pos.x_ > bounds_.max_.x_ || pos.z_ < bounds_.min_.z_ || pos.z_ > bounds_.max_.z_)
         node_->Yaw(rotationSpeed_ * timeStep);
 
-    // Get the model's first (only) animation state and advance its time. Note the convenience accessor to other components
-    // in the same scene node
+    // Get the model's first (only) animation state and advance its time. Note the convenience accessor to other
+    // components in the same scene node
     AnimatedModel* model = node_->GetComponent<AnimatedModel>(true);
     if (model->GetNumAnimationStates())
     {

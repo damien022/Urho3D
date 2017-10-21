@@ -29,15 +29,12 @@
 
 namespace Urho3D
 {
-
-Skeleton::Skeleton() :
-    rootBoneIndex_(M_MAX_UNSIGNED)
+Skeleton::Skeleton()
+    : rootBoneIndex_(M_MAX_UNSIGNED)
 {
 }
 
-Skeleton::~Skeleton()
-{
-}
+Skeleton::~Skeleton() {}
 
 bool Skeleton::Load(Deserializer& source)
 {
@@ -146,26 +143,13 @@ void Skeleton::ResetSilent()
     }
 }
 
+Bone* Skeleton::GetRootBone() { return GetBone(rootBoneIndex_); }
 
-Bone* Skeleton::GetRootBone()
-{
-    return GetBone(rootBoneIndex_);
-}
+Bone* Skeleton::GetBone(unsigned index) { return index < bones_.Size() ? &bones_[index] : nullptr; }
 
-Bone* Skeleton::GetBone(unsigned index)
-{
-    return index < bones_.Size() ? &bones_[index] : nullptr;
-}
+Bone* Skeleton::GetBone(const String& name) { return GetBone(StringHash(name)); }
 
-Bone* Skeleton::GetBone(const String& name)
-{
-    return GetBone(StringHash(name));
-}
-
-Bone* Skeleton::GetBone(const char* name)
-{
-    return GetBone(StringHash(name));
-}
+Bone* Skeleton::GetBone(const char* name) { return GetBone(StringHash(name)); }
 
 Bone* Skeleton::GetBone(StringHash nameHash)
 {
@@ -177,5 +161,4 @@ Bone* Skeleton::GetBone(StringHash nameHash)
 
     return nullptr;
 }
-
 }

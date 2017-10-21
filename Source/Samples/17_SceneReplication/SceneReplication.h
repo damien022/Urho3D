@@ -26,13 +26,11 @@
 
 namespace Urho3D
 {
-
 class Button;
 class Connection;
 class Scene;
 class Text;
 class UIElement;
-
 }
 
 /// Scene network replication example.
@@ -54,12 +52,13 @@ public:
 
 protected:
     /// Return XML patch instructions for screen joystick layout for a specific sample app, if any.
-    virtual String GetScreenJoystickPatchString() const override { return
-        "<patch>"
-        "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Hat0']]\">"
-        "        <attribute name=\"Is Visible\" value=\"false\" />"
-        "    </add>"
-        "</patch>";
+    virtual String GetScreenJoystickPatchString() const override
+    {
+        return "<patch>"
+               "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Hat0']]\">"
+               "        <attribute name=\"Is Visible\" value=\"false\" />"
+               "    </add>"
+               "</patch>";
     }
 
 private:
@@ -99,7 +98,7 @@ private:
     void HandleClientObjectID(StringHash eventType, VariantMap& eventData);
 
     /// Mapping from client connections to controllable objects.
-    HashMap<Connection*, WeakPtr<Node> > serverObjects_;
+    HashMap<Connection*, WeakPtr<Node>> serverObjects_;
     /// Button container element.
     SharedPtr<UIElement> buttonContainer_;
     /// Server address line editor element.

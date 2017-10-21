@@ -36,39 +36,36 @@
 
 namespace Urho3D
 {
-
 extern const char* GEOMETRY_CATEGORY;
 extern const char* faceCameraModeNames[];
 static const unsigned MAX_PARTICLES_IN_FRAME = 100;
 
 extern const char* autoRemoveModeNames[];
 
-ParticleEmitter::ParticleEmitter(Context* context) :
-    BillboardSet(context),
-    periodTimer_(0.0f),
-    emissionTimer_(0.0f),
-    lastTimeStep_(0.0f),
-    lastUpdateFrameNumber_(M_MAX_UNSIGNED),
-    emitting_(true),
-    needUpdate_(false),
-    serializeParticles_(true),
-    sendFinishedEvent_(true),
-    autoRemove_(REMOVE_DISABLED)
+ParticleEmitter::ParticleEmitter(Context* context)
+    : BillboardSet(context)
+    , periodTimer_(0.0f)
+    , emissionTimer_(0.0f)
+    , lastTimeStep_(0.0f)
+    , lastUpdateFrameNumber_(M_MAX_UNSIGNED)
+    , emitting_(true)
+    , needUpdate_(false)
+    , serializeParticles_(true)
+    , sendFinishedEvent_(true)
+    , autoRemove_(REMOVE_DISABLED)
 {
     SetNumParticles(DEFAULT_NUM_PARTICLES);
 }
 
-ParticleEmitter::~ParticleEmitter()
-{
-}
+ParticleEmitter::~ParticleEmitter() {}
 
 void ParticleEmitter::RegisterObject(Context* context)
 {
     context->RegisterFactory<ParticleEmitter>(GEOMETRY_CATEGORY);
 
     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Effect", GetEffectAttr, SetEffectAttr, ResourceRef, ResourceRef(ParticleEffect::GetTypeStatic()),
-        AM_DEFAULT);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Effect", GetEffectAttr, SetEffectAttr, ResourceRef,
+                                    ResourceRef(ParticleEffect::GetTypeStatic()), AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Can Be Occluded", IsOccludee, SetOccludee, bool, true, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Cast Shadows", bool, castShadows_, false, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Draw Distance", GetDrawDistance, SetDrawDistance, float, 0.0f, AM_DEFAULT);
@@ -79,10 +76,10 @@ void ParticleEmitter::RegisterObject(Context* context)
     URHO3D_ATTRIBUTE("Emission Timer", float, emissionTimer_, 0.0f, AM_FILE | AM_NOEDIT);
     URHO3D_ENUM_ATTRIBUTE("Autoremove Mode", autoRemove_, autoRemoveModeNames, REMOVE_DISABLED, AM_DEFAULT);
     URHO3D_COPY_BASE_ATTRIBUTES(Drawable);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Particles", GetParticlesAttr, SetParticlesAttr, VariantVector, Variant::emptyVariantVector,
-        AM_FILE | AM_NOEDIT);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Billboards", GetParticleBillboardsAttr, SetBillboardsAttr, VariantVector, Variant::emptyVariantVector,
-        AM_FILE | AM_NOEDIT);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Particles", GetParticlesAttr, SetParticlesAttr, VariantVector,
+                                    Variant::emptyVariantVector, AM_FILE | AM_NOEDIT);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Billboards", GetParticleBillboardsAttr, SetBillboardsAttr, VariantVector,
+                                    Variant::emptyVariantVector, AM_FILE | AM_NOEDIT);
     URHO3D_ATTRIBUTE("Serialize Particles", bool, serializeParticles_, true, AM_FILE);
 }
 
@@ -135,7 +132,8 @@ void ParticleEmitter::Update(const FrameInfo& frame)
             sendFinishedEvent_ = true;
             periodTimer_ -= inactiveTime;
         }
-        // If emitter has an indefinite stop interval, keep period timer reset to allow restarting emission in the editor
+        // If emitter has an indefinite stop interval, keep period timer reset to allow restarting emission in the
+        // editor
         if (inactiveTime == 0.0f)
             periodTimer_ = 0.0f;
     }
@@ -317,10 +315,7 @@ void ParticleEmitter::SetAutoRemoveMode(AutoRemoveMode mode)
     MarkNetworkUpdate();
 }
 
-void ParticleEmitter::ResetEmissionTimer()
-{
-    emissionTimer_ = 0.0f;
-}
+void ParticleEmitter::ResetEmissionTimer() { emissionTimer_ = 0.0f; }
 
 void ParticleEmitter::RemoveAllParticles()
 {
@@ -352,10 +347,7 @@ void ParticleEmitter::ApplyEffect()
     SetFaceCameraMode(effect_->GetFaceCameraMode());
 }
 
-ParticleEffect* ParticleEmitter::GetEffect() const
-{
-    return effect_;
-}
+ParticleEffect* ParticleEmitter::GetEffect() const { return effect_; }
 
 void ParticleEmitter::SetEffectAttr(const ResourceRef& value)
 {
@@ -363,10 +355,7 @@ void ParticleEmitter::SetEffectAttr(const ResourceRef& value)
     SetEffect(cache->GetResource<ParticleEffect>(value.name_));
 }
 
-ResourceRef ParticleEmitter::GetEffectAttr() const
-{
-    return GetResourceRef(effect_, ParticleEffect::GetTypeStatic());
-}
+ResourceRef ParticleEmitter::GetEffectAttr() const { return GetResourceRef(effect_, ParticleEffect::GetTypeStatic()); }
 
 void ParticleEmitter::SetParticlesAttr(const VariantVector& value)
 {
@@ -444,7 +433,7 @@ void ParticleEmitter::OnSceneSet(Scene* scene)
     if (scene && IsEnabledEffective())
         SubscribeToEvent(scene, E_SCENEPOSTUPDATE, URHO3D_HANDLER(ParticleEmitter, HandleScenePostUpdate));
     else if (!scene)
-         UnsubscribeFromEvent(E_SCENEPOSTUPDATE);
+        UnsubscribeFromEvent(E_SCENEPOSTUPDATE);
 }
 
 bool ParticleEmitter::EmitNewParticle()
@@ -465,27 +454,21 @@ bool ParticleEmitter::EmitNewParticle()
     switch (effect_->GetEmitterType())
     {
     case EMITTER_SPHERE:
-        {
-            Vector3 dir(
-                Random(2.0f) - 1.0f,
-                Random(2.0f) - 1.0f,
-                Random(2.0f) - 1.0f
-            );
-            dir.Normalize();
-            startPos = effect_->GetEmitterSize() * dir * 0.5f;
-        }
-        break;
+    {
+        Vector3 dir(Random(2.0f) - 1.0f, Random(2.0f) - 1.0f, Random(2.0f) - 1.0f);
+        dir.Normalize();
+        startPos = effect_->GetEmitterSize() * dir * 0.5f;
+    }
+    break;
 
     case EMITTER_BOX:
-        {
-            const Vector3& emitterSize = effect_->GetEmitterSize();
-            startPos = Vector3(
-                Random(emitterSize.x_) - emitterSize.x_ * 0.5f,
-                Random(emitterSize.y_) - emitterSize.y_ * 0.5f,
-                Random(emitterSize.z_) - emitterSize.z_ * 0.5f
-            );
-        }
-        break;
+    {
+        const Vector3& emitterSize = effect_->GetEmitterSize();
+        startPos =
+            Vector3(Random(emitterSize.x_) - emitterSize.x_ * 0.5f, Random(emitterSize.y_) - emitterSize.y_ * 0.5f,
+                    Random(emitterSize.z_) - emitterSize.z_ * 0.5f);
+    }
+    break;
     }
 
     particle.size_ = effect_->GetRandomSize();
@@ -591,5 +574,4 @@ void ParticleEmitter::HandleEffectReloadFinished(StringHash eventType, VariantMa
     Reset();
     ApplyEffect();
 }
-
 }

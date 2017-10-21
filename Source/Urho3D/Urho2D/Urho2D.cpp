@@ -56,7 +56,6 @@
 
 namespace Urho3D
 {
-
 const char* URHO2D_CATEGORY = "Urho2D";
 
 void RegisterUrho2DLibrary(Context* context)
@@ -103,5 +102,4 @@ void RegisterUrho2DLibrary(Context* context)
     ConstraintWeld2D::RegisterObject(context);
     ConstraintWheel2D::RegisterObject(context);
 }
-
 }

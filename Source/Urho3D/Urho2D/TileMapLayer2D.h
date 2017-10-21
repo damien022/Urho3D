@@ -31,7 +31,6 @@
 
 namespace Urho3D
 {
-
 class DebugRenderer;
 class Node;
 class TileMap2D;
@@ -124,7 +123,6 @@ private:
     /// Visible.
     bool visible_;
     /// Tile node or image nodes.
-    Vector<SharedPtr<Node> > nodes_;
+    Vector<SharedPtr<Node>> nodes_;
 };
-
 }

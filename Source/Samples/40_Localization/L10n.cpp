@@ -41,8 +41,8 @@
 
 URHO3D_DEFINE_APPLICATION_MAIN(L10n)
 
-L10n::L10n(Context* context) :
-    Sample(context)
+L10n::L10n(Context* context)
+    : Sample(context)
 {
 }
 
@@ -231,7 +231,8 @@ void L10n::HandleChangeLanguage(StringHash eventType, VariantMap& eventData)
     UIElement* uiRoot = GetSubsystem<UI>()->GetRoot();
 
     Text* windowTitle = uiRoot->GetChildStaticCast<Text>("WindowTitle", true);
-    windowTitle->SetText(l10n->Get("title") + " (" + String(l10n->GetLanguageIndex()) + " " + l10n->GetLanguage() + ")");
+    windowTitle->SetText(l10n->Get("title") + " (" + String(l10n->GetLanguageIndex()) + " " + l10n->GetLanguage() +
+                         ")");
 
     Text* buttonText = uiRoot->GetChildStaticCast<Text>("ButtonTextQuit", true);
     buttonText->SetText(l10n->Get("quit"));

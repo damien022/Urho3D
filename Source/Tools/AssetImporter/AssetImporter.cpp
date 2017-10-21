@@ -48,11 +48,11 @@
 #include <windows.h>
 #endif
 
-#include <assimp/config.h>
-#include <assimp/cimport.h>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
 #include <assimp/DefaultLogger.hpp>
+#include <assimp/cimport.h>
+#include <assimp/config.h>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
 
 #include <Urho3D/DebugNew.h>
 
@@ -60,10 +60,10 @@ using namespace Urho3D;
 
 struct OutModel
 {
-    OutModel() :
-        rootBone_(nullptr),
-        totalVertices_(0),
-        totalIndices_(0)
+    OutModel()
+        : rootBone_(nullptr)
+        , totalVertices_(0)
+        , totalIndices_(0)
     {
     }
 
@@ -106,21 +106,20 @@ enum TransformationComp
     TransformationComp_ScalingPivot,
     TransformationComp_Scaling,
 
-    // Not checking these
-    // They are typically flushed out in the fbxconverter, but there
-    // might be cases where they're not, hence, leaving them.
-    #ifdef EXT_TRANSFORMATION_CHECK
+// Not checking these
+// They are typically flushed out in the fbxconverter, but there
+// might be cases where they're not, hence, leaving them.
+#ifdef EXT_TRANSFORMATION_CHECK
     TransformationComp_ScalingPivotInverse,
     TransformationComp_GeometricTranslation,
     TransformationComp_GeometricRotation,
     TransformationComp_GeometricScaling,
-    #endif
+#endif
 
     TransformationComp_MAXIMUM
 };
 
-const char *transformSuffix[TransformationComp_MAXIMUM] =
-{
+const char* transformSuffix[TransformationComp_MAXIMUM] = {
     "Translation",          // TransformationComp_Translation = 0,
     "RotationOffset",       // TransformationComp_RotationOffset,
     "RotationPivot",        // TransformationComp_RotationPivot,
@@ -129,16 +128,16 @@ const char *transformSuffix[TransformationComp_MAXIMUM] =
     "PostRotation",         // TransformationComp_PostRotation,
     "RotationPivotInverse", // TransformationComp_RotationPivotInverse,
 
-    "ScalingOffset",        // TransformationComp_ScalingOffset,
-    "ScalingPivot",         // TransformationComp_ScalingPivot,
-    "Scaling",              // TransformationComp_Scaling,
+    "ScalingOffset", // TransformationComp_ScalingOffset,
+    "ScalingPivot",  // TransformationComp_ScalingPivot,
+    "Scaling",       // TransformationComp_Scaling,
 
-    #ifdef EXT_TRANSFORMATION_CHECK
+#ifdef EXT_TRANSFORMATION_CHECK
     "ScalingPivotInverse",  // TransformationComp_ScalingPivotInverse,
     "GeometricTranslation", // TransformationComp_GeometricTranslation,
     "GeometricRotation",    // TransformationComp_GeometricRotation,
     "GeometricScaling",     // TransformationComp_GeometricScaling,
-    #endif
+#endif
 };
 
 static const unsigned MAX_CHANNELS = 4;
@@ -210,13 +209,13 @@ void CopyTextures(const HashSet<String>& usedTextures, const String& sourcePath)
 
 void CombineLods(const PODVector<float>& lodDistances, const Vector<String>& modelNames, const String& outName);
 
-void GetMeshesUnderNode(Vector<Pair<aiNode*, aiMesh*> >& meshes, aiNode* node);
+void GetMeshesUnderNode(Vector<Pair<aiNode*, aiMesh*>>& meshes, aiNode* node);
 unsigned GetMeshIndex(aiMesh* mesh);
 unsigned GetBoneIndex(OutModel& model, const String& boneName);
 aiBone* GetMeshBone(OutModel& model, const String& boneName);
 Matrix3x4 GetOffsetMatrix(OutModel& model, const String& boneName);
-void GetBlendData(OutModel& model, aiMesh* mesh, aiNode* meshNode, PODVector<unsigned>& boneMappings, Vector<PODVector<unsigned char> >&
-    blendIndices, Vector<PODVector<float> >& blendWeights);
+void GetBlendData(OutModel& model, aiMesh* mesh, aiNode* meshNode, PODVector<unsigned>& boneMappings,
+                  Vector<PODVector<unsigned char>>& blendIndices, Vector<PODVector<float>>& blendWeights);
 String GetMeshMaterialName(aiMesh* mesh);
 String GetMaterialTextureName(const String& nameIn);
 String GenerateMaterialName(aiMaterial* material);
@@ -226,8 +225,8 @@ unsigned GetNumValidFaces(aiMesh* mesh);
 void WriteShortIndices(unsigned short*& dest, aiMesh* mesh, unsigned index, unsigned offset);
 void WriteLargeIndices(unsigned*& dest, aiMesh* mesh, unsigned index, unsigned offset);
 void WriteVertex(float*& dest, aiMesh* mesh, unsigned index, bool isSkinned, BoundingBox& box,
-    const Matrix3x4& vertexTransform, const Matrix3& normalTransform, Vector<PODVector<unsigned char> >& blendIndices,
-    Vector<PODVector<float> >& blendWeights);
+                 const Matrix3x4& vertexTransform, const Matrix3& normalTransform,
+                 Vector<PODVector<unsigned char>>& blendIndices, Vector<PODVector<float>>& blendWeights);
 PODVector<VertexElement> GetVertexElements(aiMesh* mesh, bool isSkinned);
 
 aiNode* GetNode(const String& name, aiNode* rootNode, bool caseSensitive = true);
@@ -246,17 +245,17 @@ String SanitateAssetName(const String& name);
 
 unsigned GetPivotlessBoneIndex(OutModel& model, const String& boneName);
 void ExtrapolatePivotlessAnimation(OutModel* model);
-void CollectSceneNodesAsBones(OutModel &model, aiNode* rootNode);
+void CollectSceneNodesAsBones(OutModel& model, aiNode* rootNode);
 
 int main(int argc, char** argv)
 {
     Vector<String> arguments;
 
-    #ifdef WIN32
+#ifdef WIN32
     arguments = ParseArguments(GetCommandLineW());
-    #else
+#else
     arguments = ParseArguments(argc, argv);
-    #endif
+#endif
 
     Run(arguments);
     return 0;
@@ -266,54 +265,52 @@ void Run(const Vector<String>& arguments)
 {
     if (arguments.Size() < 2)
     {
-        ErrorExit(
-            "Usage: AssetImporter <command> <input file> <output file> [options]\n"
-            "See http://assimp.sourceforge.net/main_features_formats.html for input formats\n\n"
-            "Commands:\n"
-            "model       Output a model\n"
-            "anim        Output animation(s)\n"
-            "scene       Output a scene\n"
-            "node        Output a node and its children (prefab)\n"
-            "dump        Dump scene node structure. No output file is generated\n"
-            "lod         Combine several Urho3D models as LOD levels of the output model\n"
-            "            Syntax: lod <dist0> <mdl0> <dist1 <mdl1> ... <output file>\n"
-            "\n"
-            "Options:\n"
-            "-b          Save scene in binary format, default format is XML\n"
-            "-j          Save scene in JSON format, default format is XML\n"
-            "-h          Generate hard instead of smooth normals if input has no normals\n"
-            "-i          Use local ID's for scene nodes\n"
-            "-l          Output a material list file for models\n"
-            "-na         Do not output animations\n"
-            "-nm         Do not output materials\n"
-            "-nt         Do not output material textures\n"
-            "-nc         Do not use material diffuse color value, instead output white\n"
-            "-nh         Do not save full node hierarchy (scene mode only)\n"
-            "-ns         Do not create subdirectories for resources\n"
-            "-nz         Do not create a zone and a directional light (scene mode only)\n"
-            "-nf         Do not fix infacing normals\n"
-            "-ne         Do not save empty nodes (scene mode only)\n"
-            "-mb <x>     Maximum number of bones per submesh. Default 64\n"
-            "-p <path>   Set path for scene resources. Default is output file path\n"
-            "-r <name>   Use the named scene node as root node\n"
-            "-f <freq>   Animation tick frequency to use if unspecified. Default 4800\n"
-            "-o          Optimize redundant submeshes. Loses scene hierarchy and animations\n"
-            "-s <filter> Include non-skinning bones in the model's skeleton. Can be given a\n"
-            "            case-insensitive semicolon separated filter list. Bone is included\n"
-            "            if its name contains any of the filters. Prefix filter with minus\n"
-            "            sign to use as an exclude. For example -s \"Bip01;-Dummy;-Helper\"\n"
-            "-t          Generate tangents\n"
-            "-v          Enable verbose Assimp library logging\n"
-            "-eao        Interpret material emissive texture as ambient occlusion\n"
-            "-cm         Check and do not overwrite if material exists\n"
-            "-ct         Check and do not overwrite if texture exists\n"
-            "-ctn        Check and do not overwrite if texture has newer timestamp\n"
-            "-am         Export all meshes even if identical (scene mode only)\n"
-            "-bp         Move bones to bind pose before saving model\n"
-            "-split <start> <end> (animation model only)\n"
-            "            Split animation, will only import from start frame to end frame\n"
-            "-np         Do not suppress $fbx pivot nodes (FBX files only)\n"
-        );
+        ErrorExit("Usage: AssetImporter <command> <input file> <output file> [options]\n"
+                  "See http://assimp.sourceforge.net/main_features_formats.html for input formats\n\n"
+                  "Commands:\n"
+                  "model       Output a model\n"
+                  "anim        Output animation(s)\n"
+                  "scene       Output a scene\n"
+                  "node        Output a node and its children (prefab)\n"
+                  "dump        Dump scene node structure. No output file is generated\n"
+                  "lod         Combine several Urho3D models as LOD levels of the output model\n"
+                  "            Syntax: lod <dist0> <mdl0> <dist1 <mdl1> ... <output file>\n"
+                  "\n"
+                  "Options:\n"
+                  "-b          Save scene in binary format, default format is XML\n"
+                  "-j          Save scene in JSON format, default format is XML\n"
+                  "-h          Generate hard instead of smooth normals if input has no normals\n"
+                  "-i          Use local ID's for scene nodes\n"
+                  "-l          Output a material list file for models\n"
+                  "-na         Do not output animations\n"
+                  "-nm         Do not output materials\n"
+                  "-nt         Do not output material textures\n"
+                  "-nc         Do not use material diffuse color value, instead output white\n"
+                  "-nh         Do not save full node hierarchy (scene mode only)\n"
+                  "-ns         Do not create subdirectories for resources\n"
+                  "-nz         Do not create a zone and a directional light (scene mode only)\n"
+                  "-nf         Do not fix infacing normals\n"
+                  "-ne         Do not save empty nodes (scene mode only)\n"
+                  "-mb <x>     Maximum number of bones per submesh. Default 64\n"
+                  "-p <path>   Set path for scene resources. Default is output file path\n"
+                  "-r <name>   Use the named scene node as root node\n"
+                  "-f <freq>   Animation tick frequency to use if unspecified. Default 4800\n"
+                  "-o          Optimize redundant submeshes. Loses scene hierarchy and animations\n"
+                  "-s <filter> Include non-skinning bones in the model's skeleton. Can be given a\n"
+                  "            case-insensitive semicolon separated filter list. Bone is included\n"
+                  "            if its name contains any of the filters. Prefix filter with minus\n"
+                  "            sign to use as an exclude. For example -s \"Bip01;-Dummy;-Helper\"\n"
+                  "-t          Generate tangents\n"
+                  "-v          Enable verbose Assimp library logging\n"
+                  "-eao        Interpret material emissive texture as ambient occlusion\n"
+                  "-cm         Check and do not overwrite if material exists\n"
+                  "-ct         Check and do not overwrite if texture exists\n"
+                  "-ctn        Check and do not overwrite if texture has newer timestamp\n"
+                  "-am         Export all meshes even if identical (scene mode only)\n"
+                  "-bp         Move bones to bind pose before saving model\n"
+                  "-split <start> <end> (animation model only)\n"
+                  "            Split animation, will only import from start frame to end frame\n"
+                  "-np         Do not suppress $fbx pivot nodes (FBX files only)\n");
     }
 
     context_->RegisterSubsystem(new FileSystem(context_));
@@ -328,19 +325,10 @@ void Run(const Vector<String>& arguments)
     String command = arguments[0].ToLower();
     String rootNodeName;
 
-    unsigned flags =
-        aiProcess_ConvertToLeftHanded |
-        aiProcess_JoinIdenticalVertices |
-        aiProcess_Triangulate |
-        aiProcess_GenSmoothNormals |
-        aiProcess_LimitBoneWeights |
-        aiProcess_ImproveCacheLocality |
-        aiProcess_RemoveRedundantMaterials |
-        aiProcess_FixInfacingNormals |
-        aiProcess_FindInvalidData |
-        aiProcess_GenUVCoords |
-        aiProcess_FindInstances |
-        aiProcess_OptimizeMeshes;
+    unsigned flags = aiProcess_ConvertToLeftHanded | aiProcess_JoinIdenticalVertices | aiProcess_Triangulate |
+                     aiProcess_GenSmoothNormals | aiProcess_LimitBoneWeights | aiProcess_ImproveCacheLocality |
+                     aiProcess_RemoveRedundantMaterials | aiProcess_FixInfacingNormals | aiProcess_FindInvalidData |
+                     aiProcess_GenUVCoords | aiProcess_FindInstances | aiProcess_OptimizeMeshes;
 
     for (unsigned i = 2; i < arguments.Size(); ++i)
     {
@@ -351,7 +339,7 @@ void Run(const Vector<String>& arguments)
 
             if (argument == "b")
                 saveBinary_ = true;
-            else if(argument == "j")
+            else if (argument == "j")
                 saveJson_ = true;
             else if (argument == "h")
             {
@@ -407,9 +395,8 @@ void Run(const Vector<String>& arguments)
                     break;
 
                 case 'p':
-                        suppressFbxPivotNodes_ = false;
+                    suppressFbxPivotNodes_ = false;
                     break;
-
                 }
             }
             else if (argument == "mb" && !value.Empty())
@@ -516,16 +503,17 @@ void Run(const Vector<String>& arguments)
         if (suppressFbxPivotNodes_ && command == "model")
         {
             PrintLine("Suppressing $fbx nodes");
-            aiPropertyStore *aiprops = aiCreatePropertyStore();
-            aiSetImportPropertyInteger(aiprops, AI_CONFIG_IMPORT_FBX_READ_ALL_GEOMETRY_LAYERS, 1);       //default = true;
-            aiSetImportPropertyInteger(aiprops, AI_CONFIG_IMPORT_FBX_READ_ALL_MATERIALS, 0);             //default = false;
-            aiSetImportPropertyInteger(aiprops, AI_CONFIG_IMPORT_FBX_READ_MATERIALS, 1);                 //default = true;
-            aiSetImportPropertyInteger(aiprops, AI_CONFIG_IMPORT_FBX_READ_CAMERAS, 1);                   //default = true;
-            aiSetImportPropertyInteger(aiprops, AI_CONFIG_IMPORT_FBX_READ_LIGHTS, 1);                    //default = true;
-            aiSetImportPropertyInteger(aiprops, AI_CONFIG_IMPORT_FBX_READ_ANIMATIONS, 1);                //default = true;
-            aiSetImportPropertyInteger(aiprops, AI_CONFIG_IMPORT_FBX_STRICT_MODE, 0);                    //default = false;
-            aiSetImportPropertyInteger(aiprops, AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, 0);                //**false, default = true;
-            aiSetImportPropertyInteger(aiprops, AI_CONFIG_IMPORT_FBX_OPTIMIZE_EMPTY_ANIMATION_CURVES, 1);//default = true;
+            aiPropertyStore* aiprops = aiCreatePropertyStore();
+            aiSetImportPropertyInteger(aiprops, AI_CONFIG_IMPORT_FBX_READ_ALL_GEOMETRY_LAYERS, 1); // default = true;
+            aiSetImportPropertyInteger(aiprops, AI_CONFIG_IMPORT_FBX_READ_ALL_MATERIALS, 0);       // default = false;
+            aiSetImportPropertyInteger(aiprops, AI_CONFIG_IMPORT_FBX_READ_MATERIALS, 1);           // default = true;
+            aiSetImportPropertyInteger(aiprops, AI_CONFIG_IMPORT_FBX_READ_CAMERAS, 1);             // default = true;
+            aiSetImportPropertyInteger(aiprops, AI_CONFIG_IMPORT_FBX_READ_LIGHTS, 1);              // default = true;
+            aiSetImportPropertyInteger(aiprops, AI_CONFIG_IMPORT_FBX_READ_ANIMATIONS, 1);          // default = true;
+            aiSetImportPropertyInteger(aiprops, AI_CONFIG_IMPORT_FBX_STRICT_MODE, 0);              // default = false;
+            aiSetImportPropertyInteger(aiprops, AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, 0); //**false, default = true;
+            aiSetImportPropertyInteger(aiprops, AI_CONFIG_IMPORT_FBX_OPTIMIZE_EMPTY_ANIMATION_CURVES,
+                                       1); // default = true;
 
             scene_ = aiImportFileExWithProperties(GetNativePath(inFile).CString(), flags, nullptr, aiprops);
 
@@ -685,7 +673,7 @@ void ExportAnimation(const String& outName, bool animationOnly)
     if (!noAnimations_)
     {
         // Most fbx animation files contain only a skeleton and no skinned mesh.
-        // Assume the scene node contains the model's bone definition and, 
+        // Assume the scene node contains the model's bone definition and,
         // transfer the info to the model.
         if (suppressFbxPivotNodes_ && model.bones_.Size() == 0)
             CollectSceneNodesAsBones(model, rootNode_);
@@ -790,7 +778,6 @@ void CollectBones(OutModel& model, bool animationOnly)
         }
     }
 
-
     // If we find multiple root nodes, try to remedy by going back in the parent chain and finding a common parent
     if (rootNodes.Size() > 1)
     {
@@ -819,7 +806,8 @@ void CollectBones(OutModel& model, bool animationOnly)
 
                 if (found >= rootNodes.Size() - 1)
                 {
-                    PrintLine("Multiple roots initially found, using new root node " + FromAIString(commonParent->mName));
+                    PrintLine("Multiple roots initially found, using new root node " +
+                              FromAIString(commonParent->mName));
                     rootNodes.Clear();
                     rootNodes.Insert(commonParent);
                     necessary.Insert(commonParent);
@@ -1007,7 +995,7 @@ void BuildAndSaveModel(OutModel& model)
     PrintLine("Writing model " + rootNodeName);
 
     SharedPtr<Model> outModel(new Model(context_));
-    Vector<PODVector<unsigned> > allBoneMappings;
+    Vector<PODVector<unsigned>> allBoneMappings;
     BoundingBox box;
 
     unsigned numValidGeometries = 0;
@@ -1043,8 +1031,8 @@ void BuildAndSaveModel(OutModel& model)
 
     SharedPtr<IndexBuffer> ib;
     SharedPtr<VertexBuffer> vb;
-    Vector<SharedPtr<VertexBuffer> > vbVector;
-    Vector<SharedPtr<IndexBuffer> > ibVector;
+    Vector<SharedPtr<VertexBuffer>> vbVector;
+    Vector<SharedPtr<IndexBuffer>> ibVector;
     unsigned startVertexOffset = 0;
     unsigned startIndexOffset = 0;
     unsigned destGeomIndex = 0;
@@ -1101,7 +1089,7 @@ void BuildAndSaveModel(OutModel& model)
         SharedPtr<Geometry> geom(new Geometry(context_));
 
         PrintLine("Writing geometry " + String(i) + " with " + String(mesh->mNumVertices) + " vertices " +
-            String(validFaces * 3) + " indices");
+                  String(validFaces * 3) + " indices");
 
         if (model.bones_.Size() > 0 && !mesh->HasBones())
             PrintLine("Warning: model has bones but geometry " + String(i) + " has no skinning information");
@@ -1125,8 +1113,8 @@ void BuildAndSaveModel(OutModel& model)
 
         // Build the vertex data
         // If there are bones, get blend data
-        Vector<PODVector<unsigned char> > blendIndices;
-        Vector<PODVector<float> > blendWeights;
+        Vector<PODVector<unsigned char>> blendIndices;
+        Vector<PODVector<float>> blendWeights;
         PODVector<unsigned> boneMappings;
         if (model.bones_.Size())
             GetBlendData(model, mesh, model.meshNodes_[i], boneMappings, blendIndices, blendWeights);
@@ -1177,7 +1165,7 @@ void BuildAndSaveModel(OutModel& model)
     if (model.bones_.Size() && model.rootBone_)
     {
         PrintLine("Writing skeleton with " + String(model.bones_.Size()) + " bones, rootbone " +
-            FromAIString(model.rootBone_->mName));
+                  FromAIString(model.rootBone_->mName));
 
         Skeleton skeleton;
         Vector<Bone>& bones = skeleton.GetModifiableBones();
@@ -1271,7 +1259,8 @@ void BuildAndSaveAnimations(OutModel* model)
         if (animName.Empty())
             animName = "Anim" + String(i + 1);
         if (model)
-            animOutName = GetPath(model->outName_) + GetFileName(model->outName_) + "_" + SanitateAssetName(animName) + ".ani";
+            animOutName =
+                GetPath(model->outName_) + GetFileName(model->outName_) + "_" + SanitateAssetName(animName) + ".ani";
         else
             animOutName = outPath_ + GetFileName(outName_) + "_" + SanitateAssetName(animName) + ".ani";
 
@@ -1329,8 +1318,8 @@ void BuildAndSaveAnimations(OutModel* model)
                 {
                     channelName = channelName.Substring(0, pos);
 
-                    // every first $fbx animation channel for a bone will consolidate other $fbx animation to a single channel
-                    // skip subsequent $fbx animation channel for the same bone
+                    // every first $fbx animation channel for a bone will consolidate other $fbx animation to a single
+                    // channel skip subsequent $fbx animation channel for the same bone
                     if (outAnim->GetTrack(channelName) != nullptr)
                         continue;
 
@@ -1365,11 +1354,14 @@ void BuildAndSaveAnimations(OutModel* model)
             bool scaleEqual = true;
             bool rotEqual = true;
 
-            if (channel->mNumPositionKeys > 0 && !ToVector3(bonePos).Equals(ToVector3(channel->mPositionKeys[0].mValue)))
+            if (channel->mNumPositionKeys > 0 &&
+                !ToVector3(bonePos).Equals(ToVector3(channel->mPositionKeys[0].mValue)))
                 posEqual = false;
-            if (channel->mNumScalingKeys > 0 && !ToVector3(boneScale).Equals(ToVector3(channel->mScalingKeys[0].mValue)))
+            if (channel->mNumScalingKeys > 0 &&
+                !ToVector3(boneScale).Equals(ToVector3(channel->mScalingKeys[0].mValue)))
                 scaleEqual = false;
-            if (channel->mNumRotationKeys > 0 && !ToQuaternion(boneRot).Equals(ToQuaternion(channel->mRotationKeys[0].mValue)))
+            if (channel->mNumRotationKeys > 0 &&
+                !ToQuaternion(boneRot).Equals(ToQuaternion(channel->mRotationKeys[0].mValue)))
                 rotEqual = false;
 
             AnimationTrack* track = outAnim->CreateTrack(channelName);
@@ -1410,9 +1402,12 @@ void BuildAndSaveAnimations(OutModel* model)
 
             // Currently only same amount of keyframes is supported
             // Note: should also check the times of individual keyframes for match
-            if ((channel->mNumPositionKeys > 1 && channel->mNumRotationKeys > 1 && channel->mNumPositionKeys != channel->mNumRotationKeys) ||
-                (channel->mNumPositionKeys > 1 && channel->mNumScalingKeys > 1 && channel->mNumPositionKeys != channel->mNumScalingKeys) ||
-                (channel->mNumRotationKeys > 1 && channel->mNumScalingKeys > 1 && channel->mNumRotationKeys != channel->mNumScalingKeys))
+            if ((channel->mNumPositionKeys > 1 && channel->mNumRotationKeys > 1 &&
+                 channel->mNumPositionKeys != channel->mNumRotationKeys) ||
+                (channel->mNumPositionKeys > 1 && channel->mNumScalingKeys > 1 &&
+                 channel->mNumPositionKeys != channel->mNumScalingKeys) ||
+                (channel->mNumRotationKeys > 1 && channel->mNumScalingKeys > 1 &&
+                 channel->mNumRotationKeys != channel->mNumScalingKeys))
             {
                 PrintLine("Warning: differing amounts of channel keyframes, skipping animation track " + channelName);
                 outAnim->RemoveTrack(channelName);
@@ -1521,14 +1516,15 @@ void ExportScene(const String& outName, bool asPrefab)
 
 void CollectSceneModels(OutScene& scene, aiNode* node)
 {
-    Vector<Pair<aiNode*, aiMesh*> > meshes;
+    Vector<Pair<aiNode*, aiMesh*>> meshes;
     GetMeshesUnderNode(meshes, node);
 
     if (meshes.Size())
     {
         OutModel model;
         model.rootNode_ = node;
-        model.outName_ = resourcePath_ + (useSubdirs_ ? "Models/" : "") + SanitateAssetName(FromAIString(node->mName)) + ".mdl";
+        model.outName_ =
+            resourcePath_ + (useSubdirs_ ? "Models/" : "") + SanitateAssetName(FromAIString(node->mName)) + ".mdl";
         for (unsigned i = 0; i < meshes.Size(); ++i)
         {
             aiMesh* mesh = meshes[i].second_;
@@ -1642,10 +1638,10 @@ void BuildAndSaveScene(OutScene& scene, bool asPrefab)
 
     if (!asPrefab)
     {
-        #ifdef URHO3D_PHYSICS
+#ifdef URHO3D_PHYSICS
         /// \todo Make the physics properties configurable
         outScene->CreateComponent<PhysicsWorld>();
-        #endif
+#endif
 
         /// \todo Make the octree properties configurable, or detect from the scene contents
         outScene->CreateComponent<Octree>();
@@ -1679,11 +1675,11 @@ void BuildAndSaveScene(OutScene& scene, bool asPrefab)
         outRootNode = CreateSceneNode(outScene, rootNode_, nodeMapping);
     else
     {
-        // If not saving as a prefab, associate the root node with the scene first to prevent unnecessary creation of a root
-        // However do not do that if the root node does not have an identity matrix, or itself contains a model
+        // If not saving as a prefab, associate the root node with the scene first to prevent unnecessary creation of a
+        // root However do not do that if the root node does not have an identity matrix, or itself contains a model
         // (models at the Urho scene root are not preferable)
         if (ToMatrix3x4(rootNode_->mTransformation).Equals(Matrix3x4::IDENTITY) && !scene.nodes_.Contains(rootNode_))
-           nodeMapping[rootNode_] = outScene;
+            nodeMapping[rootNode_] = outScene;
     }
 
     // If is allowed to export empty nodes, export the full Assimp node hierarchy first
@@ -1695,7 +1691,8 @@ void BuildAndSaveScene(OutScene& scene, bool asPrefab)
     {
         const OutModel& model = scene.models_[scene.nodeModelIndices_[i]];
         Node* modelNode = CreateSceneNode(outScene, scene.nodes_[i], nodeMapping);
-        StaticModel* staticModel = model.bones_.Empty() ? modelNode->CreateComponent<StaticModel>() : modelNode->CreateComponent<AnimatedModel>();
+        StaticModel* staticModel = model.bones_.Empty() ? modelNode->CreateComponent<StaticModel>()
+                                                        : modelNode->CreateComponent<AnimatedModel>();
 
         // Create a dummy model so that the reference can be stored
         String modelName = (useSubdirs_ ? "Models/" : "") + GetFileNameAndExtension(model.outName_);
@@ -1737,8 +1734,8 @@ void BuildAndSaveScene(OutScene& scene, bool asPrefab)
             Vector3 lightAdjustPosition = ToVector3(light->mPosition);
             Vector3 lightAdjustDirection = ToVector3(light->mDirection);
             // If light is not aligned at the scene node, an adjustment node needs to be created
-            if (!lightAdjustPosition.Equals(Vector3::ZERO) || (light->mType != aiLightSource_POINT &&
-                !lightAdjustDirection.Equals(Vector3::FORWARD)))
+            if (!lightAdjustPosition.Equals(Vector3::ZERO) ||
+                (light->mType != aiLightSource_POINT && !lightAdjustDirection.Equals(Vector3::FORWARD)))
             {
                 outNode = outNode->CreateChild("LightAdjust");
                 outNode->SetPosition(lightAdjustPosition);
@@ -1764,7 +1761,8 @@ void BuildAndSaveScene(OutScene& scene, bool asPrefab)
                 break;
             }
 
-            // Calculate range from attenuation parameters so that light intensity has been reduced to 10% at that distance
+            // Calculate range from attenuation parameters so that light intensity has been reduced to 10% at that
+            // distance
             if (light->mType != aiLightSource_DIRECTIONAL)
             {
                 float a = light->mAttenuationQuadratic;
@@ -1957,7 +1955,7 @@ void BuildAndSaveMaterial(aiMaterial* material, HashSet<String>& usedTextures)
 
     FileSystem* fileSystem = context_->GetSubsystem<FileSystem>();
 
-    String outFileName = resourcePath_ + (useSubdirs_ ? "Materials/" : "" ) + matName + ".xml";
+    String outFileName = resourcePath_ + (useSubdirs_ ? "Materials/" : "") + matName + ".xml";
     if (noOverwriteMaterial_ && fileSystem->FileExists(outFileName))
     {
         PrintLine("Skipping save of existing material " + matName);
@@ -2040,8 +2038,8 @@ void CopyTextures(const HashSet<String>& usedTextures, const String& sourcePath)
                 PrintLine("Skipping copy of existing texture " + *i);
                 continue;
             }
-            if (destExists && noOverwriteNewerTexture_ && fileSystem->GetLastModifiedTime(fullDestName) >
-                fileSystem->GetLastModifiedTime(fullSourceName))
+            if (destExists && noOverwriteNewerTexture_ &&
+                fileSystem->GetLastModifiedTime(fullDestName) > fileSystem->GetLastModifiedTime(fullSourceName))
             {
                 PrintLine("Skipping copying of material texture " + *i + ", destination is newer");
                 continue;
@@ -2056,10 +2054,11 @@ void CopyTextures(const HashSet<String>& usedTextures, const String& sourcePath)
 void CombineLods(const PODVector<float>& lodDistances, const Vector<String>& modelNames, const String& outName)
 {
     // Load models
-    Vector<SharedPtr<Model> > srcModels;
+    Vector<SharedPtr<Model>> srcModels;
     for (unsigned i = 0; i < modelNames.Size(); ++i)
     {
-        PrintLine("Reading LOD level " + String(i) + ": model " + modelNames[i] + " distance " + String(lodDistances[i]));
+        PrintLine("Reading LOD level " + String(i) + ": model " + modelNames[i] + " distance " +
+                  String(lodDistances[i]));
         File srcFile(context_);
         srcFile.Open(modelNames[i]);
         SharedPtr<Model> srcModel(new Model(context_));
@@ -2099,8 +2098,8 @@ void CombineLods(const PODVector<float>& lodDistances, const Vector<String>& mod
             ErrorExit(modelNames[i] + " has different per-geometry bone mappings than " + modelNames[0]);
     }
 
-    Vector<SharedPtr<VertexBuffer> > vbVector;
-    Vector<SharedPtr<IndexBuffer> > ibVector;
+    Vector<SharedPtr<VertexBuffer>> vbVector;
+    Vector<SharedPtr<IndexBuffer>> ibVector;
     PODVector<unsigned> emptyMorphRange;
 
     // Create the final model
@@ -2143,7 +2142,7 @@ void CombineLods(const PODVector<float>& lodDistances, const Vector<String>& mod
     outModel->Save(outFile);
 }
 
-void GetMeshesUnderNode(Vector<Pair<aiNode*, aiMesh*> >& dest, aiNode* node)
+void GetMeshesUnderNode(Vector<Pair<aiNode*, aiMesh*>>& dest, aiNode* node)
 {
     for (unsigned i = 0; i < node->mNumMeshes; ++i)
         dest.Push(MakePair(node, scene_->mMeshes[node->mMeshes[i]]));
@@ -2220,8 +2219,8 @@ Matrix3x4 GetOffsetMatrix(OutModel& model, const String& boneName)
     return Matrix3x4::IDENTITY;
 }
 
-void GetBlendData(OutModel& model, aiMesh* mesh, aiNode* meshNode, PODVector<unsigned>& boneMappings, Vector<PODVector<unsigned char> >&
-    blendIndices, Vector<PODVector<float> >& blendWeights)
+void GetBlendData(OutModel& model, aiMesh* mesh, aiNode* meshNode, PODVector<unsigned>& boneMappings,
+                  Vector<PODVector<unsigned char>>& blendIndices, Vector<PODVector<float>>& blendWeights)
 {
     blendIndices.Resize(mesh->mNumVertices);
     blendWeights.Resize(mesh->mNumVertices);
@@ -2232,10 +2231,10 @@ void GetBlendData(OutModel& model, aiMesh* mesh, aiNode* meshNode, PODVector<uns
     {
         if (mesh->mNumBones > maxBones_)
         {
-            ErrorExit(
-                "Geometry (submesh) has over " + String(maxBones_) + " bone influences. Try splitting to more submeshes\n"
-                "that each stay at " + String(maxBones_) + " bones or below."
-            );
+            ErrorExit("Geometry (submesh) has over " + String(maxBones_) +
+                      " bone influences. Try splitting to more submeshes\n"
+                      "that each stay at " +
+                      String(maxBones_) + " bones or below.");
         }
         if (mesh->mNumBones > 0)
         {
@@ -2258,7 +2257,8 @@ void GetBlendData(OutModel& model, aiMesh* mesh, aiNode* meshNode, PODVector<uns
         }
         else
         {
-            // If mesh does not have skinning information, implement rigid skinning so that it stays compatible with AnimatedModel
+            // If mesh does not have skinning information, implement rigid skinning so that it stays compatible with
+            // AnimatedModel
             String boneName = FromAIString(meshNode->mName);
             unsigned globalIndex = GetBoneIndex(model, boneName);
             if (globalIndex == M_MAX_UNSIGNED)
@@ -2382,10 +2382,12 @@ String GenerateTextureName(unsigned texIndex)
 {
     if (texIndex < scene_->mNumTextures)
     {
-        // If embedded texture contains encoded data, use the format hint for file extension. Else save RGBA8 data as PNG
+        // If embedded texture contains encoded data, use the format hint for file extension. Else save RGBA8 data as
+        // PNG
         aiTexture* tex = scene_->mTextures[texIndex];
         if (!tex->mHeight)
-            return (useSubdirs_ ? "Textures/" : "") + inputName_ + "_Texture" + String(texIndex) + "." + tex->achFormatHint;
+            return (useSubdirs_ ? "Textures/" : "") + inputName_ + "_Texture" + String(texIndex) + "." +
+                   tex->achFormatHint;
         else
             return (useSubdirs_ ? "Textures/" : "") + inputName_ + "_Texture" + String(texIndex) + ".png";
     }
@@ -2428,8 +2430,8 @@ void WriteLargeIndices(unsigned*& dest, aiMesh* mesh, unsigned index, unsigned o
 }
 
 void WriteVertex(float*& dest, aiMesh* mesh, unsigned index, bool isSkinned, BoundingBox& box,
-    const Matrix3x4& vertexTransform, const Matrix3& normalTransform, Vector<PODVector<unsigned char> >& blendIndices,
-    Vector<PODVector<float> >& blendWeights)
+                 const Matrix3x4& vertexTransform, const Matrix3& normalTransform,
+                 Vector<PODVector<unsigned char>>& blendIndices, Vector<PODVector<float>>& blendWeights)
 {
     Vector3 vertex = vertexTransform * ToVector3(mesh->mVertices[index]);
     box.Merge(vertex);
@@ -2448,10 +2450,11 @@ void WriteVertex(float*& dest, aiMesh* mesh, unsigned index, bool isSkinned, Bou
     for (unsigned i = 0; i < mesh->GetNumColorChannels() && i < MAX_CHANNELS; ++i)
     {
         *((unsigned*)dest) = Color(mesh->mColors[i][index].r, mesh->mColors[i][index].g, mesh->mColors[i][index].b,
-            mesh->mColors[i][index].a).ToUInt();
+                                   mesh->mColors[i][index].a)
+                                 .ToUInt();
         ++dest;
     }
-    
+
     for (unsigned i = 0; i < mesh->GetNumUVChannels() && i < MAX_CHANNELS; ++i)
     {
         Vector3 texCoord = ToVector3(mesh->mTextureCoords[i][index]);
@@ -2484,7 +2487,7 @@ void WriteVertex(float*& dest, aiMesh* mesh, unsigned index, bool isSkinned, Bou
             else
                 *dest++ = 0.0f;
         }
-    
+
         unsigned char* destBytes = (unsigned char*)dest;
         ++dest;
         for (unsigned i = 0; i < 4; ++i)
@@ -2510,7 +2513,8 @@ PODVector<VertexElement> GetVertexElements(aiMesh* mesh, bool isSkinned)
     for (unsigned i = 0; i < mesh->GetNumColorChannels() && i < MAX_CHANNELS; ++i)
         ret.Push(VertexElement(TYPE_UBYTE4_NORM, SEM_COLOR, i));
 
-    /// \todo Assimp mesh structure can specify 3D UV-coords. How to determine the difference? For now always treated as 2D.
+    /// \todo Assimp mesh structure can specify 3D UV-coords. How to determine the difference? For now always treated as
+    /// 2D.
     for (unsigned i = 0; i < mesh->GetNumUVChannels() && i < MAX_CHANNELS; ++i)
         ret.Push(VertexElement(TYPE_VECTOR2, SEM_TEXCOORD, i));
 
@@ -2579,26 +2583,13 @@ void GetPosRotScale(const aiMatrix4x4& transform, Vector3& pos, Quaternion& rot,
     scale = ToVector3(aiScale);
 }
 
+String FromAIString(const aiString& str) { return String(str.data); }
 
-String FromAIString(const aiString& str)
-{
-    return String(str.data);
-}
+Vector3 ToVector3(const aiVector3D& vec) { return Vector3(vec.x, vec.y, vec.z); }
 
-Vector3 ToVector3(const aiVector3D& vec)
-{
-    return Vector3(vec.x, vec.y, vec.z);
-}
+Vector2 ToVector2(const aiVector2D& vec) { return Vector2(vec.x, vec.y); }
 
-Vector2 ToVector2(const aiVector2D& vec)
-{
-    return Vector2(vec.x, vec.y);
-}
-
-Quaternion ToQuaternion(const aiQuaternion& quat)
-{
-    return Quaternion(quat.w, quat.x, quat.y, quat.z);
-}
+Quaternion ToQuaternion(const aiQuaternion& quat) { return Quaternion(quat.w, quat.x, quat.y, quat.z); }
 
 Matrix3x4 ToMatrix3x4(const aiMatrix4x4& mat)
 {
@@ -2640,7 +2631,7 @@ unsigned GetPivotlessBoneIndex(OutModel& model, const String& boneName)
     return M_MAX_UNSIGNED;
 }
 
-void FillChainTransforms(OutModel &model, aiMatrix4x4 *chain, const String& mainBoneName)
+void FillChainTransforms(OutModel& model, aiMatrix4x4* chain, const String& mainBoneName)
 {
     for (unsigned j = 0; j < TransformationComp_MAXIMUM; ++j)
     {
@@ -2659,13 +2650,13 @@ void FillChainTransforms(OutModel &model, aiMatrix4x4 *chain, const String& main
     }
 }
 
-void ExpandAnimatedChannelKeys(aiAnimation* anim, unsigned mainChannel, int *channelIndices)
+void ExpandAnimatedChannelKeys(aiAnimation* anim, unsigned mainChannel, int* channelIndices)
 {
     aiNodeAnim* channel = anim->mChannels[mainChannel];
     unsigned int poskeyFrames = channel->mNumPositionKeys;
     unsigned int rotkeyFrames = channel->mNumRotationKeys;
     unsigned int scalekeyFrames = channel->mNumScalingKeys;
-    
+
     // Get max key frames
     for (unsigned i = 0; i < TransformationComp_MAXIMUM; ++i)
     {
@@ -2677,7 +2668,7 @@ void ExpandAnimatedChannelKeys(aiAnimation* anim, unsigned mainChannel, int *cha
                 poskeyFrames = channel2->mNumPositionKeys;
             if (channel2->mNumRotationKeys > rotkeyFrames)
                 rotkeyFrames = channel2->mNumRotationKeys;
-            if (channel2->mNumScalingKeys  > scalekeyFrames)
+            if (channel2->mNumScalingKeys > scalekeyFrames)
                 scalekeyFrames = channel2->mNumScalingKeys;
         }
     }
@@ -2685,10 +2676,10 @@ void ExpandAnimatedChannelKeys(aiAnimation* anim, unsigned mainChannel, int *cha
     // Resize and init vector key array
     if (poskeyFrames > channel->mNumPositionKeys)
     {
-        aiVectorKey* newKeys  = new aiVectorKey[poskeyFrames];
+        aiVectorKey* newKeys = new aiVectorKey[poskeyFrames];
         for (unsigned i = 0; i < poskeyFrames; ++i)
         {
-            if (i < channel->mNumPositionKeys )
+            if (i < channel->mNumPositionKeys)
                 newKeys[i] = aiVectorKey(channel->mPositionKeys[i].mTime, channel->mPositionKeys[i].mValue);
             else
                 newKeys[i].mValue = aiVector3D(0.0f, 0.0f, 0.0f);
@@ -2699,7 +2690,7 @@ void ExpandAnimatedChannelKeys(aiAnimation* anim, unsigned mainChannel, int *cha
     }
     if (rotkeyFrames > channel->mNumRotationKeys)
     {
-        aiQuatKey* newKeys  = new aiQuatKey[rotkeyFrames];
+        aiQuatKey* newKeys = new aiQuatKey[rotkeyFrames];
         for (unsigned i = 0; i < rotkeyFrames; ++i)
         {
             if (i < channel->mNumRotationKeys)
@@ -2713,10 +2704,10 @@ void ExpandAnimatedChannelKeys(aiAnimation* anim, unsigned mainChannel, int *cha
     }
     if (scalekeyFrames > channel->mNumScalingKeys)
     {
-        aiVectorKey* newKeys  = new aiVectorKey[scalekeyFrames];
+        aiVectorKey* newKeys = new aiVectorKey[scalekeyFrames];
         for (unsigned i = 0; i < scalekeyFrames; ++i)
         {
-            if ( i < channel->mNumScalingKeys)
+            if (i < channel->mNumScalingKeys)
                 newKeys[i] = aiVectorKey(channel->mScalingKeys[i].mTime, channel->mScalingKeys[i].mValue);
             else
                 newKeys[i].mValue = aiVector3D(1.0f, 1.0f, 1.0f);
@@ -2727,7 +2718,8 @@ void ExpandAnimatedChannelKeys(aiAnimation* anim, unsigned mainChannel, int *cha
     }
 }
 
-void InitAnimatedChainTransformIndices(aiAnimation* anim, unsigned mainChannel, const String& mainBoneName, int *channelIndices)
+void InitAnimatedChainTransformIndices(aiAnimation* anim, unsigned mainChannel, const String& mainBoneName,
+                                       int* channelIndices)
 {
     int numTransforms = 0;
 
@@ -2755,7 +2747,7 @@ void InitAnimatedChainTransformIndices(aiAnimation* anim, unsigned mainChannel, 
         ExpandAnimatedChannelKeys(anim, mainChannel, channelIndices);
 }
 
-void CreatePivotlessFbxBoneStruct(OutModel &model)
+void CreatePivotlessFbxBoneStruct(OutModel& model)
 {
     // Init
     model.pivotlessBones_.Clear();
@@ -2778,7 +2770,7 @@ void CreatePivotlessFbxBoneStruct(OutModel &model)
             finalTransform = finalTransform * chain[j];
 
         // New bone node
-        aiNode *pnode = new aiNode;
+        aiNode* pnode = new aiNode;
         pnode->mName = model.bones_[i]->mName;
         pnode->mTransformation = finalTransform * model.bones_[i]->mTransformation;
 
@@ -2796,7 +2788,7 @@ void ExtrapolatePivotlessAnimation(OutModel* model)
         CreatePivotlessFbxBoneStruct(*model);
 
         // Extrapolate anim
-        const PODVector<aiAnimation *> &animations = model->animations_;
+        const PODVector<aiAnimation*>& animations = model->animations_;
         for (unsigned i = 0; i < animations.Size(); ++i)
         {
             aiAnimation* anim = animations[i];
@@ -2811,8 +2803,8 @@ void ExtrapolatePivotlessAnimation(OutModel* model)
 
                 if (pos != String::NPOS)
                 {
-                    // Every first $fbx animation channel for a bone will consolidate other $fbx animation to a single channel
-                    // skip subsequent $fbx animation channel for the same bone
+                    // Every first $fbx animation channel for a bone will consolidate other $fbx animation to a single
+                    // channel skip subsequent $fbx animation channel for the same bone
                     String mainBoneName = channelName.Substring(0, pos);
 
                     if (mainBoneCompleteList.Find(mainBoneName) != mainBoneCompleteList.End())
@@ -2837,7 +2829,7 @@ void ExtrapolatePivotlessAnimation(OutModel* model)
                     unsigned keyFrames = channel->mNumPositionKeys;
                     if (channel->mNumRotationKeys > keyFrames)
                         keyFrames = channel->mNumRotationKeys;
-                    if (channel->mNumScalingKeys  > keyFrames)
+                    if (channel->mNumScalingKeys > keyFrames)
                         keyFrames = channel->mNumScalingKeys;
 
                     for (unsigned k = 0; k < keyFrames; ++k)
@@ -2909,7 +2901,7 @@ void ExtrapolatePivotlessAnimation(OutModel* model)
     }
 }
 
-void CollectSceneNodesAsBones(OutModel &model, aiNode* rootNode)
+void CollectSceneNodesAsBones(OutModel& model, aiNode* rootNode)
 {
     if (!rootNode)
         return;
@@ -2921,4 +2913,3 @@ void CollectSceneNodesAsBones(OutModel &model, aiNode* rootNode)
         CollectSceneNodesAsBones(model, rootNode->mChildren[i]);
     }
 }
-

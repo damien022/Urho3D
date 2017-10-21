@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// JSON value type.
 enum JSONValueType
 {
@@ -57,6 +56,7 @@ enum JSONNumberType
     JSONNT_FLOAT_DOUBLE
 };
 
+class Context;
 class JSONValue;
 
 /// JSON array type.
@@ -73,96 +73,93 @@ class URHO3D_API JSONValue
 {
 public:
     /// Construct null value.
-    JSONValue() : 
-        type_(0)
+    JSONValue()
+        : type_(0)
     {
     }
     /// Construct with a boolean.
-    JSONValue(bool value) :
-        type_(0)
+    JSONValue(bool value)
+        : type_(0)
     {
         *this = value;
     }
     /// Construct with a integer.
-    JSONValue(int value) :
-        type_(0)
+    JSONValue(int value)
+        : type_(0)
     {
         *this = value;
     }
     /// Construct with a unsigned integer.
-    JSONValue(unsigned value) :
-        type_(0)
+    JSONValue(unsigned value)
+        : type_(0)
     {
         *this = value;
     }
     /// Construct with a float.
-    JSONValue(float value) :
-        type_(0)
+    JSONValue(float value)
+        : type_(0)
     {
         *this = value;
     }
     /// Construct with a double.
-    JSONValue(double value) :
-        type_(0)
+    JSONValue(double value)
+        : type_(0)
     {
         *this = value;
     }
     /// Construct with a string.
-    JSONValue(const String& value) :
-        type_(0)
+    JSONValue(const String& value)
+        : type_(0)
     {
         *this = value;
     }
     /// Construct with a C string.
-    JSONValue(const char* value) :
-        type_(0)
+    JSONValue(const char* value)
+        : type_(0)
     {
         *this = value;
     }
     /// Construct with a JSON array.
-    JSONValue(const JSONArray& value) :
-        type_(0)
+    JSONValue(const JSONArray& value)
+        : type_(0)
     {
         *this = value;
     }
     /// Construct with a JSON object.
-    JSONValue(const JSONObject& value) :
-        type_(0)
+    JSONValue(const JSONObject& value)
+        : type_(0)
     {
         *this = value;
-    }    
+    }
     /// Copy-construct from another JSON value.
-    JSONValue(const JSONValue& value) :
-        type_(0)
+    JSONValue(const JSONValue& value)
+        : type_(0)
     {
         *this = value;
     }
     /// Destruct.
-    ~JSONValue()
-    {
-        SetType(JSON_NULL);
-    }
+    ~JSONValue() { SetType(JSON_NULL); }
 
     /// Assign from a boolean.
-    JSONValue& operator =(bool rhs);
+    JSONValue& operator=(bool rhs);
     /// Assign from an integer.
-    JSONValue& operator =(int rhs);
+    JSONValue& operator=(int rhs);
     /// Assign from an unsigned integer.
-    JSONValue& operator =(unsigned rhs);
+    JSONValue& operator=(unsigned rhs);
     /// Assign from a float.
-    JSONValue& operator =(float rhs);
+    JSONValue& operator=(float rhs);
     /// Assign from a double.
-    JSONValue& operator =(double rhs);
+    JSONValue& operator=(double rhs);
     /// Assign from a string.
-    JSONValue& operator =(const String& rhs);
+    JSONValue& operator=(const String& rhs);
     /// Assign from a C string.
-    JSONValue& operator =(const char* rhs);
+    JSONValue& operator=(const char* rhs);
     /// Assign from a JSON array.
-    JSONValue& operator =(const JSONArray& rhs);
+    JSONValue& operator=(const JSONArray& rhs);
     /// Assign from a JSON object.
-    JSONValue& operator =(const JSONObject& rhs);
+    JSONValue& operator=(const JSONObject& rhs);
     /// Assign from another JSON value.
-    JSONValue& operator =(const JSONValue& rhs);
+    JSONValue& operator=(const JSONValue& rhs);
 
     /// Return value type.
     JSONValueType GetValueType() const;
@@ -187,7 +184,7 @@ public:
     bool IsObject() const { return GetValueType() == JSON_OBJECT; }
 
     /// Return boolean value.
-    bool GetBool() const { return IsBool() ? boolValue_ : false;}
+    bool GetBool() const { return IsBool() ? boolValue_ : false; }
     /// Return integer value.
     int GetInt() const { return IsNumber() ? (int)numberValue_ : 0; }
     /// Return unsigned integer value.
@@ -197,9 +194,9 @@ public:
     /// Return double value.
     double GetDouble() const { return IsNumber() ? numberValue_ : 0.0; }
     /// Return string value.
-    const String& GetString() const { return IsString() ? *stringValue_ : String::EMPTY;}
+    const String& GetString() const { return IsString() ? *stringValue_ : String::EMPTY; }
     /// Return C string value.
-    const char* GetCString() const { return IsString() ? stringValue_->CString() : nullptr;}
+    const char* GetCString() const { return IsString() ? stringValue_->CString() : nullptr; }
     /// Return JSON array value.
     const JSONArray& GetArray() const { return IsArray() ? *arrayValue_ : emptyArray; }
     /// Return JSON object value.
@@ -207,9 +204,9 @@ public:
 
     // JSON array functions
     /// Return JSON value at index.
-    JSONValue& operator [](unsigned index);
+    JSONValue& operator[](unsigned index);
     /// Return JSON value at index.
-    const JSONValue& operator [](unsigned index) const;
+    const JSONValue& operator[](unsigned index) const;
     /// Add JSON value at end.
     void Push(const JSONValue& value);
     /// Remove the last JSON value.
@@ -225,9 +222,9 @@ public:
 
     // JSON object functions
     /// Return JSON value with key.
-    JSONValue& operator [](const String& key);
+    JSONValue& operator[](const String& key);
     /// Return JSON value with key.
-    const JSONValue& operator [](const String& key) const;
+    const JSONValue& operator[](const String& key) const;
     /// Set JSON value with key.
     void Set(const String& key, const JSONValue& value);
     /// Return JSON value with key.
@@ -291,8 +288,7 @@ public:
 private:
     /// type.
     unsigned type_;
-    union
-    {
+    union {
         /// Boolean value.
         bool boolValue_;
         /// Number value.
@@ -305,5 +301,4 @@ private:
         JSONObject* objectValue_;
     };
 };
-
 }

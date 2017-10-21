@@ -29,7 +29,6 @@ class btTypedConstraint;
 
 namespace Urho3D
 {
-
 /// Supported constraint types.
 enum ConstraintType
 {
@@ -84,7 +83,8 @@ public:
     void SetOtherRotation(const Quaternion& rotation);
     /// Set constraint rotation relative to the other body by specifying the axis.
     void SetOtherAxis(const Vector3& axis);
-    /// Set constraint world space position. Resets both own and other body relative position, ie. zeroes the constraint error.
+    /// Set constraint world space position. Resets both own and other body relative position, ie. zeroes the constraint
+    /// error.
     void SetWorldPosition(const Vector3& position);
     /// Set high limit. Interpretation is constraint type specific.
     void SetHighLimit(const Vector2& limit);
@@ -200,5 +200,4 @@ private:
     /// Constraint creation retry flag if attributes initially set without scene.
     bool retryCreation_;
 };
-
 }

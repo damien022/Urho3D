@@ -34,9 +34,7 @@
 
 namespace Urho3D
 {
-
-static const int srcBlendFuncs[] =
-{
+static const int srcBlendFuncs[] = {
     1,      // GL_ONE
     1,      // GL_ONE
     0x0306, // GL_DST_COLOR
@@ -48,8 +46,7 @@ static const int srcBlendFuncs[] =
     0x0302  // GL_SRC_ALPHA
 };
 
-static const int destBlendFuncs[] =
-{
+static const int destBlendFuncs[] = {
     0,      // GL_ZERO
     1,      // GL_ONE
     0,      // GL_ZERO
@@ -65,53 +62,48 @@ static const int destBlendFuncs[] =
 static_assert(sizeof(srcBlendFuncs) / sizeof(srcBlendFuncs[0]) == MAX_BLENDMODES, "");
 static_assert(sizeof(destBlendFuncs) / sizeof(destBlendFuncs[0]) == MAX_BLENDMODES, "");
 
-ParticleEffect2D::ParticleEffect2D(Context* context) :
-    Resource(context),
-    sourcePositionVariance_(7.0f, 7.0f),
-    speed_(260.0f),
-    speedVariance_(10.0f),
-    particleLifeSpan_(1.000f),
-    particleLifespanVariance_(0.700f),
-    angle_(0.0f),
-    angleVariance_(360.0f),
-    gravity_(0.0f, 0.0f),
-    radialAcceleration_(-380.0f),
-    tangentialAcceleration_(-140.0f),
-    radialAccelVariance_(0.0f),
-    tangentialAccelVariance_(0.0f),
-    startColor_(1.0f, 0.0f, 0.0f, 1.0f),
-    startColorVariance_(0.0f, 0.0f, 0.0f, 0.0f),
-    finishColor_(1.0f, 1.0f, 0.0f, 1.0f),
-    finishColorVariance_(0.0f, 0.0f, 0.0f, 0.0f),
-    maxParticles_(600),
-    startParticleSize_(60.0f),
-    startParticleSizeVariance_(40.0f),
-    finishParticleSize_(5.0f),
-    finishParticleSizeVariance_(5.0f),
-    duration_(-1.0f),
-    emitterType_(EMITTER_TYPE_GRAVITY),
-    maxRadius_(100.0f),
-    maxRadiusVariance_(0.0f),
-    minRadius_(0.0f),
-    minRadiusVariance_(0.0f),
-    rotatePerSecond_(0.0f),
-    rotatePerSecondVariance_(0.0f),
-    blendMode_(BLEND_ALPHA),
-    rotationStart_(0.0f),
-    rotationStartVariance_(0.0f),
-    rotationEnd_(0.0f),
-    rotationEndVariance_(0.0f)
+ParticleEffect2D::ParticleEffect2D(Context* context)
+    : Resource(context)
+    , sourcePositionVariance_(7.0f, 7.0f)
+    , speed_(260.0f)
+    , speedVariance_(10.0f)
+    , particleLifeSpan_(1.000f)
+    , particleLifespanVariance_(0.700f)
+    , angle_(0.0f)
+    , angleVariance_(360.0f)
+    , gravity_(0.0f, 0.0f)
+    , radialAcceleration_(-380.0f)
+    , tangentialAcceleration_(-140.0f)
+    , radialAccelVariance_(0.0f)
+    , tangentialAccelVariance_(0.0f)
+    , startColor_(1.0f, 0.0f, 0.0f, 1.0f)
+    , startColorVariance_(0.0f, 0.0f, 0.0f, 0.0f)
+    , finishColor_(1.0f, 1.0f, 0.0f, 1.0f)
+    , finishColorVariance_(0.0f, 0.0f, 0.0f, 0.0f)
+    , maxParticles_(600)
+    , startParticleSize_(60.0f)
+    , startParticleSizeVariance_(40.0f)
+    , finishParticleSize_(5.0f)
+    , finishParticleSizeVariance_(5.0f)
+    , duration_(-1.0f)
+    , emitterType_(EMITTER_TYPE_GRAVITY)
+    , maxRadius_(100.0f)
+    , maxRadiusVariance_(0.0f)
+    , minRadius_(0.0f)
+    , minRadiusVariance_(0.0f)
+    , rotatePerSecond_(0.0f)
+    , rotatePerSecondVariance_(0.0f)
+    , blendMode_(BLEND_ALPHA)
+    , rotationStart_(0.0f)
+    , rotationStartVariance_(0.0f)
+    , rotationEnd_(0.0f)
+    , rotationEndVariance_(0.0f)
 {
 }
 
-ParticleEffect2D::~ParticleEffect2D()
-{
-}
+ParticleEffect2D::~ParticleEffect2D() {}
 
-void ParticleEffect2D::RegisterObject(Context* context)
-{
-    context->RegisterFactory<ParticleEffect2D>();
-}
+void ParticleEffect2D::RegisterObject(Context* context) { context->RegisterFactory<ParticleEffect2D>(); }
 
 bool ParticleEffect2D::BeginLoad(Deserializer& source)
 {
@@ -175,7 +167,6 @@ bool ParticleEffect2D::BeginLoad(Deserializer& source)
         if (duration > 0.0f)
             duration_ = duration;
     }
-
 
     emitterType_ = (EmitterType2D)ReadInt(rootElem, "emitterType");
 
@@ -298,180 +289,105 @@ bool ParticleEffect2D::Save(Serializer& dest) const
     return xmlFile.Save(dest);
 }
 
-void ParticleEffect2D::SetSprite(Sprite2D* sprite)
-{
-    sprite_ = sprite;
-}
+void ParticleEffect2D::SetSprite(Sprite2D* sprite) { sprite_ = sprite; }
 
 void ParticleEffect2D::SetSourcePositionVariance(const Vector2& sourcePositionVariance)
 {
     sourcePositionVariance_ = sourcePositionVariance;
 }
 
-void ParticleEffect2D::SetSpeed(float speed)
-{
-    speed_ = speed;
-}
+void ParticleEffect2D::SetSpeed(float speed) { speed_ = speed; }
 
-void ParticleEffect2D::SetSpeedVariance(float speedVariance)
-{
-    speedVariance_ = speedVariance;
-}
+void ParticleEffect2D::SetSpeedVariance(float speedVariance) { speedVariance_ = speedVariance; }
 
-void ParticleEffect2D::SetParticleLifeSpan(float particleLifeSpan)
-{
-    particleLifeSpan_ = particleLifeSpan;
-}
+void ParticleEffect2D::SetParticleLifeSpan(float particleLifeSpan) { particleLifeSpan_ = particleLifeSpan; }
 
 void ParticleEffect2D::SetParticleLifespanVariance(float particleLifespanVariance)
 {
     particleLifespanVariance_ = particleLifespanVariance;
 }
 
-void ParticleEffect2D::SetAngle(float angle)
-{
-    angle_ = angle;
-}
+void ParticleEffect2D::SetAngle(float angle) { angle_ = angle; }
 
-void ParticleEffect2D::SetAngleVariance(float angleVariance)
-{
-    angleVariance_ = angleVariance;
-}
+void ParticleEffect2D::SetAngleVariance(float angleVariance) { angleVariance_ = angleVariance; }
 
-void ParticleEffect2D::SetGravity(const Vector2& gravity)
-{
-    gravity_ = gravity;
-}
+void ParticleEffect2D::SetGravity(const Vector2& gravity) { gravity_ = gravity; }
 
-void ParticleEffect2D::SetRadialAcceleration(float radialAcceleration)
-{
-    radialAcceleration_ = radialAcceleration;
-}
+void ParticleEffect2D::SetRadialAcceleration(float radialAcceleration) { radialAcceleration_ = radialAcceleration; }
 
 void ParticleEffect2D::SetTangentialAcceleration(float tangentialAcceleration)
 {
     tangentialAcceleration_ = tangentialAcceleration;
 }
 
-void ParticleEffect2D::SetRadialAccelVariance(float radialAccelVariance)
-{
-    radialAccelVariance_ = radialAccelVariance;
-}
+void ParticleEffect2D::SetRadialAccelVariance(float radialAccelVariance) { radialAccelVariance_ = radialAccelVariance; }
 
 void ParticleEffect2D::SetTangentialAccelVariance(float tangentialAccelVariance)
 {
     tangentialAccelVariance_ = tangentialAccelVariance;
 }
 
-void ParticleEffect2D::SetStartColor(const Color& startColor)
-{
-    startColor_ = startColor;
-}
+void ParticleEffect2D::SetStartColor(const Color& startColor) { startColor_ = startColor; }
 
 void ParticleEffect2D::SetStartColorVariance(const Color& startColorVariance)
 {
     startColorVariance_ = startColorVariance;
 }
 
-void ParticleEffect2D::SetFinishColor(const Color& finishColor)
-{
-    finishColor_ = finishColor;
-}
+void ParticleEffect2D::SetFinishColor(const Color& finishColor) { finishColor_ = finishColor; }
 
 void ParticleEffect2D::SetFinishColorVariance(const Color& finishColorVariance)
 {
     finishColorVariance_ = finishColorVariance;
 }
 
-void ParticleEffect2D::SetMaxParticles(int maxParticles)
-{
-    maxParticles_ = maxParticles;
-}
+void ParticleEffect2D::SetMaxParticles(int maxParticles) { maxParticles_ = maxParticles; }
 
-void ParticleEffect2D::SetStartParticleSize(float startParticleSize)
-{
-    startParticleSize_ = startParticleSize;
-}
+void ParticleEffect2D::SetStartParticleSize(float startParticleSize) { startParticleSize_ = startParticleSize; }
 
 void ParticleEffect2D::SetStartParticleSizeVariance(float startParticleSizeVariance)
 {
     startParticleSizeVariance_ = startParticleSizeVariance;
 }
 
-void ParticleEffect2D::SetFinishParticleSize(float finishParticleSize)
-{
-    finishParticleSize_ = finishParticleSize;
-}
+void ParticleEffect2D::SetFinishParticleSize(float finishParticleSize) { finishParticleSize_ = finishParticleSize; }
 
 void ParticleEffect2D::SetFinishParticleSizeVariance(float finishParticleSizeVariance)
 {
     finishParticleSizeVariance_ = finishParticleSizeVariance;
 }
 
-void ParticleEffect2D::SetDuration(float duration)
-{
-    duration_ = duration;
-}
+void ParticleEffect2D::SetDuration(float duration) { duration_ = duration; }
 
-void ParticleEffect2D::SetEmitterType(EmitterType2D emitterType)
-{
-    emitterType_ = emitterType;
-}
+void ParticleEffect2D::SetEmitterType(EmitterType2D emitterType) { emitterType_ = emitterType; }
 
-void ParticleEffect2D::SetMaxRadius(float maxRadius)
-{
-    maxRadius_ = maxRadius;
-}
+void ParticleEffect2D::SetMaxRadius(float maxRadius) { maxRadius_ = maxRadius; }
 
-void ParticleEffect2D::SetMaxRadiusVariance(float maxRadiusVariance)
-{
-    maxRadiusVariance_ = maxRadiusVariance;
-}
+void ParticleEffect2D::SetMaxRadiusVariance(float maxRadiusVariance) { maxRadiusVariance_ = maxRadiusVariance; }
 
-void ParticleEffect2D::SetMinRadius(float minRadius)
-{
-    minRadius_ = minRadius;
-}
+void ParticleEffect2D::SetMinRadius(float minRadius) { minRadius_ = minRadius; }
 
-void ParticleEffect2D::SetMinRadiusVariance(float minRadiusVariance)
-{
-    minRadiusVariance_ = minRadiusVariance;
-}
+void ParticleEffect2D::SetMinRadiusVariance(float minRadiusVariance) { minRadiusVariance_ = minRadiusVariance; }
 
-void ParticleEffect2D::SetRotatePerSecond(float rotatePerSecond)
-{
-    rotatePerSecond_ = rotatePerSecond;
-}
+void ParticleEffect2D::SetRotatePerSecond(float rotatePerSecond) { rotatePerSecond_ = rotatePerSecond; }
 
 void ParticleEffect2D::SetRotatePerSecondVariance(float rotatePerSecondVariance)
 {
     rotatePerSecondVariance_ = rotatePerSecondVariance;
 }
 
-void ParticleEffect2D::SetBlendMode(BlendMode blendMode)
-{
-    blendMode_ = blendMode;
-}
+void ParticleEffect2D::SetBlendMode(BlendMode blendMode) { blendMode_ = blendMode; }
 
-void ParticleEffect2D::SetRotationStart(float rotationStart)
-{
-    rotationStart_ = rotationStart;
-}
+void ParticleEffect2D::SetRotationStart(float rotationStart) { rotationStart_ = rotationStart; }
 
 void ParticleEffect2D::SetRotationStartVariance(float rotationStartVariance)
 {
     rotationStartVariance_ = rotationStartVariance;
 }
 
-void ParticleEffect2D::SetRotationEnd(float rotationEnd)
-{
-    rotationEnd_ = rotationEnd;
-}
+void ParticleEffect2D::SetRotationEnd(float rotationEnd) { rotationEnd_ = rotationEnd; }
 
-void ParticleEffect2D::SetRotationEndVariance(float rotationEndVariance)
-{
-    rotationEndVariance_ = rotationEndVariance;
-}
+void ParticleEffect2D::SetRotationEndVariance(float rotationEndVariance) { rotationEndVariance_ = rotationEndVariance; }
 
 SharedPtr<ParticleEffect2D> ParticleEffect2D::Clone(const String& cloneName) const
 {
@@ -515,7 +431,7 @@ SharedPtr<ParticleEffect2D> ParticleEffect2D::Clone(const String& cloneName) con
     ret->rotationEndVariance_ = rotationEndVariance_;
     /// \todo Zero if source was created programmatically
     ret->SetMemoryUse(GetMemoryUse());
-    
+
     return ret;
 }
 
@@ -568,5 +484,4 @@ void ParticleEffect2D::WriteVector2(XMLElement& element, const String& name, con
     child.SetFloat("x", value.x_);
     child.SetFloat("y", value.y_);
 }
-
 }

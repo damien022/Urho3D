@@ -39,7 +39,6 @@
 
 namespace Urho3D
 {
-
 extern const char* SCENE_CATEGORY;
 
 static const LightType DEFAULT_LIGHTTYPE = LIGHT_POINT;
@@ -61,13 +60,7 @@ static const float DEFAULT_TEMPERATURE = 6590.0f;
 static const float DEFAULT_RADIUS = 0.0f;
 static const float DEFAULT_LENGTH = 0.0f;
 
-static const char* typeNames[] =
-{
-    "Directional",
-    "Spot",
-    "Point",
-    nullptr
-};
+static const char* typeNames[] = {"Directional", "Spot", "Point", nullptr};
 
 void BiasParameters::Validate()
 {
@@ -89,46 +82,46 @@ void FocusParameters::Validate()
     minView_ = Max(minView_, SHADOW_MIN_VIEW);
 }
 
-Light::Light(Context* context) :
-    Drawable(context, DRAWABLE_LIGHT),
-    lightType_(DEFAULT_LIGHTTYPE),
-    shadowBias_(BiasParameters(DEFAULT_CONSTANTBIAS, DEFAULT_SLOPESCALEDBIAS)),
-    shadowCascade_(CascadeParameters(DEFAULT_SHADOWSPLIT, 0.0f, 0.0f, 0.0f, DEFAULT_SHADOWFADESTART)),
-    shadowFocus_(FocusParameters(true, true, true, DEFAULT_SHADOWQUANTIZE, DEFAULT_SHADOWMINVIEW)),
-    lightQueue_(nullptr),
-    temperature_(DEFAULT_TEMPERATURE),
-    lightRad_(DEFAULT_RADIUS),
-    lightLength_(DEFAULT_LENGTH),
-    specularIntensity_(DEFAULT_SPECULARINTENSITY),
-    brightness_(DEFAULT_BRIGHTNESS),
-    range_(DEFAULT_RANGE),
-    fov_(DEFAULT_LIGHT_FOV),
-    aspectRatio_(1.0f),
-    fadeDistance_(0.0f),
-    shadowFadeDistance_(0.0f),
-    shadowIntensity_(0.0f),
-    shadowResolution_(1.0f),
-    shadowNearFarRatio_(DEFAULT_SHADOWNEARFARRATIO),
-    shadowMaxExtrusion_(DEFAULT_SHADOWMAXEXTRUSION),
-    perVertex_(false),
-    usePhysicalValues_(false)
+Light::Light(Context* context)
+    : Drawable(context, DRAWABLE_LIGHT)
+    , lightType_(DEFAULT_LIGHTTYPE)
+    , shadowBias_(BiasParameters(DEFAULT_CONSTANTBIAS, DEFAULT_SLOPESCALEDBIAS))
+    , shadowCascade_(CascadeParameters(DEFAULT_SHADOWSPLIT, 0.0f, 0.0f, 0.0f, DEFAULT_SHADOWFADESTART))
+    , shadowFocus_(FocusParameters(true, true, true, DEFAULT_SHADOWQUANTIZE, DEFAULT_SHADOWMINVIEW))
+    , lightQueue_(nullptr)
+    , temperature_(DEFAULT_TEMPERATURE)
+    , lightRad_(DEFAULT_RADIUS)
+    , lightLength_(DEFAULT_LENGTH)
+    , specularIntensity_(DEFAULT_SPECULARINTENSITY)
+    , brightness_(DEFAULT_BRIGHTNESS)
+    , range_(DEFAULT_RANGE)
+    , fov_(DEFAULT_LIGHT_FOV)
+    , aspectRatio_(1.0f)
+    , fadeDistance_(0.0f)
+    , shadowFadeDistance_(0.0f)
+    , shadowIntensity_(0.0f)
+    , shadowResolution_(1.0f)
+    , shadowNearFarRatio_(DEFAULT_SHADOWNEARFARRATIO)
+    , shadowMaxExtrusion_(DEFAULT_SHADOWMAXEXTRUSION)
+    , perVertex_(false)
+    , usePhysicalValues_(false)
 {
 }
 
-Light::~Light()
-{
-}
+Light::~Light() {}
 
 void Light::RegisterObject(Context* context)
 {
     context->RegisterFactory<Light>(SCENE_CATEGORY);
 
     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
-    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Light Type", GetLightType, SetLightType, LightType, typeNames, DEFAULT_LIGHTTYPE, AM_DEFAULT);
+    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Light Type", GetLightType, SetLightType, LightType, typeNames, DEFAULT_LIGHTTYPE,
+                                   AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Color", GetColor, SetColor, Color, Color::WHITE, AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Specular Intensity", GetSpecularIntensity, SetSpecularIntensity, float, DEFAULT_SPECULARINTENSITY,
-        AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Brightness Multiplier", GetBrightness, SetBrightness, float, DEFAULT_BRIGHTNESS, AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Specular Intensity", GetSpecularIntensity, SetSpecularIntensity, float,
+                              DEFAULT_SPECULARINTENSITY, AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Brightness Multiplier", GetBrightness, SetBrightness, float, DEFAULT_BRIGHTNESS,
+                              AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Temperature", GetTemperature, SetTemperature, float, DEFAULT_TEMPERATURE, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Use Physical Values", bool, usePhysicalValues_, false, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Radius", GetRadius, SetRadius, float, DEFAULT_RADIUS, AM_DEFAULT);
@@ -137,22 +130,24 @@ void Light::RegisterObject(Context* context)
     URHO3D_ACCESSOR_ATTRIBUTE("Spot FOV", GetFov, SetFov, float, DEFAULT_LIGHT_FOV, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Spot Aspect Ratio", GetAspectRatio, SetAspectRatio, float, 1.0f, AM_DEFAULT);
     URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Attenuation Texture", GetRampTextureAttr, SetRampTextureAttr, ResourceRef,
-        ResourceRef(Texture2D::GetTypeStatic()), AM_DEFAULT);
+                                    ResourceRef(Texture2D::GetTypeStatic()), AM_DEFAULT);
     URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Light Shape Texture", GetShapeTextureAttr, SetShapeTextureAttr, ResourceRef,
-        ResourceRef(Texture2D::GetTypeStatic()), AM_DEFAULT);
+                                    ResourceRef(Texture2D::GetTypeStatic()), AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Can Be Occluded", IsOccludee, SetOccludee, bool, true, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Cast Shadows", bool, castShadows_, false, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Per Vertex", bool, perVertex_, false, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Draw Distance", GetDrawDistance, SetDrawDistance, float, 0.0f, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Fade Distance", GetFadeDistance, SetFadeDistance, float, 0.0f, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Shadow Distance", GetShadowDistance, SetShadowDistance, float, 0.0f, AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Shadow Fade Distance", GetShadowFadeDistance, SetShadowFadeDistance, float, 0.0f, AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Shadow Fade Distance", GetShadowFadeDistance, SetShadowFadeDistance, float, 0.0f,
+                              AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Shadow Intensity", GetShadowIntensity, SetShadowIntensity, float, 0.0f, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Shadow Resolution", GetShadowResolution, SetShadowResolution, float, 1.0f, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Focus To Scene", bool, shadowFocus_.focus_, true, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Non-uniform View", bool, shadowFocus_.nonUniform_, true, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Auto-Reduce Size", bool, shadowFocus_.autoSize_, true, AM_DEFAULT);
-    URHO3D_ATTRIBUTE("CSM Splits", Vector4, shadowCascade_.splits_, Vector4(DEFAULT_SHADOWSPLIT, 0.0f, 0.0f, 0.0f), AM_DEFAULT);
+    URHO3D_ATTRIBUTE("CSM Splits", Vector4, shadowCascade_.splits_, Vector4(DEFAULT_SHADOWSPLIT, 0.0f, 0.0f, 0.0f),
+                     AM_DEFAULT);
     URHO3D_ATTRIBUTE("CSM Fade Start", float, shadowCascade_.fadeStart_, DEFAULT_SHADOWFADESTART, AM_DEFAULT);
     URHO3D_ATTRIBUTE("CSM Bias Auto Adjust", float, shadowCascade_.biasAutoAdjust_, DEFAULT_BIASAUTOADJUST, AM_DEFAULT);
     URHO3D_ATTRIBUTE("View Size Quantize", float, shadowFocus_.quantize_, DEFAULT_SHADOWQUANTIZE, AM_DEFAULT);
@@ -161,7 +156,8 @@ void Light::RegisterObject(Context* context)
     URHO3D_ATTRIBUTE("Depth Slope Bias", float, shadowBias_.slopeScaledBias_, DEFAULT_SLOPESCALEDBIAS, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Normal Offset", float, shadowBias_.normalOffset_, DEFAULT_NORMALOFFSET, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Near/Farclip Ratio", float, shadowNearFarRatio_, DEFAULT_SHADOWNEARFARRATIO, AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Max Extrusion", GetShadowMaxExtrusion, SetShadowMaxExtrusion, float, DEFAULT_SHADOWMAXEXTRUSION, AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Max Extrusion", GetShadowMaxExtrusion, SetShadowMaxExtrusion, float,
+                              DEFAULT_SHADOWMAXEXTRUSION, AM_DEFAULT);
     URHO3D_ATTRIBUTE("View Mask", int, viewMask_, DEFAULT_VIEWMASK, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Light Mask", int, lightMask_, DEFAULT_LIGHTMASK, AM_DEFAULT);
 }
@@ -171,7 +167,8 @@ void Light::OnSetAttribute(const AttributeInfo& attr, const Variant& src)
     Serializable::OnSetAttribute(attr, src);
 
     // Validate the bias, cascade & focus parameters
-    if (attr.offset_ >= offsetof(Light, shadowBias_) && attr.offset_ < (offsetof(Light, shadowBias_) + sizeof(BiasParameters)))
+    if (attr.offset_ >= offsetof(Light, shadowBias_) &&
+        attr.offset_ < (offsetof(Light, shadowBias_) + sizeof(BiasParameters)))
         shadowBias_.Validate();
     else if (attr.offset_ >= offsetof(Light, shadowCascade_) &&
              attr.offset_ < (offsetof(Light, shadowCascade_) + sizeof(CascadeParameters)))
@@ -195,14 +192,14 @@ void Light::ProcessRayQuery(const RayOctreeQuery& query, PODVector<RayQueryResul
         return;
 
     case RAY_OBB:
-        {
-            Matrix3x4 inverse(node_->GetWorldTransform().Inverse());
-            Ray localRay = query.ray_.Transformed(inverse);
-            distance = localRay.HitDistance(GetWorldBoundingBox().Transformed(inverse));
-            if (distance >= query.maxDistance_)
-                return;
-        }
-        break;
+    {
+        Matrix3x4 inverse(node_->GetWorldTransform().Inverse());
+        Ray localRay = query.ray_.Transformed(inverse);
+        distance = localRay.HitDistance(GetWorldBoundingBox().Transformed(inverse));
+        if (distance >= query.maxDistance_)
+            return;
+    }
+    break;
 
     case RAY_TRIANGLE:
         if (lightType_ == LIGHT_SPOT)
@@ -259,20 +256,20 @@ void Light::DrawDebugGeometry(DebugRenderer* debug, bool depthTest)
         switch (lightType_)
         {
         case LIGHT_DIRECTIONAL:
+        {
+            Vector3 start = node_->GetWorldPosition();
+            Vector3 end = start + node_->GetWorldDirection() * 10.f;
+            for (int i = -1; i < 2; ++i)
             {
-                Vector3 start = node_->GetWorldPosition();
-                Vector3 end = start + node_->GetWorldDirection() * 10.f;
-                for (int i = -1; i < 2; ++i)
+                for (int j = -1; j < 2; ++j)
                 {
-                    for (int j = -1; j < 2; ++j)
-                    {
-                        Vector3 offset = Vector3::UP * (5.f * i) + Vector3::RIGHT * (5.f * j);
-                        debug->AddSphere(Sphere(start + offset, 0.1f), color, depthTest);
-                        debug->AddLine(start + offset, end + offset, color, depthTest);
-                    }
+                    Vector3 offset = Vector3::UP * (5.f * i) + Vector3::RIGHT * (5.f * j);
+                    debug->AddSphere(Sphere(start + offset, 0.1f), color, depthTest);
+                    debug->AddLine(start + offset, end + offset, color, depthTest);
                 }
             }
-            break;
+        }
+        break;
 
         case LIGHT_SPOT:
             debug->AddFrustum(GetFrustum(), color, depthTest);
@@ -434,9 +431,9 @@ Color Light::GetColorFromTemperature() const
 {
     // Approximate Planckian locus in CIE 1960 UCS
     float u = (0.860117757f + 1.54118254e-4f * temperature_ + 1.28641212e-7f * temperature_ * temperature_) /
-        (1.0f + 8.42420235e-4f * temperature_ + 7.08145163e-7f * temperature_ * temperature_);
+              (1.0f + 8.42420235e-4f * temperature_ + 7.08145163e-7f * temperature_ * temperature_);
     float v = (0.317398726f + 4.22806245e-5f * temperature_ + 4.20481691e-8f * temperature_ * temperature_) /
-        (1.0f - 2.89741816e-5f * temperature_ + 1.61456053e-7f * temperature_ * temperature_);
+              (1.0f - 2.89741816e-5f * temperature_ + 1.61456053e-7f * temperature_ * temperature_);
 
     float x = 3.0f * u / (2.0f * u - 8.0f * v + 4.0f);
     float y = 2.0f * v / (2.0f * u - 8.0f * v + 4.0f);
@@ -461,7 +458,8 @@ Color Light::GetEffectiveColor() const
         Color tempColor = GetColorFromTemperature();
         // Light brightness in lumens
         float energy = (brightness_ * 4.0f * M_PI) * 16.0f / (100.0f * 100.0f) / M_PI;
-        return Color(tempColor.r_ * color_.r_ * energy, tempColor.g_ * color_.g_ * energy, tempColor.b_ * color_.b_ * energy, 1.0f);
+        return Color(tempColor.r_ * color_.r_ * energy, tempColor.g_ * color_.g_ * energy,
+                     tempColor.b_ * color_.b_ * energy, 1.0f);
     }
     else
     {
@@ -472,8 +470,8 @@ Color Light::GetEffectiveColor() const
 Frustum Light::GetFrustum() const
 {
     // Note: frustum is unaffected by node or parent scale
-    Matrix3x4 frustumTransform(node_ ? Matrix3x4(node_->GetWorldPosition(), node_->GetWorldRotation(), 1.0f) :
-                               Matrix3x4::IDENTITY);
+    Matrix3x4 frustumTransform(node_ ? Matrix3x4(node_->GetWorldPosition(), node_->GetWorldRotation(), 1.0f)
+                                     : Matrix3x4::IDENTITY);
     Frustum ret;
     ret.Define(fov_, aspectRatio_, 1.0f, M_MIN_NEARCLIP, range_, frustumTransform);
     return ret;
@@ -482,8 +480,8 @@ Frustum Light::GetFrustum() const
 Frustum Light::GetViewSpaceFrustum(const Matrix3x4& view) const
 {
     // Note: frustum is unaffected by node or parent scale
-    Matrix3x4 frustumTransform(node_ ? Matrix3x4(node_->GetWorldPosition(), node_->GetWorldRotation(), 1.0f) :
-                               Matrix3x4::IDENTITY);
+    Matrix3x4 frustumTransform(node_ ? Matrix3x4(node_->GetWorldPosition(), node_->GetWorldRotation(), 1.0f)
+                                     : Matrix3x4::IDENTITY);
     Frustum ret;
     ret.Define(fov_, aspectRatio_, 1.0f, M_MIN_NEARCLIP, range_, view * frustumTransform);
     return ret;
@@ -519,12 +517,13 @@ const Matrix3x4& Light::GetVolumeTransform(Camera* camera)
         break;
 
     case LIGHT_SPOT:
-        {
-            float yScale = tanf(fov_ * M_DEGTORAD * 0.5f) * range_;
-            float xScale = aspectRatio_ * yScale;
-            volumeTransform_ = Matrix3x4(node_->GetWorldPosition(), node_->GetWorldRotation(), Vector3(xScale, yScale, range_));
-        }
-        break;
+    {
+        float yScale = tanf(fov_ * M_DEGTORAD * 0.5f) * range_;
+        float xScale = aspectRatio_ * yScale;
+        volumeTransform_ =
+            Matrix3x4(node_->GetWorldPosition(), node_->GetWorldRotation(), Vector3(xScale, yScale, range_));
+    }
+    break;
 
     case LIGHT_POINT:
         volumeTransform_ = Matrix3x4(node_->GetWorldPosition(), Quaternion::IDENTITY, range_);
@@ -546,14 +545,12 @@ void Light::SetShapeTextureAttr(const ResourceRef& value)
     shapeTexture_ = static_cast<Texture*>(cache->GetResource(value.type_, value.name_));
 }
 
-ResourceRef Light::GetRampTextureAttr() const
-{
-    return GetResourceRef(rampTexture_, Texture2D::GetTypeStatic());
-}
+ResourceRef Light::GetRampTextureAttr() const { return GetResourceRef(rampTexture_, Texture2D::GetTypeStatic()); }
 
 ResourceRef Light::GetShapeTextureAttr() const
 {
-    return GetResourceRef(shapeTexture_, lightType_ == LIGHT_POINT ? TextureCube::GetTypeStatic() : Texture2D::GetTypeStatic());
+    return GetResourceRef(shapeTexture_,
+                          lightType_ == LIGHT_POINT ? TextureCube::GetTypeStatic() : Texture2D::GetTypeStatic());
 }
 
 void Light::OnWorldBoundingBoxUpdate()
@@ -571,18 +568,19 @@ void Light::OnWorldBoundingBoxUpdate()
         break;
 
     case LIGHT_POINT:
-        {
-            const Vector3& center = node_->GetWorldPosition();
-            Vector3 edge(range_, range_, range_);
-            worldBoundingBox_.Define(center - edge, center + edge);
-        }
-        break;
+    {
+        const Vector3& center = node_->GetWorldPosition();
+        Vector3 edge(range_, range_, range_);
+        worldBoundingBox_.Define(center - edge, center + edge);
+    }
+    break;
     }
 }
 
 void Light::SetIntensitySortValue(float distance)
 {
-    // When sorting lights globally, give priority to directional lights so that they will be combined into the ambient pass
+    // When sorting lights globally, give priority to directional lights so that they will be combined into the ambient
+    // pass
     if (!IsNegative())
     {
         if (lightType_ != LIGHT_DIRECTIONAL)
@@ -592,8 +590,8 @@ void Light::SetIntensitySortValue(float distance)
     }
     else
     {
-        // Give extra priority to negative lights in the global sorting order so that they're handled first, right after ambient.
-        // Positive lights are added after them
+        // Give extra priority to negative lights in the global sorting order so that they're handled first, right after
+        // ambient. Positive lights are added after them
         if (lightType_ != LIGHT_DIRECTIONAL)
             sortValue_ = -Max(distance, M_MIN_NEARCLIP) * GetIntensityDivisor();
         else
@@ -611,52 +609,50 @@ void Light::SetIntensitySortValue(const BoundingBox& box)
         break;
 
     case LIGHT_SPOT:
-        {
-            Vector3 centerPos = box.Center();
-            Vector3 lightPos = node_->GetWorldPosition();
-            Vector3 lightDir = node_->GetWorldDirection();
-            Ray lightRay(lightPos, lightDir);
+    {
+        Vector3 centerPos = box.Center();
+        Vector3 lightPos = node_->GetWorldPosition();
+        Vector3 lightDir = node_->GetWorldDirection();
+        Ray lightRay(lightPos, lightDir);
 
-            Vector3 centerProj = lightRay.Project(centerPos);
-            float centerDistance = (centerProj - lightPos).Length();
-            Ray centerRay(centerProj, centerPos - centerProj);
-            float centerAngle = centerRay.HitDistance(box) / centerDistance;
+        Vector3 centerProj = lightRay.Project(centerPos);
+        float centerDistance = (centerProj - lightPos).Length();
+        Ray centerRay(centerProj, centerPos - centerProj);
+        float centerAngle = centerRay.HitDistance(box) / centerDistance;
 
-            // Check if a corner of the bounding box is closer to the light ray than the center, use its angle in that case
-            Vector3 cornerPos = centerPos + box.HalfSize() * Vector3(centerPos.x_ < centerProj.x_ ? 1.0f : -1.0f,
-                centerPos.y_ < centerProj.y_ ? 1.0f : -1.0f, centerPos.z_ < centerProj.z_ ? 1.0f : -1.0f);
-            Vector3 cornerProj = lightRay.Project(cornerPos);
-            float cornerDistance = (cornerProj - lightPos).Length();
-            float cornerAngle = (cornerPos - cornerProj).Length() / cornerDistance;
+        // Check if a corner of the bounding box is closer to the light ray than the center, use its angle in that case
+        Vector3 cornerPos = centerPos + box.HalfSize() * Vector3(centerPos.x_ < centerProj.x_ ? 1.0f : -1.0f,
+                                                                 centerPos.y_ < centerProj.y_ ? 1.0f : -1.0f,
+                                                                 centerPos.z_ < centerProj.z_ ? 1.0f : -1.0f);
+        Vector3 cornerProj = lightRay.Project(cornerPos);
+        float cornerDistance = (cornerProj - lightPos).Length();
+        float cornerAngle = (cornerPos - cornerProj).Length() / cornerDistance;
 
-            float spotAngle = Min(centerAngle, cornerAngle);
-            float maxAngle = tanf(fov_ * M_DEGTORAD * 0.5f);
-            float spotFactor = Min(spotAngle / maxAngle, 1.0f);
-            // We do not know the actual range attenuation ramp, so take only spot attenuation into account
-            float att = Max(1.0f - spotFactor * spotFactor, M_EPSILON);
-            sortValue_ = 1.0f / GetIntensityDivisor(att);
-        }
-        break;
+        float spotAngle = Min(centerAngle, cornerAngle);
+        float maxAngle = tanf(fov_ * M_DEGTORAD * 0.5f);
+        float spotFactor = Min(spotAngle / maxAngle, 1.0f);
+        // We do not know the actual range attenuation ramp, so take only spot attenuation into account
+        float att = Max(1.0f - spotFactor * spotFactor, M_EPSILON);
+        sortValue_ = 1.0f / GetIntensityDivisor(att);
+    }
+    break;
 
     case LIGHT_POINT:
-        {
-            Vector3 centerPos = box.Center();
-            Vector3 lightPos = node_->GetWorldPosition();
-            Vector3 lightDir = (centerPos - lightPos).Normalized();
-            Ray lightRay(lightPos, lightDir);
-            float distance = lightRay.HitDistance(box);
-            float normDistance = distance / range_;
-            float att = Max(1.0f - normDistance * normDistance, M_EPSILON);
-            sortValue_ = 1.0f / GetIntensityDivisor(att);
-        }
-        break;
+    {
+        Vector3 centerPos = box.Center();
+        Vector3 lightPos = node_->GetWorldPosition();
+        Vector3 lightDir = (centerPos - lightPos).Normalized();
+        Ray lightRay(lightPos, lightDir);
+        float distance = lightRay.HitDistance(box);
+        float normDistance = distance / range_;
+        float att = Max(1.0f - normDistance * normDistance, M_EPSILON);
+        sortValue_ = 1.0f / GetIntensityDivisor(att);
+    }
+    break;
     }
 }
 
-void Light::SetLightQueue(LightBatchQueue* queue)
-{
-    lightQueue_ = queue;
-}
+void Light::SetLightQueue(LightBatchQueue* queue) { lightQueue_ = queue; }
 
 Matrix3x4 Light::GetFullscreenQuadTransform(Camera* camera)
 {
@@ -665,8 +661,8 @@ Matrix3x4 Light::GetFullscreenQuadTransform(Camera* camera)
     // Position the directional light quad in halfway between far & near planes to prevent depth clipping
     camera->GetFrustumSize(near, far);
     quadTransform.SetTranslation(Vector3(0.0f, 0.0f, (camera->GetNearClip() + camera->GetFarClip()) * 0.5f));
-    quadTransform.SetScale(Vector3(far.x_, far.y_, 1.0f)); // Will be oversized, but doesn't matter (gets frustum clipped)
+    quadTransform.SetScale(
+        Vector3(far.x_, far.y_, 1.0f)); // Will be oversized, but doesn't matter (gets frustum clipped)
     return camera->GetEffectiveWorldTransform() * quadTransform;
 }
-
 }

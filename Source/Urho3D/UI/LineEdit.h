@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 class Font;
 class Text;
 
@@ -48,18 +47,17 @@ public:
     /// Perform UI element update.
     virtual void Update(float timeStep) override;
     /// React to mouse click begin.
-    virtual void OnClickBegin
-        (const IntVector2& position, const IntVector2& screenPosition, int button, int buttons, int qualifiers, Cursor* cursor) override;
+    virtual void OnClickBegin(const IntVector2& position, const IntVector2& screenPosition, int button, int buttons,
+                              int qualifiers, Cursor* cursor) override;
     /// React to mouse doubleclick.
-    virtual void OnDoubleClick
-        (const IntVector2& position, const IntVector2& screenPosition, int button, int buttons, int qualifiers, Cursor* cursor) override;
+    virtual void OnDoubleClick(const IntVector2& position, const IntVector2& screenPosition, int button, int buttons,
+                               int qualifiers, Cursor* cursor) override;
     /// React to mouse drag begin.
-    virtual void
-        OnDragBegin(const IntVector2& position, const IntVector2& screenPosition, int buttons, int qualifiers, Cursor* cursor) override;
+    virtual void OnDragBegin(const IntVector2& position, const IntVector2& screenPosition, int buttons, int qualifiers,
+                             Cursor* cursor) override;
     /// React to mouse drag motion.
-    virtual void OnDragMove
-        (const IntVector2& position, const IntVector2& screenPosition, const IntVector2& deltaPos, int buttons, int qualifiers,
-            Cursor* cursor) override;
+    virtual void OnDragMove(const IntVector2& position, const IntVector2& screenPosition, const IntVector2& deltaPos,
+                            int buttons, int qualifiers, Cursor* cursor) override;
     /// React to drag and drop test. Return true to signal that the drop is acceptable.
     virtual bool OnDragDropTest(UIElement* source) override;
     /// React to drag and drop finish. Return true to signal that the drop was accepted.
@@ -163,5 +161,4 @@ private:
     /// Handle the element layout having been updated.
     void HandleLayoutUpdated(StringHash eventType, VariantMap& eventData);
 };
-
 }

@@ -32,16 +32,12 @@
 
 namespace Urho3D
 {
-
 class HttpRequest;
 class MemoryBuffer;
 class Scene;
 
 /// MessageConnection hash function.
-template <class T> unsigned MakeHash(kNet::MessageConnection* value)
-{
-    return ((unsigned)(size_t)value) >> 9;
-}
+template <class T> unsigned MakeHash(kNet::MessageConnection* value) { return ((unsigned)(size_t)value) >> 9; }
 
 /// %Network subsystem. Manages client-server communications using the UDP protocol.
 class URHO3D_API Network : public Object, public kNet::IMessageHandler, public kNet::INetworkServerListener
@@ -55,8 +51,8 @@ public:
     virtual ~Network() override;
 
     /// Handle a kNet message from either a client or the server.
-    virtual void HandleMessage
-        (kNet::MessageConnection* source, kNet::packet_id_t packetId, kNet::message_id_t msgId, const char* data, size_t numBytes) override;
+    virtual void HandleMessage(kNet::MessageConnection* source, kNet::packet_id_t packetId, kNet::message_id_t msgId,
+                               const char* data, size_t numBytes) override;
     /// Compute the content ID for a message.
     virtual u32 ComputeContentID(kNet::message_id_t msgId, const char* data, size_t numBytes) override;
     /// Handle a new client connection.
@@ -65,8 +61,10 @@ public:
     virtual void ClientDisconnected(kNet::MessageConnection* connection) override;
 
     /// Connect to a server using UDP protocol. Return true if connection process successfully started.
-    bool Connect(const String& address, unsigned short port, Scene* scene, const VariantMap& identity = Variant::emptyVariantMap);
-    /// Disconnect the connection to the server. If wait time is non-zero, will block while waiting for disconnect to finish.
+    bool Connect(const String& address, unsigned short port, Scene* scene,
+                 const VariantMap& identity = Variant::emptyVariantMap);
+    /// Disconnect the connection to the server. If wait time is non-zero, will block while waiting for disconnect to
+    /// finish.
     void Disconnect(int waitMSec = 0);
     /// Start a server on a port using UDP protocol. Return true if successful.
     bool StartServer(unsigned short port);
@@ -75,23 +73,26 @@ public:
     /// Broadcast a message with content ID to all client connections.
     void BroadcastMessage(int msgID, bool reliable, bool inOrder, const VectorBuffer& msg, unsigned contentID = 0);
     /// Broadcast a message with content ID to all client connections.
-    void BroadcastMessage
-        (int msgID, bool reliable, bool inOrder, const unsigned char* data, unsigned numBytes, unsigned contentID = 0);
+    void BroadcastMessage(int msgID, bool reliable, bool inOrder, const unsigned char* data, unsigned numBytes,
+                          unsigned contentID = 0);
     /// Broadcast a remote event to all client connections.
-    void BroadcastRemoteEvent(StringHash eventType, bool inOrder, const VariantMap& eventData = Variant::emptyVariantMap);
+    void BroadcastRemoteEvent(StringHash eventType, bool inOrder,
+                              const VariantMap& eventData = Variant::emptyVariantMap);
     /// Broadcast a remote event to all client connections in a specific scene.
-    void BroadcastRemoteEvent
-        (Scene* scene, StringHash eventType, bool inOrder, const VariantMap& eventData = Variant::emptyVariantMap);
-    /// Broadcast a remote event with the specified node as a sender. Is sent to all client connections in the node's scene.
-    void BroadcastRemoteEvent
-        (Node* node, StringHash eventType, bool inOrder, const VariantMap& eventData = Variant::emptyVariantMap);
+    void BroadcastRemoteEvent(Scene* scene, StringHash eventType, bool inOrder,
+                              const VariantMap& eventData = Variant::emptyVariantMap);
+    /// Broadcast a remote event with the specified node as a sender. Is sent to all client connections in the node's
+    /// scene.
+    void BroadcastRemoteEvent(Node* node, StringHash eventType, bool inOrder,
+                              const VariantMap& eventData = Variant::emptyVariantMap);
     /// Set network update FPS.
     void SetUpdateFps(int fps);
     /// Set simulated latency in milliseconds. This adds a fixed delay before sending each packet.
     void SetSimulatedLatency(int ms);
     /// Set simulated packet loss probability between 0.0 - 1.0.
     void SetSimulatedPacketLoss(float probability);
-    /// Register a remote event as allowed to be received. There is also a fixed blacklist of events that can not be allowed in any case, such as ConsoleCommand.
+    /// Register a remote event as allowed to be received. There is also a fixed blacklist of events that can not be
+    /// allowed in any case, such as ConsoleCommand.
     void RegisterRemoteEvent(StringHash eventType);
     /// Unregister a remote event as allowed to received.
     void UnregisterRemoteEvent(StringHash eventType);
@@ -99,12 +100,15 @@ public:
     void UnregisterAllRemoteEvents();
     /// Set the package download cache directory.
     void SetPackageCacheDir(const String& path);
-    /// Trigger all client connections in the specified scene to download a package file from the server. Can be used to download additional resource packages when clients are already joined in the scene. The package must have been added as a requirement to the scene, or else the eventual download will fail.
+    /// Trigger all client connections in the specified scene to download a package file from the server. Can be used to
+    /// download additional resource packages when clients are already joined in the scene. The package must have been
+    /// added as a requirement to the scene, or else the eventual download will fail.
     void SendPackageToClients(Scene* scene, PackageFile* package);
-    /// Perform an HTTP request to the specified URL. Empty verb defaults to a GET request. Return a request object which can be used to read the response data.
-    SharedPtr<HttpRequest> MakeHttpRequest
-        (const String& url, const String& verb = String::EMPTY, const Vector<String>& headers = Vector<String>(),
-            const String& postData = String::EMPTY);
+    /// Perform an HTTP request to the specified URL. Empty verb defaults to a GET request. Return a request object
+    /// which can be used to read the response data.
+    SharedPtr<HttpRequest> MakeHttpRequest(const String& url, const String& verb = String::EMPTY,
+                                           const Vector<String>& headers = Vector<String>(),
+                                           const String& postData = String::EMPTY);
 
     /// Return network update FPS.
     int GetUpdateFps() const { return updateFps_; }
@@ -120,7 +124,7 @@ public:
     /// Return the connection to the server. Null if not connected.
     Connection* GetServerConnection() const;
     /// Return all client connections.
-    Vector<SharedPtr<Connection> > GetClientConnections() const;
+    Vector<SharedPtr<Connection>> GetClientConnections() const;
     /// Return whether the server is running.
     bool IsServerRunning() const;
     /// Return whether a remote event is allowed to be received.
@@ -151,7 +155,7 @@ private:
     /// Client's server connection.
     SharedPtr<Connection> serverConnection_;
     /// Server's client connections.
-    HashMap<kNet::MessageConnection*, SharedPtr<Connection> > clientConnections_;
+    HashMap<kNet::MessageConnection*, SharedPtr<Connection>> clientConnections_;
     /// Allowed remote events.
     HashSet<StringHash> allowedRemoteEvents_;
     /// Remote event fixed blacklist.
@@ -174,5 +178,4 @@ private:
 
 /// Register Network library objects.
 void URHO3D_API RegisterNetworkLibrary(Context* context);
-
 }

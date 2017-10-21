@@ -48,26 +48,27 @@ class Character : public LogicComponent
 public:
     /// Construct.
     Character(Context* context);
-    
+
     /// Register object factory and attributes.
     static void RegisterObject(Context* context);
-    
+
     /// Handle startup. Called by LogicComponent base class.
     virtual void Start() override;
     /// Handle physics world update. Called by LogicComponent base class.
     virtual void FixedUpdate(float timeStep) override;
-    
+
     /// Movement controls. Assigned by the main program each frame.
     Controls controls_;
-    
+
 private:
     /// Handle physics collision event.
     void HandleNodeCollision(StringHash eventType, VariantMap& eventData);
-    
+
     /// Grounded flag for movement.
     bool onGround_;
     /// Jump flag.
     bool okToJump_;
-    /// In air timer. Due to possible physics inaccuracy, character can be off ground for max. 1/10 second and still be allowed to move.
+    /// In air timer. Due to possible physics inaccuracy, character can be off ground for max. 1/10 second and still be
+    /// allowed to move.
     float inAirTimer_;
 };

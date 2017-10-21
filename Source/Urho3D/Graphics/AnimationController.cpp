@@ -39,7 +39,6 @@
 
 namespace Urho3D
 {
-
 static const unsigned char CTRL_LOOPED = 0x1;
 static const unsigned char CTRL_STARTBONE = 0x2;
 static const unsigned char CTRL_AUTOFADE = 0x4;
@@ -53,26 +52,24 @@ static const unsigned MAX_NODE_ANIMATION_STATES = 256;
 
 extern const char* LOGIC_CATEGORY;
 
-AnimationController::AnimationController(Context* context) :
-    Component(context)
+AnimationController::AnimationController(Context* context)
+    : Component(context)
 {
 }
 
-AnimationController::~AnimationController()
-{
-}
+AnimationController::~AnimationController() {}
 
 void AnimationController::RegisterObject(Context* context)
 {
     context->RegisterFactory<AnimationController>(LOGIC_CATEGORY);
 
     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Animations", GetAnimationsAttr, SetAnimationsAttr, VariantVector, Variant::emptyVariantVector,
-        AM_FILE | AM_NOEDIT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Network Animations", GetNetAnimationsAttr, SetNetAnimationsAttr, PODVector<unsigned char>,
-        Variant::emptyBuffer, AM_NET | AM_LATESTDATA | AM_NOEDIT);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Node Animation States", GetNodeAnimationStatesAttr, SetNodeAnimationStatesAttr, VariantVector,
-        Variant::emptyVariantVector, AM_FILE | AM_NOEDIT);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Animations", GetAnimationsAttr, SetAnimationsAttr, VariantVector,
+                                    Variant::emptyVariantVector, AM_FILE | AM_NOEDIT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Network Animations", GetNetAnimationsAttr, SetNetAnimationsAttr,
+                              PODVector<unsigned char>, Variant::emptyBuffer, AM_NET | AM_LATESTDATA | AM_NOEDIT);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Node Animation States", GetNodeAnimationStatesAttr, SetNodeAnimationStatesAttr,
+                                    VariantVector, Variant::emptyVariantVector, AM_FILE | AM_NOEDIT);
 }
 
 void AnimationController::OnSetEnabled()
@@ -154,7 +151,8 @@ void AnimationController::Update(float timeStep)
     }
 
     // Node hierarchy animations need to be applied manually
-    for (Vector<SharedPtr<AnimationState> >::Iterator i = nodeAnimationStates_.Begin(); i != nodeAnimationStates_.End(); ++i)
+    for (Vector<SharedPtr<AnimationState>>::Iterator i = nodeAnimationStates_.Begin(); i != nodeAnimationStates_.End();
+         ++i)
         (*i)->Apply();
 }
 
@@ -199,11 +197,11 @@ bool AnimationController::Play(const String& name, unsigned char layer, bool loo
 bool AnimationController::PlayExclusive(const String& name, unsigned char layer, bool looped, float fadeTime)
 {
     bool success = Play(name, layer, looped, fadeTime);
-    
+
     // Fade other animations only if successfully started the new one
     if (success)
         FadeOthers(name, 0.0f, fadeTime);
-    
+
     return success;
 }
 
@@ -467,8 +465,8 @@ bool AnimationController::IsFadingOut(const String& name) const
     if (index == M_MAX_UNSIGNED || !state)
         return false;
 
-    return (animations_[index].fadeTime_ && animations_[index].targetWeight_ < state->GetWeight())
-           || (!state->IsLooped() && state->GetTime() >= state->GetLength() && animations_[index].autoFadeTime_);
+    return (animations_[index].fadeTime_ && animations_[index].targetWeight_ < state->GetWeight()) ||
+           (!state->IsLooped() && state->GetTime() >= state->GetLength() && animations_[index].autoFadeTime_);
 }
 
 bool AnimationController::IsAtEnd(const String& name) const
@@ -583,7 +581,8 @@ AnimationState* AnimationController::GetAnimationState(StringHash nameHash) cons
         return model->GetAnimationState(nameHash);
 
     // Node hierarchy mode
-    for (Vector<SharedPtr<AnimationState> >::ConstIterator i = nodeAnimationStates_.Begin(); i != nodeAnimationStates_.End(); ++i)
+    for (Vector<SharedPtr<AnimationState>>::ConstIterator i = nodeAnimationStates_.Begin();
+         i != nodeAnimationStates_.End(); ++i)
     {
         Animation* animation = (*i)->GetAnimation();
         if (animation->GetNameHash() == nameHash || animation->GetAnimationNameHash() == nameHash)
@@ -596,9 +595,9 @@ AnimationState* AnimationController::GetAnimationState(StringHash nameHash) cons
 void AnimationController::SetAnimationsAttr(const VariantVector& value)
 {
     animations_.Clear();
-    animations_.Reserve(value.Size() / 5);  // Incomplete data is discarded
+    animations_.Reserve(value.Size() / 5); // Incomplete data is discarded
     unsigned index = 0;
-    while (index + 4 < value.Size())    // Prevent out-of-bound index access
+    while (index + 4 < value.Size()) // Prevent out-of-bound index access
     {
         AnimationControl newControl;
         newControl.name_ = value[index++].GetString();
@@ -658,9 +657,11 @@ void AnimationController::SetNetAnimationsAttr(const PODVector<unsigned char>& v
         state->SetLayer(buf.ReadUByte());
         state->SetLooped((ctrl & CTRL_LOOPED) != 0);
         state->SetBlendMode((ctrl & CTRL_ADDITIVE) != 0 ? ABM_ADDITIVE : ABM_LERP);
-        animations_[index].speed_ = (float)buf.ReadShort() / 2048.0f; // 11 bits of decimal precision, max. 16x playback speed
+        animations_[index].speed_ =
+            (float)buf.ReadShort() / 2048.0f; // 11 bits of decimal precision, max. 16x playback speed
         animations_[index].targetWeight_ = (float)buf.ReadUByte() / 255.0f; // 8 bits of decimal precision
-        animations_[index].fadeTime_ = (float)buf.ReadUByte() / 64.0f; // 6 bits of decimal precision, max. 4 seconds fade
+        animations_[index].fadeTime_ =
+            (float)buf.ReadUByte() / 64.0f; // 6 bits of decimal precision, max. 4 seconds fade
         if (ctrl & CTRL_STARTBONE)
         {
             StringHash boneHash = buf.ReadStringHash();
@@ -670,12 +671,13 @@ void AnimationController::SetNetAnimationsAttr(const PODVector<unsigned char>& v
         else
             state->SetStartBone(nullptr);
         if (ctrl & CTRL_AUTOFADE)
-            animations_[index].autoFadeTime_ = (float)buf.ReadUByte() / 64.0f; // 6 bits of decimal precision, max. 4 seconds fade
+            animations_[index].autoFadeTime_ =
+                (float)buf.ReadUByte() / 64.0f; // 6 bits of decimal precision, max. 4 seconds fade
         else
             animations_[index].autoFadeTime_ = 0.0f;
-        
+
         animations_[index].removeOnCompletion_ = (ctrl & CTRL_REMOVEONCOMPLETION) != 0;
-        
+
         if (ctrl & CTRL_SETTIME)
         {
             unsigned char setTimeRev = buf.ReadUByte();
@@ -730,7 +732,8 @@ void AnimationController::SetNodeAnimationStatesAttr(const VariantVector& value)
         {
             // Note: null animation is allowed here for editing
             const ResourceRef& animRef = value[index++].GetResourceRef();
-            SharedPtr<AnimationState> newState(new AnimationState(GetNode(), cache->GetResource<Animation>(animRef.name_)));
+            SharedPtr<AnimationState> newState(
+                new AnimationState(GetNode(), cache->GetResource<Animation>(animRef.name_)));
             nodeAnimationStates_.Push(newState);
 
             newState->SetLooped(value[index++].GetBool());
@@ -827,7 +830,8 @@ VariantVector AnimationController::GetNodeAnimationStatesAttr() const
     VariantVector ret;
     ret.Reserve(nodeAnimationStates_.Size() * 3 + 1);
     ret.Push(nodeAnimationStates_.Size());
-    for (Vector<SharedPtr<AnimationState> >::ConstIterator i = nodeAnimationStates_.Begin(); i != nodeAnimationStates_.End(); ++i)
+    for (Vector<SharedPtr<AnimationState>>::ConstIterator i = nodeAnimationStates_.Begin();
+         i != nodeAnimationStates_.End(); ++i)
     {
         AnimationState* state = *i;
         Animation* animation = state->GetAnimation();
@@ -876,7 +880,8 @@ void AnimationController::RemoveAnimationState(AnimationState* state)
     }
 
     // Node hierarchy mode
-    for (Vector<SharedPtr<AnimationState> >::Iterator i = nodeAnimationStates_.Begin(); i != nodeAnimationStates_.End(); ++i)
+    for (Vector<SharedPtr<AnimationState>>::Iterator i = nodeAnimationStates_.Begin(); i != nodeAnimationStates_.End();
+         ++i)
     {
         if ((*i) == state)
         {
@@ -894,7 +899,8 @@ void AnimationController::FindAnimation(const String& name, unsigned& index, Ani
     state = GetAnimationState(nameHash);
     if (state)
     {
-        // Either a resource name or animation name may be specified. We store resource names, so correct the hash if necessary
+        // Either a resource name or animation name may be specified. We store resource names, so correct the hash if
+        // necessary
         nameHash = state->GetAnimation()->GetNameHash();
     }
 
@@ -916,5 +922,4 @@ void AnimationController::HandleScenePostUpdate(StringHash eventType, VariantMap
 
     Update(eventData[P_TIMESTEP].GetFloat());
 }
-
 }

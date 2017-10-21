@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// Low-resolution operating system timer.
 class URHO3D_API Timer
 {
@@ -126,5 +125,4 @@ private:
     /// Low-resolution timer period.
     unsigned timerPeriod_;
 };
-
 }

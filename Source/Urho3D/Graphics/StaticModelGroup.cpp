@@ -37,35 +37,28 @@
 
 namespace Urho3D
 {
-
 extern const char* GEOMETRY_CATEGORY;
 
-static const StringVector instanceNodesStructureElementNames =
-{
-    "Instance Count",
-    "   NodeID"
-};
+static const StringVector instanceNodesStructureElementNames = {"Instance Count", "   NodeID"};
 
-StaticModelGroup::StaticModelGroup(Context* context) :
-    StaticModel(context),
-    nodesDirty_(false),
-    nodeIDsDirty_(false)
+StaticModelGroup::StaticModelGroup(Context* context)
+    : StaticModel(context)
+    , nodesDirty_(false)
+    , nodeIDsDirty_(false)
 {
     // Initialize the default node IDs attribute
     UpdateNodeIDs();
 }
 
-StaticModelGroup::~StaticModelGroup()
-{
-}
+StaticModelGroup::~StaticModelGroup() {}
 
 void StaticModelGroup::RegisterObject(Context* context)
 {
     context->RegisterFactory<StaticModelGroup>(GEOMETRY_CATEGORY);
 
     URHO3D_COPY_BASE_ATTRIBUTES(StaticModel);
-    URHO3D_ACCESSOR_ATTRIBUTE("Instance Nodes", GetNodeIDsAttr, SetNodeIDsAttr,
-        VariantVector, Variant::emptyVariantVector, AM_DEFAULT | AM_NODEIDVECTOR)
+    URHO3D_ACCESSOR_ATTRIBUTE("Instance Nodes", GetNodeIDsAttr, SetNodeIDsAttr, VariantVector,
+                              Variant::emptyVariantVector, AM_DEFAULT | AM_NODEIDVECTOR)
         .SetMetadata(AttributeMetadata::P_VECTOR_STRUCT_ELEMENTS, instanceNodesStructureElementNames);
 }
 
@@ -259,14 +252,16 @@ bool StaticModelGroup::DrawOcclusion(OcclusionBuffer* buffer)
 
             geometry->GetRawData(vertexData, vertexSize, indexData, indexSize, elements);
             // Check for valid geometry data
-            if (!vertexData || !indexData || !elements || VertexBuffer::GetElementOffset(*elements, TYPE_VECTOR3, SEM_POSITION) != 0)
+            if (!vertexData || !indexData || !elements ||
+                VertexBuffer::GetElementOffset(*elements, TYPE_VECTOR3, SEM_POSITION) != 0)
                 continue;
 
             unsigned indexStart = geometry->GetIndexStart();
             unsigned indexCount = geometry->GetIndexCount();
 
             // Draw and check for running out of triangles
-            if (!buffer->AddTriangles(worldTransforms_[i], vertexData, vertexSize, indexData, indexSize, indexStart, indexCount))
+            if (!buffer->AddTriangles(worldTransforms_[i], vertexData, vertexSize, indexData, indexSize, indexStart,
+                                      indexCount))
                 return false;
         }
     }
@@ -283,7 +278,8 @@ void StaticModelGroup::AddInstanceNode(Node* node)
     if (instanceNodes_.Contains(instanceWeak))
         return;
 
-    // Add as a listener for the instance node, so that we know to dirty the transforms when the node moves or is enabled/disabled
+    // Add as a listener for the instance node, so that we know to dirty the transforms when the node moves or is
+    // enabled/disabled
     node->AddListener(this);
     instanceNodes_.Push(instanceWeak);
     UpdateNumTransforms();
@@ -295,7 +291,7 @@ void StaticModelGroup::RemoveInstanceNode(Node* node)
         return;
 
     WeakPtr<Node> instanceWeak(node);
-    Vector<WeakPtr<Node> >::Iterator i = instanceNodes_.Find(instanceWeak);
+    Vector<WeakPtr<Node>>::Iterator i = instanceNodes_.Find(instanceWeak);
     if (i == instanceNodes_.End())
         return;
 
@@ -364,10 +360,7 @@ const VariantVector& StaticModelGroup::GetNodeIDsAttr() const
     return nodeIDsAttr_;
 }
 
-void StaticModelGroup::OnNodeSetEnabled(Node* node)
-{
-    Drawable::OnMarkedDirty(node);
-}
+void StaticModelGroup::OnNodeSetEnabled(Node* node) { Drawable::OnMarkedDirty(node); }
 
 void StaticModelGroup::OnWorldBoundingBoxUpdate()
 {
@@ -389,8 +382,8 @@ void StaticModelGroup::OnWorldBoundingBoxUpdate()
 
     worldBoundingBox_ = worldBox;
 
-    // Store the amount of valid instances we found instead of resizing worldTransforms_. This is because this function may be
-    // called from multiple worker threads simultaneously
+    // Store the amount of valid instances we found instead of resizing worldTransforms_. This is because this function
+    // may be called from multiple worker threads simultaneously
     numWorldTransforms_ = index;
 }
 
@@ -419,5 +412,4 @@ void StaticModelGroup::UpdateNodeIDs() const
 
     nodeIDsDirty_ = false;
 }
-
 }

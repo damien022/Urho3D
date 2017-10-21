@@ -38,7 +38,6 @@
 
 namespace Urho3D
 {
-
 extern const char* horizontalAlignments[];
 extern const char* verticalAlignments[];
 extern const char* textEffects[];
@@ -48,34 +47,33 @@ extern const char* GEOMETRY_CATEGORY;
 static const float TEXT_SCALING = 1.0f / 128.0f;
 static const float DEFAULT_EFFECT_DEPTH_BIAS = 0.1f;
 
-Text3D::Text3D(Context* context) :
-    Drawable(context, DRAWABLE_GEOMETRY),
-    text_(context),
-    vertexBuffer_(new VertexBuffer(context_)),
-    customWorldTransform_(Matrix3x4::IDENTITY),
-    faceCameraMode_(FC_NONE),
-    minAngle_(0.0f),
-    fixedScreenSize_(false),
-    textDirty_(true),
-    geometryDirty_(true),
-    usingSDFShader_(false),
-    fontDataLost_(false)
+Text3D::Text3D(Context* context)
+    : Drawable(context, DRAWABLE_GEOMETRY)
+    , text_(context)
+    , vertexBuffer_(new VertexBuffer(context_))
+    , customWorldTransform_(Matrix3x4::IDENTITY)
+    , faceCameraMode_(FC_NONE)
+    , minAngle_(0.0f)
+    , fixedScreenSize_(false)
+    , textDirty_(true)
+    , geometryDirty_(true)
+    , usingSDFShader_(false)
+    , fontDataLost_(false)
 {
     text_.SetEffectDepthBias(DEFAULT_EFFECT_DEPTH_BIAS);
 }
 
-Text3D::~Text3D()
-{
-}
+Text3D::~Text3D() {}
 
 void Text3D::RegisterObject(Context* context)
 {
     context->RegisterFactory<Text3D>(GEOMETRY_CATEGORY);
 
     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Font", GetFontAttr, SetFontAttr, ResourceRef, ResourceRef(Font::GetTypeStatic()), AM_DEFAULT);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Material", GetMaterialAttr, SetMaterialAttr, ResourceRef, ResourceRef(Material::GetTypeStatic()),
-        AM_DEFAULT);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Font", GetFontAttr, SetFontAttr, ResourceRef, ResourceRef(Font::GetTypeStatic()),
+                                    AM_DEFAULT);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Material", GetMaterialAttr, SetMaterialAttr, ResourceRef,
+                                    ResourceRef(Material::GetTypeStatic()), AM_DEFAULT);
     URHO3D_ATTRIBUTE("Font Size", float, text_.fontSize_, DEFAULT_FONT_SIZE, AM_DEFAULT);
     URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Text", GetTextAttr, SetTextAttr, String, String::EMPTY, AM_DEFAULT);
     URHO3D_ENUM_ATTRIBUTE("Text Alignment", text_.textAlignment_, horizontalAlignments, HA_LEFT, AM_DEFAULT);
@@ -87,10 +85,10 @@ void Text3D::RegisterObject(Context* context)
     URHO3D_ATTRIBUTE("Min Angle", float, minAngle_, 0.0f, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Draw Distance", GetDrawDistance, SetDrawDistance, float, 0.0f, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Width", GetWidth, SetWidth, int, 0, AM_DEFAULT);
-    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Horiz Alignment", GetHorizontalAlignment, SetHorizontalAlignment, HorizontalAlignment,
-        horizontalAlignments, HA_LEFT, AM_DEFAULT);
-    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Vert Alignment", GetVerticalAlignment, SetVerticalAlignment, VerticalAlignment, verticalAlignments,
-        VA_TOP, AM_DEFAULT);
+    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Horiz Alignment", GetHorizontalAlignment, SetHorizontalAlignment,
+                                   HorizontalAlignment, horizontalAlignments, HA_LEFT, AM_DEFAULT);
+    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Vert Alignment", GetVerticalAlignment, SetVerticalAlignment, VerticalAlignment,
+                                   verticalAlignments, VA_TOP, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Opacity", GetOpacity, SetOpacity, float, 1.0f, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Color", GetColorAttr, SetColor, Color, Color::WHITE, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Top Left Color", Color, text_.color_[0], Color::WHITE, AM_DEFAULT);
@@ -157,7 +155,7 @@ void Text3D::UpdateGeometry(const FrameInfo& frame)
         {
             Geometry* geometry = geometries_[i];
             geometry->SetDrawRange(TRIANGLE_LIST, 0, 0, uiBatches_[i].vertexStart_ / UI_VERTEX_SIZE,
-                (uiBatches_[i].vertexEnd_ - uiBatches_[i].vertexStart_) / UI_VERTEX_SIZE);
+                                   (uiBatches_[i].vertexEnd_ - uiBatches_[i].vertexStart_) / UI_VERTEX_SIZE);
         }
     }
 
@@ -174,7 +172,8 @@ void Text3D::UpdateGeometry(const FrameInfo& frame)
 
 UpdateGeometryType Text3D::GetUpdateGeometryType()
 {
-    if (geometryDirty_ || fontDataLost_ || vertexBuffer_->IsDataLost() || faceCameraMode_ != FC_NONE || fixedScreenSize_)
+    if (geometryDirty_ || fontDataLost_ || vertexBuffer_->IsDataLost() || faceCameraMode_ != FC_NONE ||
+        fixedScreenSize_)
         return UPDATE_MAIN_THREAD;
     else
         return UPDATE_NONE;
@@ -282,20 +281,11 @@ void Text3D::SetTextEffect(TextEffect textEffect)
     UpdateTextMaterials(true);
 }
 
-void Text3D::SetEffectShadowOffset(const IntVector2& offset)
-{
-    text_.SetEffectShadowOffset(offset);
-}
+void Text3D::SetEffectShadowOffset(const IntVector2& offset) { text_.SetEffectShadowOffset(offset); }
 
-void Text3D::SetEffectStrokeThickness(int thickness)
-{
-    text_.SetEffectStrokeThickness(thickness);
-}
+void Text3D::SetEffectStrokeThickness(int thickness) { text_.SetEffectStrokeThickness(thickness); }
 
-void Text3D::SetEffectRoundStroke(bool roundStroke)
-{
-    text_.SetEffectRoundStroke(roundStroke);
-}
+void Text3D::SetEffectRoundStroke(bool roundStroke) { text_.SetEffectRoundStroke(roundStroke); }
 
 void Text3D::SetEffectColor(const Color& effectColor)
 {
@@ -327,7 +317,8 @@ void Text3D::SetColor(const Color& color)
 
     MarkTextDirty();
 
-    // If alpha changes from zero to nonzero or vice versa, amount of text batches changes (optimization), so do full update
+    // If alpha changes from zero to nonzero or vice versa, amount of text batches changes (optimization), so do full
+    // update
     if ((oldAlpha == 0.0f && color.a_ != 0.0f) || (oldAlpha != 0.0f && color.a_ == 0.0f))
     {
         UpdateTextBatches();
@@ -350,7 +341,8 @@ void Text3D::SetOpacity(float opacity)
 
     MarkTextDirty();
 
-    // If opacity changes from zero to nonzero or vice versa, amount of text batches changes (optimization), so do full update
+    // If opacity changes from zero to nonzero or vice versa, amount of text batches changes (optimization), so do full
+    // update
     if ((oldOpacity == 0.0f && newOpacity != 0.0f) || (oldOpacity != 0.0f && newOpacity == 0.0f))
     {
         UpdateTextBatches();
@@ -382,130 +374,55 @@ void Text3D::SetFaceCameraMode(FaceCameraMode mode)
     }
 }
 
-Material* Text3D::GetMaterial() const
-{
-    return material_;
-}
+Material* Text3D::GetMaterial() const { return material_; }
 
-Font* Text3D::GetFont() const
-{
-    return text_.GetFont();
-}
+Font* Text3D::GetFont() const { return text_.GetFont(); }
 
-float Text3D::GetFontSize() const
-{
-    return text_.GetFontSize();
-}
+float Text3D::GetFontSize() const { return text_.GetFontSize(); }
 
-const String& Text3D::GetText() const
-{
-    return text_.GetText();
-}
+const String& Text3D::GetText() const { return text_.GetText(); }
 
-HorizontalAlignment Text3D::GetHorizontalAlignment() const
-{
-    return text_.GetHorizontalAlignment();
-}
+HorizontalAlignment Text3D::GetHorizontalAlignment() const { return text_.GetHorizontalAlignment(); }
 
-VerticalAlignment Text3D::GetVerticalAlignment() const
-{
-    return text_.GetVerticalAlignment();
-}
+VerticalAlignment Text3D::GetVerticalAlignment() const { return text_.GetVerticalAlignment(); }
 
-HorizontalAlignment Text3D::GetTextAlignment() const
-{
-    return text_.GetTextAlignment();
-}
+HorizontalAlignment Text3D::GetTextAlignment() const { return text_.GetTextAlignment(); }
 
-float Text3D::GetRowSpacing() const
-{
-    return text_.GetRowSpacing();
-}
+float Text3D::GetRowSpacing() const { return text_.GetRowSpacing(); }
 
-bool Text3D::GetWordwrap() const
-{
-    return text_.GetWordwrap();
-}
+bool Text3D::GetWordwrap() const { return text_.GetWordwrap(); }
 
-TextEffect Text3D::GetTextEffect() const
-{
-    return text_.GetTextEffect();
-}
+TextEffect Text3D::GetTextEffect() const { return text_.GetTextEffect(); }
 
-const IntVector2& Text3D::GetEffectShadowOffset() const
-{
-    return text_.GetEffectShadowOffset();
-}
+const IntVector2& Text3D::GetEffectShadowOffset() const { return text_.GetEffectShadowOffset(); }
 
-int Text3D::GetEffectStrokeThickness() const
-{
-    return text_.GetEffectStrokeThickness();
-}
+int Text3D::GetEffectStrokeThickness() const { return text_.GetEffectStrokeThickness(); }
 
-bool Text3D::GetEffectRoundStroke() const
-{
-    return text_.GetEffectRoundStroke();
-}
+bool Text3D::GetEffectRoundStroke() const { return text_.GetEffectRoundStroke(); }
 
-const Color& Text3D::GetEffectColor() const
-{
-    return text_.GetEffectColor();
-}
+const Color& Text3D::GetEffectColor() const { return text_.GetEffectColor(); }
 
-float Text3D::GetEffectDepthBias() const
-{
-    return text_.GetEffectDepthBias();
-}
+float Text3D::GetEffectDepthBias() const { return text_.GetEffectDepthBias(); }
 
-int Text3D::GetWidth() const
-{
-    return text_.GetWidth();
-}
+int Text3D::GetWidth() const { return text_.GetWidth(); }
 
-int Text3D::GetHeight() const
-{
-    return text_.GetHeight();
-}
+int Text3D::GetHeight() const { return text_.GetHeight(); }
 
-int Text3D::GetRowHeight() const
-{
-    return text_.GetRowHeight();
-}
+int Text3D::GetRowHeight() const { return text_.GetRowHeight(); }
 
-unsigned Text3D::GetNumRows() const
-{
-    return text_.GetNumRows();
-}
+unsigned Text3D::GetNumRows() const { return text_.GetNumRows(); }
 
-unsigned Text3D::GetNumChars() const
-{
-    return text_.GetNumChars();
-}
+unsigned Text3D::GetNumChars() const { return text_.GetNumChars(); }
 
-int Text3D::GetRowWidth(unsigned index) const
-{
-    return text_.GetRowWidth(index);
-}
+int Text3D::GetRowWidth(unsigned index) const { return text_.GetRowWidth(index); }
 
-Vector2 Text3D::GetCharPosition(unsigned index)
-{
-    return text_.GetCharPosition(index);
-}
+Vector2 Text3D::GetCharPosition(unsigned index) { return text_.GetCharPosition(index); }
 
-Vector2 Text3D::GetCharSize(unsigned index)
-{
-    return text_.GetCharSize(index);
-}
+Vector2 Text3D::GetCharSize(unsigned index) { return text_.GetCharSize(index); }
 
-const Color& Text3D::GetColor(Corner corner) const
-{
-    return text_.GetColor(corner);
-}
+const Color& Text3D::GetColor(Corner corner) const { return text_.GetColor(corner); }
 
-float Text3D::GetOpacity() const
-{
-    return text_.GetOpacity();
-}
+float Text3D::GetOpacity() const { return text_.GetOpacity(); }
 
 void Text3D::OnNodeSet(Node* node)
 {
@@ -523,8 +440,8 @@ void Text3D::OnWorldBoundingBoxUpdate()
     // In face camera mode, use the last camera rotation to build the world bounding box
     if (faceCameraMode_ != FC_NONE || fixedScreenSize_)
     {
-        worldBoundingBox_ = boundingBox_.Transformed(Matrix3x4(node_->GetWorldPosition(),
-            customWorldTransform_.Rotation(), customWorldTransform_.Scale()));
+        worldBoundingBox_ = boundingBox_.Transformed(
+            Matrix3x4(node_->GetWorldPosition(), customWorldTransform_.Rotation(), customWorldTransform_.Scale()));
     }
     else
         worldBoundingBox_ = boundingBox_.Transformed(node_->GetWorldTransform());
@@ -550,25 +467,13 @@ void Text3D::SetFontAttr(const ResourceRef& value)
     text_.font_ = cache->GetResource<Font>(value.name_);
 }
 
-void Text3D::SetTextAttr(const String& value)
-{
-    text_.SetTextAttr(value);
-}
+void Text3D::SetTextAttr(const String& value) { text_.SetTextAttr(value); }
 
-String Text3D::GetTextAttr() const
-{
-    return text_.GetTextAttr();
-}
+String Text3D::GetTextAttr() const { return text_.GetTextAttr(); }
 
-ResourceRef Text3D::GetMaterialAttr() const
-{
-    return GetResourceRef(material_, Material::GetTypeStatic());
-}
+ResourceRef Text3D::GetMaterialAttr() const { return GetResourceRef(material_, Material::GetTypeStatic()); }
 
-ResourceRef Text3D::GetFontAttr() const
-{
-    return GetResourceRef(text_.font_, Font::GetTypeStatic());
-}
+ResourceRef Text3D::GetFontAttr() const { return GetResourceRef(text_.font_, Font::GetTypeStatic()); }
 
 void Text3D::UpdateTextBatches()
 {
@@ -754,9 +659,10 @@ void Text3D::CalculateFixedScreenSize(const FrameInfo& frame)
             worldScale *= textScaling * halfViewWorldSize;
     }
 
-    customWorldTransform_ = Matrix3x4(worldPosition, frame.camera_->GetFaceCameraRotation(
-        worldPosition, node_->GetWorldRotation(), faceCameraMode_, minAngle_), worldScale);
+    customWorldTransform_ = Matrix3x4(
+        worldPosition,
+        frame.camera_->GetFaceCameraRotation(worldPosition, node_->GetWorldRotation(), faceCameraMode_, minAngle_),
+        worldScale);
     worldBoundingBoxDirty_ = true;
 }
-
 }

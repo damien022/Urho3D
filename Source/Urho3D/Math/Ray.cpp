@@ -30,7 +30,6 @@
 
 namespace Urho3D
 {
-
 Vector3 Ray::ClosestPoint(const Ray& ray) const
 {
     // Algorithm based on http://paulbourke.net/geometry/lineline3d/
@@ -87,7 +86,8 @@ float Ray::HitDistance(const BoundingBox& box) const
         if (x < dist)
         {
             Vector3 point = origin_ + x * direction_;
-            if (point.y_ >= box.min_.y_ && point.y_ <= box.max_.y_ && point.z_ >= box.min_.z_ && point.z_ <= box.max_.z_)
+            if (point.y_ >= box.min_.y_ && point.y_ <= box.max_.y_ && point.z_ >= box.min_.z_ &&
+                point.z_ <= box.max_.z_)
                 dist = x;
         }
     }
@@ -97,7 +97,8 @@ float Ray::HitDistance(const BoundingBox& box) const
         if (x < dist)
         {
             Vector3 point = origin_ + x * direction_;
-            if (point.y_ >= box.min_.y_ && point.y_ <= box.max_.y_ && point.z_ >= box.min_.z_ && point.z_ <= box.max_.z_)
+            if (point.y_ >= box.min_.y_ && point.y_ <= box.max_.y_ && point.z_ >= box.min_.z_ &&
+                point.z_ <= box.max_.z_)
                 dist = x;
         }
     }
@@ -108,7 +109,8 @@ float Ray::HitDistance(const BoundingBox& box) const
         if (x < dist)
         {
             Vector3 point = origin_ + x * direction_;
-            if (point.x_ >= box.min_.x_ && point.x_ <= box.max_.x_ && point.z_ >= box.min_.z_ && point.z_ <= box.max_.z_)
+            if (point.x_ >= box.min_.x_ && point.x_ <= box.max_.x_ && point.z_ >= box.min_.z_ &&
+                point.z_ <= box.max_.z_)
                 dist = x;
         }
     }
@@ -118,7 +120,8 @@ float Ray::HitDistance(const BoundingBox& box) const
         if (x < dist)
         {
             Vector3 point = origin_ + x * direction_;
-            if (point.x_ >= box.min_.x_ && point.x_ <= box.max_.x_ && point.z_ >= box.min_.z_ && point.z_ <= box.max_.z_)
+            if (point.x_ >= box.min_.x_ && point.x_ <= box.max_.x_ && point.z_ >= box.min_.z_ &&
+                point.z_ <= box.max_.z_)
                 dist = x;
         }
     }
@@ -129,7 +132,8 @@ float Ray::HitDistance(const BoundingBox& box) const
         if (x < dist)
         {
             Vector3 point = origin_ + x * direction_;
-            if (point.x_ >= box.min_.x_ && point.x_ <= box.max_.x_ && point.y_ >= box.min_.y_ && point.y_ <= box.max_.y_)
+            if (point.x_ >= box.min_.x_ && point.x_ <= box.max_.x_ && point.y_ >= box.min_.y_ &&
+                point.y_ <= box.max_.y_)
                 dist = x;
         }
     }
@@ -139,7 +143,8 @@ float Ray::HitDistance(const BoundingBox& box) const
         if (x < dist)
         {
             Vector3 point = origin_ + x * direction_;
-            if (point.x_ >= box.min_.x_ && point.x_ <= box.max_.x_ && point.y_ >= box.min_.y_ && point.y_ <= box.max_.y_)
+            if (point.x_ >= box.min_.x_ && point.x_ <= box.max_.x_ && point.y_ >= box.min_.y_ &&
+                point.y_ <= box.max_.y_)
                 dist = x;
         }
     }
@@ -203,7 +208,8 @@ float Ray::HitDistance(const Sphere& sphere) const
         return (-b + dSqrt) / (2.0f * a);
 }
 
-float Ray::HitDistance(const Vector3& v0, const Vector3& v1, const Vector3& v2, Vector3* outNormal, Vector3* outBary) const
+float Ray::HitDistance(const Vector3& v0, const Vector3& v1, const Vector3& v2, Vector3* outNormal,
+                       Vector3* outBary) const
 {
     // Based on Fast, Minimum Storage Ray/Triangle Intersection by Möller & Trumbore
     // http://www.graphics.cornell.edu/pubs/1997/MT97.pdf
@@ -245,7 +251,7 @@ float Ray::HitDistance(const Vector3& v0, const Vector3& v1, const Vector3& v2, 
 }
 
 float Ray::HitDistance(const void* vertexData, unsigned vertexStride, unsigned vertexStart, unsigned vertexCount,
-    Vector3* outNormal, Vector2* outUV, unsigned uvOffset) const
+                       Vector3* outNormal, Vector2* outUV, unsigned uvOffset) const
 {
     float nearest = M_INFINITY;
     const unsigned char* vertices = ((const unsigned char*)vertexData) + vertexStart * vertexStride;
@@ -278,7 +284,7 @@ float Ray::HitDistance(const void* vertexData, unsigned vertexStride, unsigned v
             const Vector2& uv1 = *((const Vector2*)(&vertices[uvOffset + (nearestIdx + 1) * vertexStride]));
             const Vector2& uv2 = *((const Vector2*)(&vertices[uvOffset + (nearestIdx + 2) * vertexStride]));
             *outUV = Vector2(uv0.x_ * barycentric.x_ + uv1.x_ * barycentric.y_ + uv2.x_ * barycentric.z_,
-                uv0.y_ * barycentric.x_ + uv1.y_ * barycentric.y_ + uv2.y_ * barycentric.z_);
+                             uv0.y_ * barycentric.x_ + uv1.y_ * barycentric.y_ + uv2.y_ * barycentric.z_);
         }
     }
 
@@ -286,7 +292,8 @@ float Ray::HitDistance(const void* vertexData, unsigned vertexStride, unsigned v
 }
 
 float Ray::HitDistance(const void* vertexData, unsigned vertexStride, const void* indexData, unsigned indexSize,
-    unsigned indexStart, unsigned indexCount, Vector3* outNormal, Vector2* outUV, unsigned uvOffset) const
+                       unsigned indexStart, unsigned indexCount, Vector3* outNormal, Vector2* outUV,
+                       unsigned uvOffset) const
 {
     float nearest = M_INFINITY;
     const unsigned char* vertices = (const unsigned char*)vertexData;
@@ -325,7 +332,7 @@ float Ray::HitDistance(const void* vertexData, unsigned vertexStride, const void
                 const Vector2& uv1 = *((const Vector2*)(&vertices[uvOffset + nearestIndices[1] * vertexStride]));
                 const Vector2& uv2 = *((const Vector2*)(&vertices[uvOffset + nearestIndices[2] * vertexStride]));
                 *outUV = Vector2(uv0.x_ * barycentric.x_ + uv1.x_ * barycentric.y_ + uv2.x_ * barycentric.z_,
-                    uv0.y_ * barycentric.x_ + uv1.y_ * barycentric.y_ + uv2.y_ * barycentric.z_);
+                                 uv0.y_ * barycentric.x_ + uv1.y_ * barycentric.y_ + uv2.y_ * barycentric.z_);
             }
         }
     }
@@ -361,7 +368,7 @@ float Ray::HitDistance(const void* vertexData, unsigned vertexStride, const void
                 const Vector2& uv1 = *((const Vector2*)(&vertices[uvOffset + nearestIndices[1] * vertexStride]));
                 const Vector2& uv2 = *((const Vector2*)(&vertices[uvOffset + nearestIndices[2] * vertexStride]));
                 *outUV = Vector2(uv0.x_ * barycentric.x_ + uv1.x_ * barycentric.y_ + uv2.x_ * barycentric.z_,
-                    uv0.y_ * barycentric.x_ + uv1.y_ * barycentric.y_ + uv2.y_ * barycentric.z_);
+                                 uv0.y_ * barycentric.x_ + uv1.y_ * barycentric.y_ + uv2.y_ * barycentric.z_);
             }
         }
     }
@@ -384,25 +391,25 @@ bool Ray::InsideGeometry(const void* vertexData, unsigned vertexSize, unsigned v
         float frontFaceDistance = HitDistance(v0, v1, v2);
         float backFaceDistance = HitDistance(v2, v1, v0);
         currentFrontFace = Min(frontFaceDistance > 0.0f ? frontFaceDistance : M_INFINITY, currentFrontFace);
-        // A backwards face is just a regular one, with the vertices in the opposite order. This essentially checks backfaces by
-        // checking reversed frontfaces
+        // A backwards face is just a regular one, with the vertices in the opposite order. This essentially checks
+        // backfaces by checking reversed frontfaces
         currentBackFace = Min(backFaceDistance > 0.0f ? backFaceDistance : M_INFINITY, currentBackFace);
         index += 3;
     }
 
     // If the closest face is a backface, that means that the ray originates from the inside of the geometry
-    // NOTE: there may be cases where both are equal, as in, no collision to either. This is prevented in the most likely case
-    // (ray doesn't hit either) by this conditional
+    // NOTE: there may be cases where both are equal, as in, no collision to either. This is prevented in the most
+    // likely case (ray doesn't hit either) by this conditional
     if (currentFrontFace != M_INFINITY || currentBackFace != M_INFINITY)
         return currentBackFace < currentFrontFace;
 
-    // It is still possible for two triangles to be equally distant from the triangle, however, this is extremely unlikely.
-    // As such, it is safe to assume they are not
+    // It is still possible for two triangles to be equally distant from the triangle, however, this is extremely
+    // unlikely. As such, it is safe to assume they are not
     return false;
 }
 
 bool Ray::InsideGeometry(const void* vertexData, unsigned vertexSize, const void* indexData, unsigned indexSize,
-    unsigned indexStart, unsigned indexCount) const
+                         unsigned indexStart, unsigned indexCount) const
 {
     float currentFrontFace = M_INFINITY;
     float currentBackFace = M_INFINITY;
@@ -422,8 +429,8 @@ bool Ray::InsideGeometry(const void* vertexData, unsigned vertexSize, const void
             float frontFaceDistance = HitDistance(v0, v1, v2);
             float backFaceDistance = HitDistance(v2, v1, v0);
             currentFrontFace = Min(frontFaceDistance > 0.0f ? frontFaceDistance : M_INFINITY, currentFrontFace);
-            // A backwards face is just a regular one, with the vertices in the opposite order. This essentially checks backfaces by
-            // checking reversed frontfaces
+            // A backwards face is just a regular one, with the vertices in the opposite order. This essentially checks
+            // backfaces by checking reversed frontfaces
             currentBackFace = Min(backFaceDistance > 0.0f ? backFaceDistance : M_INFINITY, currentBackFace);
             indices += 3;
         }
@@ -442,21 +449,21 @@ bool Ray::InsideGeometry(const void* vertexData, unsigned vertexSize, const void
             float frontFaceDistance = HitDistance(v0, v1, v2);
             float backFaceDistance = HitDistance(v2, v1, v0);
             currentFrontFace = Min(frontFaceDistance > 0.0f ? frontFaceDistance : M_INFINITY, currentFrontFace);
-            // A backwards face is just a regular one, with the vertices in the opposite order. This essentially checks backfaces by
-            // checking reversed frontfaces
+            // A backwards face is just a regular one, with the vertices in the opposite order. This essentially checks
+            // backfaces by checking reversed frontfaces
             currentBackFace = Min(backFaceDistance > 0.0f ? backFaceDistance : M_INFINITY, currentBackFace);
             indices += 3;
         }
     }
 
     // If the closest face is a backface, that means that the ray originates from the inside of the geometry
-    // NOTE: there may be cases where both are equal, as in, no collision to either. This is prevented in the most likely case
-    // (ray doesn't hit either) by this conditional
+    // NOTE: there may be cases where both are equal, as in, no collision to either. This is prevented in the most
+    // likely case (ray doesn't hit either) by this conditional
     if (currentFrontFace != M_INFINITY || currentBackFace != M_INFINITY)
         return currentBackFace < currentFrontFace;
 
-    // It is still possible for two triangles to be equally distant from the triangle, however, this is extremely unlikely.
-    // As such, it is safe to assume they are not
+    // It is still possible for two triangles to be equally distant from the triangle, however, this is extremely
+    // unlikely. As such, it is safe to assume they are not
     return false;
 }
 
@@ -467,5 +474,4 @@ Ray Ray::Transformed(const Matrix3x4& transform) const
     ret.direction_ = transform * Vector4(direction_, 0.0f);
     return ret;
 }
-
 }

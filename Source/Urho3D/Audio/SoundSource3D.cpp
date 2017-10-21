@@ -32,7 +32,6 @@
 
 namespace Urho3D
 {
-
 static const float DEFAULT_NEARDISTANCE = 0.0f;
 static const float DEFAULT_FARDISTANCE = 100.0f;
 static const float DEFAULT_ROLLOFF = 2.0f;
@@ -43,13 +42,13 @@ static const Color OUTER_COLOR(1.0f, 0.0f, 1.0f);
 
 extern const char* AUDIO_CATEGORY;
 
-SoundSource3D::SoundSource3D(Context* context) :
-    SoundSource(context),
-    nearDistance_(DEFAULT_NEARDISTANCE),
-    farDistance_(DEFAULT_FARDISTANCE),
-    innerAngle_(DEFAULT_ANGLE),
-    outerAngle_(DEFAULT_ANGLE),
-    rolloffFactor_(DEFAULT_ROLLOFF)
+SoundSource3D::SoundSource3D(Context* context)
+    : SoundSource(context)
+    , nearDistance_(DEFAULT_NEARDISTANCE)
+    , farDistance_(DEFAULT_FARDISTANCE)
+    , innerAngle_(DEFAULT_ANGLE)
+    , outerAngle_(DEFAULT_ANGLE)
+    , rolloffFactor_(DEFAULT_ROLLOFF)
 {
     // Start from zero volume until attenuation properly calculated
     attenuation_ = 0.0f;
@@ -83,10 +82,14 @@ void SoundSource3D::DrawDebugGeometry(DebugRenderer* debug, bool depthTest)
     if (innerAngle_ < DEFAULT_ANGLE && outerAngle_ > 0.0f)
     {
         const Quaternion rotation = worldRotation * Quaternion(Vector3::UP, Vector3::FORWARD);
-        debug->AddSphereSector(Sphere(worldPosition, nearDistance_), rotation, innerAngle_, false, INNER_COLOR, depthTest);
-        debug->AddSphereSector(Sphere(worldPosition, nearDistance_), rotation, outerAngle_, false, OUTER_COLOR, depthTest);
-        debug->AddSphereSector(Sphere(worldPosition, farDistance_), rotation, innerAngle_, true, INNER_COLOR, depthTest);
-        debug->AddSphereSector(Sphere(worldPosition, farDistance_), rotation, outerAngle_, true, OUTER_COLOR, depthTest);
+        debug->AddSphereSector(Sphere(worldPosition, nearDistance_), rotation, innerAngle_, false, INNER_COLOR,
+                               depthTest);
+        debug->AddSphereSector(Sphere(worldPosition, nearDistance_), rotation, outerAngle_, false, OUTER_COLOR,
+                               depthTest);
+        debug->AddSphereSector(Sphere(worldPosition, farDistance_), rotation, innerAngle_, true, INNER_COLOR,
+                               depthTest);
+        debug->AddSphereSector(Sphere(worldPosition, farDistance_), rotation, outerAngle_, true, OUTER_COLOR,
+                               depthTest);
     }
     else
     {
@@ -160,8 +163,8 @@ void SoundSource3D::CalculateAttenuation()
         if (listener && listener->IsEnabledEffective() && (!listener->GetScene() || listener->GetScene() == GetScene()))
         {
             Node* listenerNode = listener->GetNode();
-            Vector3 relativePos
-                (listenerNode->GetWorldRotation().Inverse() * (node_->GetWorldPosition() - listenerNode->GetWorldPosition()));
+            Vector3 relativePos(listenerNode->GetWorldRotation().Inverse() *
+                                (node_->GetWorldPosition() - listenerNode->GetWorldPosition()));
             float distance = relativePos.Length();
 
             // Distance attenuation
@@ -176,8 +179,8 @@ void SoundSource3D::CalculateAttenuation()
             // Angle attenuation
             if (innerAngle_ < DEFAULT_ANGLE && outerAngle_ > 0.0f)
             {
-                Vector3 listenerRelativePos
-                    (node_->GetWorldRotation().Inverse() * (listenerNode->GetWorldPosition() - node_->GetWorldPosition()));
+                Vector3 listenerRelativePos(node_->GetWorldRotation().Inverse() *
+                                            (listenerNode->GetWorldPosition() - node_->GetWorldPosition()));
                 float listenerDot = Vector3::FORWARD.DotProduct(listenerRelativePos.Normalized());
                 float listenerAngle = acosf(listenerDot) * M_RADTODEG * 2.0f;
                 float angleInterval = Max(outerAngle_ - innerAngle_, 0.0f);
@@ -187,8 +190,9 @@ void SoundSource3D::CalculateAttenuation()
                 {
                     if (listenerAngle > innerAngle_)
                     {
-                        angleAttenuation = powf(1.0f - Clamp(listenerAngle - innerAngle_, 0.0f, angleInterval) / angleInterval,
-                            rolloffFactor_);
+                        angleAttenuation =
+                            powf(1.0f - Clamp(listenerAngle - innerAngle_, 0.0f, angleInterval) / angleInterval,
+                                 rolloffFactor_);
                     }
                 }
                 else
@@ -203,5 +207,4 @@ void SoundSource3D::CalculateAttenuation()
     else
         attenuation_ = 0.0f;
 }
-
 }

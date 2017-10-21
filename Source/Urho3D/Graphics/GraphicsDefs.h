@@ -27,10 +27,10 @@
 
 namespace Urho3D
 {
-
 class Vector3;
 
-/// Graphics capability support level. Web platform (Emscripten) also uses OpenGL ES, but is considered a desktop platform capability-wise
+/// Graphics capability support level. Web platform (Emscripten) also uses OpenGL ES, but is considered a desktop
+/// platform capability-wise
 #if defined(IOS) || defined(TVOS) || defined(__ANDROID__) || defined(__arm__) || defined(__aarch64__)
 #define MOBILE_GRAPHICS
 #else
@@ -180,30 +180,36 @@ enum VertexElementSemantic
 struct URHO3D_API VertexElement
 {
     /// Default-construct.
-    VertexElement() :
-        type_(TYPE_VECTOR3),
-        semantic_(SEM_POSITION),
-        index_(0),
-        perInstance_(false),
-        offset_(0)
+    VertexElement()
+        : type_(TYPE_VECTOR3)
+        , semantic_(SEM_POSITION)
+        , index_(0)
+        , perInstance_(false)
+        , offset_(0)
     {
     }
 
     /// Construct with type, semantic, index and whether is per-instance data.
-    VertexElement(VertexElementType type, VertexElementSemantic semantic, unsigned char index = 0, bool perInstance = false) :
-        type_(type),
-        semantic_(semantic),
-        index_(index),
-        perInstance_(perInstance),
-        offset_(0)
+    VertexElement(VertexElementType type, VertexElementSemantic semantic, unsigned char index = 0,
+                  bool perInstance = false)
+        : type_(type)
+        , semantic_(semantic)
+        , index_(index)
+        , perInstance_(perInstance)
+        , offset_(0)
     {
     }
 
-    /// Test for equality with another vertex element. Offset is intentionally not compared, as it's relevant only when an element exists within a vertex buffer.
-    bool operator ==(const VertexElement& rhs) const { return type_ == rhs.type_ && semantic_ == rhs.semantic_ && index_ == rhs.index_ && perInstance_ == rhs.perInstance_; }
+    /// Test for equality with another vertex element. Offset is intentionally not compared, as it's relevant only when
+    /// an element exists within a vertex buffer.
+    bool operator==(const VertexElement& rhs) const
+    {
+        return type_ == rhs.type_ && semantic_ == rhs.semantic_ && index_ == rhs.index_ &&
+               perInstance_ == rhs.perInstance_;
+    }
 
     /// Test for inequality with another vertex element.
-    bool operator !=(const VertexElement& rhs) const { return !(*this == rhs); }
+    bool operator!=(const VertexElement& rhs) const { return !(*this == rhs); }
 
     /// Data type of element.
     VertexElementType type_;
@@ -300,7 +306,8 @@ enum ShaderType
     PS,
 };
 
-/// Shader parameter groups for determining need to update. On APIs that support constant buffers, these correspond to different constant buffers.
+/// Shader parameter groups for determining need to update. On APIs that support constant buffers, these correspond to
+/// different constant buffers.
 enum ShaderParameterGroup
 {
     SP_FRAME = 0,

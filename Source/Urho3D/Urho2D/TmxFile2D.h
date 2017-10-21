@@ -27,7 +27,6 @@
 
 namespace Urho3D
 {
-
 class Sprite2D;
 class Texture2D;
 class TmxFile2D;
@@ -64,7 +63,6 @@ public:
     /// Return property value (use for script).
     const String& GetProperty(const String& name) const;
 
-
 protected:
     /// Load layer info.
     void LoadInfo(const XMLElement& element);
@@ -100,7 +98,7 @@ public:
 
 protected:
     /// Tiles.
-    Vector<SharedPtr<Tile2D> > tiles_;
+    Vector<SharedPtr<Tile2D>> tiles_;
 };
 
 /// Tmx objects layer.
@@ -113,7 +111,8 @@ public:
     bool Load(const XMLElement& element, const TileMapInfo2D& info);
 
     /// Store object.
-    void StoreObject(XMLElement objectElem, SharedPtr<TileMapObject2D> object, const TileMapInfo2D& info, bool isTile = false);
+    void StoreObject(XMLElement objectElem, SharedPtr<TileMapObject2D> object, const TileMapInfo2D& info,
+                     bool isTile = false);
 
     /// Return number of objects.
     unsigned GetNumObjects() const { return objects_.Size(); }
@@ -123,7 +122,7 @@ public:
 
 private:
     /// Objects.
-    Vector<SharedPtr<TileMapObject2D> > objects_;
+    Vector<SharedPtr<TileMapObject2D>> objects_;
 };
 
 /// Tmx image layer.
@@ -175,7 +174,7 @@ public:
     bool SetInfo(Orientation2D orientation, int width, int height, float tileWidth, float tileHeight);
 
     /// Add layer at index, if index > number of layers then append to end.
-    void AddLayer(unsigned index, TmxLayer2D *layer);
+    void AddLayer(unsigned index, TmxLayer2D* layer);
 
     /// Append layer to end.
     void AddLayer(Urho3D::TmxLayer2D* layer);
@@ -187,7 +186,7 @@ public:
     Sprite2D* GetTileSprite(int gid) const;
 
     /// Return tile collision shapes for a given gid.
-    Vector<SharedPtr<TileMapObject2D> > GetTileCollisionShapes(int gid) const;
+    Vector<SharedPtr<TileMapObject2D>> GetTileCollisionShapes(int gid) const;
 
     /// Return tile property set by gid, if not exist return 0.
     PropertySet2D* GetTilePropertySet(int gid) const;
@@ -207,17 +206,16 @@ private:
     /// XML file used during loading.
     SharedPtr<XMLFile> loadXMLFile_;
     /// TSX name to XML file mapping.
-    HashMap<String, SharedPtr<XMLFile> > tsxXMLFiles_;
+    HashMap<String, SharedPtr<XMLFile>> tsxXMLFiles_;
     /// Tile map information.
     TileMapInfo2D info_;
     /// Gid to tile sprite mapping.
-    HashMap<int, SharedPtr<Sprite2D> > gidToSpriteMapping_;
+    HashMap<int, SharedPtr<Sprite2D>> gidToSpriteMapping_;
     /// Gid to tile property set mapping.
-    HashMap<int, SharedPtr<PropertySet2D> > gidToPropertySetMapping_;
+    HashMap<int, SharedPtr<PropertySet2D>> gidToPropertySetMapping_;
     /// Gid to tile collision shape mapping.
-    HashMap<int, Vector<SharedPtr<TileMapObject2D> > > gidToCollisionShapeMapping_;
+    HashMap<int, Vector<SharedPtr<TileMapObject2D>>> gidToCollisionShapeMapping_;
     /// Layers.
     Vector<TmxLayer2D*> layers_;
 };
-
 }

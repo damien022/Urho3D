@@ -35,8 +35,8 @@
 #include <Urho3D/Scene/Scene.h>
 #include <Urho3D/UI/Font.h>
 #include <Urho3D/UI/Text.h>
-#include <Urho3D/UI/UI.h>
 #include <Urho3D/UI/Text3D.h>
+#include <Urho3D/UI/UI.h>
 
 #include "RibbonTrailDemo.h"
 
@@ -44,11 +44,11 @@
 
 URHO3D_DEFINE_APPLICATION_MAIN(RibbonTrailDemo)
 
-RibbonTrailDemo::RibbonTrailDemo(Context* context) :
-    Sample(context),
-    swordTrailStartTime_(0.2f),
-    swordTrailEndTime_(0.46f),
-    timeStepSum_(0.0f)
+RibbonTrailDemo::RibbonTrailDemo(Context* context)
+    : Sample(context)
+    , swordTrailStartTime_(0.2f)
+    , swordTrailEndTime_(0.46f)
+    , timeStepSum_(0.0f)
 {
 }
 
@@ -198,9 +198,10 @@ void RibbonTrailDemo::SetupViewport()
 {
     Renderer* renderer = GetSubsystem<Renderer>();
 
-    // Set up a viewport to the Renderer subsystem so that the 3D scene can be seen. We need to define the scene and the camera
-    // at minimum. Additionally we could configure the viewport screen size and the rendering path (eg. forward / deferred) to
-    // use, but now we just use full screen and default render path configured in the engine command line options
+    // Set up a viewport to the Renderer subsystem so that the 3D scene can be seen. We need to define the scene and the
+    // camera at minimum. Additionally we could configure the viewport screen size and the rendering path (eg. forward /
+    // deferred) to use, but now we just use full screen and default render path configured in the engine command line
+    // options
     SharedPtr<Viewport> viewport(new Viewport(context_, scene_, cameraNode_->GetComponent<Camera>()));
     renderer->SetViewport(0, viewport);
 }
@@ -259,12 +260,12 @@ void RibbonTrailDemo::HandleUpdate(StringHash eventType, VariantMap& eventData)
     timeStepSum_ += timeStep;
 
     // Move first box with pattern.
-    boxNode1_->SetTransform(Vector3(-4.0f + 3.0f * Cos(100.0f * timeStepSum_), 0.5f, -2.0f * Cos(400.0f * timeStepSum_)),
-        Quaternion());
+    boxNode1_->SetTransform(
+        Vector3(-4.0f + 3.0f * Cos(100.0f * timeStepSum_), 0.5f, -2.0f * Cos(400.0f * timeStepSum_)), Quaternion());
 
     // Move second box with pattern.
     boxNode2_->SetTransform(Vector3(0.0f + 3.0f * Cos(100.0f * timeStepSum_), 0.5f, -2.0f * Cos(400.0f * timeStepSum_)),
-        Quaternion());
+                            Quaternion());
 
     // Get elapsed attack animation time.
     float swordAnimTime = ninjaAnimCtrl_->GetAnimationState(String("Models/NinjaSnowWar/Ninja_Attack3.ani"))->GetTime();

@@ -27,7 +27,6 @@
 
 namespace Urho3D
 {
-
 class ShaderVariation;
 
 /// %Shader resource consisting of several shader variations.
@@ -72,13 +71,12 @@ private:
     /// Source code adapted for pixel shader.
     String psSourceCode_;
     /// Vertex shader variations.
-    HashMap<StringHash, SharedPtr<ShaderVariation> > vsVariations_;
+    HashMap<StringHash, SharedPtr<ShaderVariation>> vsVariations_;
     /// Pixel shader variations.
-    HashMap<StringHash, SharedPtr<ShaderVariation> > psVariations_;
+    HashMap<StringHash, SharedPtr<ShaderVariation>> psVariations_;
     /// Source code timestamp.
     unsigned timeStamp_;
     /// Number of unique variations so far.
     unsigned numVariations_;
 };
-
 }

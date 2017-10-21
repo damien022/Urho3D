@@ -22,24 +22,23 @@
 
 #pragma once
 
-
 #include <array>
 
-#include "../../Core/Object.h"
 #include "../../Core/Context.h"
-
+#include "../../Core/Object.h"
 
 namespace Urho3D
 {
-
 class URHO3D_API AttributeInspector : public Object
 {
     URHO3D_OBJECT(AttributeInspector, Object);
+
 public:
     /// Construct.
     explicit AttributeInspector(Context* context);
 
-    /// Render attribute inspector widgets. Attributes are rendered in columns. Be sure to call `ui::Columns()` before calling this method.
+    /// Render attribute inspector widgets. Attributes are rendered in columns. Be sure to call `ui::Columns()` before
+    /// calling this method.
     void RenderAttributes(Serializable* item);
 
 protected:
@@ -69,6 +68,7 @@ protected:
 class URHO3D_API AttributeInspectorWindow : public AttributeInspector
 {
     URHO3D_OBJECT(AttributeInspectorWindow, Object);
+
 public:
     /// Construct.
     explicit AttributeInspectorWindow(Context* context);
@@ -91,5 +91,4 @@ protected:
     /// Current Serializable whose attributes are rendered.
     WeakPtr<Serializable> currentSerializable_;
 };
-
 }

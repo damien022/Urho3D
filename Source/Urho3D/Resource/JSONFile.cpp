@@ -23,8 +23,8 @@
 #include "../Precompiled.h"
 
 #include "../Container/ArrayPtr.h"
-#include "../Core/Profiler.h"
 #include "../Core/Context.h"
+#include "../Core/Profiler.h"
 #include "../IO/Deserializer.h"
 #include "../IO/Log.h"
 #include "../IO/MemoryBuffer.h"
@@ -32,8 +32,8 @@
 #include "../Resource/ResourceCache.h"
 
 #include <rapidjson/document.h>
-#include <rapidjson/stringbuffer.h>
 #include <rapidjson/prettywriter.h>
+#include <rapidjson/stringbuffer.h>
 
 #include "../DebugNew.h"
 
@@ -41,20 +41,14 @@ using namespace rapidjson;
 
 namespace Urho3D
 {
-
-JSONFile::JSONFile(Context* context) :
-    Resource(context)
+JSONFile::JSONFile(Context* context)
+    : Resource(context)
 {
 }
 
-JSONFile::~JSONFile()
-{
-}
+JSONFile::~JSONFile() {}
 
-void JSONFile::RegisterObject(Context* context)
-{
-    context->RegisterFactory<JSONFile>();
-}
+void JSONFile::RegisterObject(Context* context) { context->RegisterFactory<JSONFile>(); }
 
 // Convert rapidjson value to JSON value.
 static void ToJSONValue(JSONValue& jsonValue, const rapidjson::Value& rapidjsonValue)
@@ -88,25 +82,26 @@ static void ToJSONValue(JSONValue& jsonValue, const rapidjson::Value& rapidjsonV
         break;
 
     case kArrayType:
+    {
+        jsonValue.Resize(rapidjsonValue.Size());
+        for (unsigned i = 0; i < rapidjsonValue.Size(); ++i)
         {
-            jsonValue.Resize(rapidjsonValue.Size());
-            for (unsigned i = 0; i < rapidjsonValue.Size(); ++i)
-            {
-                ToJSONValue(jsonValue[i], rapidjsonValue[i]);
-            }
+            ToJSONValue(jsonValue[i], rapidjsonValue[i]);
         }
-        break;
+    }
+    break;
 
     case kObjectType:
+    {
+        jsonValue.SetType(JSON_OBJECT);
+        for (rapidjson::Value::ConstMemberIterator i = rapidjsonValue.MemberBegin(); i != rapidjsonValue.MemberEnd();
+             ++i)
         {
-            jsonValue.SetType(JSON_OBJECT);
-            for (rapidjson::Value::ConstMemberIterator i = rapidjsonValue.MemberBegin(); i != rapidjsonValue.MemberEnd(); ++i)
-            {
-                JSONValue& value = jsonValue[String(i->name.GetString())];
-                ToJSONValue(value, i->value);
-            }
+            JSONValue& value = jsonValue[String(i->name.GetString())];
+            ToJSONValue(value, i->value);
         }
-        break;
+    }
+    break;
 
     default:
         break;
@@ -141,7 +136,8 @@ bool JSONFile::BeginLoad(Deserializer& source)
     return true;
 }
 
-static void ToRapidjsonValue(rapidjson::Value& rapidjsonValue, const JSONValue& jsonValue, rapidjson::MemoryPoolAllocator<>& allocator)
+static void ToRapidjsonValue(rapidjson::Value& rapidjsonValue, const JSONValue& jsonValue,
+                             rapidjson::MemoryPoolAllocator<>& allocator)
 {
     switch (jsonValue.GetValueType())
     {
@@ -154,68 +150,65 @@ static void ToRapidjsonValue(rapidjson::Value& rapidjsonValue, const JSONValue& 
         break;
 
     case JSON_NUMBER:
+    {
+        switch (jsonValue.GetNumberType())
         {
-            switch (jsonValue.GetNumberType())
-            {
-            case JSONNT_INT:
-                rapidjsonValue.SetInt(jsonValue.GetInt());
-                break;
+        case JSONNT_INT:
+            rapidjsonValue.SetInt(jsonValue.GetInt());
+            break;
 
-            case JSONNT_UINT:
-                rapidjsonValue.SetUint(jsonValue.GetUInt());
-                break;
+        case JSONNT_UINT:
+            rapidjsonValue.SetUint(jsonValue.GetUInt());
+            break;
 
-            default:
-                rapidjsonValue.SetDouble(jsonValue.GetDouble());
-                break;
-            }
+        default:
+            rapidjsonValue.SetDouble(jsonValue.GetDouble());
+            break;
         }
-        break;
+    }
+    break;
 
     case JSON_STRING:
         rapidjsonValue.SetString(jsonValue.GetCString(), allocator);
         break;
 
     case JSON_ARRAY:
+    {
+        const JSONArray& jsonArray = jsonValue.GetArray();
+
+        rapidjsonValue.SetArray();
+        rapidjsonValue.Reserve(jsonArray.Size(), allocator);
+
+        for (unsigned i = 0; i < jsonArray.Size(); ++i)
         {
-            const JSONArray& jsonArray = jsonValue.GetArray();
-
-            rapidjsonValue.SetArray();
-            rapidjsonValue.Reserve(jsonArray.Size(), allocator);
-
-            for (unsigned i = 0; i < jsonArray.Size(); ++i)
-            {
-                rapidjson::Value value;
-                ToRapidjsonValue(value, jsonArray[i], allocator);
-                rapidjsonValue.PushBack(value, allocator);
-            }
+            rapidjson::Value value;
+            ToRapidjsonValue(value, jsonArray[i], allocator);
+            rapidjsonValue.PushBack(value, allocator);
         }
-        break;
+    }
+    break;
 
     case JSON_OBJECT:
-        {
-            const JSONObject& jsonObject = jsonValue.GetObject();
+    {
+        const JSONObject& jsonObject = jsonValue.GetObject();
 
-            rapidjsonValue.SetObject();
-            for (JSONObject::ConstIterator i = jsonObject.Begin(); i != jsonObject.End(); ++i)
-            {
-                const char* name = i->first_.CString();
-                rapidjson::Value value;
-                ToRapidjsonValue(value, i->second_, allocator);
-                rapidjsonValue.AddMember(StringRef(name), value, allocator);
-            }
+        rapidjsonValue.SetObject();
+        for (JSONObject::ConstIterator i = jsonObject.Begin(); i != jsonObject.End(); ++i)
+        {
+            const char* name = i->first_.CString();
+            rapidjson::Value value;
+            ToRapidjsonValue(value, i->second_, allocator);
+            rapidjsonValue.AddMember(StringRef(name), value, allocator);
         }
-        break;
+    }
+    break;
 
     default:
         break;
     }
 }
 
-bool JSONFile::Save(Serializer& dest) const
-{
-    return Save(dest, "\t");
-}
+bool JSONFile::Save(Serializer& dest) const { return Save(dest, "\t"); }
 
 bool JSONFile::Save(Serializer& dest, const String& indendation) const
 {
@@ -231,7 +224,7 @@ bool JSONFile::Save(Serializer& dest, const String& indendation) const
     return dest.Write(buffer.GetString(), size) == size;
 }
 
-bool JSONFile::FromString(const String & source)
+bool JSONFile::FromString(const String& source)
 {
     if (source.Empty())
         return false;
@@ -253,5 +246,4 @@ bool JSONFile::ParseJSON(const String& json, JSONValue& value, bool reportError)
     ToJSONValue(value, document);
     return true;
 }
-
 }

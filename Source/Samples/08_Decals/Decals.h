@@ -26,11 +26,9 @@
 
 namespace Urho3D
 {
-
 class Drawable;
 class Node;
 class Scene;
-
 }
 
 /// Decals example.
@@ -52,25 +50,32 @@ public:
 
 protected:
     /// Return XML patch instructions for screen joystick layout for a specific sample app, if any.
-    virtual String GetScreenJoystickPatchString() const override { return
-        "<patch>"
-        "    <remove sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]/attribute[@name='Is Visible']\" />"
-        "    <replace sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]/element[./attribute[@name='Name' and @value='Label']]/attribute[@name='Text']/@value\">Paint</replace>"
-        "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]\">"
-        "        <element type=\"Text\">"
-        "            <attribute name=\"Name\" value=\"MouseButtonBinding\" />"
-        "            <attribute name=\"Text\" value=\"LEFT\" />"
-        "        </element>"
-        "    </add>"
-        "    <remove sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]/attribute[@name='Is Visible']\" />"
-        "    <replace sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]/element[./attribute[@name='Name' and @value='Label']]/attribute[@name='Text']/@value\">Debug</replace>"
-        "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]\">"
-        "        <element type=\"Text\">"
-        "            <attribute name=\"Name\" value=\"KeyBinding\" />"
-        "            <attribute name=\"Text\" value=\"SPACE\" />"
-        "        </element>"
-        "    </add>"
-        "</patch>";
+    virtual String GetScreenJoystickPatchString() const override
+    {
+        return "<patch>"
+               "    <remove sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]/attribute[@name='Is "
+               "Visible']\" />"
+               "    <replace sel=\"/element/element[./attribute[@name='Name' and "
+               "@value='Button0']]/element[./attribute[@name='Name' and "
+               "@value='Label']]/attribute[@name='Text']/@value\">Paint</replace>"
+               "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]\">"
+               "        <element type=\"Text\">"
+               "            <attribute name=\"Name\" value=\"MouseButtonBinding\" />"
+               "            <attribute name=\"Text\" value=\"LEFT\" />"
+               "        </element>"
+               "    </add>"
+               "    <remove sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]/attribute[@name='Is "
+               "Visible']\" />"
+               "    <replace sel=\"/element/element[./attribute[@name='Name' and "
+               "@value='Button1']]/element[./attribute[@name='Name' and "
+               "@value='Label']]/attribute[@name='Text']/@value\">Debug</replace>"
+               "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]\">"
+               "        <element type=\"Text\">"
+               "            <attribute name=\"Name\" value=\"KeyBinding\" />"
+               "            <attribute name=\"Text\" value=\"SPACE\" />"
+               "        </element>"
+               "    </add>"
+               "</patch>";
     }
 
 private:
@@ -92,7 +97,7 @@ private:
     void HandleUpdate(StringHash eventType, VariantMap& eventData);
     /// Handle the post-render update event.
     void HandlePostRenderUpdate(StringHash eventType, VariantMap& eventData);
-    
+
     /// Flag for drawing debug geometry.
     bool drawDebug_;
 };

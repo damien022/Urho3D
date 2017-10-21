@@ -30,41 +30,38 @@
 
 namespace Urho3D
 {
-
-ValueAnimationInfo::ValueAnimationInfo(ValueAnimation* animation, WrapMode wrapMode, float speed) :
-    animation_(animation),
-    wrapMode_(wrapMode),
-    speed_(speed),
-    currentTime_(0.0f),
-    lastScaledTime_(0.0f)
+ValueAnimationInfo::ValueAnimationInfo(ValueAnimation* animation, WrapMode wrapMode, float speed)
+    : animation_(animation)
+    , wrapMode_(wrapMode)
+    , speed_(speed)
+    , currentTime_(0.0f)
+    , lastScaledTime_(0.0f)
 {
     speed_ = Max(0.0f, speed_);
 }
 
-ValueAnimationInfo::ValueAnimationInfo(Object* target, ValueAnimation* animation, WrapMode wrapMode, float speed) :
-    target_(target),
-    animation_(animation),
-    wrapMode_(wrapMode),
-    speed_(speed),
-    currentTime_(0.0f),
-    lastScaledTime_(0.0f)
+ValueAnimationInfo::ValueAnimationInfo(Object* target, ValueAnimation* animation, WrapMode wrapMode, float speed)
+    : target_(target)
+    , animation_(animation)
+    , wrapMode_(wrapMode)
+    , speed_(speed)
+    , currentTime_(0.0f)
+    , lastScaledTime_(0.0f)
 {
     speed_ = Max(0.0f, speed_);
 }
 
-ValueAnimationInfo::ValueAnimationInfo(const ValueAnimationInfo& other) :
-    target_(other.target_),
-    animation_(other.animation_),
-    wrapMode_(other.wrapMode_),
-    speed_(other.speed_),
-    currentTime_(0.0f),
-    lastScaledTime_(0.0f)
+ValueAnimationInfo::ValueAnimationInfo(const ValueAnimationInfo& other)
+    : target_(other.target_)
+    , animation_(other.animation_)
+    , wrapMode_(other.wrapMode_)
+    , speed_(other.speed_)
+    , currentTime_(0.0f)
+    , lastScaledTime_(0.0f)
 {
 }
 
-ValueAnimationInfo::~ValueAnimationInfo()
-{
-}
+ValueAnimationInfo::~ValueAnimationInfo() {}
 
 bool ValueAnimationInfo::Update(float timeStep)
 {
@@ -100,8 +97,8 @@ bool ValueAnimationInfo::SetTime(float time)
 
         if (eventFrames.Size())
         {
-            // Make a copy of the target weakptr, since if it expires, the AnimationInfo is deleted as well, in which case the
-            // member variable cannot be accessed
+            // Make a copy of the target weakptr, since if it expires, the AnimationInfo is deleted as well, in which
+            // case the member variable cannot be accessed
             WeakPtr<Object> targetWeak(target_);
 
             for (unsigned i = 0; i < eventFrames.Size(); ++i)
@@ -118,14 +115,9 @@ bool ValueAnimationInfo::SetTime(float time)
     return finished;
 }
 
-Object* ValueAnimationInfo::GetTarget() const
-{
-    return target_;
-}
+Object* ValueAnimationInfo::GetTarget() const { return target_; }
 
-void ValueAnimationInfo::ApplyValue(const Variant& newValue)
-{
-}
+void ValueAnimationInfo::ApplyValue(const Variant& newValue) {}
 
 float ValueAnimationInfo::CalculateScaledTime(float currentTime, bool& finished) const
 {
@@ -135,13 +127,13 @@ float ValueAnimationInfo::CalculateScaledTime(float currentTime, bool& finished)
     switch (wrapMode_)
     {
     case WM_LOOP:
-        {
-            float span = endTime - beginTime;
-            float time = fmodf(currentTime - beginTime, span);
-            if (time < 0.0f)
-                time += span;
-            return beginTime + time;
-        }
+    {
+        float span = endTime - beginTime;
+        float time = fmodf(currentTime - beginTime, span);
+        if (time < 0.0f)
+            time += span;
+        return beginTime + time;
+    }
 
     case WM_ONCE:
         finished = (currentTime >= endTime);
@@ -177,5 +169,4 @@ void ValueAnimationInfo::GetEventFrames(float beginTime, float endTime, PODVecto
         break;
     }
 }
-
 }

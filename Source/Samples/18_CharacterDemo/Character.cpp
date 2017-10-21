@@ -31,11 +31,11 @@
 
 #include "Character.h"
 
-Character::Character(Context* context) :
-    LogicComponent(context),
-    onGround_(false),
-    okToJump_(true),
-    inAirTimer_(0.0f)
+Character::Character(Context* context)
+    : LogicComponent(context)
+    , onGround_(false)
+    , okToJump_(true)
+    , inAirTimer_(0.0f)
 {
     // Only the physics update event is needed: unsubscribe from the rest for optimization
     SetUpdateEventMask(USE_FIXEDUPDATE);
@@ -46,7 +46,8 @@ void Character::RegisterObject(Context* context)
     context->RegisterFactory<Character>();
 
     // These macros register the class attributes to the Context for automatic load / save handling.
-    // We specify the Default attribute mode which means it will be used both for saving into file, and network replication
+    // We specify the Default attribute mode which means it will be used both for saving into file, and network
+    // replication
     URHO3D_ATTRIBUTE("Controls Yaw", float, controls_.yaw_, 0.0f, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Controls Pitch", float, controls_.pitch_, 0.0f, AM_DEFAULT);
     URHO3D_ATTRIBUTE("On Ground", bool, onGround_, false, AM_DEFAULT);
@@ -117,7 +118,7 @@ void Character::FixedUpdate(float timeStep)
             okToJump_ = true;
     }
 
-    if ( !onGround_ )
+    if (!onGround_)
     {
         animCtrl->PlayExclusive("Models/Mutant/Mutant_Jump1.ani", 0, false, 0.2f);
     }
@@ -139,7 +140,8 @@ void Character::FixedUpdate(float timeStep)
 
 void Character::HandleNodeCollision(StringHash eventType, VariantMap& eventData)
 {
-    // Check collision contacts and see if character is standing on ground (look for a contact that has near vertical normal)
+    // Check collision contacts and see if character is standing on ground (look for a contact that has near vertical
+    // normal)
     using namespace NodeCollision;
 
     MemoryBuffer contacts(eventData[P_CONTACTS].GetBuffer());
@@ -148,8 +150,8 @@ void Character::HandleNodeCollision(StringHash eventType, VariantMap& eventData)
     {
         Vector3 contactPosition = contacts.ReadVector3();
         Vector3 contactNormal = contacts.ReadVector3();
-        /*float contactDistance = */contacts.ReadFloat();
-        /*float contactImpulse = */contacts.ReadFloat();
+        /*float contactDistance = */ contacts.ReadFloat();
+        /*float contactImpulse = */ contacts.ReadFloat();
 
         // If contact is below node center and pointing up, assume it's a ground contact
         if (contactPosition.y_ < (node_->GetPosition().y_ + 1.0f))

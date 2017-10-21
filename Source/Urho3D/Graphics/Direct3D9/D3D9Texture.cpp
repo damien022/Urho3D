@@ -34,7 +34,6 @@
 
 namespace Urho3D
 {
-
 void Texture::SetSRGB(bool enable)
 {
     if (graphics_)
@@ -48,10 +47,7 @@ void Texture::UpdateParameters()
     // No-op on Direct3D9, handled by Graphics instead by modifying the sampler settings as necessary
 }
 
-bool Texture::GetParametersDirty() const
-{
-    return false;
-}
+bool Texture::GetParametersDirty() const { return false; }
 
 bool Texture::IsCompressed() const
 {
@@ -110,29 +106,13 @@ void Texture::RegenerateLevels()
     levelsDirty_ = false;
 }
 
-unsigned Texture::GetSRGBFormat(unsigned format)
-{
-    return 0;
-}
+unsigned Texture::GetSRGBFormat(unsigned format) { return 0; }
 
-unsigned Texture::GetSRVFormat(unsigned format)
-{
-    return 0;
-}
+unsigned Texture::GetSRVFormat(unsigned format) { return 0; }
 
-unsigned Texture::GetDSVFormat(unsigned format)
-{
-    return 0;
-}
+unsigned Texture::GetDSVFormat(unsigned format) { return 0; }
 
-unsigned Texture::GetExternalFormat(unsigned format)
-{
-    return 0;
-}
+unsigned Texture::GetExternalFormat(unsigned format) { return 0; }
 
-unsigned Texture::GetDataType(unsigned format)
-{
-    return 0;
-}
-
+unsigned Texture::GetDataType(unsigned format) { return 0; }
 }

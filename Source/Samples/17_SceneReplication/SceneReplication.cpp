@@ -31,9 +31,9 @@
 #include <Urho3D/Graphics/Renderer.h>
 #include <Urho3D/Graphics/StaticModel.h>
 #include <Urho3D/Graphics/Zone.h>
+#include <Urho3D/IO/Log.h>
 #include <Urho3D/Input/Controls.h>
 #include <Urho3D/Input/Input.h>
-#include <Urho3D/IO/Log.h>
 #include <Urho3D/Network/Connection.h>
 #include <Urho3D/Network/Network.h>
 #include <Urho3D/Network/NetworkEvents.h>
@@ -69,8 +69,8 @@ static const unsigned CTRL_RIGHT = 8;
 
 URHO3D_DEFINE_APPLICATION_MAIN(SceneReplication)
 
-SceneReplication::SceneReplication(Context* context) :
-    Sample(context)
+SceneReplication::SceneReplication(Context* context)
+    : Sample(context)
 {
 }
 
@@ -101,13 +101,14 @@ void SceneReplication::CreateScene()
 
     ResourceCache* cache = GetSubsystem<ResourceCache>();
 
-    // Create octree and physics world with default settings. Create them as local so that they are not needlessly replicated
-    // when a client connects
+    // Create octree and physics world with default settings. Create them as local so that they are not needlessly
+    // replicated when a client connects
     scene_->CreateComponent<Octree>(LOCAL);
     scene_->CreateComponent<PhysicsWorld>(LOCAL);
 
-    // All static scene content and the camera are also created as local, so that they are unaffected by scene replication and are
-    // not removed from the client upon connection. Create a Zone component first for ambient lighting & fog control.
+    // All static scene content and the camera are also created as local, so that they are unaffected by scene
+    // replication and are not removed from the client upon connection. Create a Zone component first for ambient
+    // lighting & fog control.
     Node* zoneNode = scene_->CreateChild("Zone", LOCAL);
     Zone* zone = zoneNode->CreateComponent<Zone>();
     zone->SetBoundingBox(BoundingBox(-1000.0f, 1000.0f));
@@ -143,10 +144,10 @@ void SceneReplication::CreateScene()
     }
 
     // Create the camera. Limit far clip distance to match the fog
-    // The camera needs to be created into a local node so that each client can retain its own camera, that is unaffected by
-    // network messages. Furthermore, because the client removes all replicated scene nodes when connecting to a server scene,
-    // the screen would become blank if the camera node was replicated (as only the locally created camera is assigned to a
-    // viewport in SetupViewports() below)
+    // The camera needs to be created into a local node so that each client can retain its own camera, that is
+    // unaffected by network messages. Furthermore, because the client removes all replicated scene nodes when
+    // connecting to a server scene, the screen would become blank if the camera node was replicated (as only the
+    // locally created camera is assigned to a viewport in SetupViewports() below)
     cameraNode_ = scene_->CreateChild("Camera", LOCAL);
     Camera* camera = cameraNode_->CreateComponent<Camera>();
     camera->SetFarClip(300.0f);
@@ -164,8 +165,8 @@ void SceneReplication::CreateUI()
     // Set style to the UI root so that elements will inherit it
     root->SetDefaultStyle(uiStyle);
 
-    // Create a Cursor UI element because we want to be able to hide and show it at will. When hidden, the mouse cursor will
-    // control the camera, and when visible, it can interact with the login UI
+    // Create a Cursor UI element because we want to be able to hide and show it at will. When hidden, the mouse cursor
+    // will control the camera, and when visible, it can interact with the login UI
     SharedPtr<Cursor> cursor(new Cursor(context_));
     cursor->SetStyleAuto(uiStyle);
     ui->SetCursor(cursor);
@@ -175,9 +176,7 @@ void SceneReplication::CreateUI()
 
     // Construct the instructions text element
     instructionsText_ = ui->GetRoot()->CreateChild<Text>();
-    instructionsText_->SetText(
-        "Use WASD keys to move and RMB to rotate view"
-    );
+    instructionsText_->SetText("Use WASD keys to move and RMB to rotate view");
     instructionsText_->SetFont(cache->GetResource<Font>("Fonts/Anonymous Pro.ttf"), 15);
     // Position the text relative to the screen center
     instructionsText_->SetHorizontalAlignment(HA_CENTER);
@@ -231,9 +230,11 @@ void SceneReplication::SubscribeToEvents()
     SubscribeToEvent(E_CONNECTFAILED, URHO3D_HANDLER(SceneReplication, HandleConnectionStatus));
     SubscribeToEvent(E_CLIENTCONNECTED, URHO3D_HANDLER(SceneReplication, HandleClientConnected));
     SubscribeToEvent(E_CLIENTDISCONNECTED, URHO3D_HANDLER(SceneReplication, HandleClientDisconnected));
-    // This is a custom event, sent from the server to the client. It tells the node ID of the object the client should control
+    // This is a custom event, sent from the server to the client. It tells the node ID of the object the client should
+    // control
     SubscribeToEvent(E_CLIENTOBJECTID, URHO3D_HANDLER(SceneReplication, HandleClientObjectID));
-    // Events sent between client & server (remote events) must be explicitly registered or else they are not allowed to be received
+    // Events sent between client & server (remote events) must be explicitly registered or else they are not allowed to
+    // be received
     GetSubsystem<Network>()->RegisterRemoteEvent(E_CLIENTOBJECTID);
 }
 
@@ -330,7 +331,8 @@ void SceneReplication::MoveCamera()
             const float CAMERA_DISTANCE = 5.0f;
 
             // Move camera some distance away from the ball
-            cameraNode_->SetPosition(ballNode->GetPosition() + cameraNode_->GetRotation() * Vector3::BACK * CAMERA_DISTANCE);
+            cameraNode_->SetPosition(ballNode->GetPosition() +
+                                     cameraNode_->GetRotation() * Vector3::BACK * CAMERA_DISTANCE);
             showInstructions = true;
         }
     }
@@ -372,14 +374,15 @@ void SceneReplication::HandlePhysicsPreStep(StringHash eventType, VariantMap& ev
         }
 
         serverConnection->SetControls(controls);
-        // In case the server wants to do position-based interest management using the NetworkPriority components, we should also
-        // tell it our observer (camera) position. In this sample it is not in use, but eg. the NinjaSnowWar game uses it
+        // In case the server wants to do position-based interest management using the NetworkPriority components, we
+        // should also tell it our observer (camera) position. In this sample it is not in use, but eg. the NinjaSnowWar
+        // game uses it
         serverConnection->SetPosition(cameraNode_->GetPosition());
     }
     // Server: apply controls to client objects
     else if (network->IsServerRunning())
     {
-        const Vector<SharedPtr<Connection> >& connections = network->GetClientConnections();
+        const Vector<SharedPtr<Connection>>& connections = network->GetClientConnections();
 
         for (unsigned i = 0; i < connections.Size(); ++i)
         {
@@ -457,10 +460,7 @@ void SceneReplication::HandleStartServer(StringHash eventType, VariantMap& event
     UpdateButtons();
 }
 
-void SceneReplication::HandleConnectionStatus(StringHash eventType, VariantMap& eventData)
-{
-    UpdateButtons();
-}
+void SceneReplication::HandleConnectionStatus(StringHash eventType, VariantMap& eventData) { UpdateButtons(); }
 
 void SceneReplication::HandleClientConnected(StringHash eventType, VariantMap& eventData)
 {

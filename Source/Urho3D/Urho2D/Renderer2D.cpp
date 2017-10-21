@@ -45,25 +45,24 @@
 
 namespace Urho3D
 {
-
 extern const char* blendModeNames[];
 
 static const unsigned MASK_VERTEX2D = MASK_POSITION | MASK_COLOR | MASK_TEXCOORD1;
 
-ViewBatchInfo2D::ViewBatchInfo2D() :
-    vertexBufferUpdateFrameNumber_(0),
-    indexCount_(0),
-    vertexCount_(0),
-    batchUpdatedFrameNumber_(0),
-    batchCount_(0)
+ViewBatchInfo2D::ViewBatchInfo2D()
+    : vertexBufferUpdateFrameNumber_(0)
+    , indexCount_(0)
+    , vertexCount_(0)
+    , batchUpdatedFrameNumber_(0)
+    , batchCount_(0)
 {
 }
 
-Renderer2D::Renderer2D(Context* context) :
-    Drawable(context, DRAWABLE_GEOMETRY),
-    material_(new Material(context)),
-    indexBuffer_(new IndexBuffer(context_)),
-    viewMask_(DEFAULT_VIEWMASK)
+Renderer2D::Renderer2D(Context* context)
+    : Drawable(context, DRAWABLE_GEOMETRY)
+    , material_(new Material(context))
+    , indexBuffer_(new IndexBuffer(context_))
+    , viewMask_(DEFAULT_VIEWMASK)
 {
     material_->SetName("Urho2D");
 
@@ -81,14 +80,9 @@ Renderer2D::Renderer2D(Context* context) :
     SubscribeToEvent(E_BEGINVIEWUPDATE, URHO3D_HANDLER(Renderer2D, HandleBeginViewUpdate));
 }
 
-Renderer2D::~Renderer2D()
-{
-}
+Renderer2D::~Renderer2D() {}
 
-void Renderer2D::RegisterObject(Context* context)
-{
-    context->RegisterFactory<Renderer2D>();
-}
+void Renderer2D::RegisterObject(Context* context) { context->RegisterFactory<Renderer2D>(); }
 
 static inline bool CompareRayQueryResults(RayQueryResult& lr, RayQueryResult& rr)
 {
@@ -221,10 +215,7 @@ void Renderer2D::UpdateGeometry(const FrameInfo& frame)
     }
 }
 
-UpdateGeometryType Renderer2D::GetUpdateGeometryType()
-{
-    return UPDATE_MAIN_THREAD;
-}
+UpdateGeometryType Renderer2D::GetUpdateGeometryType() { return UPDATE_MAIN_THREAD; }
 
 void Renderer2D::AddDrawable(Drawable2D* drawable)
 {
@@ -247,7 +238,7 @@ Material* Renderer2D::GetMaterial(Texture2D* texture, BlendMode blendMode)
     if (!texture)
         return material_;
 
-    HashMap<Texture2D*, HashMap<int, SharedPtr<Material> > >::Iterator t = cachedMaterials_.Find(texture);
+    HashMap<Texture2D*, HashMap<int, SharedPtr<Material>>>::Iterator t = cachedMaterials_.Find(texture);
     if (t == cachedMaterials_.End())
     {
         SharedPtr<Material> newMaterial = CreateMaterial(texture, blendMode);
@@ -255,8 +246,8 @@ Material* Renderer2D::GetMaterial(Texture2D* texture, BlendMode blendMode)
         return newMaterial;
     }
 
-    HashMap<int, SharedPtr<Material> >& materials = t->second_;
-    HashMap<int, SharedPtr<Material> >::Iterator b = materials.Find(blendMode);
+    HashMap<int, SharedPtr<Material>>& materials = t->second_;
+    HashMap<int, SharedPtr<Material>>::Iterator b = materials.Find(blendMode);
     if (b != materials.End())
         return b->second_;
 
@@ -286,7 +277,7 @@ SharedPtr<Material> Renderer2D::CreateMaterial(Texture2D* texture, BlendMode ble
 {
     SharedPtr<Material> newMaterial = material_->Clone();
 
-    HashMap<int, SharedPtr<Technique> >::Iterator techIt = cachedTechniques_.Find((int)blendMode);
+    HashMap<int, SharedPtr<Technique>>::Iterator techIt = cachedTechniques_.Find((int)blendMode);
     if (techIt == cachedTechniques_.End())
     {
         SharedPtr<Technique> tech(new Technique(context_));
@@ -391,16 +382,16 @@ void Renderer2D::GetDrawables(PODVector<Drawable2D*>& dest, Node* node)
     if (!node || !node->IsEnabled())
         return;
 
-    const Vector<SharedPtr<Component> >& components = node->GetComponents();
-    for (Vector<SharedPtr<Component> >::ConstIterator i = components.Begin(); i != components.End(); ++i)
+    const Vector<SharedPtr<Component>>& components = node->GetComponents();
+    for (Vector<SharedPtr<Component>>::ConstIterator i = components.Begin(); i != components.End(); ++i)
     {
         Drawable2D* drawable = dynamic_cast<Drawable2D*>(i->Get());
         if (drawable && drawable->IsEnabled())
             dest.Push(drawable);
     }
 
-    const Vector<SharedPtr<Node> >& children = node->GetChildren();
-    for (Vector<SharedPtr<Node> >::ConstIterator i = children.Begin(); i != children.End(); ++i)
+    const Vector<SharedPtr<Node>>& children = node->GetChildren();
+    for (Vector<SharedPtr<Node>>::ConstIterator i = children.Begin(); i != children.End(); ++i)
         GetDrawables(dest, i->Get());
 }
 
@@ -445,7 +436,7 @@ void Renderer2D::UpdateViewBatchInfo(ViewBatchInfo2D& viewBatchInfo, Camera* cam
         Vector3 worldPos = sourceBatch->owner_->GetNode()->GetWorldPosition();
         sourceBatch->distance_ = camera->GetDistance(worldPos);
     }
-    
+
     Sort(sourceBatches.Begin(), sourceBatches.End(), CompareSourceBatch2Ds);
 
     viewBatchInfo.batchCount_ = 0;
@@ -484,15 +475,15 @@ void Renderer2D::UpdateViewBatchInfo(ViewBatchInfo2D& viewBatchInfo, Camera* cam
 
     // Add the final batch if necessary
     if (currMaterial && vCount)
-        AddViewBatch(viewBatchInfo, currMaterial, iStart, iCount, vStart, vCount,distance);
+        AddViewBatch(viewBatchInfo, currMaterial, iStart, iCount, vStart, vCount, distance);
 
     viewBatchInfo.indexCount_ = iStart + iCount;
     viewBatchInfo.vertexCount_ = vStart + vCount;
     viewBatchInfo.batchUpdatedFrameNumber_ = frame_.frameNumber_;
 }
 
-void Renderer2D::AddViewBatch(ViewBatchInfo2D& viewBatchInfo, Material* material, 
-    unsigned indexStart, unsigned indexCount, unsigned vertexStart, unsigned vertexCount, float distance)
+void Renderer2D::AddViewBatch(ViewBatchInfo2D& viewBatchInfo, Material* material, unsigned indexStart,
+                              unsigned indexCount, unsigned vertexStart, unsigned vertexCount, float distance)
 {
     if (!material || indexCount == 0 || vertexCount == 0)
         return;
@@ -520,5 +511,4 @@ void Renderer2D::AddViewBatch(ViewBatchInfo2D& viewBatchInfo, Material* material
 
     viewBatchInfo.batchCount_++;
 }
-
 }

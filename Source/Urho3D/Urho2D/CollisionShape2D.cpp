@@ -34,13 +34,11 @@
 
 namespace Urho3D
 {
-
-CollisionShape2D::CollisionShape2D(Context* context) :
-    Component(context),
-    fixture_(nullptr),
-    cachedWorldScale_(Vector3::ONE)
+CollisionShape2D::CollisionShape2D(Context* context)
+    : Component(context)
+    , fixture_(nullptr)
+    , cachedWorldScale_(Vector3::ONE)
 {
-
 }
 
 CollisionShape2D::~CollisionShape2D()
@@ -221,7 +219,8 @@ void CollisionShape2D::CreateFixture()
         return;
 
     // Chain shape must have atleast two vertices before creating fixture
-    if (fixtureDef_.shape->m_type != b2Shape::e_chain || static_cast<const b2ChainShape*>(fixtureDef_.shape)->m_count >= 2)
+    if (fixtureDef_.shape->m_type != b2Shape::e_chain ||
+        static_cast<const b2ChainShape*>(fixtureDef_.shape)->m_count >= 2)
     {
         b2MassData massData;
         body->GetMassData(&massData);
@@ -303,7 +302,8 @@ void CollisionShape2D::OnNodeSet(Node* node)
 
 void CollisionShape2D::OnMarkedDirty(Node* node)
 {
-    // Use signed world scale to allow flipping of sprites by negative scale to work properly in regard to the collision shape
+    // Use signed world scale to allow flipping of sprites by negative scale to work properly in regard to the collision
+    // shape
     Vector3 newWorldScale = node_->GetSignedWorldScale();
 
     Vector3 delta = newWorldScale - cachedWorldScale_;
@@ -322,5 +322,4 @@ void CollisionShape2D::OnMarkedDirty(Node* node)
 
     ApplyNodeWorldScale();
 }
-
 }

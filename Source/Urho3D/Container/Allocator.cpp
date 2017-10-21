@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 AllocatorBlock* AllocatorReserveBlock(AllocatorBlock* allocator, unsigned nodeSize, unsigned capacity)
 {
     if (!capacity)
@@ -118,5 +117,4 @@ void AllocatorFree(AllocatorBlock* allocator, void* ptr)
     node->next_ = allocator->free_;
     allocator->free_ = node;
 }
-
 }

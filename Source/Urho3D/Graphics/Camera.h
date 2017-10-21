@@ -29,7 +29,6 @@
 
 namespace Urho3D
 {
-
 static const float DEFAULT_NEARCLIP = 0.1f;
 static const float DEFAULT_FARCLIP = 1000.0f;
 static const float DEFAULT_CAMERA_FOV = 45.0f;
@@ -92,18 +91,22 @@ public:
     void SetUseClipping(bool enable);
     /// Set custom clipping plane in world space.
     void SetClipPlane(const Plane& plane);
-    /// Set vertical flipping mode. Called internally by View to resolve OpenGL / Direct3D9 rendertarget sampling differences.
+    /// Set vertical flipping mode. Called internally by View to resolve OpenGL / Direct3D9 rendertarget sampling
+    /// differences.
     void SetFlipVertical(bool enable);
-    /// Set custom projection matrix, which should be specified in D3D convention with depth range 0 - 1. Disables auto aspect ratio.
-    /** Change any of the standard view parameters (FOV, far clip, zoom etc.) to revert to the standard projection. 
+    /// Set custom projection matrix, which should be specified in D3D convention with depth range 0 - 1. Disables auto
+    /// aspect ratio.
+    /** Change any of the standard view parameters (FOV, far clip, zoom etc.) to revert to the standard projection.
         Note that the custom projection is not serialized or replicated through the network.
      */
     void SetProjection(const Matrix4& projection);
 
-    /// Return far clip distance. If a custom projection matrix is in use, is calculated from it instead of the value assigned with SetFarClip().
+    /// Return far clip distance. If a custom projection matrix is in use, is calculated from it instead of the value
+    /// assigned with SetFarClip().
     float GetFarClip() const;
 
-    /// Return near clip distance. If a custom projection matrix is in use, is calculated from it instead of the value assigned with SetNearClip().
+    /// Return near clip distance. If a custom projection matrix is in use, is calculated from it instead of the value
+    /// assigned with SetNearClip().
     float GetNearClip() const;
 
     /// Return vertical field of view in degrees.
@@ -158,8 +161,10 @@ public:
     Ray GetScreenRay(float x, float y) const;
     /// Convert a world space point to normalized screen coordinates (0 - 1).
     Vector2 WorldToScreenPoint(const Vector3& worldPos) const;
-    /// Convert normalized screen coordinates (0 - 1) and distance along view Z axis (in Z coordinate) to a world space point. The distance can not be closer than the near clip plane.
-    /** Note that a HitDistance() from the camera screen ray is not the same as distance along the view Z axis, as under a perspective projection the ray is likely to not be Z-aligned.
+    /// Convert normalized screen coordinates (0 - 1) and distance along view Z axis (in Z coordinate) to a world space
+    /// point. The distance can not be closer than the near clip plane.
+    /** Note that a HitDistance() from the camera screen ray is not the same as distance along the view Z axis, as under
+     * a perspective projection the ray is likely to not be Z-aligned.
      */
     Vector3 ScreenToWorldPoint(const Vector3& screenPos) const;
 
@@ -191,8 +196,10 @@ public:
     /// Return a scene node's LOD scaled distance.
     float GetLodDistance(float distance, float scale, float bias) const;
     /// Return a world rotation for facing a camera on certain axes based on the existing world rotation.
-    Quaternion GetFaceCameraRotation(const Vector3& position, const Quaternion& rotation, FaceCameraMode mode, float minAngle = 0.0f);
-    /// Get effective world transform for matrix and frustum calculations including reflection but excluding node scaling.
+    Quaternion GetFaceCameraRotation(const Vector3& position, const Quaternion& rotation, FaceCameraMode mode,
+                                     float minAngle = 0.0f);
+    /// Get effective world transform for matrix and frustum calculations including reflection but excluding node
+    /// scaling.
     Matrix3x4 GetEffectiveWorldTransform() const;
     /// Return if projection parameters are valid for rendering and raycasting.
     bool IsProjectionValid() const;
@@ -277,5 +284,4 @@ private:
     /// Use custom projection matrix flag. Used internally.
     mutable bool customProjection_;
 };
-
 }

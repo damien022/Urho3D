@@ -22,17 +22,14 @@
 
 #pragma once
 
-
 #include <Urho3D/Container/Vector.h>
 #include <Urho3D/Core/Object.h>
-#include <Urho3D/Scene/Serializable.h>
 #include <Urho3D/IO/Log.h>
+#include <Urho3D/Scene/Serializable.h>
 #include <Urho3D/UI/UI.h>
-
 
 namespace Urho3D
 {
-
 /// Abstract class for implementing various trackable states.
 class UndoableState : public RefCounted
 {
@@ -44,10 +41,7 @@ public:
     /// Return true if state of this object matches state of specified object.
     virtual bool Equals(UndoableState* other) = 0;
     /// Return string representation of current state.
-    virtual String ToString() const
-    {
-        return "UndoableState";
-    }
+    virtual String ToString() const { return "UndoableState"; }
 };
 
 /// Tracks attribute values of Serializable item.
@@ -55,19 +49,21 @@ class UndoableAttributesState : public UndoableState
 {
 public:
     /// Object that was modified.
-    SharedPtr <Serializable> item_;
+    SharedPtr<Serializable> item_;
     /// Changed attributes.
-    HashMap <String, Variant> attributes_;
+    HashMap<String, Variant> attributes_;
 
     /// Construct state consisting of single attribute.
-    UndoableAttributesState(Serializable* item, const String& name, const Variant& value) : item_(item)
+    UndoableAttributesState(Serializable* item, const String& name, const Variant& value)
+        : item_(item)
     {
         attributes_[name] = value;
     }
 
     /// Construct state consisting of multiple attributes.
-    UndoableAttributesState(Serializable* item, const HashMap <String, Variant>& values) : item_(item),
-        attributes_(values)
+    UndoableAttributesState(Serializable* item, const HashMap<String, Variant>& values)
+        : item_(item)
+        , attributes_(values)
     {
     }
 
@@ -116,22 +112,21 @@ public:
     }
 
     /// Return string representation of current state.
-    virtual String ToString() const
-    {
-        return "UndoableAttributesState";
-    }
+    virtual String ToString() const { return "UndoableAttributesState"; }
 };
 
 /// Tracks item parent state. Used for tracking adding and removing UIElements.
 class UndoableItemParentState : public UndoableState
 {
 public:
-    SharedPtr <UIElement> item_;
-    SharedPtr <UIElement> parent_;
+    SharedPtr<UIElement> item_;
+    SharedPtr<UIElement> parent_;
     unsigned index_ = M_MAX_UNSIGNED;
 
     /// Construct item from the state and parent
-    UndoableItemParentState(UIElement* item, UIElement* parent) : item_(item), parent_(parent)
+    UndoableItemParentState(UIElement* item, UIElement* parent)
+        : item_(item)
+        , parent_(parent)
     {
         if (parent)
             index_ = parent->FindChild(item);
@@ -175,10 +170,7 @@ public:
     }
 
     /// Return string representation of current state.
-    virtual String ToString() const
-    {
-        return "UndoableItemParentState";
-    }
+    virtual String ToString() const { return "UndoableItemParentState"; }
 };
 
 /// Tracks xml parent state. Used for tracking adding and removing xml elements to and from data files.
@@ -189,7 +181,9 @@ public:
     Variant value_;
 
     /// Construct item from the state and parent
-    UndoableXMLVariantState(const XMLElement& item, const Variant& value) : item_(item), value_(value)
+    UndoableXMLVariantState(const XMLElement& item, const Variant& value)
+        : item_(item)
+        , value_(value)
     {
     }
 
@@ -204,10 +198,7 @@ public:
     }
 
     /// Return true if item parent matches and item is at recorded index.
-    bool IsCurrent() override
-    {
-        return item_.GetVariant() == value_;
-    }
+    bool IsCurrent() override { return item_.GetVariant() == value_; }
 
     /// Return true if state of this object matches state of specified object.
     bool Equals(UndoableState* other) override
@@ -220,10 +211,7 @@ public:
         return item_ == other_->item_ && value_ == other_->value_;
     }
 
-    String ToString() const override
-    {
-        return value_.ToString();
-    }
+    String ToString() const override { return value_.ToString(); }
 };
 
 /// Tracks item parent state. Used for tracking adding and removing UIElements.
@@ -234,7 +222,9 @@ public:
     XMLElement parent_;
 
     /// Construct item from the state and parent
-    UndoableXMLParentState(const XMLElement& item, const XMLElement& parent=XMLElement()) : item_(item), parent_(parent)
+    UndoableXMLParentState(const XMLElement& item, const XMLElement& parent = XMLElement())
+        : item_(item)
+        , parent_(parent)
     {
     }
 
@@ -253,10 +243,7 @@ public:
     }
 
     /// Return true if item parent matches and item is at recorded index.
-    bool IsCurrent() override
-    {
-        return item_.GetParent().GetNode() == parent_.GetNode();
-    }
+    bool IsCurrent() override { return item_.GetParent().GetNode() == parent_.GetNode(); }
 
     /// Return true if state of this object matches state of specified object.
     bool Equals(UndoableState* other) override
@@ -266,36 +253,37 @@ public:
         if (other_ == nullptr)
             return false;
 
-        return item_.GetNode() == other_->item_.GetNode() && parent_.GetNode() == other_->parent_.GetNode() /*&& index_ == other_->index_*/;
+        return item_.GetNode() == other_->item_.GetNode() &&
+               parent_.GetNode() == other_->parent_.GetNode() /*&& index_ == other_->index_*/;
     }
 
     /// Return string representation of current state.
-    virtual String ToString() const
-    {
-        return "UndoableXMLParentState";
-    }
+    virtual String ToString() const { return "UndoableXMLParentState"; }
 };
 
 class UndoManager : public Object
 {
     URHO3D_OBJECT(UndoManager, Object);
-public:
-    explicit UndoManager(Context* ctx) : Object(ctx)
-    {
 
+public:
+    explicit UndoManager(Context* ctx)
+        : Object(ctx)
+    {
     }
 
     /// Go back in the state history.
     void Undo()
     {
-        while (index_ >= 0 && index_ < stack_.Size() && !stack_[index_--]->Apply());
+        while (index_ >= 0 && index_ < stack_.Size() && !stack_[index_--]->Apply())
+            ;
         index_ = Clamp<int32_t>(--index_, 0, stack_.Size() - 1);
     }
 
     /// Go forward in the state history.
     void Redo()
     {
-        while (index_ >= 0 && index_ < stack_.Size() && !stack_[index_++]->Apply());
+        while (index_ >= 0 && index_ < stack_.Size() && !stack_[index_++]->Apply())
+            ;
         index_ = Clamp<int32_t>(++index_, 0, stack_.Size() - 1);
     }
 
@@ -306,7 +294,7 @@ public:
     }
 
     /// Track item state consisting of multiple attributes.
-    void TrackState(Serializable* item, const HashMap <String, Variant>& values)
+    void TrackState(Serializable* item, const HashMap<String, Variant>& values)
     {
         Track(new UndoableAttributesState(item, values));
     }
@@ -368,9 +356,8 @@ protected:
     }
 
     /// State stack
-    Vector<SharedPtr<UndoableState> > stack_;
+    Vector<SharedPtr<UndoableState>> stack_;
     /// Current state index, -1 when stack is empty.
     int32_t index_ = -1;
 };
-
 }

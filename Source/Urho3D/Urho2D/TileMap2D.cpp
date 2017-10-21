@@ -35,26 +35,23 @@
 
 namespace Urho3D
 {
-
 extern const float PIXEL_SIZE;
 extern const char* URHO2D_CATEGORY;
 
-TileMap2D::TileMap2D(Context* context) :
-    Component(context)
+TileMap2D::TileMap2D(Context* context)
+    : Component(context)
 {
 }
 
-TileMap2D::~TileMap2D()
-{
-}
+TileMap2D::~TileMap2D() {}
 
 void TileMap2D::RegisterObject(Context* context)
 {
     context->RegisterFactory<TileMap2D>(URHO2D_CATEGORY);
 
     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Tmx File", GetTmxFileAttr, SetTmxFileAttr, ResourceRef, ResourceRef(TmxFile2D::GetTypeStatic()),
-        AM_DEFAULT);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Tmx File", GetTmxFileAttr, SetTmxFileAttr, ResourceRef,
+                                    ResourceRef(TmxFile2D::GetTypeStatic()), AM_DEFAULT);
 }
 
 // Transform vector from node-local space to global space
@@ -76,17 +73,25 @@ void TileMap2D::DrawDebugGeometry(DebugRenderer* debug, bool depthTest)
     case O_ORTHOGONAL:
     case O_STAGGERED:
     case O_HEXAGONAL:
-        debug->AddLine(TransformNode2D(transform, Vector2(0.0f, 0.0f)), TransformNode2D(transform, Vector2(mapW, 0.0f)), color);
-        debug->AddLine(TransformNode2D(transform, Vector2(mapW, 0.0f)), TransformNode2D(transform, Vector2(mapW, mapH)), color);
-        debug->AddLine(TransformNode2D(transform, Vector2(mapW, mapH)), TransformNode2D(transform, Vector2(0.0f, mapH)), color);
-        debug->AddLine(TransformNode2D(transform, Vector2(0.0f, mapH)), TransformNode2D(transform, Vector2(0.0f, 0.0f)), color);
+        debug->AddLine(TransformNode2D(transform, Vector2(0.0f, 0.0f)), TransformNode2D(transform, Vector2(mapW, 0.0f)),
+                       color);
+        debug->AddLine(TransformNode2D(transform, Vector2(mapW, 0.0f)), TransformNode2D(transform, Vector2(mapW, mapH)),
+                       color);
+        debug->AddLine(TransformNode2D(transform, Vector2(mapW, mapH)), TransformNode2D(transform, Vector2(0.0f, mapH)),
+                       color);
+        debug->AddLine(TransformNode2D(transform, Vector2(0.0f, mapH)), TransformNode2D(transform, Vector2(0.0f, 0.0f)),
+                       color);
         break;
 
     case O_ISOMETRIC:
-        debug->AddLine(TransformNode2D(transform, Vector2(0.0f, mapH * 0.5f)), TransformNode2D(transform, Vector2(mapW * 0.5f, 0.0f)), color);
-        debug->AddLine(TransformNode2D(transform, Vector2(mapW * 0.5f, 0.0f)), TransformNode2D(transform, Vector2(mapW, mapH * 0.5f)), color);
-        debug->AddLine(TransformNode2D(transform, Vector2(mapW, mapH * 0.5f)), TransformNode2D(transform, Vector2(mapW * 0.5f, mapH)), color);
-        debug->AddLine(TransformNode2D(transform, Vector2(mapW * 0.5f, mapH)), TransformNode2D(transform, Vector2(0.0f, mapH * 0.5f)), color);
+        debug->AddLine(TransformNode2D(transform, Vector2(0.0f, mapH * 0.5f)),
+                       TransformNode2D(transform, Vector2(mapW * 0.5f, 0.0f)), color);
+        debug->AddLine(TransformNode2D(transform, Vector2(mapW * 0.5f, 0.0f)),
+                       TransformNode2D(transform, Vector2(mapW, mapH * 0.5f)), color);
+        debug->AddLine(TransformNode2D(transform, Vector2(mapW, mapH * 0.5f)),
+                       TransformNode2D(transform, Vector2(mapW * 0.5f, mapH)), color);
+        debug->AddLine(TransformNode2D(transform, Vector2(mapW * 0.5f, mapH)),
+                       TransformNode2D(transform, Vector2(0.0f, mapH * 0.5f)), color);
         break;
     }
 
@@ -145,10 +150,7 @@ void TileMap2D::SetTmxFile(TmxFile2D* tmxFile)
     }
 }
 
-TmxFile2D* TileMap2D::GetTmxFile() const
-{
-    return tmxFile_;
-}
+TmxFile2D* TileMap2D::GetTmxFile() const { return tmxFile_; }
 
 TileMapLayer2D* TileMap2D::GetLayer(unsigned index) const
 {
@@ -158,10 +160,7 @@ TileMapLayer2D* TileMap2D::GetLayer(unsigned index) const
     return layers_[index];
 }
 
-Vector2 TileMap2D::TileIndexToPosition(int x, int y) const
-{
-    return info_.TileIndexToPosition(x, y);
-}
+Vector2 TileMap2D::TileIndexToPosition(int x, int y) const { return info_.TileIndexToPosition(x, y); }
 
 bool TileMap2D::PositionToTileIndex(int& x, int& y, const Vector2& position) const
 {
@@ -174,15 +173,11 @@ void TileMap2D::SetTmxFileAttr(const ResourceRef& value)
     SetTmxFile(cache->GetResource<TmxFile2D>(value.name_));
 }
 
-ResourceRef TileMap2D::GetTmxFileAttr() const
-{
-    return GetResourceRef(tmxFile_, TmxFile2D::GetTypeStatic());
-}
+ResourceRef TileMap2D::GetTmxFileAttr() const { return GetResourceRef(tmxFile_, TmxFile2D::GetTypeStatic()); }
 
-Vector<SharedPtr<TileMapObject2D> > TileMap2D::GetTileCollisionShapes(int gid) const
+Vector<SharedPtr<TileMapObject2D>> TileMap2D::GetTileCollisionShapes(int gid) const
 {
-    Vector<SharedPtr<TileMapObject2D> > shapes;
+    Vector<SharedPtr<TileMapObject2D>> shapes;
     return tmxFile_ ? tmxFile_->GetTileCollisionShapes(gid) : shapes;
 }
-
 }

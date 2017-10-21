@@ -21,32 +21,32 @@
 // THE SOFTWARE.
 //
 
+#include "Console.h"
+#include "SystemUI.h"
+#include "SystemUIEvents.h"
 #include "Urho3D/Core/Context.h"
 #include "Urho3D/Core/CoreEvents.h"
 #include "Urho3D/Engine/EngineEvents.h"
 #include "Urho3D/Graphics/Graphics.h"
 #include "Urho3D/Graphics/GraphicsEvents.h"
-#include "Urho3D/Input/Input.h"
 #include "Urho3D/IO/IOEvents.h"
 #include "Urho3D/IO/Log.h"
+#include "Urho3D/Input/Input.h"
 #include "Urho3D/Resource/ResourceCache.h"
-#include "SystemUI.h"
-#include "SystemUIEvents.h"
-#include "Console.h"
 
 #include "Urho3D/DebugNew.h"
 
 namespace Urho3D
 {
-
 static const int DEFAULT_HISTORY_SIZE = 512;
 
-Console::Console(Context* context) :
-    Object(context),
-    autoVisibleOnError_(false),
-    historyRows_(DEFAULT_HISTORY_SIZE),
-    isOpen_(false),
-    windowSize_(M_MAX_INT, 200),     // Width gets clamped by HandleScreenMode()
+Console::Console(Context* context)
+    : Object(context)
+    , autoVisibleOnError_(false)
+    , historyRows_(DEFAULT_HISTORY_SIZE)
+    , isOpen_(false)
+    , windowSize_(M_MAX_INT, 200)
+    , // Width gets clamped by HandleScreenMode()
     currentInterpreter_(0)
 {
     inputBuffer_[0] = 0;
@@ -60,10 +60,7 @@ Console::Console(Context* context) :
     SubscribeToEvent(E_LOGMESSAGE, URHO3D_HANDLER(Console, HandleLogMessage));
 }
 
-Console::~Console()
-{
-    UnsubscribeFromAllEvents();
-}
+Console::~Console() { UnsubscribeFromAllEvents(); }
 
 void Console::SetVisible(bool enable)
 {
@@ -80,10 +77,7 @@ void Console::SetVisible(bool enable)
     }
 }
 
-void Console::Toggle()
-{
-    SetVisible(!IsVisible());
-}
+void Console::Toggle() { SetVisible(!IsVisible()); }
 
 void Console::SetNumHistoryRows(unsigned rows)
 {
@@ -92,10 +86,7 @@ void Console::SetNumHistoryRows(unsigned rows)
         history_.Resize(rows);
 }
 
-bool Console::IsVisible() const
-{
-    return isOpen_;
-}
+bool Console::IsVisible() const { return isOpen_; }
 
 bool Console::PopulateInterpreter()
 {
@@ -174,8 +165,8 @@ void Console::RenderUi(StringHash eventType, VariantMap& eventData)
 
     auto old_rounding = ui::GetStyle().WindowRounding;
     ui::GetStyle().WindowRounding = 0;
-    if (ui::Begin("Debug Console", &isOpen_, ImGuiWindowFlags_NoTitleBar|ImGuiWindowFlags_NoMove|
-                     ImGuiWindowFlags_NoSavedSettings))
+    if (ui::Begin("Debug Console", &isOpen_,
+                  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings))
     {
         auto region = ui::GetContentRegionAvail();
         ui::BeginChild("scrolling", ImVec2(region.x, region.y - 30), false, ImGuiWindowFlags_HorizontalScrollbar);
@@ -194,7 +185,6 @@ void Console::RenderUi(StringHash eventType, VariantMap& eventData)
         ui::PushItemWidth(100);
         if (ui::Combo("", &currentInterpreter_, &interpretersPointers_.Front(), interpretersPointers_.Size()))
         {
-
         }
         ui::PopItemWidth();
         ui::SameLine();
@@ -242,10 +232,7 @@ void Console::RenderUi(StringHash eventType, VariantMap& eventData)
     ui::GetStyle().WindowRounding = old_rounding;
 }
 
-void Console::Clear()
-{
-    history_.Clear();
-}
+void Console::Clear() { history_.Clear(); }
 
 void Console::SetCommandInterpreter(const String& interpreter)
 {
@@ -263,5 +250,4 @@ void Console::HandleScreenMode(StringHash eventType, VariantMap& eventData)
     windowSize_.x_ = Clamp(windowSize_.x_, 0, graphics->GetWidth());
     windowSize_.y_ = Clamp(windowSize_.y_, 0, graphics->GetHeight());
 }
-
 }

@@ -31,19 +31,16 @@
 
 namespace Urho3D
 {
-
 extern const char* URHO2D_CATEGORY;
 
-ConstraintWheel2D::ConstraintWheel2D(Context* context) :
-    Constraint2D(context),
-    anchor_(Vector2::ZERO),
-    axis_(Vector2::RIGHT)
+ConstraintWheel2D::ConstraintWheel2D(Context* context)
+    : Constraint2D(context)
+    , anchor_(Vector2::ZERO)
+    , axis_(Vector2::RIGHT)
 {
 }
 
-ConstraintWheel2D::~ConstraintWheel2D()
-{
-}
+ConstraintWheel2D::~ConstraintWheel2D() {}
 
 void ConstraintWheel2D::RegisterObject(Context* context)
 {
@@ -81,7 +78,6 @@ void ConstraintWheel2D::SetAxis(const Vector2& axis)
     RecreateJoint();
     MarkNetworkUpdate();
 }
-
 
 void ConstraintWheel2D::SetEnableMotor(bool enableMotor)
 {
@@ -172,5 +168,4 @@ b2JointDef* ConstraintWheel2D::GetJointDef()
 
     return &jointDef_;
 }
-
 }

@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// A link between otherwise unconnected regions of the navigation mesh.
 class URHO3D_API OffMeshConnection : public Component
 {
@@ -89,5 +88,4 @@ private:
     /// Area id to be used for this off mesh connection's internal poly
     unsigned areaId_;
 };
-
 }

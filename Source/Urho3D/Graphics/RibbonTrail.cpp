@@ -23,62 +23,53 @@
 #include "../Precompiled.h"
 
 #include "../Core/Context.h"
-#include "../Graphics/RibbonTrail.h"
-#include "../Graphics/VertexBuffer.h"
-#include "../Graphics/IndexBuffer.h"
 #include "../Graphics/Camera.h"
+#include "../Graphics/Geometry.h"
+#include "../Graphics/IndexBuffer.h"
 #include "../Graphics/Material.h"
 #include "../Graphics/OctreeQuery.h"
-#include "../Graphics/Geometry.h"
+#include "../Graphics/RibbonTrail.h"
+#include "../Graphics/VertexBuffer.h"
+#include "../IO/Log.h"
+#include "../Resource/ResourceCache.h"
 #include "../Scene/Scene.h"
 #include "../Scene/SceneEvents.h"
-#include "../Resource/ResourceCache.h"
-#include "../IO/Log.h"
 
 namespace Urho3D
 {
-
 extern const char* GEOMETRY_CATEGORY;
 static const unsigned MAX_TAIL_COLUMN = 16;
 
-const char* trailTypeNames[] =
-{
-    "Face Camera",
-    "Bone",
-    nullptr
-};
+const char* trailTypeNames[] = {"Face Camera", "Bone", nullptr};
 
-inline bool CompareTails(TrailPoint* lhs, TrailPoint* rhs)
-{
-    return lhs->sortDistance_ > rhs->sortDistance_;
-}
+inline bool CompareTails(TrailPoint* lhs, TrailPoint* rhs) { return lhs->sortDistance_ > rhs->sortDistance_; }
 
-RibbonTrail::RibbonTrail(Context* context) :
-    Drawable(context, DRAWABLE_GEOMETRY),
-    geometry_(new Geometry(context_)),
-    animationLodBias_(1.0f),
-    animationLodTimer_(0.0f),
-    vertexBuffer_(new VertexBuffer(context_)),
-    indexBuffer_(new IndexBuffer(context_)),
-    bufferDirty_(true),
-    previousPosition_(Vector3::ZERO),
-    numPoints_(0),
-    lifetime_(1.0f),
-    vertexDistance_(0.1f),
-    width_(0.2f),
-    startScale_(1.0f),
-    endScale_(1.0f),
-    endColor_(Color(1.0f, 1.0f, 1.0f, 0.0f)),
-    startColor_(Color(1.0f, 1.0f, 1.0f, 1.0f)),
-    lastUpdateFrameNumber_(M_MAX_UNSIGNED),
-    needUpdate_(false),
-    sorted_(false),
-    previousOffset_(Vector3::ZERO),
-    forceUpdate_(false),
-    trailType_(TT_FACE_CAMERA),
-    tailColumn_(1),
-    updateInvisible_(false),
-    emitting_(true)
+RibbonTrail::RibbonTrail(Context* context)
+    : Drawable(context, DRAWABLE_GEOMETRY)
+    , geometry_(new Geometry(context_))
+    , animationLodBias_(1.0f)
+    , animationLodTimer_(0.0f)
+    , vertexBuffer_(new VertexBuffer(context_))
+    , indexBuffer_(new IndexBuffer(context_))
+    , bufferDirty_(true)
+    , previousPosition_(Vector3::ZERO)
+    , numPoints_(0)
+    , lifetime_(1.0f)
+    , vertexDistance_(0.1f)
+    , width_(0.2f)
+    , startScale_(1.0f)
+    , endScale_(1.0f)
+    , endColor_(Color(1.0f, 1.0f, 1.0f, 0.0f))
+    , startColor_(Color(1.0f, 1.0f, 1.0f, 1.0f))
+    , lastUpdateFrameNumber_(M_MAX_UNSIGNED)
+    , needUpdate_(false)
+    , sorted_(false)
+    , previousOffset_(Vector3::ZERO)
+    , forceUpdate_(false)
+    , trailType_(TT_FACE_CAMERA)
+    , tailColumn_(1)
+    , updateInvisible_(false)
+    , emitting_(true)
 {
     geometry_->SetVertexBuffer(0, vertexBuffer_);
     geometry_->SetIndexBuffer(indexBuffer_);
@@ -92,9 +83,7 @@ RibbonTrail::RibbonTrail(Context* context) :
     batches_[0].numWorldTransforms_ = 1;
 }
 
-RibbonTrail::~RibbonTrail()
-{
-}
+RibbonTrail::~RibbonTrail() {}
 
 void RibbonTrail::RegisterObject(Context* context)
 {
@@ -102,10 +91,12 @@ void RibbonTrail::RegisterObject(Context* context)
 
     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
     URHO3D_COPY_BASE_ATTRIBUTES(Drawable);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Material", GetMaterialAttr, SetMaterialAttr, ResourceRef, ResourceRef(Material::GetTypeStatic()), AM_DEFAULT);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Material", GetMaterialAttr, SetMaterialAttr, ResourceRef,
+                                    ResourceRef(Material::GetTypeStatic()), AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Emitting", IsEmitting, SetEmitting, bool, true, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Update Invisible", GetUpdateInvisible, SetUpdateInvisible, bool, false, AM_DEFAULT);
-    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Trail Type", GetTrailType, SetTrailType, TrailType, trailTypeNames, TT_FACE_CAMERA, AM_DEFAULT);
+    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Trail Type", GetTrailType, SetTrailType, TrailType, trailTypeNames, TT_FACE_CAMERA,
+                                   AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Tail Lifetime", GetLifetime, SetLifetime, float, 1.0f, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Tail Column", GetTailColumn, SetTailColumn, unsigned, 0, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Vertex Distance", GetVertexDistance, SetVertexDistance, float, 0.1f, AM_DEFAULT);
@@ -134,7 +125,7 @@ void RibbonTrail::ProcessRayQuery(const RayOctreeQuery& query, PODVector<RayQuer
     // Approximate the tails as spheres for raycasting
     for (unsigned i = 0; i < points_.Size() - 1; ++i)
     {
-        Vector3 center = (points_[i].position_ + points_[i+1].position_) * 0.5f;
+        Vector3 center = (points_[i].position_ + points_[i + 1].position_) * 0.5f;
         Vector3 scale = width_ * Vector3::ONE;
         // Tail should be represented in cylinder shape, but we don't have this yet on Urho,
         // so this implementation will use bounding box instead (hopefully only temporarily)
@@ -191,7 +182,7 @@ void RibbonTrail::HandleScenePostUpdate(StringHash eventType, VariantMap& eventD
     }
 }
 
-void RibbonTrail::Update(const FrameInfo &frame)
+void RibbonTrail::Update(const FrameInfo& frame)
 {
     Drawable::Update(frame);
 
@@ -419,7 +410,7 @@ void RibbonTrail::OnSceneSet(Scene* scene)
     if (scene && IsEnabledEffective())
         SubscribeToEvent(scene, E_SCENEPOSTUPDATE, URHO3D_HANDLER(RibbonTrail, HandleScenePostUpdate));
     else if (!scene)
-         UnsubscribeFromEvent(E_SCENEPOSTUPDATE);
+        UnsubscribeFromEvent(E_SCENEPOSTUPDATE);
 }
 
 void RibbonTrail::OnWorldBoundingBoxUpdate()
@@ -428,7 +419,7 @@ void RibbonTrail::OnWorldBoundingBoxUpdate()
 
     for (unsigned i = 0; i < points_.Size(); ++i)
     {
-        Vector3 &p = points_[i].position_;
+        Vector3& p = points_[i].position_;
         Vector3 scale = width_ * Vector3::ONE;
         worldBox.Merge(BoundingBox(p - scale, p + scale));
     }
@@ -448,12 +439,12 @@ void RibbonTrail::UpdateBufferSize()
     if (trailType_ == TT_FACE_CAMERA)
     {
         batches_[0].geometryType_ = GEOM_TRAIL_FACE_CAMERA;
-        mask =  MASK_POSITION | MASK_COLOR | MASK_TEXCOORD1 | MASK_TANGENT;
+        mask = MASK_POSITION | MASK_COLOR | MASK_TEXCOORD1 | MASK_TANGENT;
     }
     else if (trailType_ == TT_BONE)
     {
         batches_[0].geometryType_ = GEOM_TRAIL_BONE;
-        mask =  MASK_POSITION | MASK_NORMAL | MASK_COLOR | MASK_TEXCOORD1 | MASK_TANGENT;
+        mask = MASK_POSITION | MASK_NORMAL | MASK_COLOR | MASK_TEXCOORD1 | MASK_TANGENT;
     }
 
     bufferSizeDirty_ = false;
@@ -507,8 +498,7 @@ void RibbonTrail::UpdateBufferSize()
             vertexIndex += 2;
         }
 
-       vertexIndex += 2;
-
+        vertexIndex += 2;
     }
 
     indexBuffer_->Unlock();
@@ -557,13 +547,13 @@ void RibbonTrail::UpdateVertexBuffer(const FrameInfo& frame)
 
     // Update individual trail elapsed length
     float trailLength = 0.0f;
-    for(unsigned i = 0; i < numPoints_; ++i)
+    for (unsigned i = 0; i < numPoints_; ++i)
     {
-        float length = i == 0 ? 0.0f : (points_[i].position_ - points_[i-1].position_).Length();
+        float length = i == 0 ? 0.0f : (points_[i].position_ - points_[i - 1].position_).Length();
         trailLength += length;
         points_[i].elapsedLength_ = trailLength;
         if (i < numPoints_ - 1)
-            points_[i].next_ = &points_[i+1];
+            points_[i].next_ = &points_[i + 1];
     }
 
     batches_[0].geometry_->SetDrawRange(TRIANGLE_LIST, 0, (numPoints_ - 1) * indexPerSegment, false);
@@ -581,7 +571,8 @@ void RibbonTrail::UpdateVertexBuffer(const FrameInfo& frame)
         {
             TrailPoint& point = *sortedPoints_[i];
 
-            if (sortedPoints_[i] == &points_.Back()) continue;
+            if (sortedPoints_[i] == &points_.Back())
+                continue;
 
             // This point
             float factor = SmoothStep(0.0f, trailLength, point.elapsedLength_);
@@ -682,7 +673,8 @@ void RibbonTrail::UpdateVertexBuffer(const FrameInfo& frame)
         {
             TrailPoint& point = *sortedPoints_[i];
 
-            if (sortedPoints_[i] == &points_.Back()) continue;
+            if (sortedPoints_[i] == &points_.Back())
+                continue;
 
             // This point
             float factor = SmoothStep(0.0f, trailLength, point.elapsedLength_);
@@ -888,14 +880,10 @@ void RibbonTrail::MarkPositionsDirty()
     bufferDirty_ = true;
 }
 
-Material* RibbonTrail::GetMaterial() const
-{
-    return batches_[0].material_;
-}
+Material* RibbonTrail::GetMaterial() const { return batches_[0].material_; }
 
 ResourceRef RibbonTrail::GetMaterialAttr() const
 {
     return GetResourceRef(batches_[0].material_, Material::GetTypeStatic());
 }
-
 }

@@ -26,8 +26,8 @@
 
 namespace Urho3D
 {
-    class HttpRequest;
-    class Text;
+class HttpRequest;
+class Text;
 }
 
 /// Http request example.
@@ -46,12 +46,13 @@ public:
 
 protected:
     /// Return XML patch instructions for screen joystick layout for a specific sample app, if any.
-    virtual String GetScreenJoystickPatchString() const override { return
-        "<patch>"
-        "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Hat0']]\">"
-        "        <attribute name=\"Is Visible\" value=\"false\" />"
-        "    </add>"
-        "</patch>";
+    virtual String GetScreenJoystickPatchString() const override
+    {
+        return "<patch>"
+               "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Hat0']]\">"
+               "        <attribute name=\"Is Visible\" value=\"false\" />"
+               "    </add>"
+               "</patch>";
     }
 
 private:
@@ -61,7 +62,7 @@ private:
     void SubscribeToEvents();
     /// Handle the logic update event.
     void HandleUpdate(StringHash eventType, VariantMap& eventData);
-    
+
     String message_;
     SharedPtr<Text> text_;
     SharedPtr<HttpRequest> httpRequest_;

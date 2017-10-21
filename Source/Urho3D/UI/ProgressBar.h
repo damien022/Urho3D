@@ -22,13 +22,12 @@
 
 #pragma once
 
-#include "BorderImage.h"
 #include "../Math/Vector2.h"
+#include "BorderImage.h"
 #include "Text.h"
 
 namespace Urho3D
 {
-
 /// %ProgressBar bar %UI element.
 class URHO3D_API ProgressBar : public BorderImage
 {
@@ -36,13 +35,13 @@ class URHO3D_API ProgressBar : public BorderImage
 
 public:
     /// Construct.
-    ProgressBar(Context *context);
+    ProgressBar(Context* context);
 
     /// Destruct.
     virtual ~ProgressBar() override;
 
     /// Register object factory.
-    static void RegisterObject(Context *context);
+    static void RegisterObject(Context* context);
 
     /// React to resize.
     virtual void OnResize(const IntVector2& newSize, const IntVector2& delta) override;
@@ -69,10 +68,10 @@ public:
     float GetValue() const { return value_; }
 
     /// Return knob element.
-    BorderImage *GetKnob() const { return knob_; }
+    BorderImage* GetKnob() const { return knob_; }
 
     /// Sets the loading percent style.
-    void SetLoadingPercentStyle(const String &style) { loadingPercentStyle_ = style; }
+    void SetLoadingPercentStyle(const String& style) { loadingPercentStyle_ = style; }
 
     /// Returns the loading percent style.
     const String& GetLoadingPercentStyle() const { return loadingPercentStyle_; }
@@ -85,15 +84,15 @@ public:
 
 protected:
     /// Filter implicit attributes in serialization process.
-    virtual bool FilterImplicitAttributes(XMLElement &dest) const override;
+    virtual bool FilterImplicitAttributes(XMLElement& dest) const override;
 
     /// Update ProgressBar knob position & size.
     void UpdateProgressBar();
 
     /// ProgressBar knob.
-    SharedPtr <BorderImage> knob_;
+    SharedPtr<BorderImage> knob_;
     /// ProgressBar text
-    SharedPtr <Text> loadingText_;
+    SharedPtr<Text> loadingText_;
     /// Orientation.
     Orientation orientation_;
     /// ProgressBar text style
@@ -105,5 +104,4 @@ protected:
     /// Flag to show the percent text.
     bool showPercentText_;
 };
-
 }

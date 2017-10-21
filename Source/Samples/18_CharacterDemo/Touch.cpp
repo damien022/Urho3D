@@ -30,18 +30,16 @@
 
 const float GYROSCOPE_THRESHOLD = 0.1f;
 
-Touch::Touch(Context* context, float touchSensitivity) :
-    Object(context),
-    touchSensitivity_(touchSensitivity),
-    cameraDistance_(CAMERA_INITIAL_DIST),
-    zoom_(false),
-    useGyroscope_(false)
+Touch::Touch(Context* context, float touchSensitivity)
+    : Object(context)
+    , touchSensitivity_(touchSensitivity)
+    , cameraDistance_(CAMERA_INITIAL_DIST)
+    , zoom_(false)
+    , useGyroscope_(false)
 {
 }
 
-Touch::~Touch()
-{
-}
+Touch::~Touch() {}
 
 void Touch::UpdateTouches(Controls& controls) // Called from HandleUpdate
 {
@@ -56,7 +54,8 @@ void Touch::UpdateTouches(Controls& controls) // Called from HandleUpdate
         TouchState* touch2 = input->GetTouch(1);
 
         // Check for zoom pattern (touches moving in opposite directions and on empty space)
-        if (!touch1->touchedElement_ && !touch2->touchedElement_ && ((touch1->delta_.y_ > 0 && touch2->delta_.y_ < 0) || (touch1->delta_.y_ < 0 && touch2->delta_.y_ > 0)))
+        if (!touch1->touchedElement_ && !touch2->touchedElement_ &&
+            ((touch1->delta_.y_ > 0 && touch2->delta_.y_ < 0) || (touch1->delta_.y_ < 0 && touch2->delta_.y_ > 0)))
             zoom_ = true;
         else
             zoom_ = false;
@@ -65,7 +64,8 @@ void Touch::UpdateTouches(Controls& controls) // Called from HandleUpdate
         {
             int sens = 0;
             // Check for zoom direction (in/out)
-            if (Abs(touch1->position_.y_ - touch2->position_.y_) > Abs(touch1->lastPosition_.y_ - touch2->lastPosition_.y_))
+            if (Abs(touch1->position_.y_ - touch2->position_.y_) >
+                Abs(touch1->lastPosition_.y_ - touch2->lastPosition_.y_))
                 sens = -1;
             else
                 sens = 1;
@@ -75,7 +75,7 @@ void Touch::UpdateTouches(Controls& controls) // Called from HandleUpdate
     }
 
     // Gyroscope (emulated by SDL through a virtual joystick)
-    if (useGyroscope_ && input->GetNumJoysticks() > 0)  // numJoysticks = 1 on iOS & Android
+    if (useGyroscope_ && input->GetNumJoysticks() > 0) // numJoysticks = 1 on iOS & Android
     {
         JoystickState* joystick = input->GetJoystickByIndex(0);
         if (joystick->GetNumAxes() >= 2)

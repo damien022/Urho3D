@@ -37,12 +37,11 @@
 #include "../../DebugNew.h"
 
 #ifdef _MSC_VER
-#pragma warning(disable:4355)
+#pragma warning(disable : 4355)
 #endif
 
 namespace Urho3D
 {
-
 void Texture2DArray::OnDeviceLost()
 {
     if (usage_ > TEXTURE_STATIC)
@@ -137,7 +136,8 @@ bool Texture2DArray::SetData(unsigned layer, Image* image, bool useAlpha)
         // Discard unnecessary mip levels
         for (unsigned i = 0; i < mipsToSkip_[quality]; ++i)
         {
-            mipImage = image->GetNextLevel(); image = mipImage;
+            mipImage = image->GetNextLevel();
+            image = mipImage;
             levelData = image->GetData();
             levelWidth = image->GetWidth();
             levelHeight = image->GetHeight();
@@ -153,13 +153,15 @@ bool Texture2DArray::SetData(unsigned layer, Image* image, bool useAlpha)
             format = Graphics::GetRGBAFormat();
             break;
 
-        default: break;
+        default:
+            break;
         }
 
         // Create the texture array when layer 0 is being loaded, check that rest of the layers are same size & format
         if (!layer)
         {
-            // If image was previously compressed, reset number of requested levels to avoid error if level count is too high for new size
+            // If image was previously compressed, reset number of requested levels to avoid error if level count is too
+            // high for new size
             if (IsCompressed() && requestedLevels_ > 1)
                 requestedLevels_ = 0;
             // Create the texture array (the number of layers must have been already set)
@@ -170,7 +172,7 @@ bool Texture2DArray::SetData(unsigned layer, Image* image, bool useAlpha)
             if (!object_.ptr_)
             {
                 // Do not spam this error on D3D9
-                //URHO3D_LOGERROR("Texture array layer 0 must be loaded first");
+                // URHO3D_LOGERROR("Texture array layer 0 must be loaded first");
                 return false;
             }
             if (levelWidth != width_ || levelHeight != height_ || format != format_)
@@ -187,7 +189,8 @@ bool Texture2DArray::SetData(unsigned layer, Image* image, bool useAlpha)
 
             if (i < levels_ - 1)
             {
-                mipImage = image->GetNextLevel(); image = mipImage;
+                mipImage = image->GetNextLevel();
+                image = mipImage;
                 levelData = image->GetData();
                 levelWidth = image->GetWidth();
                 levelHeight = image->GetHeight();
@@ -226,7 +229,7 @@ bool Texture2DArray::SetData(unsigned layer, Image* image, bool useAlpha)
         {
             if (!object_.ptr_)
             {
-                //URHO3D_LOGERROR("Texture array layer 0 must be loaded first");
+                // URHO3D_LOGERROR("Texture array layer 0 must be loaded first");
                 return false;
             }
             if (width != width_ || height != height_ || format != format_)
@@ -280,5 +283,4 @@ bool Texture2DArray::Create()
     URHO3D_LOGERROR("Texture2DArray not supported on Direct3D9, can not create");
     return false;
 }
-
 }

@@ -20,56 +20,40 @@
 // THE SOFTWARE.
 //
 
+#include "../SystemUI/DebugHud.h"
 #include "../Core/CoreEvents.h"
 #include "../Core/Profiler.h"
 #include "../Engine/Engine.h"
 #include "../Graphics/Graphics.h"
-#include "../Graphics/Renderer.h"
 #include "../Graphics/GraphicsEvents.h"
+#include "../Graphics/Renderer.h"
 #include "../IO/Log.h"
-#include "../UI/UI.h"
 #include "../SystemUI/SystemUI.h"
-#include "../SystemUI/DebugHud.h"
+#include "../UI/UI.h"
 
 #include "../DebugNew.h"
 
-
 namespace Urho3D
 {
+static const char* qualityTexts[] = {"Low", "Med", "High"};
 
-static const char* qualityTexts[] =
-{
-    "Low",
-    "Med",
-    "High"
-};
-
-static const char* shadowQualityTexts[] =
-{
-    "16bit Low",
-    "24bit Low",
-    "16bit High",
-    "24bit High"
-};
+static const char* shadowQualityTexts[] = {"16bit Low", "24bit Low", "16bit High", "24bit High"};
 
 static const unsigned FPS_UPDATE_INTERVAL_MS = 500;
 
-DebugHud::DebugHud(Context* context) :
-    Object(context),
-    profilerMaxDepth_(M_MAX_UNSIGNED),
-    profilerInterval_(1000),
-    useRendererStats_(true),
-    mode_(DEBUGHUD_SHOW_NONE),
-    fps_(0)
+DebugHud::DebugHud(Context* context)
+    : Object(context)
+    , profilerMaxDepth_(M_MAX_UNSIGNED)
+    , profilerInterval_(1000)
+    , useRendererStats_(true)
+    , mode_(DEBUGHUD_SHOW_NONE)
+    , fps_(0)
 {
     SetExtents();
     SubscribeToEvent(E_UPDATE, std::bind(&DebugHud::RenderUi, this, std::placeholders::_2));
 }
 
-DebugHud::~DebugHud()
-{
-    UnsubscribeFromAllEvents();
-}
+DebugHud::~DebugHud() { UnsubscribeFromAllEvents(); }
 
 void DebugHud::SetExtents(const IntVector2& position, IntVector2 size)
 {
@@ -93,10 +77,7 @@ void DebugHud::RecalculateWindowPositions()
     posStats_ = WithinExtents({ui::GetStyle().WindowPadding.x, ui::GetStyle().WindowPadding.y});
 }
 
-void DebugHud::SetMode(unsigned mode)
-{
-    mode_ = mode;
-}
+void DebugHud::SetMode(unsigned mode) { mode_ = mode; }
 
 void DebugHud::CycleMode()
 {
@@ -118,25 +99,13 @@ void DebugHud::CycleMode()
     }
 }
 
-void DebugHud::SetUseRendererStats(bool enable)
-{
-    useRendererStats_ = enable;
-}
+void DebugHud::SetUseRendererStats(bool enable) { useRendererStats_ = enable; }
 
-void DebugHud::Toggle(unsigned mode)
-{
-    SetMode(GetMode() ^ mode);
-}
+void DebugHud::Toggle(unsigned mode) { SetMode(GetMode() ^ mode); }
 
-void DebugHud::ToggleAll()
-{
-    Toggle(DEBUGHUD_SHOW_ALL);
-}
+void DebugHud::ToggleAll() { Toggle(DEBUGHUD_SHOW_ALL); }
 
-void DebugHud::SetAppStats(const String& label, const Variant& stats)
-{
-    SetAppStats(label, stats.ToString());
-}
+void DebugHud::SetAppStats(const String& label, const Variant& stats) { SetAppStats(label, stats.ToString()); }
 
 void DebugHud::SetAppStats(const String& label, const String& stats)
 {
@@ -146,15 +115,9 @@ void DebugHud::SetAppStats(const String& label, const String& stats)
         appStats_.Sort();
 }
 
-bool DebugHud::ResetAppStats(const String& label)
-{
-    return appStats_.Erase(label);
-}
+bool DebugHud::ResetAppStats(const String& label) { return appStats_.Erase(label); }
 
-void DebugHud::ClearAppStats()
-{
-    appStats_.Clear();
-}
+void DebugHud::ClearAppStats() { appStats_.Clear(); }
 
 Vector2 DebugHud::WithinExtents(Vector2 pos)
 {
@@ -182,22 +145,19 @@ void DebugHud::RenderUi(VariantMap& eventData)
 
     ui::SetNextWindowPos({0, 0});
     ui::SetNextWindowSize({(float)extents_.Width(), (float)extents_.Height()});
-    if (ui::Begin("DebugHud mode", nullptr, ImVec2(1024, 30), 0, ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoTitleBar|
-                                                                 ImGuiWindowFlags_NoMove|ImGuiWindowFlags_NoInputs))
+    if (ui::Begin("DebugHud mode", nullptr, ImVec2(1024, 30), 0,
+                  ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove |
+                      ImGuiWindowFlags_NoInputs))
     {
         if (mode_ & DEBUGHUD_SHOW_MODE)
         {
             ui::SetCursorPos({posMode_.x_, posMode_.y_});
             ui::Text("Tex:%s Mat:%s Spec:%s Shadows:%s Size:%i Quality:%s Occlusion:%s Instancing:%s API:%s",
-                     qualityTexts[renderer->GetTextureQuality()],
-                     qualityTexts[renderer->GetMaterialQuality()],
-                     renderer->GetSpecularLighting() ? "On" : "Off",
-                     renderer->GetDrawShadows() ? "On" : "Off",
-                     renderer->GetShadowMapSize(),
-                     shadowQualityTexts[renderer->GetShadowQuality()],
+                     qualityTexts[renderer->GetTextureQuality()], qualityTexts[renderer->GetMaterialQuality()],
+                     renderer->GetSpecularLighting() ? "On" : "Off", renderer->GetDrawShadows() ? "On" : "Off",
+                     renderer->GetShadowMapSize(), shadowQualityTexts[renderer->GetShadowQuality()],
                      renderer->GetMaxOccluderTriangles() > 0 ? "On" : "Off",
-                     renderer->GetDynamicInstancing() ? "On" : "Off",
-                     graphics->GetApiName().CString());
+                     renderer->GetDynamicInstancing() ? "On" : "Off", graphics->GetApiName().CString());
         }
 
         if (mode_ & DEBUGHUD_SHOW_STATS)
@@ -237,5 +197,4 @@ void DebugHud::RenderUi(VariantMap& eventData)
     }
     ui::End();
 }
-
 }

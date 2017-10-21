@@ -28,7 +28,6 @@
 
 namespace Urho3D
 {
-
 class CollisionShape2D;
 class Constraint2D;
 class PhysicsWorld2D;
@@ -176,9 +175,8 @@ private:
     /// Box2D body.
     b2Body* body_;
     /// Collision shapes.
-    Vector<WeakPtr<CollisionShape2D> > collisionShapes_;
+    Vector<WeakPtr<CollisionShape2D>> collisionShapes_;
     /// Constraints.
-    Vector<WeakPtr<Constraint2D> > constraints_;
+    Vector<WeakPtr<Constraint2D>> constraints_;
 };
-
 }

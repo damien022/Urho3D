@@ -27,7 +27,6 @@
 
 namespace Urho3D
 {
-
 class XMLElement;
 
 /// Orientation.
@@ -204,5 +203,4 @@ private:
     /// Property set.
     SharedPtr<PropertySet2D> propertySet_;
 };
-
 }

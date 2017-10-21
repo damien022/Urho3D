@@ -35,9 +35,8 @@
 
 namespace Urho3D
 {
-
-BackgroundLoader::BackgroundLoader(ResourceCache* owner) :
-    owner_(owner)
+BackgroundLoader::BackgroundLoader(ResourceCache* owner)
+    : owner_(owner)
 {
 }
 
@@ -92,10 +91,11 @@ void BackgroundLoader::ThreadFunction()
             backgroundLoadMutex_.Acquire();
             if (item.dependents_.Size())
             {
-                for (HashSet<Pair<StringHash, StringHash> >::Iterator i = item.dependents_.Begin();
+                for (HashSet<Pair<StringHash, StringHash>>::Iterator i = item.dependents_.Begin();
                      i != item.dependents_.End(); ++i)
                 {
-                    HashMap<Pair<StringHash, StringHash>, BackgroundLoadItem>::Iterator j = backgroundLoadQueue_.Find(*i);
+                    HashMap<Pair<StringHash, StringHash>, BackgroundLoadItem>::Iterator j =
+                        backgroundLoadQueue_.Find(*i);
                     if (j != backgroundLoadQueue_.End())
                         j->second_.dependencies_.Erase(key);
                 }
@@ -160,7 +160,7 @@ bool BackgroundLoader::QueueResource(StringHash type, const String& name, bool s
         }
         else
             URHO3D_LOGWARNING("Resource " + caller->GetName() +
-                       " requested for a background loaded resource but was not in the background load queue");
+                              " requested for a background loaded resource but was not in the background load queue");
     }
 
     // Start the background loader thread now
@@ -200,11 +200,12 @@ void BackgroundLoader::WaitForResource(StringHash type, StringHash nameHash)
             }
 
             if (didWait)
-                URHO3D_LOGDEBUG("Waited " + String(waitTimer.GetUSec(false) / 1000) + " ms for background loaded resource " +
-                         resource->GetName());
+                URHO3D_LOGDEBUG("Waited " + String(waitTimer.GetUSec(false) / 1000) +
+                                " ms for background loaded resource " + resource->GetName());
         }
 
-        // This may take a long time and may potentially wait on other resources, so it is important we do not hold the mutex during this
+        // This may take a long time and may potentially wait on other resources, so it is important we do not hold the
+        // mutex during this
         FinishBackgroundLoading(i->second_);
 
         backgroundLoadMutex_.Acquire();
@@ -294,7 +295,6 @@ void BackgroundLoader::FinishBackgroundLoading(BackgroundLoadItem& item)
         owner_->SendEvent(E_RESOURCEBACKGROUNDLOADED, eventData);
     }
 }
-
 }
 
 #endif

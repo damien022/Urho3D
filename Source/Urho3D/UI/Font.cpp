@@ -27,37 +27,33 @@
 #include "../Graphics/Graphics.h"
 #include "../IO/Deserializer.h"
 #include "../IO/FileSystem.h"
-#include "../UI/Font.h"
-#include "../UI/FontFaceBitmap.h"
-#include "../UI/FontFaceFreeType.h"
 #include "../Resource/ResourceCache.h"
 #include "../Resource/XMLElement.h"
 #include "../Resource/XMLFile.h"
+#include "../UI/Font.h"
+#include "../UI/FontFaceBitmap.h"
+#include "../UI/FontFaceFreeType.h"
 
 #include "../DebugNew.h"
 
 namespace Urho3D
 {
-
 namespace
 {
-    /// Convert float to 26.6 fixed-point (as used internally by FreeType)
-    inline int FloatToFixed(float value)
-    {
-        return (int)(value * 64);
-    }
+/// Convert float to 26.6 fixed-point (as used internally by FreeType)
+inline int FloatToFixed(float value) { return (int)(value * 64); }
 }
 
 static const float MIN_POINT_SIZE = 1;
 static const float MAX_POINT_SIZE = 96;
 
-Font::Font(Context* context) :
-    Resource(context),
-    fontDataSize_(0),
-    absoluteOffset_(IntVector2::ZERO),
-    scaledOffset_(Vector2::ZERO),
-    fontType_(FONT_NONE),
-    sdfFont_(false)
+Font::Font(Context* context)
+    : Resource(context)
+    , fontDataSize_(0)
+    , absoluteOffset_(IntVector2::ZERO)
+    , scaledOffset_(Vector2::ZERO)
+    , fontType_(FONT_NONE)
+    , sdfFont_(false)
 {
 }
 
@@ -68,10 +64,7 @@ Font::~Font()
     fontData_.Reset();
 }
 
-void Font::RegisterObject(Context* context)
-{
-    context->RegisterFactory<Font>();
-}
+void Font::RegisterObject(Context* context) { context->RegisterFactory<Font>(); }
 
 bool Font::BeginLoad(Deserializer& source)
 {
@@ -126,15 +119,9 @@ bool Font::SaveXML(Serializer& dest, int pointSize, bool usedGlyphs, const Strin
     return packedFontFace->Save(dest, pointSize, indentation);
 }
 
-void Font::SetAbsoluteGlyphOffset(const IntVector2& offset)
-{
-    absoluteOffset_ = offset;
-}
+void Font::SetAbsoluteGlyphOffset(const IntVector2& offset) { absoluteOffset_ = offset; }
 
-void Font::SetScaledGlyphOffset(const Vector2& offset)
-{
-    scaledOffset_ = offset;
-}
+void Font::SetScaledGlyphOffset(const Vector2& offset) { scaledOffset_ = offset; }
 
 FontFace* Font::GetFace(float pointSize)
 {
@@ -143,7 +130,8 @@ FontFace* Font::GetFace(float pointSize)
     if (!graphics)
         return nullptr;
 
-    // For bitmap font type, always return the same font face provided by the font's bitmap file regardless of the actual requested point size
+    // For bitmap font type, always return the same font face provided by the font's bitmap file regardless of the
+    // actual requested point size
     if (fontType_ == FONT_BITMAP)
         pointSize = 0;
     else
@@ -151,7 +139,7 @@ FontFace* Font::GetFace(float pointSize)
 
     // For outline fonts, we return the nearest size in 1/64th increments, as that's what FreeType supports.
     int key = FloatToFixed(pointSize);
-    HashMap<int, SharedPtr<FontFace> >::Iterator i = faces_.Find(key);
+    HashMap<int, SharedPtr<FontFace>>::Iterator i = faces_.Find(key);
     if (i != faces_.End())
     {
         if (!i->second_->IsDataLost())
@@ -184,10 +172,7 @@ IntVector2 Font::GetTotalGlyphOffset(float pointSize) const
     return absoluteOffset_ + IntVector2((int)(multipliedOffset.x_ + 0.5f), (int)(multipliedOffset.y_ + 0.5f));
 }
 
-void Font::ReleaseFaces()
-{
-    faces_.Clear();
-}
+void Font::ReleaseFaces() { faces_.Clear(); }
 
 void Font::LoadParameters()
 {
@@ -241,5 +226,4 @@ FontFace* Font::GetFaceBitmap(float pointSize)
     faces_[key] = newFace;
     return newFace;
 }
-
 }

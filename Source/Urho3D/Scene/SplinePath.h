@@ -23,9 +23,9 @@
 #pragma once
 
 #include "../Container/Ptr.h"
-#include "../Core/Variant.h"
 #include "../Container/Vector.h"
 #include "../Core/Spline.h"
+#include "../Core/Variant.h"
 #include "../Graphics/DebugRenderer.h"
 #include "../Math/MathDefs.h"
 #include "../Math/Vector3.h"
@@ -34,7 +34,6 @@
 
 namespace Urho3D
 {
-
 /// Spline for creating smooth movement based on Speed along a set of Control Points modified by the Interpolation Mode.
 class URHO3D_API SplinePath : public Component
 {
@@ -45,7 +44,7 @@ public:
     SplinePath(Context* context);
 
     /// Destructor.
-    virtual ~SplinePath() override { };
+    virtual ~SplinePath() override{};
     /// Register object factory.
     static void RegisterObject(Context* context);
 
@@ -77,7 +76,7 @@ public:
 
     /// Get the movement Speed.
     float GetSpeed() const { return speed_; }
-    
+
     /// Get the length of SplinePath;
     float GetLength() const { return length_; }
 
@@ -137,7 +136,7 @@ private:
     /// Node to be moved along the SplinePath.
     WeakPtr<Node> controlledNode_;
     /// Control Points for the SplinePath.
-    Vector<WeakPtr<Node> > controlPoints_;
+    Vector<WeakPtr<Node>> controlPoints_;
     /// Control Point ID's for the SplinePath.
     mutable VariantVector controlPointIdsAttr_;
     /// Controlled ID for the SplinePath.

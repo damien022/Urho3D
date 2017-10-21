@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// %File entry within the package file.
 struct PackageEntry
 {
@@ -53,9 +52,11 @@ public:
 
     /// Open the package file. Return true if successful.
     bool Open(const String& fileName, unsigned startOffset = 0);
-    /// Check if a file exists within the package file. This will be case-insensitive on Windows and case-sensitive on other platforms.
+    /// Check if a file exists within the package file. This will be case-insensitive on Windows and case-sensitive on
+    /// other platforms.
     bool Exists(const String& fileName) const;
-    /// Return the file entry corresponding to the name, or null if not found. This will be case-insensitive on Windows and case-sensitive on other platforms.
+    /// Return the file entry corresponding to the name, or null if not found. This will be case-insensitive on Windows
+    /// and case-sensitive on other platforms.
     const PackageEntry* GetEntry(const String& fileName) const;
 
     /// Return all file entries.
@@ -86,15 +87,16 @@ public:
     const Vector<String> GetEntryNames() const { return entries_.Keys(); }
 
     /// Return a file name in the package at the specified index
-    const String& GetEntryName(unsigned index) const 
+    const String& GetEntryName(unsigned index) const
     {
         unsigned nn = 0;
         for (HashMap<String, PackageEntry>::ConstIterator j = entries_.Begin(); j != entries_.End(); ++j)
         {
-            if (nn == index) return j->first_;
+            if (nn == index)
+                return j->first_;
             nn++;
         }
-        return String::EMPTY; 
+        return String::EMPTY;
     }
 
     /// Scan package for specified files.
@@ -116,5 +118,4 @@ private:
     /// Compressed flag.
     bool compressed_;
 };
-
 }

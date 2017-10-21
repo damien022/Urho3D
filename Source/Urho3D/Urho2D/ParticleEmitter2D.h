@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 class ParticleEffect2D;
 class Sprite2D;
 
@@ -162,5 +161,4 @@ private:
     /// Bounding box max point.
     Vector3 boundingBoxMaxPoint_;
 };
-
 }

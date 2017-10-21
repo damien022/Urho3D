@@ -27,10 +27,10 @@
 #include "../IO/Deserializer.h"
 #include "../IO/FileSystem.h"
 #include "../IO/Log.h"
+#include "../Resource/JSONFile.h"
 #include "../Resource/PListFile.h"
 #include "../Resource/ResourceCache.h"
 #include "../Resource/XMLFile.h"
-#include "../Resource/JSONFile.h"
 #include "../Urho2D/Sprite2D.h"
 #include "../Urho2D/SpriteSheet2D.h"
 
@@ -38,20 +38,14 @@
 
 namespace Urho3D
 {
-
-SpriteSheet2D::SpriteSheet2D(Context* context) :
-    Resource(context)
+SpriteSheet2D::SpriteSheet2D(Context* context)
+    : Resource(context)
 {
 }
 
-SpriteSheet2D::~SpriteSheet2D()
-{
-}
+SpriteSheet2D::~SpriteSheet2D() {}
 
-void SpriteSheet2D::RegisterObject(Context* context)
-{
-    context->RegisterFactory<SpriteSheet2D>();
-}
+void SpriteSheet2D::RegisterObject(Context* context) { context->RegisterFactory<SpriteSheet2D>(); }
 
 bool SpriteSheet2D::BeginLoad(Deserializer& source)
 {
@@ -70,7 +64,6 @@ bool SpriteSheet2D::BeginLoad(Deserializer& source)
 
     if (extension == ".json")
         return BeginLoadFromJSONFile(source);
-
 
     URHO3D_LOGERROR("Unsupported file type");
     return false;
@@ -96,7 +89,8 @@ void SpriteSheet2D::SetTexture(Texture2D* texture)
     texture_ = texture;
 }
 
-void SpriteSheet2D::DefineSprite(const String& name, const IntRect& rectangle, const Vector2& hotSpot, const IntVector2& offset)
+void SpriteSheet2D::DefineSprite(const String& name, const IntRect& rectangle, const Vector2& hotSpot,
+                                 const IntVector2& offset)
 {
     if (!texture_)
         return;
@@ -117,7 +111,7 @@ void SpriteSheet2D::DefineSprite(const String& name, const IntRect& rectangle, c
 
 Sprite2D* SpriteSheet2D::GetSprite(const String& name) const
 {
-    HashMap<String, SharedPtr<Sprite2D> >::ConstIterator i = spriteMapping_.Find(name);
+    HashMap<String, SharedPtr<Sprite2D>>::ConstIterator i = spriteMapping_.Find(name);
     if (i == spriteMapping_.End())
         return nullptr;
 
@@ -340,12 +334,10 @@ bool SpriteSheet2D::EndLoadFromJSONFile()
         }
 
         DefineSprite(name, rectangle, hotSpot, offset);
-
     }
 
     loadJSONFile_.Reset();
     loadTextureName_.Clear();
     return true;
 }
-
 }

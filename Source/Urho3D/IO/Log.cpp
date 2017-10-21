@@ -44,39 +44,31 @@ extern "C" void SDL_IOS_LogMessage(const char* message);
 
 namespace Urho3D
 {
-
-const char* logLevelPrefixes[] =
-{
-    "DEBUG",
-    "INFO",
-    "WARNING",
-    "ERROR",
-    nullptr
-};
+const char* logLevelPrefixes[] = {"DEBUG", "INFO", "WARNING", "ERROR", nullptr};
 
 static Log* logInstance = nullptr;
 static bool threadErrorDisplayed = false;
 
-Log::Log(Context* context) :
-    Object(context),
+Log::Log(Context* context)
+    : Object(context)
+    ,
 #ifdef _DEBUG
-    level_(LOG_DEBUG),
+    level_(LOG_DEBUG)
+    ,
 #else
-    level_(LOG_INFO),
+    level_(LOG_INFO)
+    ,
 #endif
-    timeStamp_(true),
-    inWrite_(false),
-    quiet_(false)
+    timeStamp_(true)
+    , inWrite_(false)
+    , quiet_(false)
 {
     logInstance = this;
 
     SubscribeToEvent(E_ENDFRAME, URHO3D_HANDLER(Log, HandleEndFrame));
 }
 
-Log::~Log()
-{
-    logInstance = nullptr;
-}
+Log::~Log() { logInstance = nullptr; }
 
 void Log::Open(const String& fileName)
 {
@@ -124,15 +116,9 @@ void Log::SetLevel(int level)
     level_ = level;
 }
 
-void Log::SetTimeStamp(bool enable)
-{
-    timeStamp_ = enable;
-}
+void Log::SetTimeStamp(bool enable) { timeStamp_ = enable; }
 
-void Log::SetQuiet(bool quiet)
-{
-    quiet_ = quiet;
-}
+void Log::SetQuiet(bool quiet) { quiet_ = quiet; }
 
 void Log::Write(int level, const String& message)
 {
@@ -291,5 +277,4 @@ void Log::HandleEndFrame(StringHash eventType, VariantMap& eventData)
         threadMessages_.PopFront();
     }
 }
-
 }

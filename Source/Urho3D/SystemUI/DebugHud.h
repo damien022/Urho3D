@@ -27,7 +27,6 @@
 
 namespace Urho3D
 {
-
 static const unsigned DEBUGHUD_SHOW_NONE = 0x0;
 static const unsigned DEBUGHUD_SHOW_STATS = 0x1;
 static const unsigned DEBUGHUD_SHOW_MODE = 0x2;
@@ -77,7 +76,8 @@ public:
     /// Limit rendering area of debug hud.
     /// \param position of debug hud from top-left corner of the screen.
     /// \param size specifies size of debug hud rect. Pass zero vector to occupy entire screen and automatically resize
-    /// debug hud to the size of the screen later. Calling this method with non-zero size parameter requires user to manually resize debug hud on screen size changes later.
+    /// debug hud to the size of the screen later. Calling this method with non-zero size parameter requires user to
+    /// manually resize debug hud on screen size changes later.
     void SetExtents(const IntVector2& position = IntVector2::ZERO, IntVector2 size = IntVector2::ZERO);
 
 private:
@@ -109,5 +109,4 @@ private:
     /// Cached position (top-left corner) of stats.
     Vector2 posStats_;
 };
-
 }

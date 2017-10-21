@@ -28,7 +28,6 @@
 
 namespace Urho3D
 {
-
 /// Abstract stream for reading.
 class URHO3D_API Deserializer
 {
@@ -148,5 +147,4 @@ protected:
     /// Stream size.
     unsigned size_;
 };
-
 }

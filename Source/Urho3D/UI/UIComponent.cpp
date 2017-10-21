@@ -22,32 +22,30 @@
 #include "UIComponent.h"
 #include "../Core/Context.h"
 #include "../Graphics/BillboardSet.h"
-#include "../Graphics/Graphics.h"
-#include "../Graphics/Octree.h"
-#include "../Graphics/Technique.h"
-#include "../Graphics/Material.h"
-#include "../Graphics/Texture2D.h"
-#include "../Graphics/StaticModel.h"
-#include "../Graphics/Renderer.h"
 #include "../Graphics/Camera.h"
+#include "../Graphics/Graphics.h"
+#include "../Graphics/Material.h"
+#include "../Graphics/Octree.h"
+#include "../Graphics/Renderer.h"
+#include "../Graphics/StaticModel.h"
+#include "../Graphics/Technique.h"
+#include "../Graphics/Texture2D.h"
 #include "../Graphics/VertexBuffer.h"
-#include "../Scene/Scene.h"
-#include "../Resource/ResourceCache.h"
 #include "../IO/Log.h"
+#include "../Resource/ResourceCache.h"
+#include "../Scene/Scene.h"
 #include "../UI/UI.h"
 #include "../UI/UIEvents.h"
 
-
 namespace Urho3D
 {
-
 static int const UICOMPONENT_DEFAULT_TEXTURE_SIZE = 512;
 static int const UICOMPONENT_MIN_TEXTURE_SIZE = 64;
 static int const UICOMPONENT_MAX_TEXTURE_SIZE = 4096;
 
-UIComponent::UIComponent(Context* context) : 
-    Component(context),
-    isStaticModelOwned_(false)
+UIComponent::UIComponent(Context* context)
+    : Component(context)
+    , isStaticModelOwned_(false)
 {
     vertexBuffer_ = new VertexBuffer(context_);
     debugVertexBuffer_ = new VertexBuffer(context_);
@@ -66,30 +64,15 @@ UIComponent::UIComponent(Context* context) :
     rootElement_->SetSize(UICOMPONENT_DEFAULT_TEXTURE_SIZE, UICOMPONENT_DEFAULT_TEXTURE_SIZE);
 }
 
-UIComponent::~UIComponent()
-{
-}
+UIComponent::~UIComponent() {}
 
-void UIComponent::RegisterObject(Context* context)
-{
-    context->RegisterFactory<UIComponent>();
-}
+void UIComponent::RegisterObject(Context* context) { context->RegisterFactory<UIComponent>(); }
 
-UIElement* UIComponent::GetRoot() const
-{
-    return rootElement_;
-}
+UIElement* UIComponent::GetRoot() const { return rootElement_; }
 
-Material* UIComponent::GetMaterial() const
-{
-    return material_;
-}
+Material* UIComponent::GetMaterial() const { return material_; }
 
-Texture2D* UIComponent::GetTexture() const
-{
-    return texture_;
-}
-
+Texture2D* UIComponent::GetTexture() const { return texture_; }
 
 void UIComponent::OnNodeSet(Node* node)
 {
@@ -138,7 +121,7 @@ void UIComponent::OnElementResized(StringHash eventType, VariantMap& args)
         texture_->SetFilterMode(FILTER_BILINEAR);
         texture_->SetAddressMode(COORD_U, ADDRESS_CLAMP);
         texture_->SetAddressMode(COORD_V, ADDRESS_CLAMP);
-        texture_->SetNumLevels(1);                                                // No mipmaps
+        texture_->SetNumLevels(1); // No mipmaps
         texture_->GetRenderSurface()->SetUpdateMode(SURFACE_MANUALUPDATE);
     }
     else
@@ -202,5 +185,4 @@ bool UIComponent::ScreenToUIPosition(IntVector2 screenPos, IntVector2& result)
     }
     return false;
 }
-
 }

@@ -27,16 +27,13 @@
 
 namespace pugi
 {
-
 class xml_document;
 class xml_node;
 class xpath_node;
-
 }
 
 namespace Urho3D
 {
-
 /// XML document resource.
 class URHO3D_API XMLFile : public Resource
 {
@@ -96,5 +93,4 @@ private:
     /// Pugixml document.
     UniquePtr<pugi::xml_document> document_;
 };
-
 }

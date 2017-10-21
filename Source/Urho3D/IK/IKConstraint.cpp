@@ -20,9 +20,9 @@
 // THE SOFTWARE.
 //
 
+#include "../IK/IKConstraint.h"
 #include "../Core/Context.h"
 #include "../IK/IK.h"
-#include "../IK/IKConstraint.h"
 #include "../Scene/Node.h"
 #include "../Scene/SceneEvents.h"
 
@@ -31,22 +31,19 @@
 
 namespace Urho3D
 {
-
 extern const char* IK_CATEGORY;
 
 // ----------------------------------------------------------------------------
-IKConstraint::IKConstraint(Context* context) :
-    Component(context),
-    ikConstraintNode_(nullptr),
-    stiffness_(0.0f),
-    stretchiness_(0.0f)
+IKConstraint::IKConstraint(Context* context)
+    : Component(context)
+    , ikConstraintNode_(nullptr)
+    , stiffness_(0.0f)
+    , stretchiness_(0.0f)
 {
 }
 
 // ----------------------------------------------------------------------------
-IKConstraint::~IKConstraint()
-{
-}
+IKConstraint::~IKConstraint() {}
 
 // ----------------------------------------------------------------------------
 void IKConstraint::RegisterObject(Context* context)
@@ -55,14 +52,12 @@ void IKConstraint::RegisterObject(Context* context)
 
     URHO3D_ACCESSOR_ATTRIBUTE("Stiffness", GetStiffness, SetStiffness, float, 0.0f, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Stretchiness", GetStretchiness, SetStretchiness, float, 0.0f, AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Length Constraints", GetLengthConstraints, SetLengthConstraints, Vector2, Vector2::ZERO, AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Length Constraints", GetLengthConstraints, SetLengthConstraints, Vector2, Vector2::ZERO,
+                              AM_DEFAULT);
 }
 
 // ----------------------------------------------------------------------------
-float IKConstraint::GetStiffness() const
-{
-    return stiffness_;
-}
+float IKConstraint::GetStiffness() const { return stiffness_; }
 
 // ----------------------------------------------------------------------------
 void IKConstraint::SetStiffness(float stiffness)
@@ -74,10 +69,7 @@ void IKConstraint::SetStiffness(float stiffness)
 }
 
 // ----------------------------------------------------------------------------
-float IKConstraint::GetStretchiness() const
-{
-    return stretchiness_;
-}
+float IKConstraint::GetStretchiness() const { return stretchiness_; }
 
 // ----------------------------------------------------------------------------
 void IKConstraint::SetStretchiness(float stretchiness)
@@ -89,10 +81,7 @@ void IKConstraint::SetStretchiness(float stretchiness)
 }
 
 // ----------------------------------------------------------------------------
-const Vector2& IKConstraint::GetLengthConstraints() const
-{
-    return lengthConstraints_;
-}
+const Vector2& IKConstraint::GetLengthConstraints() const { return lengthConstraints_; }
 
 // ----------------------------------------------------------------------------
 void IKConstraint::SetLengthConstraints(const Vector2& lengthConstraints)

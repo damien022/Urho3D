@@ -31,7 +31,6 @@
 
 namespace Urho3D
 {
-
 class Geometry;
 class Drawable;
 class Light;
@@ -175,7 +174,7 @@ class URHO3D_API Renderer : public Object
     URHO3D_OBJECT(Renderer, Object);
 
 public:
-    using ShadowMapFilter = void(Object::*)(View* view, Texture2D* shadowMap, float blurScale);
+    using ShadowMapFilter = void (Object::*)(View* view, Texture2D* shadowMap, float blurScale);
 
     /// Construct.
     Renderer(Context* context);
@@ -220,11 +219,14 @@ public:
     void SetShadowMapFilter(Object* instance, ShadowMapFilter functionPtr);
     /// Set reuse of shadow maps. Default is true. If disabled, also transparent geometry can be shadowed.
     void SetReuseShadowMaps(bool enable);
-    /// Set maximum number of shadow maps created for one resolution. Only has effect if reuse of shadow maps is disabled.
+    /// Set maximum number of shadow maps created for one resolution. Only has effect if reuse of shadow maps is
+    /// disabled.
     void SetMaxShadowMaps(int shadowMaps);
-    /// Set dynamic instancing on/off. When on (default), drawables using the same static-type geometry and material will be automatically combined to an instanced draw call.
+    /// Set dynamic instancing on/off. When on (default), drawables using the same static-type geometry and material
+    /// will be automatically combined to an instanced draw call.
     void SetDynamicInstancing(bool enable);
-    /// Set number of extra instancing buffer elements. Default is 0. Extra 4-vectors are available through TEXCOORD7 and further.
+    /// Set number of extra instancing buffer elements. Default is 0. Extra 4-vectors are available through TEXCOORD7
+    /// and further.
     void SetNumExtraInstancingBufferElements(int elements);
     /// Set minimum number of instances required in a batch group to render as instanced.
     void SetMinInstances(int instances);
@@ -238,11 +240,14 @@ public:
     void SetOccluderSizeThreshold(float screenSize);
     /// Set whether to thread occluder rendering. Default false.
     void SetThreadedOcclusion(bool enable);
-    /// Set shadow depth bias multiplier for mobile platforms to counteract possible worse shadow map precision. Default 1.0 (no effect.)
+    /// Set shadow depth bias multiplier for mobile platforms to counteract possible worse shadow map precision.
+    /// Default 1.0 (no effect.)
     void SetMobileShadowBiasMul(float mul);
-    /// Set shadow depth bias addition for mobile platforms to counteract possible worse shadow map precision. Default 0.0 (no effect.)
+    /// Set shadow depth bias addition for mobile platforms to counteract possible worse shadow map precision. Default
+    /// 0.0 (no effect.)
     void SetMobileShadowBiasAdd(float add);
-    /// Set shadow normal offset multiplier for mobile platforms to counteract possible worse shadow map precision. Default 1.0 (no effect.)
+    /// Set shadow normal offset multiplier for mobile platforms to counteract possible worse shadow map precision.
+    /// Default 1.0 (no effect.)
     void SetMobileNormalOffsetMul(float mul);
     /// Force reload of shaders.
     void ReloadShaders();
@@ -396,10 +401,12 @@ public:
     Geometry* GetQuadGeometry();
     /// Allocate a shadow map. If shadow map reuse is disabled, a different map is returned each time.
     Texture2D* GetShadowMap(Light* light, Camera* camera, unsigned viewWidth, unsigned viewHeight);
-    /// Allocate a rendertarget or depth-stencil texture for deferred rendering or postprocessing. Should only be called during actual rendering, not before.
-    Texture* GetScreenBuffer
-        (int width, int height, unsigned format, int multiSample, bool autoResolve, bool cubemap, bool filtered, bool srgb, unsigned persistentKey = 0);
-    /// Allocate a depth-stencil surface that does not need to be readable. Should only be called during actual rendering, not before.
+    /// Allocate a rendertarget or depth-stencil texture for deferred rendering or postprocessing. Should only be called
+    /// during actual rendering, not before.
+    Texture* GetScreenBuffer(int width, int height, unsigned format, int multiSample, bool autoResolve, bool cubemap,
+                             bool filtered, bool srgb, unsigned persistentKey = 0);
+    /// Allocate a depth-stencil surface that does not need to be readable. Should only be called during actual
+    /// rendering, not before.
     RenderSurface* GetDepthStencil(int width, int height, int multiSample, bool autoResolve);
     /// Allocate an occlusion buffer.
     OcclusionBuffer* GetOcclusionBuffer(Camera* camera);
@@ -409,11 +416,12 @@ public:
     void StorePreparedView(View* view, Camera* cullCamera);
     /// Return a prepared view if exists for the specified camera. Used to avoid duplicate view preparation CPU work.
     View* GetPreparedView(Camera* cullCamera);
-    /// Choose shaders for a forward rendering batch. The related batch queue is provided in case it has extra shader compilation defines.
+    /// Choose shaders for a forward rendering batch. The related batch queue is provided in case it has extra shader
+    /// compilation defines.
     void SetBatchShaders(Batch& batch, Technique* tech, bool allowShadows, const BatchQueue& queue);
     /// Choose shaders for a deferred light volume batch.
-    void SetLightVolumeBatchShaders
-        (Batch& batch, Camera* camera, const String& vsName, const String& psName, const String& vsDefines, const String& psDefines);
+    void SetLightVolumeBatchShaders(Batch& batch, Camera* camera, const String& vsName, const String& psName,
+                                    const String& vsDefines, const String& psDefines);
     /// Set cull mode while taking possible projection flipping into account.
     void SetCullMode(CullMode mode, Camera* camera);
     /// Ensure sufficient size of the instancing vertex buffer. Return true if successful.
@@ -433,8 +441,10 @@ private:
     void Initialize();
     /// Reload shaders.
     void LoadShaders();
-    /// Reload shaders for a material pass. The related batch queue is provided in case it has extra shader compilation defines.
-    void LoadPassShaders(Pass* pass, Vector<SharedPtr<ShaderVariation> >& vertexShaders, Vector<SharedPtr<ShaderVariation> >& pixelShaders, const BatchQueue& queue);
+    /// Reload shaders for a material pass. The related batch queue is provided in case it has extra shader compilation
+    /// defines.
+    void LoadPassShaders(Pass* pass, Vector<SharedPtr<ShaderVariation>>& vertexShaders,
+                         Vector<SharedPtr<ShaderVariation>>& pixelShaders, const BatchQueue& queue);
     /// Release shaders used in materials.
     void ReleaseMaterialShaders();
     /// Reload textures.
@@ -495,21 +505,21 @@ private:
     /// Indirection cube map for shadowed pointlights.
     SharedPtr<TextureCube> indirectionCubeMap_;
     /// Reusable scene nodes with shadow camera components.
-    Vector<SharedPtr<Node> > shadowCameraNodes_;
+    Vector<SharedPtr<Node>> shadowCameraNodes_;
     /// Reusable occlusion buffers.
-    Vector<SharedPtr<OcclusionBuffer> > occlusionBuffers_;
+    Vector<SharedPtr<OcclusionBuffer>> occlusionBuffers_;
     /// Shadow maps by resolution.
-    HashMap<int, Vector<SharedPtr<Texture2D> > > shadowMaps_;
+    HashMap<int, Vector<SharedPtr<Texture2D>>> shadowMaps_;
     /// Shadow map dummy color buffers by resolution.
-    HashMap<int, SharedPtr<Texture2D> > colorShadowMaps_;
+    HashMap<int, SharedPtr<Texture2D>> colorShadowMaps_;
     /// Shadow map allocations by resolution.
-    HashMap<int, PODVector<Light*> > shadowMapAllocations_;
+    HashMap<int, PODVector<Light*>> shadowMapAllocations_;
     /// Instance of shadow map filter
     Object* shadowMapFilterInstance_;
     /// Function pointer of shadow map filter
     ShadowMapFilter shadowMapFilter_;
     /// Screen buffers by resolution and format.
-    HashMap<long long, Vector<SharedPtr<Texture> > > screenBuffers_;
+    HashMap<long long, Vector<SharedPtr<Texture>>> screenBuffers_;
     /// Current screen buffer allocations by resolution and format.
     HashMap<long long, unsigned> screenBufferAllocations_;
     /// Saved status of screen buffer allocations for restoring.
@@ -517,13 +527,13 @@ private:
     /// Cache for light scissor queries.
     HashMap<Pair<Light*, Camera*>, Rect> lightScissorCache_;
     /// Backbuffer viewports.
-    Vector<SharedPtr<Viewport> > viewports_;
+    Vector<SharedPtr<Viewport>> viewports_;
     /// Render surface viewports queued for update.
-    Vector<Pair<WeakPtr<RenderSurface>, WeakPtr<Viewport> > > queuedViewports_;
+    Vector<Pair<WeakPtr<RenderSurface>, WeakPtr<Viewport>>> queuedViewports_;
     /// Views that have been processed this frame.
-    Vector<WeakPtr<View> > views_;
+    Vector<WeakPtr<View>> views_;
     /// Prepared views by culling camera.
-    HashMap<Camera*, WeakPtr<View> > preparedViews_;
+    HashMap<Camera*, WeakPtr<View>> preparedViews_;
     /// Octrees that have been updated during the frame.
     HashSet<Octree*> updatedOctrees_;
     /// Techniques for which missing shader error has been displayed.
@@ -603,5 +613,4 @@ private:
     /// Flag for views needing reset.
     bool resetViews_;
 };
-
 }

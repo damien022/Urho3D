@@ -22,13 +22,12 @@
 
 #pragma once
 
-#include "../Scene/LogicComponent.h"
 #include "../Physics/PhysicsUtils.h"
 #include "../Physics/RigidBody.h"
+#include "../Scene/LogicComponent.h"
 
 namespace Urho3D
 {
-
 struct RaycastVehicleData;
 
 class URHO3D_API RaycastVehicle : public LogicComponent
@@ -43,7 +42,7 @@ public:
 
     /// Register object factory and attributes.
     static void RegisterObject(Context* context);
-    
+
     /// Handle enabled/disabled state change.
     virtual void OnSetEnabled() override;
 
@@ -51,7 +50,8 @@ public:
     virtual void ApplyAttributes() override;
 
     /// Add a wheel. All parameters are relative to RigidBody / node.
-    void AddWheel(Node* wheelNode, Vector3 wheelDirection, Vector3 wheelAxle, float restLength, float wheelRadius, bool frontWheel);
+    void AddWheel(Node* wheelNode, Vector3 wheelDirection, Vector3 wheelAxle, float restLength, float wheelRadius,
+                  bool frontWheel);
     /// Reset all suspension.
     void ResetSuspension();
     /// Update transform for particular wheel.
@@ -90,7 +90,8 @@ public:
     void SetMaxSideSlipSpeed(float speed);
     /// Set cumulative skid info.
     void SetWheelSkidInfoCumulative(int wheel, float skid);
-    /// Set revolution per minute value for when wheel doesn't touch ground. If set to 0 (or not set), calculated from engine force (probably not what you want).
+    /// Set revolution per minute value for when wheel doesn't touch ground. If set to 0 (or not set), calculated from
+    /// engine force (probably not what you want).
     void SetInAirRPM(float rpm);
     /// Init the vehicle component after creation
     void Init();
@@ -183,5 +184,4 @@ private:
     /// Loaded data temporarily wait here for ApplyAttributes to come pick them up.
     VariantVector loadedWheelData_;
 };
-
 }

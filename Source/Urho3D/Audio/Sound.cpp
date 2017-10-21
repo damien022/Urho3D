@@ -39,7 +39,6 @@
 
 namespace Urho3D
 {
-
 /// WAV format header.
 struct WavHeader
 {
@@ -60,28 +59,23 @@ struct WavHeader
 
 static const unsigned IP_SAFETY = 4;
 
-Sound::Sound(Context* context) :
-    ResourceWithMetadata(context),
-    repeat_(nullptr),
-    end_(nullptr),
-    dataSize_(0),
-    frequency_(44100),
-    looped_(false),
-    sixteenBit_(false),
-    stereo_(false),
-    compressed_(false),
-    compressedLength_(0.0f)
+Sound::Sound(Context* context)
+    : ResourceWithMetadata(context)
+    , repeat_(nullptr)
+    , end_(nullptr)
+    , dataSize_(0)
+    , frequency_(44100)
+    , looped_(false)
+    , sixteenBit_(false)
+    , stereo_(false)
+    , compressed_(false)
+    , compressedLength_(0.0f)
 {
 }
 
-Sound::~Sound()
-{
-}
+Sound::~Sound() {}
 
-void Sound::RegisterObject(Context* context)
-{
-    context->RegisterFactory<Sound>();
-}
+void Sound::RegisterObject(Context* context) { context->RegisterFactory<Sound>(); }
 
 bool Sound::BeginLoad(Deserializer& source)
 {
@@ -377,5 +371,4 @@ void Sound::LoadParameters()
         }
     }
 }
-
 }

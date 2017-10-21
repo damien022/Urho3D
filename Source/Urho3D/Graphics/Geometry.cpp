@@ -33,24 +33,21 @@
 
 namespace Urho3D
 {
-
-Geometry::Geometry(Context* context) :
-    Object(context),
-    primitiveType_(TRIANGLE_LIST),
-    indexStart_(0),
-    indexCount_(0),
-    vertexStart_(0),
-    vertexCount_(0),
-    rawVertexSize_(0),
-    rawIndexSize_(0),
-    lodDistance_(0.0f)
+Geometry::Geometry(Context* context)
+    : Object(context)
+    , primitiveType_(TRIANGLE_LIST)
+    , indexStart_(0)
+    , indexCount_(0)
+    , vertexStart_(0)
+    , vertexCount_(0)
+    , rawVertexSize_(0)
+    , rawIndexSize_(0)
+    , lodDistance_(0.0f)
 {
     SetNumVertexBuffers(1);
 }
 
-Geometry::~Geometry()
-{
-}
+Geometry::~Geometry() {}
 
 bool Geometry::SetNumVertexBuffers(unsigned num)
 {
@@ -78,10 +75,7 @@ bool Geometry::SetVertexBuffer(unsigned index, VertexBuffer* buffer)
     return true;
 }
 
-void Geometry::SetIndexBuffer(IndexBuffer* buffer)
-{
-    indexBuffer_ = buffer;
-}
+void Geometry::SetIndexBuffer(IndexBuffer* buffer) { indexBuffer_ = buffer; }
 
 bool Geometry::SetDrawRange(PrimitiveType type, unsigned indexStart, unsigned indexCount, bool getUsedVertexRange)
 {
@@ -92,8 +86,8 @@ bool Geometry::SetDrawRange(PrimitiveType type, unsigned indexStart, unsigned in
     }
     if (indexBuffer_ && indexStart + indexCount > indexBuffer_->GetIndexCount())
     {
-        URHO3D_LOGERROR("Illegal draw range " + String(indexStart) + " to " + String(indexStart + indexCount - 1) + ", index buffer has " +
-                 String(indexBuffer_->GetIndexCount()) + " indices");
+        URHO3D_LOGERROR("Illegal draw range " + String(indexStart) + " to " + String(indexStart + indexCount - 1) +
+                        ", index buffer has " + String(indexBuffer_->GetIndexCount()) + " indices");
         return false;
     }
 
@@ -119,8 +113,8 @@ bool Geometry::SetDrawRange(PrimitiveType type, unsigned indexStart, unsigned in
     return true;
 }
 
-bool Geometry::SetDrawRange(PrimitiveType type, unsigned indexStart, unsigned indexCount, unsigned minVertex, unsigned vertexCount,
-    bool checkIllegal)
+bool Geometry::SetDrawRange(PrimitiveType type, unsigned indexStart, unsigned indexCount, unsigned minVertex,
+                            unsigned vertexCount, bool checkIllegal)
 {
     if (indexBuffer_)
     {
@@ -128,7 +122,7 @@ bool Geometry::SetDrawRange(PrimitiveType type, unsigned indexStart, unsigned in
         if (checkIllegal && indexStart + indexCount > indexBuffer_->GetIndexCount())
         {
             URHO3D_LOGERROR("Illegal draw range " + String(indexStart) + " to " + String(indexStart + indexCount - 1) +
-                     ", index buffer has " + String(indexBuffer_->GetIndexCount()) + " indices");
+                            ", index buffer has " + String(indexBuffer_->GetIndexCount()) + " indices");
             return false;
         }
     }
@@ -212,7 +206,7 @@ unsigned short Geometry::GetBufferHash() const
 }
 
 void Geometry::GetRawData(const unsigned char*& vertexData, unsigned& vertexSize, const unsigned char*& indexData,
-    unsigned& indexSize, const PODVector<VertexElement>*& elements) const
+                          unsigned& indexSize, const PODVector<VertexElement>*& elements) const
 {
     if (rawVertexData_)
     {
@@ -257,7 +251,8 @@ void Geometry::GetRawData(const unsigned char*& vertexData, unsigned& vertexSize
 }
 
 void Geometry::GetRawDataShared(SharedArrayPtr<unsigned char>& vertexData, unsigned& vertexSize,
-    SharedArrayPtr<unsigned char>& indexData, unsigned& indexSize, const PODVector<VertexElement>*& elements) const
+                                SharedArrayPtr<unsigned char>& indexData, unsigned& indexSize,
+                                const PODVector<VertexElement>*& elements) const
 {
     if (rawVertexData_)
     {
@@ -310,12 +305,12 @@ float Geometry::GetHitDistance(const Ray& ray, Vector3* outNormal, Vector2* outU
     const PODVector<VertexElement>* elements;
 
     GetRawData(vertexData, vertexSize, indexData, indexSize, elements);
-    
+
     if (!vertexData || !elements || VertexBuffer::GetElementOffset(*elements, TYPE_VECTOR3, SEM_POSITION) != 0)
         return M_INFINITY;
 
     unsigned uvOffset = VertexBuffer::GetElementOffset(*elements, TYPE_VECTOR2, SEM_TEXCOORD);
-    
+
     if (outUV && uvOffset == M_MAX_UNSIGNED)
     {
         // requested UV output, but no texture data in vertex buffer
@@ -324,8 +319,9 @@ float Geometry::GetHitDistance(const Ray& ray, Vector3* outNormal, Vector2* outU
         outUV = nullptr;
     }
 
-    return indexData ? ray.HitDistance(vertexData, vertexSize, indexData, indexSize, indexStart_, indexCount_, outNormal, outUV,
-        uvOffset) : ray.HitDistance(vertexData, vertexSize, vertexStart_, vertexCount_, outNormal, outUV, uvOffset);
+    return indexData ? ray.HitDistance(vertexData, vertexSize, indexData, indexSize, indexStart_, indexCount_,
+                                       outNormal, outUV, uvOffset)
+                     : ray.HitDistance(vertexData, vertexSize, vertexStart_, vertexCount_, outNormal, outUV, uvOffset);
 }
 
 bool Geometry::IsInside(const Ray& ray) const
@@ -338,8 +334,9 @@ bool Geometry::IsInside(const Ray& ray) const
 
     GetRawData(vertexData, vertexSize, indexData, indexSize, elements);
 
-    return vertexData ? (indexData ? ray.InsideGeometry(vertexData, vertexSize, indexData, indexSize, indexStart_, indexCount_) :
-                         ray.InsideGeometry(vertexData, vertexSize, vertexStart_, vertexCount_)) : false;
+    return vertexData
+               ? (indexData ? ray.InsideGeometry(vertexData, vertexSize, indexData, indexSize, indexStart_, indexCount_)
+                            : ray.InsideGeometry(vertexData, vertexSize, vertexStart_, vertexCount_))
+               : false;
 }
-
 }

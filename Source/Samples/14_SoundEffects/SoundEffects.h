@@ -26,11 +26,9 @@
 
 namespace Urho3D
 {
-
 class Button;
 class Scene;
 class Slider;
-
 }
 
 /// Sound effects example
@@ -51,19 +49,19 @@ public:
     virtual void Start() override;
 
 protected:
-
     SoundSource* musicSource_;
 
     /// Return XML patch instructions for screen joystick layout for a specific sample app, if any.
-    virtual String GetScreenJoystickPatchString() const override { return
-        "<patch>"
-        "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button2']]\">"
-        "        <attribute name=\"Is Visible\" value=\"false\" />"
-        "    </add>"
-        "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Hat0']]\">"
-        "        <attribute name=\"Is Visible\" value=\"false\" />"
-        "    </add>"
-        "</patch>";
+    virtual String GetScreenJoystickPatchString() const override
+    {
+        return "<patch>"
+               "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button2']]\">"
+               "        <attribute name=\"Is Visible\" value=\"false\" />"
+               "    </add>"
+               "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Hat0']]\">"
+               "        <attribute name=\"Is Visible\" value=\"false\" />"
+               "    </add>"
+               "</patch>";
     }
 
 private:
@@ -84,5 +82,3 @@ private:
     /// Handle music volume slider change.
     void HandleMusicVolume(StringHash eventType, VariantMap& eventData);
 };
-
-

@@ -32,9 +32,9 @@
 #include <Urho3D/Graphics/Renderer.h>
 #include <Urho3D/Graphics/Skybox.h>
 #include <Urho3D/Graphics/Zone.h>
-#include <Urho3D/Input/Input.h>
 #include <Urho3D/IO/File.h>
 #include <Urho3D/IO/FileSystem.h>
+#include <Urho3D/Input/Input.h>
 #include <Urho3D/Physics/CollisionShape.h>
 #include <Urho3D/Physics/PhysicsWorld.h>
 #include <Urho3D/Physics/RigidBody.h>
@@ -50,9 +50,9 @@
 
 URHO3D_DEFINE_APPLICATION_MAIN(Physics)
 
-Physics::Physics(Context* context) :
-    Sample(context),
-    drawDebug_(false)
+Physics::Physics(Context* context)
+    : Sample(context)
+    , drawDebug_(false)
 {
 }
 
@@ -110,9 +110,9 @@ void Physics::CreateScene()
     // Set cascade splits at 10, 50 and 200 world units, fade shadows out at 80% of maximum shadow distance
     light->SetShadowCascade(CascadeParameters(10.0f, 50.0f, 200.0f, 0.0f, 0.8f));
 
-    // Create skybox. The Skybox component is used like StaticModel, but it will be always located at the camera, giving the
-    // illusion of the box planes being far away. Use just the ordinary Box model and a suitable material, whose shader will
-    // generate the necessary 3D texture coordinates for cube mapping
+    // Create skybox. The Skybox component is used like StaticModel, but it will be always located at the camera, giving
+    // the illusion of the box planes being far away. Use just the ordinary Box model and a suitable material, whose
+    // shader will generate the necessary 3D texture coordinates for cube mapping
     Node* skyNode = scene_->CreateChild("Sky");
     skyNode->SetScale(500.0f); // The scale actually does not matter
     Skybox* skybox = skyNode->CreateComponent<Skybox>();
@@ -131,7 +131,7 @@ void Physics::CreateScene()
         // Make the floor physical by adding RigidBody and CollisionShape components. The RigidBody's default
         // parameters make the object static (zero mass.) Note that a CollisionShape by itself will not participate
         // in the physics simulation
-        /*RigidBody* body = */floorNode->CreateComponent<RigidBody>();
+        /*RigidBody* body = */ floorNode->CreateComponent<RigidBody>();
         CollisionShape* shape = floorNode->CreateComponent<CollisionShape>();
         // Set a box shape of size 1 x 1 x 1 for collision. The shape will be scaled with the scene node scale, so the
         // rendering and physics representation sizes should match (the box model is also 1 x 1 x 1.)
@@ -163,8 +163,8 @@ void Physics::CreateScene()
         }
     }
 
-    // Create the camera. Set far clip to match the fog. Note: now we actually create the camera node outside the scene, because
-    // we want it to be unaffected by scene load / save
+    // Create the camera. Set far clip to match the fog. Note: now we actually create the camera node outside the scene,
+    // because we want it to be unaffected by scene load / save
     cameraNode_ = new Node(context_);
     Camera* camera = cameraNode_->CreateComponent<Camera>();
     camera->SetFarClip(500.0f);
@@ -180,12 +180,10 @@ void Physics::CreateInstructions()
 
     // Construct new Text object, set string to display and font to use
     Text* instructionText = ui->GetRoot()->CreateChild<Text>();
-    instructionText->SetText(
-        "Use WASD keys and mouse/touch to move\n"
-        "LMB to spawn physics objects\n"
-        "F5 to save scene, F7 to load\n"
-        "Space to toggle physics debug geometry"
-    );
+    instructionText->SetText("Use WASD keys and mouse/touch to move\n"
+                             "LMB to spawn physics objects\n"
+                             "F5 to save scene, F7 to load\n"
+                             "Space to toggle physics debug geometry");
     instructionText->SetFont(cache->GetResource<Font>("Fonts/Anonymous Pro.ttf"), 15);
     // The text has multiple rows. Center them in relation to each other
     instructionText->SetTextAlignment(HA_CENTER);

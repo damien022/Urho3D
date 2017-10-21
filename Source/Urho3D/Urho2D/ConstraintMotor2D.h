@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// 2D motor constraint component.
 class URHO3D_API ConstraintMotor2D : public Constraint2D
 {
@@ -75,5 +74,4 @@ private:
     /// Linear offset.
     Vector2 linearOffset_;
 };
-
 }

@@ -24,7 +24,6 @@
 
 namespace Urho3D
 {
-
 // Engine parameters
 static const String EP_AUTOLOAD_PATHS = "AutoloadPaths";
 static const String EP_BORDERLESS = "Borderless";

@@ -43,7 +43,7 @@ SharedPtr<XMLFile> meshFile_(new XMLFile(context_));
 SharedPtr<XMLFile> skelFile_(new XMLFile(context_));
 Vector<ModelIndexBuffer> indexBuffers_;
 Vector<ModelVertexBuffer> vertexBuffers_;
-Vector<Vector<ModelSubGeometryLodLevel> > subGeometries_;
+Vector<Vector<ModelSubGeometryLodLevel>> subGeometries_;
 Vector<Vector3> subGeometryCenters_;
 Vector<ModelBone> bones_;
 Vector<ModelMorph> morphs_;
@@ -66,11 +66,11 @@ int main(int argc, char** argv)
 {
     Vector<String> arguments;
 
-    #ifdef WIN32
+#ifdef WIN32
     arguments = ParseArguments(GetCommandLineW());
-    #else
+#else
     arguments = ParseArguments(argc, argv);
-    #endif
+#endif
 
     Run(arguments);
     return 0;
@@ -80,17 +80,15 @@ void Run(const Vector<String>& arguments)
 {
     if (arguments.Size() < 2)
     {
-        ErrorExit(
-            "Usage: OgreImporter <input file> <output file> [options]\n\n"
-            "Options:\n"
-            "-l      Output a material list file\n"
-            "-na     Do not output animations\n"
-            "-nm     Do not output morphs\n"
-            "-r      Output only rotations from animations\n"
-            "-s      Split each submesh into own vertex buffer\n"
-            "-t      Generate tangents\n"
-            "-mb <x> Maximum number of bones per submesh, default 64\n"
-        );
+        ErrorExit("Usage: OgreImporter <input file> <output file> [options]\n\n"
+                  "Options:\n"
+                  "-l      Output a material list file\n"
+                  "-na     Do not output animations\n"
+                  "-nm     Do not output morphs\n"
+                  "-r      Output only rotations from animations\n"
+                  "-s      Split each submesh into own vertex buffer\n"
+                  "-t      Generate tangents\n"
+                  "-mb <x> Maximum number of bones per submesh, default 64\n");
     }
 
     bool generateTangents = false;
@@ -202,8 +200,10 @@ void LoadSkeleton(const String& skeletonFileName)
             String bone = boneParent.GetAttribute("bone");
             String parent = boneParent.GetAttribute("parent");
             unsigned i = 0, j = 0;
-            for (i = 0; i < bones_.Size() && bones_[i].name_ != bone; ++i);
-            for (j = 0; j < bones_.Size() && bones_[j].name_ != parent; ++j);
+            for (i = 0; i < bones_.Size() && bones_[i].name_ != bone; ++i)
+                ;
+            for (j = 0; j < bones_.Size() && bones_[j].name_ != parent; ++j)
+                ;
 
             if (i >= bones_.Size() || j >= bones_.Size())
                 ErrorExit("Found indeterminate parent bone assignment");
@@ -224,7 +224,8 @@ void LoadSkeleton(const String& skeletonFileName)
             {
                 for (;;)
                 {
-                    derivedPosition = bones_[index].bindPosition_ + (bones_[index].bindRotation_ * (bones_[index].bindScale_ * derivedPosition));
+                    derivedPosition = bones_[index].bindPosition_ +
+                                      (bones_[index].bindRotation_ * (bones_[index].bindScale_ * derivedPosition));
                     derivedRotation = bones_[index].bindRotation_ * derivedRotation;
                     derivedScale = bones_[index].bindScale_ * derivedScale;
                     if (bones_[index].parentIndex_ != index)
@@ -507,8 +508,9 @@ void LoadMesh(const String& inputFileName, bool generateTangents, bool splitSubM
                 {
                     HashMap<unsigned, unsigned> usedBoneMap;
                     unsigned remapIndex = 0;
-                    for (HashMap<unsigned, PODVector<BoneWeightAssignment> >::Iterator i =
-                        subGeometryLodLevel.boneWeights_.Begin(); i != subGeometryLodLevel.boneWeights_.End(); ++i)
+                    for (HashMap<unsigned, PODVector<BoneWeightAssignment>>::Iterator i =
+                             subGeometryLodLevel.boneWeights_.Begin();
+                         i != subGeometryLodLevel.boneWeights_.End(); ++i)
                     {
                         // Sort the bone assigns by weight
                         Sort(i->second_.Begin(), i->second_.End(), CompareWeights);
@@ -528,7 +530,8 @@ void LoadMesh(const String& inputFileName, bool generateTangents, bool splitSubM
 
                     // If still too many bones in one subgeometry, error
                     if (usedBoneMap.Size() > maxBones_)
-                        ErrorExit("Too many bones (limit " + String(maxBones_) + ") in submesh " + String(subMeshIndex + 1));
+                        ErrorExit("Too many bones (limit " + String(maxBones_) + ") in submesh " +
+                                  String(subMeshIndex + 1));
 
                     // Write mapping of vertex buffer bone indices to original bone indices
                     subGeometryLodLevel.boneMapping_.Resize(usedBoneMap.Size());
@@ -538,8 +541,9 @@ void LoadMesh(const String& inputFileName, bool generateTangents, bool splitSubM
                     sorted = true;
                 }
 
-                for (HashMap<unsigned, PODVector<BoneWeightAssignment> >::Iterator i = subGeometryLodLevel.boneWeights_.Begin();
-                    i != subGeometryLodLevel.boneWeights_.End(); ++i)
+                for (HashMap<unsigned, PODVector<BoneWeightAssignment>>::Iterator i =
+                         subGeometryLodLevel.boneWeights_.Begin();
+                     i != subGeometryLodLevel.boneWeights_.End(); ++i)
                 {
                     // Sort the bone assigns by weight, if not sorted yet in bone remapping pass
                     if (!sorted)
@@ -548,7 +552,8 @@ void LoadMesh(const String& inputFileName, bool generateTangents, bool splitSubM
                     float totalWeight = 0.0f;
                     float normalizationFactor = 0.0f;
 
-                    // Calculate normalization factor in case there are more than 4 blend weights, or they do not add up to 1
+                    // Calculate normalization factor in case there are more than 4 blend weights, or they do not add up
+                    // to 1
                     for (unsigned j = 0; j < i->second_.Size() && j < 4; ++j)
                         totalWeight += i->second_[j].weight_;
                     if (totalWeight > 0.0f)
@@ -592,7 +597,7 @@ void LoadMesh(const String& inputFileName, bool generateTangents, bool splitSubM
         OptimizeIndices(&subGeometryLodLevel, vBuf, iBuf);
 
         PrintLine("Processed submesh " + String(subMeshIndex + 1) + ": " + String(vertices) + " vertices " +
-            String(triangles) + " triangles");
+                  String(triangles) + " triangles");
         Vector<ModelSubGeometryLodLevel> thisSubGeometry;
         thisSubGeometry.Push(subGeometryLodLevel);
         subGeometries_.Push(thisSubGeometry);
@@ -666,14 +671,17 @@ void LoadMesh(const String& inputFileName, bool generateTangents, bool splitSubM
                     OptimizeIndices(&newLodLevel, vBuf, iBuf);
 
                     subGeometries_[subMeshIndex].Push(newLodLevel);
-                    PrintLine("Processed LOD level for submesh " + String(subMeshIndex + 1) + ": distance " + String(distance));
+                    PrintLine("Processed LOD level for submesh " + String(subMeshIndex + 1) + ": distance " +
+                              String(distance));
 
                     lodSubMesh = lodSubMesh.GetNext("lodfacelist");
                 }
                 lod = lod.GetNext("lodgenerated");
             }
         }
-        catch (...) {}
+        catch (...)
+        {
+        }
     }
 
     // Process poses/morphs
@@ -799,7 +807,9 @@ void LoadMesh(const String& inputFileName, bool generateTangents, bool splitSubM
                 }
             }
         }
-        catch (...) {}
+        catch (...)
+        {
+        }
     }
 
     // Check any of the buffers for vertices with missing blend weight assignments
@@ -831,13 +841,13 @@ void LoadMesh(const String& inputFileName, bool generateTangents, bool splitSubM
 
                 vBuf.elementMask_ |= MASK_TANGENT;
 
-                if ((vBuf.elementMask_ & (MASK_POSITION | MASK_NORMAL | MASK_TEXCOORD1)) != (MASK_POSITION | MASK_NORMAL |
-                    MASK_TEXCOORD1))
+                if ((vBuf.elementMask_ & (MASK_POSITION | MASK_NORMAL | MASK_TEXCOORD1)) !=
+                    (MASK_POSITION | MASK_NORMAL | MASK_TEXCOORD1))
                     ErrorExit("To generate tangents, positions normals and texcoords are required");
 
-                GenerateTangents(&vBuf.vertices_[0], sizeof(ModelVertex), &iBuf.indices_[0], sizeof(unsigned), indexStart,
-                    indexCount, offsetof(ModelVertex, normal_), offsetof(ModelVertex, texCoord1_), offsetof(ModelVertex,
-                    tangent_));
+                GenerateTangents(&vBuf.vertices_[0], sizeof(ModelVertex), &iBuf.indices_[0], sizeof(unsigned),
+                                 indexStart, indexCount, offsetof(ModelVertex, normal_),
+                                 offsetof(ModelVertex, texCoord1_), offsetof(ModelVertex, tangent_));
 
                 PrintLine("Generated tangents");
             }
@@ -1103,10 +1113,8 @@ void OptimizeIndices(ModelSubGeometryLodLevel* subGeom, ModelVertexBuffer* vb, M
         for (unsigned i = 0; i < oldTriangles.Size(); ++i)
         {
             Triangle& triangle = oldTriangles[i];
-            float triangleScore =
-                vb->vertices_[triangle.v0_].score_ +
-                vb->vertices_[triangle.v1_].score_ +
-                vb->vertices_[triangle.v2_].score_;
+            float triangleScore = vb->vertices_[triangle.v0_].score_ + vb->vertices_[triangle.v1_].score_ +
+                                  vb->vertices_[triangle.v2_].score_;
 
             if (triangleScore > bestTriangleScore)
             {
@@ -1135,8 +1143,7 @@ void OptimizeIndices(ModelSubGeometryLodLevel* subGeom, ModelVertexBuffer* vb, M
         // Erase the triangle vertices from the middle of the cache, if they were there
         for (unsigned i = 0; i < vertexCache.Size(); ++i)
         {
-            if ((vertexCache[i] == triangleCopy.v0_) ||
-                (vertexCache[i] == triangleCopy.v1_) ||
+            if ((vertexCache[i] == triangleCopy.v0_) || (vertexCache[i] == triangleCopy.v1_) ||
                 (vertexCache[i] == triangleCopy.v2_))
             {
                 vertexCache.Erase(vertexCache.Begin() + i);

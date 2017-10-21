@@ -37,7 +37,6 @@ using ThreadID = unsigned;
 
 namespace Urho3D
 {
-
 /// Operating system thread.
 class URHO3D_API Thread
 {
@@ -50,7 +49,8 @@ public:
     /// The function to run in the thread.
     virtual void ThreadFunction() = 0;
 
-    /// Start running the thread. Return true if successful, or false if already running or if can not create the thread.
+    /// Start running the thread. Return true if successful, or false if already running or if can not create the
+    /// thread.
     bool Run();
     /// Set the running flag to false and wait for the thread to finish.
     void Stop();
@@ -76,5 +76,4 @@ protected:
     /// Main thread's thread ID.
     static ThreadID mainThreadID;
 };
-
 }

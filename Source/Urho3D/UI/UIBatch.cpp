@@ -30,30 +30,31 @@
 
 namespace Urho3D
 {
-
 Vector3 UIBatch::posAdjust(0.0f, 0.0f, 0.0f);
 
-UIBatch::UIBatch() :
-    element_(nullptr),
-    blendMode_(BLEND_REPLACE),
-    texture_(nullptr),
-    invTextureSize_(Vector2::ONE),
-    vertexData_(nullptr),
-    vertexStart_(0),
-    vertexEnd_(0)
+UIBatch::UIBatch()
+    : element_(nullptr)
+    , blendMode_(BLEND_REPLACE)
+    , texture_(nullptr)
+    , invTextureSize_(Vector2::ONE)
+    , vertexData_(nullptr)
+    , vertexStart_(0)
+    , vertexEnd_(0)
 {
     SetDefaultColor();
 }
 
-UIBatch::UIBatch(UIElement* element, BlendMode blendMode, const IntRect& scissor, Texture* texture, PODVector<float>* vertexData) :
-    element_(element),
-    blendMode_(blendMode),
-    scissor_(scissor),
-    texture_(texture),
-    invTextureSize_(texture ? Vector2(1.0f / (float)texture->GetWidth(), 1.0f / (float)texture->GetHeight()) : Vector2::ONE),
-    vertexData_(vertexData),
-    vertexStart_(vertexData->Size()),
-    vertexEnd_(vertexData->Size())
+UIBatch::UIBatch(UIElement* element, BlendMode blendMode, const IntRect& scissor, Texture* texture,
+                 PODVector<float>* vertexData)
+    : element_(element)
+    , blendMode_(blendMode)
+    , scissor_(scissor)
+    , texture_(texture)
+    , invTextureSize_(texture ? Vector2(1.0f / (float)texture->GetWidth(), 1.0f / (float)texture->GetHeight())
+                              : Vector2::ONE)
+    , vertexData_(vertexData)
+    , vertexStart_(vertexData->Size())
+    , vertexEnd_(vertexData->Size())
 {
     SetDefaultColor();
 }
@@ -64,8 +65,8 @@ void UIBatch::SetColor(const Color& color, bool overrideAlpha)
         overrideAlpha = true;
 
     useGradient_ = false;
-    color_ =
-        overrideAlpha ? color.ToUInt() : Color(color.r_, color.g_, color.b_, color.a_ * element_->GetDerivedOpacity()).ToUInt();
+    color_ = overrideAlpha ? color.ToUInt()
+                           : Color(color.r_, color.g_, color.b_, color.a_ * element_->GetDerivedOpacity()).ToUInt();
 }
 
 void UIBatch::SetDefaultColor()
@@ -82,7 +83,8 @@ void UIBatch::SetDefaultColor()
     }
 }
 
-void UIBatch::AddQuad(float x, float y, float width, float height, int texOffsetX, int texOffsetY, int texWidth, int texHeight)
+void UIBatch::AddQuad(float x, float y, float width, float height, int texOffsetX, int texOffsetY, int texWidth,
+                      int texHeight)
 {
     unsigned topLeftColor, topRightColor, bottomLeftColor, bottomRightColor;
 
@@ -166,7 +168,7 @@ void UIBatch::AddQuad(float x, float y, float width, float height, int texOffset
 }
 
 void UIBatch::AddQuad(const Matrix3x4& transform, int x, int y, int width, int height, int texOffsetX, int texOffsetY,
-    int texWidth, int texHeight)
+                      int texWidth, int texHeight)
 {
     unsigned topLeftColor, topRightColor, bottomLeftColor, bottomRightColor;
 
@@ -247,7 +249,8 @@ void UIBatch::AddQuad(const Matrix3x4& transform, int x, int y, int width, int h
     dest[35] = bottomUV;
 }
 
-void UIBatch::AddQuad(int x, int y, int width, int height, int texOffsetX, int texOffsetY, int texWidth, int texHeight, bool tiled)
+void UIBatch::AddQuad(int x, int y, int width, int height, int texOffsetX, int texOffsetY, int texWidth, int texHeight,
+                      bool tiled)
 {
     if (!(element_->HasColorGradient() || element_->GetDerivedColor().ToUInt() & 0xff000000))
         return; // No gradient and alpha is 0, so do not add the quad
@@ -281,8 +284,9 @@ void UIBatch::AddQuad(int x, int y, int width, int height, int texOffsetX, int t
     }
 }
 
-void UIBatch::AddQuad(const Matrix3x4& transform, const IntVector2& a, const IntVector2& b, const IntVector2& c, const IntVector2& d,
-    const IntVector2& texA, const IntVector2& texB, const IntVector2& texC, const IntVector2& texD)
+void UIBatch::AddQuad(const Matrix3x4& transform, const IntVector2& a, const IntVector2& b, const IntVector2& c,
+                      const IntVector2& d, const IntVector2& texA, const IntVector2& texB, const IntVector2& texC,
+                      const IntVector2& texD)
 {
     Vector3 v1 = (transform * Vector3((float)a.x_, (float)a.y_, 0.0f)) - posAdjust;
     Vector3 v2 = (transform * Vector3((float)b.x_, (float)b.y_, 0.0f)) - posAdjust;
@@ -312,7 +316,7 @@ void UIBatch::AddQuad(const Matrix3x4& transform, const IntVector2& a, const Int
     ((unsigned&)dest[9]) = color_;
     dest[10] = uv2.x_;
     dest[11] = uv2.y_;
-    
+
     dest[12] = v3.x_;
     dest[13] = v3.y_;
     dest[14] = 0.0f;
@@ -342,9 +346,10 @@ void UIBatch::AddQuad(const Matrix3x4& transform, const IntVector2& a, const Int
     dest[35] = uv4.y_;
 }
 
-void UIBatch::AddQuad(const Matrix3x4& transform, const IntVector2& a, const IntVector2& b, const IntVector2& c, const IntVector2& d,
-    const IntVector2& texA, const IntVector2& texB, const IntVector2& texC, const IntVector2& texD, const Color& colA,
-    const Color& colB, const Color& colC, const Color& colD)
+void UIBatch::AddQuad(const Matrix3x4& transform, const IntVector2& a, const IntVector2& b, const IntVector2& c,
+                      const IntVector2& d, const IntVector2& texA, const IntVector2& texB, const IntVector2& texC,
+                      const IntVector2& texD, const Color& colA, const Color& colB, const Color& colC,
+                      const Color& colD)
 {
     Vector3 v1 = (transform * Vector3((float)a.x_, (float)a.y_, 0.0f)) - posAdjust;
     Vector3 v2 = (transform * Vector3((float)b.x_, (float)b.y_, 0.0f)) - posAdjust;
@@ -379,7 +384,7 @@ void UIBatch::AddQuad(const Matrix3x4& transform, const IntVector2& a, const Int
     ((unsigned&)dest[9]) = c2;
     dest[10] = uv2.x_;
     dest[11] = uv2.y_;
-    
+
     dest[12] = v3.x_;
     dest[13] = v3.y_;
     dest[14] = 0.0f;
@@ -411,11 +416,8 @@ void UIBatch::AddQuad(const Matrix3x4& transform, const IntVector2& a, const Int
 
 bool UIBatch::Merge(const UIBatch& batch)
 {
-    if (batch.blendMode_ != blendMode_ ||
-        batch.scissor_ != scissor_ ||
-        batch.texture_ != texture_ ||
-        batch.vertexData_ != vertexData_ ||
-        batch.vertexStart_ != vertexEnd_)
+    if (batch.blendMode_ != blendMode_ || batch.scissor_ != scissor_ || batch.texture_ != texture_ ||
+        batch.vertexData_ != vertexData_ || batch.vertexStart_ != vertexEnd_)
         return false;
 
     vertexEnd_ = batch.vertexEnd_;
@@ -455,5 +457,4 @@ void UIBatch::AddOrMerge(const UIBatch& batch, PODVector<UIBatch>& batches)
 
     batches.Push(batch);
 }
-
 }

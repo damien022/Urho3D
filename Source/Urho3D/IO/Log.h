@@ -29,7 +29,6 @@
 
 namespace Urho3D
 {
-
 /// Fictional message level to indicate a stored raw message.
 static const int LOG_RAW = -1;
 /// Debug message level. By default only shown in debug mode.
@@ -49,15 +48,13 @@ class File;
 struct StoredLogMessage
 {
     /// Construct undefined.
-    StoredLogMessage()
-    {
-    }
+    StoredLogMessage() {}
 
     /// Construct with parameters.
-    StoredLogMessage(const String& message, int level, bool error) :
-        message_(message),
-        level_(level),
-        error_(error)
+    StoredLogMessage(const String& message, int level, bool error)
+        : message_(message)
+        , level_(level)
+        , error_(error)
     {
     }
 
@@ -88,7 +85,8 @@ public:
     void SetLevel(int level);
     /// Set whether to timestamp log messages.
     void SetTimeStamp(bool enable);
-    /// Set quiet mode ie. only print error entries to standard error stream (which is normally redirected to console also). Output to log file is not affected by this mode.
+    /// Set quiet mode ie. only print error entries to standard error stream (which is normally redirected to console
+    /// also). Output to log file is not affected by this mode.
     void SetQuiet(bool quiet);
 
     /// Return logging level.
@@ -155,5 +153,4 @@ private:
 #define URHO3D_LOGERRORF(...) ((void)0)
 #define URHO3D_LOGRAWF(...) ((void)0)
 #endif
-
 }

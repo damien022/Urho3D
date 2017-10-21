@@ -37,29 +37,22 @@
 #include "../DebugNew.h"
 
 #ifdef _MSC_VER
-#pragma warning(disable:4355)
+#pragma warning(disable : 4355)
 #endif
 
 namespace Urho3D
 {
-
-static const char* cubeMapLayoutNames[] = {
-    "horizontal",
-    "horizontalnvidia",
-    "horizontalcross",
-    "verticalcross",
-    "blender",
-    nullptr
-};
+static const char* cubeMapLayoutNames[] = {"horizontal",    "horizontalnvidia", "horizontalcross",
+                                           "verticalcross", "blender",          nullptr};
 
 static SharedPtr<Image> GetTileImage(Image* src, int tileX, int tileY, int tileWidth, int tileHeight)
 {
-    return SharedPtr<Image>(
-        src->GetSubimage(IntRect(tileX * tileWidth, tileY * tileHeight, (tileX + 1) * tileWidth, (tileY + 1) * tileHeight)));
+    return SharedPtr<Image>(src->GetSubimage(
+        IntRect(tileX * tileWidth, tileY * tileHeight, (tileX + 1) * tileWidth, (tileY + 1) * tileHeight)));
 }
 
-TextureCube::TextureCube(Context* context) :
-    Texture(context)
+TextureCube::TextureCube(Context* context)
+    : Texture(context)
 {
 #ifdef URHO3D_OPENGL
     target_ = GL_TEXTURE_CUBE_MAP;
@@ -74,15 +67,9 @@ TextureCube::TextureCube(Context* context) :
         faceMemoryUse_[i] = 0;
 }
 
-TextureCube::~TextureCube()
-{
-    Release();
-}
+TextureCube::~TextureCube() { Release(); }
 
-void TextureCube::RegisterObject(Context* context)
-{
-    context->RegisterFactory<TextureCube>();
-}
+void TextureCube::RegisterObject(Context* context) { context->RegisterFactory<TextureCube>(); }
 
 bool TextureCube::BeginLoad(Deserializer& source)
 {
@@ -142,10 +129,9 @@ bool TextureCube::BeginLoad(Deserializer& source)
         }
         else
         {
-        
-            CubeMapLayout layout =
-                (CubeMapLayout)GetStringListIndex(imageElem.GetAttribute("layout").CString(), cubeMapLayoutNames, CML_HORIZONTAL);
-            
+            CubeMapLayout layout = (CubeMapLayout)GetStringListIndex(imageElem.GetAttribute("layout").CString(),
+                                                                     cubeMapLayoutNames, CML_HORIZONTAL);
+
             switch (layout)
             {
             case CML_HORIZONTAL:
@@ -342,7 +328,8 @@ void TextureCube::HandleRenderSurfaceUpdate(StringHash eventType, VariantMap& ev
 
     for (unsigned i = 0; i < MAX_CUBEMAP_FACES; ++i)
     {
-        if (renderSurfaces_[i] && (renderSurfaces_[i]->GetUpdateMode() == SURFACE_UPDATEALWAYS || renderSurfaces_[i]->IsUpdateQueued()))
+        if (renderSurfaces_[i] &&
+            (renderSurfaces_[i]->GetUpdateMode() == SURFACE_UPDATEALWAYS || renderSurfaces_[i]->IsUpdateQueued()))
         {
             if (renderer)
                 renderer->QueueRenderSurface(renderSurfaces_[i]);
@@ -350,5 +337,4 @@ void TextureCube::HandleRenderSurfaceUpdate(StringHash eventType, VariantMap& ev
         }
     }
 }
-
 }

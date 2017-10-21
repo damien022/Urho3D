@@ -22,14 +22,13 @@
 
 #pragma once
 
-#include "../Scene/Component.h"
 #include "../IO/VectorBuffer.h"
+#include "../Scene/Component.h"
 
 #include <Box2D/Box2D.h>
 
 namespace Urho3D
 {
-
 class Camera;
 class CollisionShape2D;
 class RigidBody2D;
@@ -38,13 +37,13 @@ class RigidBody2D;
 struct URHO3D_API PhysicsRaycastResult2D
 {
     /// Construct with defaults.
-    PhysicsRaycastResult2D() :
-        body_(nullptr)
+    PhysicsRaycastResult2D()
+        : body_(nullptr)
     {
     }
 
     /// Test for inequality, added to prevent GCC from complaining.
-    bool operator !=(const PhysicsRaycastResult2D& rhs) const
+    bool operator!=(const PhysicsRaycastResult2D& rhs) const
     {
         return position_ != rhs.position_ || normal_ != rhs.normal_ || distance_ != rhs.distance_ || body_ != rhs.body_;
     }
@@ -104,7 +103,8 @@ public:
     /// Draw a circle.
     virtual void DrawCircle(const b2Vec2& center, float32 radius, const b2Color& color) override;
     /// Draw a solid circle.
-    virtual void DrawSolidCircle(const b2Vec2& center, float32 radius, const b2Vec2& axis, const b2Color& color) override;
+    virtual void DrawSolidCircle(const b2Vec2& center, float32 radius, const b2Vec2& axis,
+                                 const b2Color& color) override;
     /// Draw a line segment.
     virtual void DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& color) override;
     /// Draw a transform. Choose your own length scale.
@@ -153,10 +153,10 @@ public:
 
     /// Perform a physics world raycast and return all hits.
     void Raycast(PODVector<PhysicsRaycastResult2D>& results, const Vector2& startPoint, const Vector2& endPoint,
-        unsigned collisionMask = M_MAX_UNSIGNED);
+                 unsigned collisionMask = M_MAX_UNSIGNED);
     /// Perform a physics world raycast and return the closest hit.
     void RaycastSingle(PhysicsRaycastResult2D& result, const Vector2& startPoint, const Vector2& endPoint,
-        unsigned collisionMask = M_MAX_UNSIGNED);
+                       unsigned collisionMask = M_MAX_UNSIGNED);
     /// Return rigid body at point.
     RigidBody2D* GetRigidBody(const Vector2& point, unsigned collisionMask = M_MAX_UNSIGNED);
     /// Return rigid body at screen point.
@@ -245,7 +245,7 @@ protected:
     /// Applying transforms.
     bool applyingTransforms_;
     /// Rigid bodies.
-    Vector<WeakPtr<RigidBody2D> > rigidBodies_;
+    Vector<WeakPtr<RigidBody2D>> rigidBodies_;
     /// Delayed (parented) world transform assignments.
     HashMap<RigidBody2D*, DelayedWorldTransform2D> delayedWorldTransforms_;
 
@@ -287,5 +287,4 @@ protected:
     /// Temporary buffer with contact data.
     VectorBuffer contacts_;
 };
-
 }

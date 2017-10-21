@@ -23,8 +23,8 @@
 #include "../Precompiled.h"
 
 #include "../Core/Context.h"
-#include "../IO/Log.h"
 #include "../Graphics/Texture2D.h"
+#include "../IO/Log.h"
 #include "../Resource/Image.h"
 #include "../UI/Font.h"
 #include "../UI/FontFace.h"
@@ -33,15 +33,14 @@
 
 namespace Urho3D
 {
-
-FontGlyph::FontGlyph() :
-    page_(M_MAX_UNSIGNED),
-    used_(false)
+FontGlyph::FontGlyph()
+    : page_(M_MAX_UNSIGNED)
+    , used_(false)
 {
 }
 
-FontFace::FontFace(Font* font) :
-    font_(font)
+FontFace::FontFace(Font* font)
+    : font_(font)
 {
 }
 
@@ -100,12 +99,11 @@ bool FontFace::IsDataLost() const
     return false;
 }
 
-
 SharedPtr<Texture2D> FontFace::CreateFaceTexture()
 {
     SharedPtr<Texture2D> texture(new Texture2D(font_->GetContext()));
     texture->SetMipsToSkip(QUALITY_LOW, 0); // No quality reduction
-    texture->SetNumLevels(1); // No mipmaps
+    texture->SetNumLevels(1);               // No mipmaps
     texture->SetAddressMode(COORD_U, ADDRESS_BORDER);
     texture->SetAddressMode(COORD_V, ADDRESS_BORDER);
     texture->SetBorderColor(Color(0.0f, 0.0f, 0.0f, 0.0f));
@@ -122,5 +120,4 @@ SharedPtr<Texture2D> FontFace::LoadFaceTexture(SharedPtr<Image> image)
     }
     return texture;
 }
-
 }

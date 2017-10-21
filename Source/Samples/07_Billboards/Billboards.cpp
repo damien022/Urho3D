@@ -46,9 +46,9 @@
 
 URHO3D_DEFINE_APPLICATION_MAIN(Billboards)
 
-Billboards::Billboards(Context* context) :
-    Sample(context),
-    drawDebug_(false)
+Billboards::Billboards(Context* context)
+    : Sample(context)
+    , drawDebug_(false)
 {
 }
 
@@ -175,7 +175,8 @@ void Billboards::CreateScene()
         float angle = 0.0f;
 
         Vector3 position((i % 3) * 60.0f - 60.0f, 45.0f, (i / 3) * 60.0f - 60.0f);
-        Color color(((i + 1) & 1) * 0.5f + 0.5f, (((i + 1) >> 1) & 1) * 0.5f + 0.5f, (((i + 1) >> 2) & 1) * 0.5f + 0.5f);
+        Color color(((i + 1) & 1) * 0.5f + 0.5f, (((i + 1) >> 1) & 1) * 0.5f + 0.5f,
+                    (((i + 1) >> 2) & 1) * 0.5f + 0.5f);
 
         lightNode->SetPosition(position);
         lightNode->SetDirection(Vector3(Sin(angle), -1.5f, Cos(angle)));
@@ -189,10 +190,11 @@ void Billboards::CreateScene()
         light->SetCastShadows(true);
         light->SetShadowBias(BiasParameters(0.00002f, 0.0f));
 
-        // Configure shadow fading for the lights. When they are far away enough, the lights eventually become unshadowed for
-        // better GPU performance. Note that we could also set the maximum distance for each object to cast shadows
+        // Configure shadow fading for the lights. When they are far away enough, the lights eventually become
+        // unshadowed for better GPU performance. Note that we could also set the maximum distance for each object to
+        // cast shadows
         light->SetShadowFadeDistance(100.0f); // Fade start distance
-        light->SetShadowDistance(125.0f); // Fade end distance, shadows are disabled
+        light->SetShadowDistance(125.0f);     // Fade end distance, shadows are disabled
         // Set half resolution for the shadow maps for increased performance
         light->SetShadowResolution(0.5f);
         // The spot lights will not have anything near them, so move the near plane of the shadow camera farther
@@ -216,10 +218,8 @@ void Billboards::CreateInstructions()
 
     // Construct new Text object, set string to display and font to use
     Text* instructionText = ui->GetRoot()->CreateChild<Text>();
-    instructionText->SetText(
-        "Use WASD keys and mouse/touch to move\n"
-        "Space to toggle debug geometry"
-    );
+    instructionText->SetText("Use WASD keys and mouse/touch to move\n"
+                             "Space to toggle debug geometry");
     instructionText->SetFont(cache->GetResource<Font>("Fonts/Anonymous Pro.ttf"), 15);
     // The text has multiple rows. Center them in relation to each other
     instructionText->SetTextAlignment(HA_CENTER);
@@ -330,8 +330,8 @@ void Billboards::HandleUpdate(StringHash eventType, VariantMap& eventData)
 
 void Billboards::HandlePostRenderUpdate(StringHash eventType, VariantMap& eventData)
 {
-    // If draw debug mode is enabled, draw viewport debug geometry. This time use depth test, as otherwise the result becomes
-    // hard to interpret due to large object count
+    // If draw debug mode is enabled, draw viewport debug geometry. This time use depth test, as otherwise the result
+    // becomes hard to interpret due to large object count
     if (drawDebug_)
         GetSubsystem<Renderer>()->DrawDebugGeometry(true);
 }

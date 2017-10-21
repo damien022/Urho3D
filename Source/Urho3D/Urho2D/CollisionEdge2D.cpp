@@ -30,15 +30,14 @@
 
 namespace Urho3D
 {
-
 extern const char* URHO2D_CATEGORY;
 static const Vector2 DEFAULT_VERTEX1(-0.01f, 0.0f);
 static const Vector2 DEFAULT_VERTEX2(0.01f, 0.0f);
 
-CollisionEdge2D::CollisionEdge2D(Context* context) :
-    CollisionShape2D(context),
-    vertex1_(DEFAULT_VERTEX1),
-    vertex2_(DEFAULT_VERTEX2)
+CollisionEdge2D::CollisionEdge2D(Context* context)
+    : CollisionShape2D(context)
+    , vertex1_(DEFAULT_VERTEX1)
+    , vertex2_(DEFAULT_VERTEX2)
 {
     Vector2 worldScale(cachedWorldScale_.x_, cachedWorldScale_.y_);
     edgeShape_.Set(ToB2Vec2(vertex1_ * worldScale), ToB2Vec2(vertex2_ * worldScale));
@@ -46,9 +45,7 @@ CollisionEdge2D::CollisionEdge2D(Context* context) :
     fixtureDef_.shape = &edgeShape_;
 }
 
-CollisionEdge2D::~CollisionEdge2D()
-{
-}
+CollisionEdge2D::~CollisionEdge2D() {}
 
 void CollisionEdge2D::RegisterObject(Context* context)
 {
@@ -60,15 +57,9 @@ void CollisionEdge2D::RegisterObject(Context* context)
     URHO3D_COPY_BASE_ATTRIBUTES(CollisionShape2D);
 }
 
-void CollisionEdge2D::SetVertex1(const Vector2& vertex)
-{
-    SetVertices(vertex, vertex2_);
-}
+void CollisionEdge2D::SetVertex1(const Vector2& vertex) { SetVertices(vertex, vertex2_); }
 
-void CollisionEdge2D::SetVertex2(const Vector2& vertex)
-{
-    SetVertices(vertex1_, vertex);
-}
+void CollisionEdge2D::SetVertex2(const Vector2& vertex) { SetVertices(vertex1_, vertex); }
 
 void CollisionEdge2D::SetVertices(const Vector2& vertex1, const Vector2& vertex2)
 {
@@ -82,10 +73,7 @@ void CollisionEdge2D::SetVertices(const Vector2& vertex1, const Vector2& vertex2
     RecreateFixture();
 }
 
-void CollisionEdge2D::ApplyNodeWorldScale()
-{
-    RecreateFixture();
-}
+void CollisionEdge2D::ApplyNodeWorldScale() { RecreateFixture(); }
 
 void CollisionEdge2D::RecreateFixture()
 {
@@ -96,5 +84,4 @@ void CollisionEdge2D::RecreateFixture()
 
     CreateFixture();
 }
-
 }

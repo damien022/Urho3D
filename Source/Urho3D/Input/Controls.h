@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// %Controls sent over the network.
 class URHO3D_API Controls
 {
@@ -49,10 +48,7 @@ public:
     }
 
     /// Check if a button is held down.
-    bool IsDown(unsigned button) const
-    {
-        return (buttons_ & button) != 0;
-    }
+    bool IsDown(unsigned button) const { return (buttons_ & button) != 0; }
 
     /// Check if a button was pressed on this frame. Requires previous frame's controls.
     bool IsPressed(unsigned button, const Controls& previousControls) const
@@ -69,5 +65,4 @@ public:
     /// Extra control data.
     VariantMap extraData_;
 };
-
 }

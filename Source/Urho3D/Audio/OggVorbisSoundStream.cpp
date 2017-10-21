@@ -31,7 +31,6 @@
 
 namespace Urho3D
 {
-
 OggVorbisSoundStream::OggVorbisSoundStream(const Sound* sound)
 {
     assert(sound && sound->IsCompressed());
@@ -63,9 +62,9 @@ bool OggVorbisSoundStream::Seek(unsigned sample_number)
 {
     if (!decoder_)
         return false;
-    
+
     stb_vorbis* vorbis = static_cast<stb_vorbis*>(decoder_);
-    
+
     return stb_vorbis_seek(vorbis, sample_number) == 1;
 }
 
@@ -77,7 +76,8 @@ unsigned OggVorbisSoundStream::GetData(signed char* dest, unsigned numBytes)
     stb_vorbis* vorbis = static_cast<stb_vorbis*>(decoder_);
 
     unsigned channels = stereo_ ? 2 : 1;
-    unsigned outSamples = (unsigned)stb_vorbis_get_samples_short_interleaved(vorbis, channels, (short*)dest, numBytes >> 1);
+    unsigned outSamples =
+        (unsigned)stb_vorbis_get_samples_short_interleaved(vorbis, channels, (short*)dest, numBytes >> 1);
     unsigned outBytes = (outSamples * channels) << 1;
 
     // Rewind and retry if is looping and produced less output than should have
@@ -85,12 +85,11 @@ unsigned OggVorbisSoundStream::GetData(signed char* dest, unsigned numBytes)
     {
         numBytes -= outBytes;
         stb_vorbis_seek_start(vorbis);
-        outSamples =
-            (unsigned)stb_vorbis_get_samples_short_interleaved(vorbis, channels, (short*)(dest + outBytes), numBytes >> 1);
+        outSamples = (unsigned)stb_vorbis_get_samples_short_interleaved(vorbis, channels, (short*)(dest + outBytes),
+                                                                        numBytes >> 1);
         outBytes += (outSamples * channels) << 1;
     }
 
     return outBytes;
 }
-
 }

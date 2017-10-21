@@ -27,7 +27,6 @@
 
 namespace Urho3D
 {
-
 enum CrowdAgentRequestedTarget
 {
     CA_REQUESTEDTARGET_NONE = 0,
@@ -48,9 +47,9 @@ enum CrowdAgentTargetState
 
 enum CrowdAgentState
 {
-    CA_STATE_INVALID = 0,   ///< The agent is not in a valid state.
-    CA_STATE_WALKING,       ///< The agent is traversing a normal navigation mesh polygon.
-    CA_STATE_OFFMESH        ///< The agent is traversing an off-mesh connection.
+    CA_STATE_INVALID = 0, ///< The agent is not in a valid state.
+    CA_STATE_WALKING,     ///< The agent is traversing a normal navigation mesh polygon.
+    CA_STATE_OFFMESH      ///< The agent is traversing an off-mesh connection.
 };
 
 enum NavigationQuality
@@ -68,7 +67,8 @@ enum NavigationPushiness
     NAVIGATIONPUSHINESS_NONE
 };
 
-/// Crowd agent component, requires a CrowdManager component in the scene. When not set explicitly, agent's radius and height are defaulted to navigation mesh's agent radius and height, respectively.
+/// Crowd agent component, requires a CrowdManager component in the scene. When not set explicitly, agent's radius and
+/// height are defaulted to navigation mesh's agent radius and height, respectively.
 class URHO3D_API CrowdAgent : public Component
 {
     URHO3D_OBJECT(CrowdAgent, Component);
@@ -97,9 +97,11 @@ public:
     void SetTargetPosition(const Vector3& position);
     /// Submit a new target velocity request for this agent.
     void SetTargetVelocity(const Vector3& velocity);
-    /// Reset any target request for the specified agent. Note that the agent will continue to move into the current direction; set a zero target velocity to actually stop.
+    /// Reset any target request for the specified agent. Note that the agent will continue to move into the current
+    /// direction; set a zero target velocity to actually stop.
     void ResetTarget();
-    /// Update the node position. When set to false, the node position should be updated by other means (e.g. using Physics) in response to the E_CROWD_AGENT_REPOSITION event.
+    /// Update the node position. When set to false, the node position should be updated by other means (e.g. using
+    /// Physics) in response to the E_CROWD_AGENT_REPOSITION event.
     void SetUpdateNodePosition(bool unodepos);
     /// Set the agent's max acceleration.
     void SetMaxAccel(float maxAccel);
@@ -220,11 +222,13 @@ private:
     float height_;
     /// Agent's query filter type, it is an index to the query filter buffer configured in Detour crowd manager.
     unsigned queryFilterType_;
-    /// Agent's obstacle avoidance type, it is an index to the obstacle avoidance array configured in Detour crowd manager. It is ignored when agent's navigation quality is not set to "NAVIGATIONQUALITY_HIGH".
+    /// Agent's obstacle avoidance type, it is an index to the obstacle avoidance array configured in Detour crowd
+    /// manager. It is ignored when agent's navigation quality is not set to "NAVIGATIONQUALITY_HIGH".
     unsigned obstacleAvoidanceType_;
     /// Agent's navigation quality. The higher the setting, the higher the CPU usage during crowd simulation.
     NavigationQuality navQuality_;
-    /// Agent's navigation pushiness. The higher the setting, the stronger the agent pushes its colliding neighbours around.
+    /// Agent's navigation pushiness. The higher the setting, the stronger the agent pushes its colliding neighbours
+    /// around.
     NavigationPushiness navPushiness_;
     /// Agent's previous position used to check for position changes.
     Vector3 previousPosition_;
@@ -235,5 +239,4 @@ private:
     /// Internal flag to ignore transform changes because it came from us, used in OnCrowdAgentReposition().
     bool ignoreTransformChanges_;
 };
-
 }

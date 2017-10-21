@@ -32,55 +32,42 @@
 
 namespace Urho3D
 {
-
 extern const char* SCENE_CATEGORY;
 
-static const char* fillModeNames[] =
-{
-    "Solid",
-    "Wireframe",
-    "Point",
-    nullptr
-};
+static const char* fillModeNames[] = {"Solid", "Wireframe", "Point", nullptr};
 
-static const Matrix4 flipMatrix(
-    1.0f, 0.0f, 0.0f, 0.0f,
-    0.0f, -1.0f, 0.0f, 0.0f,
-    0.0f, 0.0f, 1.0f, 0.0f,
-    0.0f, 0.0f, 0.0f, 1.0f
-);
+static const Matrix4 flipMatrix(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+                                0.0f, 1.0f);
 
-Camera::Camera(Context* context) :
-    Component(context),
-    viewDirty_(true),
-    projectionDirty_(true),
-    frustumDirty_(true),
-    orthographic_(false),
-    nearClip_(DEFAULT_NEARCLIP),
-    farClip_(DEFAULT_FARCLIP),
-    fov_(DEFAULT_CAMERA_FOV),
-    orthoSize_(DEFAULT_ORTHOSIZE),
-    aspectRatio_(1.0f),
-    zoom_(1.0f),
-    lodBias_(1.0f),
-    viewMask_(DEFAULT_VIEWMASK),
-    viewOverrideFlags_(VO_NONE),
-    fillMode_(FILL_SOLID),
-    projectionOffset_(Vector2::ZERO),
-    reflectionPlane_(Plane::UP),
-    clipPlane_(Plane::UP),
-    autoAspectRatio_(true),
-    flipVertical_(false),
-    useReflection_(false),
-    useClipping_(false),
-    customProjection_(false)
+Camera::Camera(Context* context)
+    : Component(context)
+    , viewDirty_(true)
+    , projectionDirty_(true)
+    , frustumDirty_(true)
+    , orthographic_(false)
+    , nearClip_(DEFAULT_NEARCLIP)
+    , farClip_(DEFAULT_FARCLIP)
+    , fov_(DEFAULT_CAMERA_FOV)
+    , orthoSize_(DEFAULT_ORTHOSIZE)
+    , aspectRatio_(1.0f)
+    , zoom_(1.0f)
+    , lodBias_(1.0f)
+    , viewMask_(DEFAULT_VIEWMASK)
+    , viewOverrideFlags_(VO_NONE)
+    , fillMode_(FILL_SOLID)
+    , projectionOffset_(Vector2::ZERO)
+    , reflectionPlane_(Plane::UP)
+    , clipPlane_(Plane::UP)
+    , autoAspectRatio_(true)
+    , flipVertical_(false)
+    , useReflection_(false)
+    , useClipping_(false)
+    , customProjection_(false)
 {
     reflectionMatrix_ = reflectionPlane_.ReflectionMatrix();
 }
 
-Camera::~Camera()
-{
-}
+Camera::~Camera() {}
 
 void Camera::RegisterObject(Context* context)
 {
@@ -94,16 +81,18 @@ void Camera::RegisterObject(Context* context)
     URHO3D_ENUM_ATTRIBUTE("Fill Mode", fillMode_, fillModeNames, FILL_SOLID, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Auto Aspect Ratio", bool, autoAspectRatio_, true, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Orthographic", IsOrthographic, SetOrthographic, bool, false, AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Orthographic Size", GetOrthoSize, SetOrthoSizeAttr, float, DEFAULT_ORTHOSIZE, AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Orthographic Size", GetOrthoSize, SetOrthoSizeAttr, float, DEFAULT_ORTHOSIZE,
+                              AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Zoom", GetZoom, SetZoom, float, 1.0f, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("LOD Bias", GetLodBias, SetLodBias, float, 1.0f, AM_DEFAULT);
     URHO3D_ATTRIBUTE("View Mask", int, viewMask_, DEFAULT_VIEWMASK, AM_DEFAULT);
     URHO3D_ATTRIBUTE("View Override Flags", int, viewOverrideFlags_, VO_NONE, AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Projection Offset", GetProjectionOffset, SetProjectionOffset, Vector2, Vector2::ZERO, AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Projection Offset", GetProjectionOffset, SetProjectionOffset, Vector2, Vector2::ZERO,
+                              AM_DEFAULT);
     URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Reflection Plane", GetReflectionPlaneAttr, SetReflectionPlaneAttr, Vector4,
-        Vector4(0.0f, 1.0f, 0.0f, 0.0f), AM_DEFAULT);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Clip Plane", GetClipPlaneAttr, SetClipPlaneAttr, Vector4, Vector4(0.0f, 1.0f, 0.0f, 0.0f),
-        AM_DEFAULT);
+                                    Vector4(0.0f, 1.0f, 0.0f, 0.0f), AM_DEFAULT);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Clip Plane", GetClipPlaneAttr, SetClipPlaneAttr, Vector4,
+                                    Vector4(0.0f, 1.0f, 0.0f, 0.0f), AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Use Reflection", GetUseReflection, SetUseReflection, bool, false, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Use Clipping", GetUseClipping, SetUseClipping, bool, false, AM_DEFAULT);
 }
@@ -300,7 +289,8 @@ const Frustum& Camera::GetFrustum() const
             if (!orthographic_)
                 frustum_.Define(fov_, aspectRatio_, zoom_, GetNearClip(), GetFarClip(), GetEffectiveWorldTransform());
             else
-                frustum_.DefineOrtho(orthoSize_, aspectRatio_, zoom_, GetNearClip(), GetFarClip(), GetEffectiveWorldTransform());
+                frustum_.DefineOrtho(orthoSize_, aspectRatio_, zoom_, GetNearClip(), GetFarClip(),
+                                     GetEffectiveWorldTransform());
         }
 
         frustumDirty_ = false;
@@ -520,7 +510,8 @@ float Camera::GetLodDistance(float distance, float scale, float bias) const
         return orthoSize_ / d;
 }
 
-Quaternion Camera::GetFaceCameraRotation(const Vector3& position, const Quaternion& rotation, FaceCameraMode mode, float minAngle)
+Quaternion Camera::GetFaceCameraRotation(const Vector3& position, const Quaternion& rotation, FaceCameraMode mode,
+                                         float minAngle)
 {
     if (!node_)
         return rotation;
@@ -531,42 +522,42 @@ Quaternion Camera::GetFaceCameraRotation(const Vector3& position, const Quaterni
         return node_->GetWorldRotation();
 
     case FC_ROTATE_Y:
-        {
-            Vector3 euler = rotation.EulerAngles();
-            euler.y_ = node_->GetWorldRotation().EulerAngles().y_;
-            return Quaternion(euler.x_, euler.y_, euler.z_);
-        }
+    {
+        Vector3 euler = rotation.EulerAngles();
+        euler.y_ = node_->GetWorldRotation().EulerAngles().y_;
+        return Quaternion(euler.x_, euler.y_, euler.z_);
+    }
 
     case FC_LOOKAT_XYZ:
-        {
-            Quaternion lookAt;
-            lookAt.FromLookRotation(position - node_->GetWorldPosition());
-            return lookAt;
-        }
+    {
+        Quaternion lookAt;
+        lookAt.FromLookRotation(position - node_->GetWorldPosition());
+        return lookAt;
+    }
 
     case FC_LOOKAT_Y:
     case FC_LOOKAT_MIXED:
+    {
+        // Mixed mode needs true look-at vector
+        const Vector3 lookAtVec(position - node_->GetWorldPosition());
+        // While Y-only lookat happens on an XZ plane to make sure there are no unwanted transitions or singularities
+        const Vector3 lookAtVecXZ(lookAtVec.x_, 0.0f, lookAtVec.z_);
+
+        Quaternion lookAt;
+        lookAt.FromLookRotation(lookAtVecXZ);
+
+        Vector3 euler = rotation.EulerAngles();
+        if (mode == FC_LOOKAT_MIXED)
         {
-            // Mixed mode needs true look-at vector
-            const Vector3 lookAtVec(position - node_->GetWorldPosition());
-            // While Y-only lookat happens on an XZ plane to make sure there are no unwanted transitions or singularities
-            const Vector3 lookAtVecXZ(lookAtVec.x_, 0.0f, lookAtVec.z_);
-
-            Quaternion lookAt;
-            lookAt.FromLookRotation(lookAtVecXZ);
-
-            Vector3 euler = rotation.EulerAngles();
-            if (mode == FC_LOOKAT_MIXED)
-            {
-                const float angle = lookAtVec.Angle(rotation * Vector3::UP);
-                if (angle > 180 - minAngle)
-                    euler.x_ += minAngle - (180 - angle);
-                else if (angle < minAngle)
-                    euler.x_ -= minAngle - angle;
-            }
-            euler.y_ = lookAt.EulerAngles().y_;
-            return Quaternion(euler.x_, euler.y_, euler.z_);
+            const float angle = lookAtVec.Angle(rotation * Vector3::UP);
+            if (angle > 180 - minAngle)
+                euler.x_ += minAngle - (180 - angle);
+            else if (angle < minAngle)
+                euler.x_ -= minAngle - angle;
         }
+        euler.y_ = lookAt.EulerAngles().y_;
+        return Quaternion(euler.x_, euler.y_, euler.z_);
+    }
 
     default:
         return rotation;
@@ -575,14 +566,12 @@ Quaternion Camera::GetFaceCameraRotation(const Vector3& position, const Quaterni
 
 Matrix3x4 Camera::GetEffectiveWorldTransform() const
 {
-    Matrix3x4 worldTransform = node_ ? Matrix3x4(node_->GetWorldPosition(), node_->GetWorldRotation(), 1.0f) : Matrix3x4::IDENTITY;
+    Matrix3x4 worldTransform =
+        node_ ? Matrix3x4(node_->GetWorldPosition(), node_->GetWorldRotation(), 1.0f) : Matrix3x4::IDENTITY;
     return useReflection_ ? reflectionMatrix_ * worldTransform : worldTransform;
 }
 
-bool Camera::IsProjectionValid() const
-{
-    return GetFarClip() > GetNearClip();
-}
+bool Camera::IsProjectionValid() const { return GetFarClip() > GetNearClip(); }
 
 const Matrix3x4& Camera::GetView() const
 {
@@ -615,25 +604,13 @@ void Camera::SetOrthoSizeAttr(float orthoSize)
     MarkNetworkUpdate();
 }
 
-void Camera::SetReflectionPlaneAttr(const Vector4& value)
-{
-    SetReflectionPlane(Plane(value));
-}
+void Camera::SetReflectionPlaneAttr(const Vector4& value) { SetReflectionPlane(Plane(value)); }
 
-void Camera::SetClipPlaneAttr(const Vector4& value)
-{
-    SetClipPlane(Plane(value));
-}
+void Camera::SetClipPlaneAttr(const Vector4& value) { SetClipPlane(Plane(value)); }
 
-Vector4 Camera::GetReflectionPlaneAttr() const
-{
-    return reflectionPlane_.ToVector4();
-}
+Vector4 Camera::GetReflectionPlaneAttr() const { return reflectionPlane_.ToVector4(); }
 
-Vector4 Camera::GetClipPlaneAttr() const
-{
-    return clipPlane_.ToVector4();
-}
+Vector4 Camera::GetClipPlaneAttr() const { return clipPlane_.ToVector4(); }
 
 void Camera::OnNodeSet(Node* node)
 {
@@ -683,7 +660,8 @@ void Camera::UpdateProjection() const
         projection_.m22_ = q;
         projection_.m23_ = r;
         projection_.m33_ = 1.0f;
-        // Near clip does not affect depth accuracy in ortho projection, so let it stay 0 to avoid problems with shader depth parameters
+        // Near clip does not affect depth accuracy in ortho projection, so let it stay 0 to avoid problems with shader
+        // depth parameters
         projNearClip_ = 0.0f;
         projFarClip_ = farClip_;
     }
@@ -691,5 +669,4 @@ void Camera::UpdateProjection() const
     projectionDirty_ = false;
     customProjection_ = false;
 }
-
 }

@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// 2D prismatic constraint component.
 class URHO3D_API ConstraintPrismatic2D : public Constraint2D
 {
@@ -92,5 +91,4 @@ private:
     /// Axis.
     Vector2 axis_;
 };
-
 }

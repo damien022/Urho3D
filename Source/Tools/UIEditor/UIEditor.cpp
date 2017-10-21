@@ -42,24 +42,26 @@
 #include <Urho3D/UI/UI.h>
 #include <Urho3D/UI/Window.h>
 
-#include <tinyfiledialogs/tinyfiledialogs.h>
-#include <ImGui/imgui_internal.h>
 #include <IconFontCppHeaders/IconsFontAwesome.h>
+#include <ImGui/imgui_internal.h>
+#include <tinyfiledialogs/tinyfiledialogs.h>
 
 #include <unordered_map>
 
 #include "UndoManager.h"
 
-
 using namespace std::placeholders;
 
-#define ENUM_FLAGS(t) \
-inline t operator|(t a, t b) { return static_cast<t>(static_cast<size_t>(a) | static_cast<size_t>(b)); }\
-inline t operator|=(t& a, t b) { a = static_cast<t>(static_cast<size_t>(a) | static_cast<size_t>(b)); return a; }
+#define ENUM_FLAGS(t)                                                                                                  \
+    inline t operator|(t a, t b) { return static_cast<t>(static_cast<size_t>(a) | static_cast<size_t>(b)); }           \
+    inline t operator|=(t& a, t b)                                                                                     \
+    {                                                                                                                  \
+        a = static_cast<t>(static_cast<size_t>(a) | static_cast<size_t>(b));                                           \
+        return a;                                                                                                      \
+    }
 
 namespace Urho3D
 {
-
 enum ResizeType
 {
     RESIZE_NONE = 0,
@@ -82,14 +84,12 @@ enum TransformSelectorFlags
 
 ENUM_FLAGS(TransformSelectorFlags);
 
-inline unsigned MakeHash(const ResizeType& value)
-{
-    return value;
-}
+inline unsigned MakeHash(const ResizeType& value) { return value; }
 
 class TransformSelector : public Object
 {
-URHO3D_OBJECT(TransformSelector, Object);
+    URHO3D_OBJECT(TransformSelector, Object);
+
 public:
     /// A flag indicationg type of resize action currently in progress
     ResizeType resizing_ = RESIZE_NONE;
@@ -99,7 +99,8 @@ public:
     SDL_Cursor* cursorArrow;
     /// Flag indicating that this selector set cursor handle
     bool ownsCursor_ = false;
-    /// Flag required for sending single "ResizeStart" event, but only when item is being resized (mouse delta is not zero).
+    /// Flag required for sending single "ResizeStart" event, but only when item is being resized (mouse delta is not
+    /// zero).
     bool resizeStartSent_ = false;
 
     explicit TransformSelector(Context* context)
@@ -108,21 +109,16 @@ public:
         cursors[RESIZE_MOVE] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEALL);
         cursors[RESIZE_LEFT] = cursors[RESIZE_RIGHT] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZEWE);
         cursors[RESIZE_BOTTOM] = cursors[RESIZE_TOP] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENS);
-        cursors[RESIZE_TOP | RESIZE_LEFT] = cursors[RESIZE_BOTTOM | RESIZE_RIGHT] = SDL_CreateSystemCursor(
-            SDL_SYSTEM_CURSOR_SIZENWSE);
-        cursors[RESIZE_TOP | RESIZE_RIGHT] = cursors[RESIZE_BOTTOM | RESIZE_LEFT] = SDL_CreateSystemCursor(
-            SDL_SYSTEM_CURSOR_SIZENESW);
+        cursors[RESIZE_TOP | RESIZE_LEFT] = cursors[RESIZE_BOTTOM | RESIZE_RIGHT] =
+            SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENWSE);
+        cursors[RESIZE_TOP | RESIZE_RIGHT] = cursors[RESIZE_BOTTOM | RESIZE_LEFT] =
+            SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_SIZENESW);
         cursorArrow = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
     }
 
     bool RenderHandle(IntVector2 screenPos, int wh, TransformSelectorFlags flags)
     {
-        IntRect rect(
-            screenPos.x_ - wh / 2,
-            screenPos.y_ - wh / 2,
-            screenPos.x_ + wh / 2,
-            screenPos.y_ + wh / 2
-        );
+        IntRect rect(screenPos.x_ - wh / 2, screenPos.y_ - wh / 2, screenPos.x_ + wh / 2, screenPos.y_ + wh / 2);
 
         if (!(flags & TSF_HIDEHANDLES))
         {
@@ -142,11 +138,8 @@ public:
         bool can_resize_vertical = !(flags & TSF_NOVERTICAL);
 
         // Draw rect around selected element
-        ui::GetWindowDrawList()->AddRect(
-            ToImGui(screenRect.Min()),
-            ToImGui(screenRect.Max()),
-            ui::GetColorU32(ToImGui(Color::GREEN))
-        );
+        ui::GetWindowDrawList()->AddRect(ToImGui(screenRect.Min()), ToImGui(screenRect.Max()),
+                                         ui::GetColorU32(ToImGui(Color::GREEN)));
 
         auto size = screenRect.Size();
         auto handle_size = Max(Min(Min(size.x_ / 4, size.y_ / 4), 8), 2);
@@ -256,7 +249,8 @@ public:
 
 class UIEditor : public Application
 {
-URHO3D_OBJECT(UIEditor, Application);
+    URHO3D_OBJECT(UIEditor, Application);
+
 public:
     SharedPtr<Scene> scene_;
     WeakPtr<UIElement> selectedElement_;
@@ -277,7 +271,10 @@ public:
     ImGuiWindowFlags_ rectWindowFlags_ = (ImGuiWindowFlags_)0;
     IntRect rectWindowDeltaAccumulator_;
 
-    explicit UIEditor(Context* context) : Application(context), undo_(context), inspector_(context)
+    explicit UIEditor(Context* context)
+        : Application(context)
+        , undo_(context)
+        , inspector_(context)
     {
     }
 
@@ -329,15 +326,14 @@ public:
         ui::GetStyle().WindowRounding = 3;
 
         // Arguments
-        for (const auto& arg: GetArguments())
+        for (const auto& arg : GetArguments())
             LoadFile(arg);
     }
 
     void UIElementResizeTrack()
     {
         if (auto selected = GetSelected())
-            undo_.TrackState(selected, {{"Position", selected->GetPosition()},
-                                        {"Size",     selected->GetSize()}});
+            undo_.TrackState(selected, {{"Position", selected->GetPosition()}, {"Size", selected->GetSize()}});
     }
 
     void UIElementTrackAttributes(VariantMap& args)
@@ -476,8 +472,8 @@ public:
                         SaveFileUI(path);
                 }
 
-
-                if (ui::MenuItem(ICON_FA_FLOPPY_O " Save Style As") && rootElement_->GetNumChildren() > 0 && rootElement_->GetChild(0)->GetDefaultStyle())
+                if (ui::MenuItem(ICON_FA_FLOPPY_O " Save Style As") && rootElement_->GetNumChildren() > 0 &&
+                    rootElement_->GetChild(0)->GetDefaultStyle())
                 {
                     if (auto path = tinyfd_saveFileDialog("Save Style file", ".", 1, filters, "XML files"))
                         SaveFileStyle(path);
@@ -543,7 +539,6 @@ public:
         }
         ui::End();
 
-
         ui::SetNextWindowPos({windowWidth - leftPanelRight, menuBarHeight}, ImGuiCond_Always);
         ui::SetNextWindowSize({leftPanelRight, windowHeight - menuBarHeight});
         if (ui::Begin("AttributeList", nullptr, panelFlags))
@@ -580,10 +575,7 @@ public:
             if (auto selected = GetSelected())
             {
                 // Render element selection rect, resize handles, and handle element transformations.
-                IntRect screenRect(
-                   selected->GetScreenPosition(),
-                    selected->GetScreenPosition() + selected->GetSize()
-                );
+                IntRect screenRect(selected->GetScreenPosition(), selected->GetScreenPosition() + selected->GetSize());
                 IntRect delta = IntRect::ZERO;
 
                 auto flags = TSF_NONE;
@@ -633,10 +625,10 @@ public:
             {
                 if (ui::BeginMenu("Add Child"))
                 {
-                    const char* ui_types[] = {"BorderImage", "Button", "CheckBox", "Cursor", "DropDownList", "LineEdit",
-                                              "ListView", "Menu", "ProgressBar", "ScrollBar", "ScrollView", "Slider",
-                                              "Sprite", "Text", "ToolTip", "UIElement", "View3D", "Window", nullptr
-                    };
+                    const char* ui_types[] = {"BorderImage", "Button",   "CheckBox", "Cursor",      "DropDownList",
+                                              "LineEdit",    "ListView", "Menu",     "ProgressBar", "ScrollBar",
+                                              "ScrollView",  "Slider",   "Sprite",   "Text",        "ToolTip",
+                                              "UIElement",   "View3D",   "Window",   nullptr};
                     for (auto i = 0; ui_types[i] != nullptr; i++)
                     {
                         // TODO: element creation with custom styles more usable.
@@ -694,14 +686,15 @@ public:
                     // Texture is better visible this way when zoomed in.
                     tex->SetFilterMode(FILTER_NEAREST);
                     auto padding = ImGui::GetStyle().WindowPadding;
-                    if (ui::Begin("Select Rect", &open, ImVec2(tex->GetWidth() + padding.x * 2,
-                        tex->GetHeight() + padding.y * 2), -1, rectWindowFlags_))
+                    if (ui::Begin("Select Rect", &open,
+                                  ImVec2(tex->GetWidth() + padding.x * 2, tex->GetHeight() + padding.y * 2), -1,
+                                  rectWindowFlags_))
                     {
                         ui::SliderInt("Zoom", &textureWindowScale_, 1, 5);
                         auto windowPos = ui::GetWindowPos();
                         auto imagePos = ui::GetCursorPos();
-                        ui::Image(tex, ImVec2(tex->GetWidth() * textureWindowScale_,
-                                              tex->GetHeight() * textureWindowScale_));
+                        ui::Image(
+                            tex, ImVec2(tex->GetWidth() * textureWindowScale_, tex->GetHeight() * textureWindowScale_));
 
                         // Disable dragging of window if mouse is hovering texture.
                         if (ui::IsItemHovered())
@@ -721,10 +714,8 @@ public:
                                 flags |= TSF_HIDEHANDLES;
 
                             IntRect delta;
-                            IntRect screenRect(
-                                rect.Min() + ToIntVector2(imagePos) + ToIntVector2(windowPos),
-                                IntVector2(rect.right_ - rect.left_, rect.bottom_ - rect.top_)
-                            );
+                            IntRect screenRect(rect.Min() + ToIntVector2(imagePos) + ToIntVector2(windowPos),
+                                               IntVector2(rect.right_ - rect.left_, rect.bottom_ - rect.top_));
                             // Essentially screenRect().Max() += screenRect().Min()
                             screenRect.bottom_ += screenRect.top_;
                             screenRect.right_ += screenRect.left_;
@@ -776,22 +767,18 @@ public:
         }
     }
 
-    void OnFileDrop(VariantMap& args)
-    {
-        LoadFile(args[DropFile::P_FILENAME].GetString());
-    }
+    void OnFileDrop(VariantMap& args) { LoadFile(args[DropFile::P_FILENAME].GetString()); }
 
     String GetResourcePath(String filePath)
     {
         const static Vector<String> dataDirectories = {
-            "Materials", "RenderPaths", "Shaders", "Techniques", "Textures", "Fonts", "Models", "Particle", "Scenes",
-            "Textures", "Music", "Objects", "PostProcess", "Sounds", "UI"
-        };
+            "Materials", "RenderPaths", "Shaders", "Techniques", "Textures",    "Fonts",  "Models", "Particle",
+            "Scenes",    "Textures",    "Music",   "Objects",    "PostProcess", "Sounds", "UI"};
 
-        for (;filePath.Length();)
+        for (; filePath.Length();)
         {
             filePath = GetParentPath(filePath);
-            for (const auto& dataDirectory: dataDirectories)
+            for (const auto& dataDirectory : dataDirectories)
             {
                 if (GetFileSystem()->DirExists(filePath + dataDirectory))
                     return filePath;
@@ -992,7 +979,7 @@ public:
             if (ui::IsItemHovered() && ui::IsMouseClicked(0))
                 SelectItem(element);
 
-            for (const auto& child: element->GetChildren())
+            for (const auto& child : element->GetChildren())
                 RenderUiTree(child);
             ui::TreePop();
         }
@@ -1073,7 +1060,6 @@ public:
             styleName = style.GetAttribute("Style");
         } while (attribute.IsNull() && !styleName.Empty() && !style.IsNull());
 
-
         if (!attribute.IsNull() && attribute.GetAttribute("type") != "None")
             value = GetVariantFromXML(attribute, info);
     }
@@ -1103,7 +1089,6 @@ public:
         return nullptr;
     }
 };
-
 }
 
 URHO3D_DEFINE_APPLICATION_MAIN(Urho3D::UIEditor);

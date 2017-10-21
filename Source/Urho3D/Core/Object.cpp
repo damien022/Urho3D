@@ -23,26 +23,22 @@
 #include "../Precompiled.h"
 
 #include "../Core/Context.h"
-#include "../Core/Thread.h"
 #include "../Core/Profiler.h"
+#include "../Core/Thread.h"
 #include "../IO/Log.h"
 
 #include "../DebugNew.h"
 
-
 namespace Urho3D
 {
-
-TypeInfo::TypeInfo(const char* typeName, const TypeInfo* baseTypeInfo) :
-    type_(typeName),
-    typeName_(typeName),
-    baseTypeInfo_(baseTypeInfo)
+TypeInfo::TypeInfo(const char* typeName, const TypeInfo* baseTypeInfo)
+    : type_(typeName)
+    , typeName_(typeName)
+    , baseTypeInfo_(baseTypeInfo)
 {
 }
 
-TypeInfo::~TypeInfo()
-{
-}
+TypeInfo::~TypeInfo() {}
 
 bool TypeInfo::IsTypeOf(StringHash type) const
 {
@@ -72,9 +68,9 @@ bool TypeInfo::IsTypeOf(const TypeInfo* typeInfo) const
     return false;
 }
 
-Object::Object(Context* context) :
-    context_(context),
-    blockEvents_(false)
+Object::Object(Context* context)
+    : context_(context)
+    , blockEvents_(false)
 {
     assert(context_);
 }
@@ -127,15 +123,9 @@ void Object::OnEvent(Object* sender, StringHash eventType, VariantMap& eventData
     }
 }
 
-bool Object::IsInstanceOf(StringHash type) const
-{
-    return GetTypeInfo()->IsTypeOf(type);
-}
+bool Object::IsInstanceOf(StringHash type) const { return GetTypeInfo()->IsTypeOf(type); }
 
-bool Object::IsInstanceOf(const TypeInfo* typeInfo) const
-{
-    return GetTypeInfo()->IsTypeOf(typeInfo);
-}
+bool Object::IsInstanceOf(const TypeInfo* typeInfo) const { return GetTypeInfo()->IsTypeOf(typeInfo); }
 
 void Object::SubscribeToEvent(StringHash eventType, EventHandler* handler)
 {
@@ -183,12 +173,14 @@ void Object::SubscribeToEvent(Object* sender, StringHash eventType, EventHandler
     }
 }
 
-void Object::SubscribeToEvent(StringHash eventType, const std::function<void(StringHash, VariantMap&)>& function, void* userData/*=0*/)
+void Object::SubscribeToEvent(StringHash eventType, const std::function<void(StringHash, VariantMap&)>& function,
+                              void* userData /*=0*/)
 {
     SubscribeToEvent(eventType, new EventHandler11Impl(function, userData));
 }
 
-void Object::SubscribeToEvent(Object* sender, StringHash eventType, const std::function<void(StringHash, VariantMap&)>& function, void* userData/*=0*/)
+void Object::SubscribeToEvent(Object* sender, StringHash eventType,
+                              const std::function<void(StringHash, VariantMap&)>& function, void* userData /*=0*/)
 {
     SubscribeToEvent(sender, eventType, new EventHandler11Impl(function, userData));
 }
@@ -420,45 +412,21 @@ void Object::SendEventNonProfiled(StringHash eventType, VariantMap& eventData)
     context->EndSendEvent();
 }
 
-VariantMap& Object::GetEventDataMap() const
-{
-    return context_->GetEventDataMap();
-}
+VariantMap& Object::GetEventDataMap() const { return context_->GetEventDataMap(); }
 
-const Variant& Object::GetGlobalVar(StringHash key) const
-{
-    return context_->GetGlobalVar(key);
-}
+const Variant& Object::GetGlobalVar(StringHash key) const { return context_->GetGlobalVar(key); }
 
-const VariantMap& Object::GetGlobalVars() const
-{
-    return context_->GetGlobalVars();
-}
+const VariantMap& Object::GetGlobalVars() const { return context_->GetGlobalVars(); }
 
-void Object::SetGlobalVar(StringHash key, const Variant& value)
-{
-    context_->SetGlobalVar(key, value);
-}
+void Object::SetGlobalVar(StringHash key, const Variant& value) { context_->SetGlobalVar(key, value); }
 
-Object* Object::GetSubsystem(StringHash type) const
-{
-    return context_->GetSubsystem(type);
-}
+Object* Object::GetSubsystem(StringHash type) const { return context_->GetSubsystem(type); }
 
-Object* Object::GetEventSender() const
-{
-    return context_->GetEventSender();
-}
+Object* Object::GetEventSender() const { return context_->GetEventSender(); }
 
-EventHandler* Object::GetEventHandler() const
-{
-    return context_->GetEventHandler();
-}
+EventHandler* Object::GetEventHandler() const { return context_->GetEventHandler(); }
 
-bool Object::HasSubscribedToEvent(StringHash eventType) const
-{
-    return FindEventHandler(eventType) != nullptr;
-}
+bool Object::HasSubscribedToEvent(StringHash eventType) const { return FindEventHandler(eventType) != nullptr; }
 
 bool Object::HasSubscribedToEvent(Object* sender, StringHash eventType) const
 {
@@ -470,8 +438,9 @@ bool Object::HasSubscribedToEvent(Object* sender, StringHash eventType) const
 
 const String& Object::GetCategory() const
 {
-    const HashMap<String, Vector<StringHash> >& objectCategories = context_->GetObjectCategories();
-    for (HashMap<String, Vector<StringHash> >::ConstIterator i = objectCategories.Begin(); i != objectCategories.End(); ++i)
+    const HashMap<String, Vector<StringHash>>& objectCategories = context_->GetObjectCategories();
+    for (HashMap<String, Vector<StringHash>>::ConstIterator i = objectCategories.Begin(); i != objectCategories.End();
+         ++i)
     {
         if (i->second_.Contains(GetType()))
             return i->first_;
@@ -555,7 +524,6 @@ void Object::RemoveEventSender(Object* sender)
     }
 }
 
-
 Urho3D::StringHash EventNameRegistrar::RegisterEventName(const char* eventName)
 {
     StringHash id(eventName);
@@ -566,7 +534,7 @@ Urho3D::StringHash EventNameRegistrar::RegisterEventName(const char* eventName)
 const String& EventNameRegistrar::GetEventName(StringHash eventID)
 {
     HashMap<StringHash, String>::ConstIterator it = GetEventNameMap().Find(eventID);
-    return  it != GetEventNameMap().End() ? it->second_ : String::EMPTY ;
+    return it != GetEventNameMap().End() ? it->second_ : String::EMPTY;
 }
 
 HashMap<StringHash, String>& EventNameRegistrar::GetEventNameMap()
@@ -581,163 +549,67 @@ void Object::SendEvent(StringHash eventType, const VariantMap& eventData)
     SendEvent(eventType, eventDataCopy);
 }
 
-template <> Engine* Object::GetSubsystem<Engine>() const
-{
-    return context_->engine_;
-}
+template <> Engine* Object::GetSubsystem<Engine>() const { return context_->engine_; }
 
-template <> Time* Object::GetSubsystem<Time>() const
-{
-    return context_->time_;
-}
+template <> Time* Object::GetSubsystem<Time>() const { return context_->time_; }
 
-template <> WorkQueue* Object::GetSubsystem<WorkQueue>() const
-{
-    return context_->workQueue_;
-}
+template <> WorkQueue* Object::GetSubsystem<WorkQueue>() const { return context_->workQueue_; }
 
-template <> Profiler* Object::GetSubsystem<Profiler>() const
-{
-    return context_->profiler_;
-}
+template <> Profiler* Object::GetSubsystem<Profiler>() const { return context_->profiler_; }
 
-template <> FileSystem* Object::GetSubsystem<FileSystem>() const
-{
-    return context_->fileSystem_;
-}
+template <> FileSystem* Object::GetSubsystem<FileSystem>() const { return context_->fileSystem_; }
 
-template <> Log* Object::GetSubsystem<Log>() const
-{
-    return context_->log_;
-}
+template <> Log* Object::GetSubsystem<Log>() const { return context_->log_; }
 
-template <> ResourceCache* Object::GetSubsystem<ResourceCache>() const
-{
-    return context_->cache_;
-}
+template <> ResourceCache* Object::GetSubsystem<ResourceCache>() const { return context_->cache_; }
 
-template <> Localization* Object::GetSubsystem<Localization>() const
-{
-    return context_->l18n_;
-}
+template <> Localization* Object::GetSubsystem<Localization>() const { return context_->l18n_; }
 
-template <> Network* Object::GetSubsystem<Network>() const
-{
-    return context_->network_;
-}
+template <> Network* Object::GetSubsystem<Network>() const { return context_->network_; }
 
-template <> Input* Object::GetSubsystem<Input>() const
-{
-    return context_->input_;
-}
+template <> Input* Object::GetSubsystem<Input>() const { return context_->input_; }
 
-template <> Audio* Object::GetSubsystem<Audio>() const
-{
-    return context_->audio_;
-}
+template <> Audio* Object::GetSubsystem<Audio>() const { return context_->audio_; }
 
-template <> UI* Object::GetSubsystem<UI>() const
-{
-    return context_->ui_;
-}
+template <> UI* Object::GetSubsystem<UI>() const { return context_->ui_; }
 
-template <> SystemUI* Object::GetSubsystem<SystemUI>() const
-{
-    return context_->systemUi_;
-}
+template <> SystemUI* Object::GetSubsystem<SystemUI>() const { return context_->systemUi_; }
 
-template <> Graphics* Object::GetSubsystem<Graphics>() const
-{
-    return context_->graphics_;
-}
+template <> Graphics* Object::GetSubsystem<Graphics>() const { return context_->graphics_; }
 
-template <> Renderer* Object::GetSubsystem<Renderer>() const
-{
-    return context_->renderer_;
-}
+template <> Renderer* Object::GetSubsystem<Renderer>() const { return context_->renderer_; }
 
-template <> Tasks* Object::GetSubsystem<Tasks>() const
-{
-    return context_->tasks_;
-}
+template <> Tasks* Object::GetSubsystem<Tasks>() const { return context_->tasks_; }
 
-Engine* Object::GetEngine() const
-{
-    return context_->engine_;
-}
+Engine* Object::GetEngine() const { return context_->engine_; }
 
-Time* Object::GetTime() const
-{
-    return context_->time_; }
+Time* Object::GetTime() const { return context_->time_; }
 
-WorkQueue* Object::GetWorkQueue() const
-{
-    return context_->workQueue_;
-}
+WorkQueue* Object::GetWorkQueue() const { return context_->workQueue_; }
 
-Profiler* Object::GetProfiler() const
-{
-    return context_->profiler_;
-}
+Profiler* Object::GetProfiler() const { return context_->profiler_; }
 
-FileSystem* Object::GetFileSystem() const
-{
-    return context_->fileSystem_;
-}
+FileSystem* Object::GetFileSystem() const { return context_->fileSystem_; }
 
-Log* Object::GetLog() const
-{
-    return context_->log_;
-}
+Log* Object::GetLog() const { return context_->log_; }
 
-ResourceCache* Object::GetCache() const
-{
-    return context_->cache_;
-}
+ResourceCache* Object::GetCache() const { return context_->cache_; }
 
-Localization* Object::GetLocalization() const
-{
-    return context_->l18n_;
-}
+Localization* Object::GetLocalization() const { return context_->l18n_; }
 
-Network* Object::GetNetwork() const
-{
-    return context_->network_;
-}
+Network* Object::GetNetwork() const { return context_->network_; }
 
-Input* Object::GetInput() const
-{
-    return context_->input_;
-}
+Input* Object::GetInput() const { return context_->input_; }
 
-Audio* Object::GetAudio() const
-{
-    return context_->audio_;
-}
+Audio* Object::GetAudio() const { return context_->audio_; }
 
-UI* Object::GetUI() const
-{
-    return context_->ui_;
-}
+UI* Object::GetUI() const { return context_->ui_; }
 
-SystemUI* Object::GetSystemUI() const
-{
-    return context_->systemUi_;
-}
+SystemUI* Object::GetSystemUI() const { return context_->systemUi_; }
 
-Graphics* Object::GetGraphics() const
-{
-    return context_->graphics_;
-}
+Graphics* Object::GetGraphics() const { return context_->graphics_; }
 
-Renderer* Object::GetRenderer() const
-{
-    return context_->renderer_;
-}
+Renderer* Object::GetRenderer() const { return context_->renderer_; }
 
-Tasks* Object::GetTasks() const
-{
-    return context_->tasks_;
-}
-
+Tasks* Object::GetTasks() const { return context_->tasks_; }
 }

@@ -29,7 +29,6 @@
 
 namespace Urho3D
 {
-
 const char* NETWORK_CATEGORY = "Network";
 
 static const float DEFAULT_BASE_PRIORITY = 100.0f;
@@ -37,18 +36,16 @@ static const float DEFAULT_DISTANCE_FACTOR = 0.0f;
 static const float DEFAULT_MIN_PRIORITY = 0.0f;
 static const float UPDATE_THRESHOLD = 100.0f;
 
-NetworkPriority::NetworkPriority(Context* context) :
-    Component(context),
-    basePriority_(DEFAULT_BASE_PRIORITY),
-    distanceFactor_(DEFAULT_DISTANCE_FACTOR),
-    minPriority_(DEFAULT_MIN_PRIORITY),
-    alwaysUpdateOwner_(true)
+NetworkPriority::NetworkPriority(Context* context)
+    : Component(context)
+    , basePriority_(DEFAULT_BASE_PRIORITY)
+    , distanceFactor_(DEFAULT_DISTANCE_FACTOR)
+    , minPriority_(DEFAULT_MIN_PRIORITY)
+    , alwaysUpdateOwner_(true)
 {
 }
 
-NetworkPriority::~NetworkPriority()
-{
-}
+NetworkPriority::~NetworkPriority() {}
 
 void NetworkPriority::RegisterObject(Context* context)
 {
@@ -96,5 +93,4 @@ bool NetworkPriority::CheckUpdate(float distance, float& accumulator)
     else
         return false;
 }
-
 }

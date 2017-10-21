@@ -35,30 +35,27 @@
 
 namespace Urho3D
 {
-
 extern const char* URHO2D_CATEGORY;
 extern const char* blendModeNames[];
 
-StaticSprite2D::StaticSprite2D(Context* context) :
-    Drawable2D(context),
-    blendMode_(BLEND_ALPHA),
-    flipX_(false),
-    flipY_(false),
-    color_(Color::WHITE),
-    useHotSpot_(false),
-    useDrawRect_(false),
-    useTextureRect_(false),
-    hotSpot_(0.5f, 0.5f),
-    drawRect_(Rect::ZERO),
-    textureRect_(Rect::ZERO)
+StaticSprite2D::StaticSprite2D(Context* context)
+    : Drawable2D(context)
+    , blendMode_(BLEND_ALPHA)
+    , flipX_(false)
+    , flipY_(false)
+    , color_(Color::WHITE)
+    , useHotSpot_(false)
+    , useDrawRect_(false)
+    , useTextureRect_(false)
+    , hotSpot_(0.5f, 0.5f)
+    , drawRect_(Rect::ZERO)
+    , textureRect_(Rect::ZERO)
 {
     sourceBatches_.Resize(1);
     sourceBatches_[0].owner_ = this;
 }
 
-StaticSprite2D::~StaticSprite2D()
-{
-}
+StaticSprite2D::~StaticSprite2D() {}
 
 void StaticSprite2D::RegisterObject(Context* context)
 {
@@ -66,14 +63,15 @@ void StaticSprite2D::RegisterObject(Context* context)
 
     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
     URHO3D_COPY_BASE_ATTRIBUTES(Drawable2D);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Sprite", GetSpriteAttr, SetSpriteAttr, ResourceRef, ResourceRef(Sprite2D::GetTypeStatic()),
-        AM_DEFAULT);
-    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Blend Mode", GetBlendMode, SetBlendMode, BlendMode, blendModeNames, BLEND_ALPHA, AM_DEFAULT);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Sprite", GetSpriteAttr, SetSpriteAttr, ResourceRef,
+                                    ResourceRef(Sprite2D::GetTypeStatic()), AM_DEFAULT);
+    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Blend Mode", GetBlendMode, SetBlendMode, BlendMode, blendModeNames, BLEND_ALPHA,
+                                   AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Flip X", GetFlipX, SetFlipX, bool, false, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Flip Y", GetFlipY, SetFlipY, bool, false, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Color", GetColor, SetColor, Color, Color::WHITE, AM_DEFAULT);
     URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Custom material", GetCustomMaterialAttr, SetCustomMaterialAttr, ResourceRef,
-        ResourceRef(Material::GetTypeStatic()), AM_DEFAULT);
+                                    ResourceRef(Material::GetTypeStatic()), AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Hot Spot", GetHotSpot, SetHotSpot, Vector2, Vector2(0.5f, 0.5f), AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Use Hot Spot", GetUseHotSpot, SetUseHotSpot, bool, false, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Draw Rectangle", GetDrawRect, SetDrawRect, Rect, Rect::ZERO, AM_DEFAULT);
@@ -100,7 +98,7 @@ void StaticSprite2D::SetDrawRect(const Rect& rect)
 {
     drawRect_ = rect;
 
-    if(useDrawRect_)
+    if (useDrawRect_)
     {
         sourceBatchesDirty_ = true;
     }
@@ -110,7 +108,7 @@ void StaticSprite2D::SetTextureRect(const Rect& rect)
 {
     textureRect_ = rect;
 
-    if(useTextureRect_)
+    if (useTextureRect_)
     {
         sourceBatchesDirty_ = true;
     }
@@ -139,15 +137,9 @@ void StaticSprite2D::SetFlip(bool flipX, bool flipY)
     MarkNetworkUpdate();
 }
 
-void StaticSprite2D::SetFlipX(bool flipX)
-{
-    SetFlip(flipX, flipY_);
-}
+void StaticSprite2D::SetFlipX(bool flipX) { SetFlip(flipX, flipY_); }
 
-void StaticSprite2D::SetFlipY(bool flipY)
-{
-    SetFlip(flipX_, flipY);
-}
+void StaticSprite2D::SetFlipY(bool flipY) { SetFlip(flipX_, flipY); }
 
 void StaticSprite2D::SetColor(const Color& color)
 {
@@ -229,16 +221,9 @@ void StaticSprite2D::SetCustomMaterial(Material* customMaterial)
     MarkNetworkUpdate();
 }
 
-Sprite2D* StaticSprite2D::GetSprite() const
-{
-    return sprite_;
-}
+Sprite2D* StaticSprite2D::GetSprite() const { return sprite_; }
 
-
-Material* StaticSprite2D::GetCustomMaterial() const
-{
-    return customMaterial_;
-}
+Material* StaticSprite2D::GetCustomMaterial() const { return customMaterial_; }
 
 void StaticSprite2D::SetSpriteAttr(const ResourceRef& value)
 {
@@ -247,10 +232,7 @@ void StaticSprite2D::SetSpriteAttr(const ResourceRef& value)
         SetSprite(sprite);
 }
 
-ResourceRef StaticSprite2D::GetSpriteAttr() const
-{
-    return Sprite2D::SaveToResourceRef(sprite_);
-}
+ResourceRef StaticSprite2D::GetSpriteAttr() const { return Sprite2D::SaveToResourceRef(sprite_); }
 
 void StaticSprite2D::SetCustomMaterialAttr(const ResourceRef& value)
 {
@@ -282,10 +264,7 @@ void StaticSprite2D::OnWorldBoundingBoxUpdate()
     boundingBox_ = worldBoundingBox_.Transformed(node_->GetWorldTransform().Inverse());
 }
 
-void StaticSprite2D::OnDrawOrderChanged()
-{
-    sourceBatches_[0].drawOrder_ = GetDrawOrder();
-}
+void StaticSprite2D::OnDrawOrderChanged() { sourceBatches_[0].drawOrder_ = GetDrawOrder(); }
 
 void StaticSprite2D::UpdateSourceBatches()
 {
@@ -369,5 +348,4 @@ void StaticSprite2D::UpdateDrawRect()
         }
     }
 }
-
 }

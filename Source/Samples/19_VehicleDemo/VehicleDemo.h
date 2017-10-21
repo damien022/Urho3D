@@ -26,10 +26,8 @@
 
 namespace Urho3D
 {
-
 class Node;
 class Scene;
-
 }
 
 class Vehicle;
@@ -38,7 +36,8 @@ class Vehicle;
 /// This sample demonstrates:
 ///     - Creating a heightmap terrain with collision
 ///     - Constructing a physical vehicle with rigid bodies for the hull and the wheels, joined with constraints
-///     - Defining attributes (including node and component references) of a custom component so that it can be saved and loaded
+///     - Defining attributes (including node and component references) of a custom component so that it can be saved
+///     and loaded
 class VehicleDemo : public Sample
 {
     URHO3D_OBJECT(VehicleDemo, Sample);
@@ -46,10 +45,10 @@ class VehicleDemo : public Sample
 public:
     /// Construct.
     VehicleDemo(Context* context);
-    
+
     /// Setup after engine initialization and before running the main loop.
     virtual void Start() override;
-    
+
 private:
     /// Create static scene content.
     void CreateScene();
@@ -63,7 +62,7 @@ private:
     void HandleUpdate(StringHash eventType, VariantMap& eventData);
     /// Handle application post-update. Update camera position after vehicle has moved.
     void HandlePostUpdate(StringHash eventType, VariantMap& eventData);
-    
+
     /// The controllable vehicle component.
     WeakPtr<Vehicle> vehicle_;
 };

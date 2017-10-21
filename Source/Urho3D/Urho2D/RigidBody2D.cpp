@@ -35,22 +35,15 @@
 
 namespace Urho3D
 {
-
 extern const char* URHO2D_CATEGORY;
 static const BodyType2D DEFAULT_BODYTYPE = BT_STATIC;
 
-static const char* bodyTypeNames[] =
-{
-    "Static",
-    "Kinematic",
-    "Dynamic",
-    nullptr
-};
+static const char* bodyTypeNames[] = {"Static", "Kinematic", "Dynamic", nullptr};
 
-RigidBody2D::RigidBody2D(Context* context) :
-    Component(context),
-    useFixtureMass_(true),
-    body_(nullptr)
+RigidBody2D::RigidBody2D(Context* context)
+    : Component(context)
+    , useFixtureMass_(true)
+    , body_(nullptr)
 {
     // Make sure the massData members are zero-initialized.
     massData_.mass = 0.0f;
@@ -73,7 +66,8 @@ void RigidBody2D::RegisterObject(Context* context)
     context->RegisterFactory<RigidBody2D>(URHO2D_CATEGORY);
 
     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
-    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Body Type", GetBodyType, SetBodyType, BodyType2D, bodyTypeNames, DEFAULT_BODYTYPE, AM_DEFAULT);
+    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Body Type", GetBodyType, SetBodyType, BodyType2D, bodyTypeNames, DEFAULT_BODYTYPE,
+                                   AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Mass", GetMass, SetMass, float, 0.0f, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Inertia", GetInertia, SetInertia, float, 0.0f, AM_DEFAULT);
     URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Mass Center", GetMassCenter, SetMassCenter, Vector2, Vector2::ZERO, AM_DEFAULT);
@@ -85,10 +79,10 @@ void RigidBody2D::RegisterObject(Context* context)
     URHO3D_ACCESSOR_ATTRIBUTE("Bullet", IsBullet, SetBullet, bool, false, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Gravity Scale", GetGravityScale, SetGravityScale, float, 1.0f, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Awake", IsAwake, SetAwake, bool, true, AM_DEFAULT);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Linear Velocity", GetLinearVelocity, SetLinearVelocity, Vector2, Vector2::ZERO, AM_DEFAULT);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Linear Velocity", GetLinearVelocity, SetLinearVelocity, Vector2, Vector2::ZERO,
+                                    AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Angular Velocity", GetAngularVelocity, SetAngularVelocity, float, 0.0f, AM_DEFAULT);
 }
-
 
 void RigidBody2D::OnSetEnabled()
 {
@@ -401,7 +395,7 @@ void RigidBody2D::ReleaseBody()
         return;
 
     // Make a copy for iteration
-    Vector<WeakPtr<Constraint2D> > constraints = constraints_;
+    Vector<WeakPtr<Constraint2D>> constraints = constraints_;
     for (unsigned i = 0; i < constraints.Size(); ++i)
     {
         if (constraints[i])
@@ -530,20 +524,14 @@ Vector2 RigidBody2D::GetMassCenter() const
         return body_ ? ToVector2(body_->GetLocalCenter()) : Vector2::ZERO;
 }
 
-bool RigidBody2D::IsAwake() const
-{
-    return body_ ? body_->IsAwake() : bodyDef_.awake;
-}
+bool RigidBody2D::IsAwake() const { return body_ ? body_->IsAwake() : bodyDef_.awake; }
 
 Vector2 RigidBody2D::GetLinearVelocity() const
 {
     return ToVector2(body_ ? body_->GetLinearVelocity() : bodyDef_.linearVelocity);
 }
 
-float RigidBody2D::GetAngularVelocity() const
-{
-    return body_ ? body_->GetAngularVelocity() : bodyDef_.angularVelocity;
-}
+float RigidBody2D::GetAngularVelocity() const { return body_ ? body_->GetAngularVelocity() : bodyDef_.angularVelocity; }
 
 void RigidBody2D::OnNodeSet(Node* node)
 {
@@ -609,5 +597,4 @@ void RigidBody2D::OnMarkedDirty(Node* node)
     else if (newPosition != body_->GetPosition() || newAngle != body_->GetAngle())
         body_->SetTransform(newPosition, newAngle);
 }
-
 }

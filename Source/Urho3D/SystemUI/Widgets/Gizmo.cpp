@@ -20,27 +20,24 @@
 // THE SOFTWARE.
 //
 
-#include "../../Scene/Scene.h"
-#include "../../Graphics/GraphicsEvents.h"
+#include "Gizmo.h"
 #include "../../Graphics/AnimatedModel.h"
 #include "../../Graphics/DebugRenderer.h"
+#include "../../Graphics/GraphicsEvents.h"
 #include "../../IO/Log.h"
+#include "../../Scene/Scene.h"
 #include "../SystemUI.h"
 #include <ImGuizmo/ImGuizmo.h>
-#include "Gizmo.h"
 
 namespace Urho3D
 {
-
-Gizmo::Gizmo(Context* context) : Object(context)
+Gizmo::Gizmo(Context* context)
+    : Object(context)
 {
     SubscribeToEvent(E_ENDRENDERING, [&](StringHash, VariantMap&) { RenderDebugInfo(); });
 }
 
-Gizmo::~Gizmo()
-{
-    UnsubscribeFromAllEvents();
-}
+Gizmo::~Gizmo() { UnsubscribeFromAllEvents(); }
 
 bool Gizmo::Manipulate(const Camera* camera, Node* node)
 {
@@ -49,10 +46,7 @@ bool Gizmo::Manipulate(const Camera* camera, Node* node)
     return Manipulate(camera, nodes);
 }
 
-bool Gizmo::IsActive() const
-{
-    return ImGuizmo::IsUsing();
-}
+bool Gizmo::IsActive() const { return ImGuizmo::IsUsing(); }
 
 bool Gizmo::Manipulate(const Camera* camera, const PODVector<Node*>& nodes)
 {
@@ -71,7 +65,7 @@ bool Gizmo::Manipulate(const Camera* camera, const PODVector<Node*>& nodes)
     // Scaling is always done in local space even for multiselections.
     if (operation_ == GIZMOOP_SCALE)
         mode = ImGuizmo::LOCAL;
-        // Any other operations on multiselections are done in world space.
+    // Any other operations on multiselections are done in world space.
     else if (nodes.Size() > 1)
         mode = ImGuizmo::WORLD;
 
@@ -79,13 +73,13 @@ bool Gizmo::Manipulate(const Camera* camera, const PODVector<Node*>& nodes)
     {
         // Find center point of all nodes
         if (nodes.Size() == 1)
-            currentOrigin_ = nodes.Front()->GetTransform().ToMatrix4();     // Makes gizmo work in local space too.
+            currentOrigin_ = nodes.Front()->GetTransform().ToMatrix4(); // Makes gizmo work in local space too.
         else
         {
             // It is not clear what should be rotation and scale of center point for multiselection, therefore we limit
             // multiselection operations to world space (see above).
             Vector3 center = Vector3::ZERO;
-            for (const auto& node: nodes)
+            for (const auto& node : nodes)
                 center += node->GetWorldPosition();
             center /= nodes.Size();
             currentOrigin_.SetTranslation(center);
@@ -108,7 +102,7 @@ bool Gizmo::Manipulate(const Camera* camera, const PODVector<Node*>& nodes)
 
         currentOrigin_ = Matrix4(tran);
 
-        for (const auto& node: nodes)
+        for (const auto& node : nodes)
         {
             if (node == nullptr)
             {
@@ -181,15 +175,9 @@ void Gizmo::RenderUI()
         SetTransformSpace(TS_LOCAL);
 }
 
-void Gizmo::Select(Node* node)
-{
-    nodeSelection_.Push(WeakPtr<Node>(node));
-}
+void Gizmo::Select(Node* node) { nodeSelection_.Push(WeakPtr<Node>(node)); }
 
-void Gizmo::Unselect(Node* node)
-{
-    nodeSelection_.Remove(WeakPtr<Node>(node));
-}
+void Gizmo::Unselect(Node* node) { nodeSelection_.Remove(WeakPtr<Node>(node)); }
 
 void Gizmo::RenderDebugInfo()
 {
@@ -217,5 +205,4 @@ void Gizmo::RenderDebugInfo()
         }
     }
 }
-
 }

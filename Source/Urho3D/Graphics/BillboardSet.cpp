@@ -40,61 +40,40 @@
 
 namespace Urho3D
 {
-
 extern const char* GEOMETRY_CATEGORY;
 
 static const float INV_SQRT_TWO = 1.0f / sqrtf(2.0f);
 
-const char* faceCameraModeNames[] =
-{
-    "None",
-    "Rotate XYZ",
-    "Rotate Y",
-    "LookAt XYZ",
-    "LookAt Y",
-    "LookAt Mixed",
-    "Direction",
-    nullptr
-};
+const char* faceCameraModeNames[] = {"None",     "Rotate XYZ",   "Rotate Y",  "LookAt XYZ",
+                                     "LookAt Y", "LookAt Mixed", "Direction", nullptr};
 
-static const StringVector billboardsStructureElementNames =
-{
-    "Billboard Count",
-    "   Position",
-    "   Size",
-    "   UV Coordinates",
-    "   Color",
-    "   Rotation",
-    "   Direction",
-    "   Is Enabled"
-};
+static const StringVector billboardsStructureElementNames = {"Billboard Count",   "   Position",  "   Size",
+                                                             "   UV Coordinates", "   Color",     "   Rotation",
+                                                             "   Direction",      "   Is Enabled"};
 
-inline bool CompareBillboards(Billboard* lhs, Billboard* rhs)
-{
-    return lhs->sortDistance_ > rhs->sortDistance_;
-}
+inline bool CompareBillboards(Billboard* lhs, Billboard* rhs) { return lhs->sortDistance_ > rhs->sortDistance_; }
 
-BillboardSet::BillboardSet(Context* context) :
-    Drawable(context, DRAWABLE_GEOMETRY),
-    animationLodBias_(1.0f),
-    animationLodTimer_(0.0f),
-    relative_(true),
-    scaled_(true),
-    sorted_(false),
-    fixedScreenSize_(false),
-    faceCameraMode_(FC_ROTATE_XYZ),
-    minAngle_(0.0f),
-    geometry_(new Geometry(context)),
-    vertexBuffer_(new VertexBuffer(context_)),
-    indexBuffer_(new IndexBuffer(context_)),
-    bufferSizeDirty_(true),
-    bufferDirty_(true),
-    forceUpdate_(false),
-    geometryTypeUpdate_(false),
-    sortThisFrame_(false),
-    hasOrthoCamera_(false),
-    sortFrameNumber_(0),
-    previousOffset_(Vector3::ZERO)
+BillboardSet::BillboardSet(Context* context)
+    : Drawable(context, DRAWABLE_GEOMETRY)
+    , animationLodBias_(1.0f)
+    , animationLodTimer_(0.0f)
+    , relative_(true)
+    , scaled_(true)
+    , sorted_(false)
+    , fixedScreenSize_(false)
+    , faceCameraMode_(FC_ROTATE_XYZ)
+    , minAngle_(0.0f)
+    , geometry_(new Geometry(context))
+    , vertexBuffer_(new VertexBuffer(context_))
+    , indexBuffer_(new IndexBuffer(context_))
+    , bufferSizeDirty_(true)
+    , bufferDirty_(true)
+    , forceUpdate_(false)
+    , geometryTypeUpdate_(false)
+    , sortThisFrame_(false)
+    , hasOrthoCamera_(false)
+    , sortFrameNumber_(0)
+    , previousOffset_(Vector3::ZERO)
 {
     geometry_->SetVertexBuffer(0, vertexBuffer_);
     geometry_->SetIndexBuffer(indexBuffer_);
@@ -105,33 +84,33 @@ BillboardSet::BillboardSet(Context* context) :
     batches_[0].worldTransform_ = &transforms_[0];
 }
 
-BillboardSet::~BillboardSet()
-{
-}
+BillboardSet::~BillboardSet() {}
 
 void BillboardSet::RegisterObject(Context* context)
 {
     context->RegisterFactory<BillboardSet>(GEOMETRY_CATEGORY);
 
     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Material", GetMaterialAttr, SetMaterialAttr, ResourceRef, ResourceRef(Material::GetTypeStatic()),
-        AM_DEFAULT);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Material", GetMaterialAttr, SetMaterialAttr, ResourceRef,
+                                    ResourceRef(Material::GetTypeStatic()), AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Relative Position", IsRelative, SetRelative, bool, true, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Relative Scale", IsScaled, SetScaled, bool, true, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Sort By Distance", IsSorted, SetSorted, bool, false, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Fixed Screen Size", IsFixedScreenSize, SetFixedScreenSize, bool, false, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Can Be Occluded", IsOccludee, SetOccludee, bool, true, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Cast Shadows", bool, castShadows_, false, AM_DEFAULT);
-    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Face Camera Mode", GetFaceCameraMode, SetFaceCameraMode, FaceCameraMode, faceCameraModeNames, FC_ROTATE_XYZ, AM_DEFAULT);
+    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Face Camera Mode", GetFaceCameraMode, SetFaceCameraMode, FaceCameraMode,
+                                   faceCameraModeNames, FC_ROTATE_XYZ, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Min Angle", GetMinAngle, SetMinAngle, float, 0.0f, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Draw Distance", GetDrawDistance, SetDrawDistance, float, 0.0f, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Shadow Distance", GetShadowDistance, SetShadowDistance, float, 0.0f, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Animation LOD Bias", GetAnimationLodBias, SetAnimationLodBias, float, 1.0f, AM_DEFAULT);
     URHO3D_COPY_BASE_ATTRIBUTES(Drawable);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Billboards", GetBillboardsAttr, SetBillboardsAttr, VariantVector, Variant::emptyVariantVector, AM_FILE)
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Billboards", GetBillboardsAttr, SetBillboardsAttr, VariantVector,
+                                    Variant::emptyVariantVector, AM_FILE)
         .SetMetadata(AttributeMetadata::P_VECTOR_STRUCT_ELEMENTS, billboardsStructureElementNames);
-    URHO3D_ACCESSOR_ATTRIBUTE("Network Billboards", GetNetBillboardsAttr, SetNetBillboardsAttr, PODVector<unsigned char>,
-        Variant::emptyBuffer, AM_NET | AM_NOEDIT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Network Billboards", GetNetBillboardsAttr, SetNetBillboardsAttr,
+                              PODVector<unsigned char>, Variant::emptyBuffer, AM_NET | AM_NOEDIT);
 }
 
 void BillboardSet::ProcessRayQuery(const RayOctreeQuery& query, PODVector<RayQueryResult>& results)
@@ -157,7 +136,8 @@ void BillboardSet::ProcessRayQuery(const RayOctreeQuery& query, PODVector<RayQue
             continue;
 
         // Approximate the billboards as spheres for raycasting
-        float size = INV_SQRT_TWO * (billboards_[i].size_.x_ * billboardScale.x_ + billboards_[i].size_.y_ * billboardScale.y_);
+        float size =
+            INV_SQRT_TWO * (billboards_[i].size_.x_ * billboardScale.x_ + billboards_[i].size_.y_ * billboardScale.y_);
         if (fixedScreenSize_)
             size *= billboards_[i].screenScaleFactor_;
         Vector3 center = billboardTransform * billboards_[i].position_;
@@ -220,8 +200,13 @@ void BillboardSet::UpdateBatches(const FrameInfo& frame)
     // Billboard positioning
     transforms_[0] = relative_ ? node_->GetWorldTransform() : Matrix3x4::IDENTITY;
     // Billboard rotation
-    transforms_[1] = Matrix3x4(Vector3::ZERO, faceCameraMode_ != FC_NONE ? frame.camera_->GetFaceCameraRotation(
-        node_->GetWorldPosition(), node_->GetWorldRotation(), faceCameraMode_, minAngle_) : node_->GetWorldRotation(), Vector3::ONE);
+    transforms_[1] =
+        Matrix3x4(Vector3::ZERO,
+                  faceCameraMode_ != FC_NONE
+                      ? frame.camera_->GetFaceCameraRotation(node_->GetWorldPosition(), node_->GetWorldRotation(),
+                                                             faceCameraMode_, minAngle_)
+                      : node_->GetWorldRotation(),
+                  Vector3::ONE);
 }
 
 void BillboardSet::UpdateGeometry(const FrameInfo& frame)
@@ -233,8 +218,11 @@ void BillboardSet::UpdateGeometry(const FrameInfo& frame)
     // If using camera facing, re-update the rotation for the current view now
     if (faceCameraMode_ != FC_NONE)
     {
-        transforms_[1] = Matrix3x4(Vector3::ZERO, frame.camera_->GetFaceCameraRotation(node_->GetWorldPosition(),
-            node_->GetWorldRotation(), faceCameraMode_, minAngle_), Vector3::ONE);
+        transforms_[1] =
+            Matrix3x4(Vector3::ZERO,
+                      frame.camera_->GetFaceCameraRotation(node_->GetWorldPosition(), node_->GetWorldRotation(),
+                                                           faceCameraMode_, minAngle_),
+                      Vector3::ONE);
     }
 
     if (bufferSizeDirty_ || indexBuffer_->IsDataLost())
@@ -246,9 +234,10 @@ void BillboardSet::UpdateGeometry(const FrameInfo& frame)
 
 UpdateGeometryType BillboardSet::GetUpdateGeometryType()
 {
-    // If using camera facing, always need some kind of geometry update, in case the billboard set is rendered from several views
-    if (bufferDirty_ || bufferSizeDirty_ || vertexBuffer_->IsDataLost() || indexBuffer_->IsDataLost() || sortThisFrame_ ||
-        faceCameraMode_ != FC_NONE || fixedScreenSize_)
+    // If using camera facing, always need some kind of geometry update, in case the billboard set is rendered from
+    // several views
+    if (bufferDirty_ || bufferSizeDirty_ || vertexBuffer_->IsDataLost() || indexBuffer_->IsDataLost() ||
+        sortThisFrame_ || faceCameraMode_ != FC_NONE || fixedScreenSize_)
         return UPDATE_MAIN_THREAD;
     else
         return UPDATE_NONE;
@@ -315,7 +304,8 @@ void BillboardSet::SetFixedScreenSize(bool enable)
 
 void BillboardSet::SetFaceCameraMode(FaceCameraMode mode)
 {
-    if ((faceCameraMode_ != FC_DIRECTION && mode == FC_DIRECTION) || (faceCameraMode_ == FC_DIRECTION && mode != FC_DIRECTION))
+    if ((faceCameraMode_ != FC_DIRECTION && mode == FC_DIRECTION) ||
+        (faceCameraMode_ == FC_DIRECTION && mode != FC_DIRECTION))
     {
         faceCameraMode_ = mode;
         if (faceCameraMode_ == FC_DIRECTION)
@@ -351,10 +341,7 @@ void BillboardSet::Commit()
     MarkNetworkUpdate();
 }
 
-Material* BillboardSet::GetMaterial() const
-{
-    return batches_[0].material_;
-}
+Material* BillboardSet::GetMaterial() const { return batches_[0].material_; }
 
 Billboard* BillboardSet::GetBillboard(unsigned index)
 {
@@ -376,7 +363,8 @@ void BillboardSet::SetBillboardsAttr(const VariantVector& value)
     // Dealing with old billboard format
     if (value.Size() == billboards_.Size() * 6 + 1)
     {
-        for (PODVector<Billboard>::Iterator i = billboards_.Begin(); i != billboards_.End() && index < value.Size(); ++i)
+        for (PODVector<Billboard>::Iterator i = billboards_.Begin(); i != billboards_.End() && index < value.Size();
+             ++i)
         {
             i->position_ = value[index++].GetVector3();
             i->size_ = value[index++].GetVector2();
@@ -390,7 +378,8 @@ void BillboardSet::SetBillboardsAttr(const VariantVector& value)
     // New billboard format
     else
     {
-        for (PODVector<Billboard>::Iterator i = billboards_.Begin(); i != billboards_.End() && index < value.Size(); ++i)
+        for (PODVector<Billboard>::Iterator i = billboards_.Begin(); i != billboards_.End() && index < value.Size();
+             ++i)
         {
             i->position_ = value[index++].GetVector3();
             i->size_ = value[index++].GetVector2();
@@ -483,7 +472,8 @@ void BillboardSet::OnWorldBoundingBoxUpdate()
         if (!billboards_[i].enabled_)
             continue;
 
-        float size = INV_SQRT_TWO * (billboards_[i].size_.x_ * billboardScale.x_ + billboards_[i].size_.y_ * billboardScale.y_);
+        float size =
+            INV_SQRT_TWO * (billboards_[i].size_.x_ * billboardScale.x_ + billboards_[i].size_.y_ * billboardScale.y_);
         if (fixedScreenSize_)
             size *= billboards_[i].screenScaleFactor_;
 
@@ -494,7 +484,8 @@ void BillboardSet::OnWorldBoundingBoxUpdate()
         ++enabledBillboards;
     }
 
-    // Always merge the node's own position to ensure particle emitter updates continue when the relative mode is switched
+    // Always merge the node's own position to ensure particle emitter updates continue when the relative mode is
+    // switched
     worldBox.Merge(node_->GetWorldPosition());
 
     worldBoundingBox_ = worldBox;
@@ -508,13 +499,14 @@ void BillboardSet::UpdateBufferSize()
     {
         if (faceCameraMode_ == FC_DIRECTION)
         {
-            vertexBuffer_->SetSize(numBillboards * 4, MASK_POSITION | MASK_NORMAL | MASK_COLOR | MASK_TEXCOORD1 | MASK_TEXCOORD2, true);
+            vertexBuffer_->SetSize(numBillboards * 4,
+                                   MASK_POSITION | MASK_NORMAL | MASK_COLOR | MASK_TEXCOORD1 | MASK_TEXCOORD2, true);
             geometry_->SetVertexBuffer(0, vertexBuffer_);
-
         }
         else
         {
-            vertexBuffer_->SetSize(numBillboards * 4, MASK_POSITION | MASK_COLOR | MASK_TEXCOORD1 | MASK_TEXCOORD2, true);
+            vertexBuffer_->SetSize(numBillboards * 4, MASK_POSITION | MASK_COLOR | MASK_TEXCOORD1 | MASK_TEXCOORD2,
+                                   true);
             geometry_->SetVertexBuffer(0, vertexBuffer_);
         }
         geometryTypeUpdate_ = false;
@@ -616,7 +608,8 @@ void BillboardSet::UpdateVertexBuffer(const FrameInfo& frame)
         {
             sortedBillboards_[index++] = &billboard;
             if (sorted_)
-                billboard.sortDistance_ = frame.camera_->GetDistanceSquared(billboardTransform * billboards_[i].position_);
+                billboard.sortDistance_ =
+                    frame.camera_->GetDistanceSquared(billboardTransform * billboards_[i].position_);
         }
     }
 
@@ -815,5 +808,4 @@ void BillboardSet::CalculateFixedScreenSize(const FrameInfo& frame)
         worldBoundingBoxDirty_ = true;
     }
 }
-
 }

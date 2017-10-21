@@ -30,52 +30,49 @@
 
 namespace Urho3D
 {
-
 /// Shared pointer template class with intrusive reference counting.
 template <class T> class SharedPtr
 {
 public:
     /// Construct a null shared pointer.
-    SharedPtr() :
-        ptr_(0)
+    SharedPtr()
+        : ptr_(0)
     {
     }
 
     /// Construct a null shared pointer.
-    SharedPtr(std::nullptr_t) :
-        ptr_(0)
+    SharedPtr(std::nullptr_t)
+        : ptr_(0)
     {
     }
 
     /// Copy-construct from another shared pointer.
-    SharedPtr(const SharedPtr<T>& rhs) :
-        ptr_(rhs.ptr_)
+    SharedPtr(const SharedPtr<T>& rhs)
+        : ptr_(rhs.ptr_)
     {
         AddRef();
     }
 
     /// Copy-construct from another shared pointer allowing implicit upcasting.
-    template <class U> SharedPtr(const SharedPtr<U>& rhs) :
-        ptr_(rhs.ptr_)
+    template <class U>
+    SharedPtr(const SharedPtr<U>& rhs)
+        : ptr_(rhs.ptr_)
     {
         AddRef();
     }
 
     /// Construct from a raw pointer.
-    explicit SharedPtr(T* ptr) :
-        ptr_(ptr)
+    explicit SharedPtr(T* ptr)
+        : ptr_(ptr)
     {
         AddRef();
     }
 
     /// Destruct. Release the object reference.
-    ~SharedPtr()
-    {
-        ReleaseRef();
-    }
+    ~SharedPtr() { ReleaseRef(); }
 
     /// Assign from another shared pointer.
-    SharedPtr<T>& operator =(const SharedPtr<T>& rhs)
+    SharedPtr<T>& operator=(const SharedPtr<T>& rhs)
     {
         if (ptr_ == rhs.ptr_)
             return *this;
@@ -88,7 +85,7 @@ public:
     }
 
     /// Assign from another shared pointer allowing implicit upcasting.
-    template <class U> SharedPtr<T>& operator =(const SharedPtr<U>& rhs)
+    template <class U> SharedPtr<T>& operator=(const SharedPtr<U>& rhs)
     {
         if (ptr_ == rhs.ptr_)
             return *this;
@@ -101,7 +98,7 @@ public:
     }
 
     /// Assign from a raw pointer.
-    SharedPtr<T>& operator =(T* ptr)
+    SharedPtr<T>& operator=(T* ptr)
     {
         if (ptr_ == ptr)
             return *this;
@@ -114,34 +111,34 @@ public:
     }
 
     /// Point to the object.
-    T* operator ->() const
+    T* operator->() const
     {
         assert(ptr_);
         return ptr_;
     }
 
     /// Dereference the object.
-    T& operator *() const
+    T& operator*() const
     {
         assert(ptr_);
         return *ptr_;
     }
 
     /// Subscript the object if applicable.
-    T& operator [](const int index)
+    T& operator[](const int index)
     {
         assert(ptr_);
         return ptr_[index];
     }
 
     /// Test for less than with another shared pointer.
-    template <class U> bool operator <(const SharedPtr<U>& rhs) const { return ptr_ < rhs.ptr_; }
+    template <class U> bool operator<(const SharedPtr<U>& rhs) const { return ptr_ < rhs.ptr_; }
 
     /// Test for equality with another shared pointer.
-    template <class U> bool operator ==(const SharedPtr<U>& rhs) const { return ptr_ == rhs.ptr_; }
+    template <class U> bool operator==(const SharedPtr<U>& rhs) const { return ptr_ == rhs.ptr_; }
 
     /// Test for inequality with another shared pointer.
-    template <class U> bool operator !=(const SharedPtr<U>& rhs) const { return ptr_ != rhs.ptr_; }
+    template <class U> bool operator!=(const SharedPtr<U>& rhs) const { return ptr_ != rhs.ptr_; }
 
     /// Convert to a raw pointer.
     operator T*() const { return ptr_; }
@@ -149,7 +146,8 @@ public:
     /// Reset to null and release the object reference.
     void Reset() { ReleaseRef(); }
 
-    /// Detach without destroying the object even if the refcount goes zero. To be used for scripting language interoperation.
+    /// Detach without destroying the object even if the refcount goes zero. To be used for scripting language
+    /// interoperation.
     T* Detach()
     {
         T* ptr = ptr_;
@@ -157,7 +155,7 @@ public:
         {
             RefCount* refCount = RefCountPtr();
             ++refCount->refs_; // 2 refs
-            Reset(); // 1 ref
+            Reset();           // 1 ref
             --refCount->refs_; // 0 refs
         }
         return ptr;
@@ -245,59 +243,57 @@ template <class T> class WeakPtr
 {
 public:
     /// Construct a null weak pointer.
-    WeakPtr() :
-        ptr_(0),
-        refCount_(nullptr)
+    WeakPtr()
+        : ptr_(0)
+        , refCount_(nullptr)
     {
     }
 
     /// Construct a null weak pointer.
-    WeakPtr(std::nullptr_t) :
-        ptr_(0),
-        refCount_(nullptr)
+    WeakPtr(std::nullptr_t)
+        : ptr_(0)
+        , refCount_(nullptr)
     {
     }
 
     /// Copy-construct from another weak pointer.
-    WeakPtr(const WeakPtr<T>& rhs) :
-        ptr_(rhs.ptr_),
-        refCount_(rhs.refCount_)
+    WeakPtr(const WeakPtr<T>& rhs)
+        : ptr_(rhs.ptr_)
+        , refCount_(rhs.refCount_)
     {
         AddRef();
     }
 
     /// Copy-construct from another weak pointer allowing implicit upcasting.
-    template <class U> WeakPtr(const WeakPtr<U>& rhs) :
-        ptr_(rhs.ptr_),
-        refCount_(rhs.refCount_)
+    template <class U>
+    WeakPtr(const WeakPtr<U>& rhs)
+        : ptr_(rhs.ptr_)
+        , refCount_(rhs.refCount_)
     {
         AddRef();
     }
 
     /// Construct from a shared pointer.
-    WeakPtr(const SharedPtr<T>& rhs) :
-        ptr_(rhs.Get()),
-        refCount_(rhs.RefCountPtr())
+    WeakPtr(const SharedPtr<T>& rhs)
+        : ptr_(rhs.Get())
+        , refCount_(rhs.RefCountPtr())
     {
         AddRef();
     }
 
     /// Construct from a raw pointer.
-    explicit WeakPtr(T* ptr) :
-        ptr_(ptr),
-        refCount_(ptr ? ptr->RefCountPtr() : 0)
+    explicit WeakPtr(T* ptr)
+        : ptr_(ptr)
+        , refCount_(ptr ? ptr->RefCountPtr() : 0)
     {
         AddRef();
     }
 
     /// Destruct. Release the weak reference to the object.
-    ~WeakPtr()
-    {
-        ReleaseRef();
-    }
+    ~WeakPtr() { ReleaseRef(); }
 
     /// Assign from a shared pointer.
-    WeakPtr<T>& operator =(const SharedPtr<T>& rhs)
+    WeakPtr<T>& operator=(const SharedPtr<T>& rhs)
     {
         if (ptr_ == rhs.Get() && refCount_ == rhs.RefCountPtr())
             return *this;
@@ -311,7 +307,7 @@ public:
     }
 
     /// Assign from a weak pointer.
-    WeakPtr<T>& operator =(const WeakPtr<T>& rhs)
+    WeakPtr<T>& operator=(const WeakPtr<T>& rhs)
     {
         if (ptr_ == rhs.ptr_ && refCount_ == rhs.refCount_)
             return *this;
@@ -325,7 +321,7 @@ public:
     }
 
     /// Assign from another weak pointer allowing implicit upcasting.
-    template <class U> WeakPtr<T>& operator =(const WeakPtr<U>& rhs)
+    template <class U> WeakPtr<T>& operator=(const WeakPtr<U>& rhs)
     {
         if (ptr_ == rhs.ptr_ && refCount_ == rhs.refCount_)
             return *this;
@@ -339,7 +335,7 @@ public:
     }
 
     /// Assign from a raw pointer.
-    WeakPtr<T>& operator =(T* ptr)
+    WeakPtr<T>& operator=(T* ptr)
     {
         RefCount* refCount = ptr ? ptr->RefCountPtr() : 0;
 
@@ -373,7 +369,7 @@ public:
     }
 
     /// Point to the object.
-    T* operator ->() const
+    T* operator->() const
     {
         T* rawPtr = Get();
         assert(rawPtr);
@@ -381,7 +377,7 @@ public:
     }
 
     /// Dereference the object.
-    T& operator *() const
+    T& operator*() const
     {
         T* rawPtr = Get();
         assert(rawPtr);
@@ -389,7 +385,7 @@ public:
     }
 
     /// Subscript the object if applicable.
-    T& operator [](const int index)
+    T& operator[](const int index)
     {
         T* rawPtr = Get();
         assert(rawPtr);
@@ -397,13 +393,19 @@ public:
     }
 
     /// Test for equality with another weak pointer.
-    template <class U> bool operator ==(const WeakPtr<U>& rhs) const { return ptr_ == rhs.ptr_ && refCount_ == rhs.refCount_; }
+    template <class U> bool operator==(const WeakPtr<U>& rhs) const
+    {
+        return ptr_ == rhs.ptr_ && refCount_ == rhs.refCount_;
+    }
 
     /// Test for inequality with another weak pointer.
-    template <class U> bool operator !=(const WeakPtr<U>& rhs) const { return ptr_ != rhs.ptr_ || refCount_ != rhs.refCount_; }
+    template <class U> bool operator!=(const WeakPtr<U>& rhs) const
+    {
+        return ptr_ != rhs.ptr_ || refCount_ != rhs.refCount_;
+    }
 
     /// Test for less than with another weak pointer.
-    template <class U> bool operator <(const WeakPtr<U>& rhs) const { return ptr_ < rhs.ptr_; }
+    template <class U> bool operator<(const WeakPtr<U>& rhs) const { return ptr_ < rhs.ptr_; }
 
     /// Convert to a raw pointer, null if the object is expired.
     operator T*() const { return Get(); }
@@ -514,11 +516,11 @@ template <class T, class U> WeakPtr<T> DynamicCast(const WeakPtr<U>& ptr)
 }
 
 /// Delete object of type T. T must be complete. See boost::checked_delete.
-template<class T> inline void CheckedDelete(T* x)
+template <class T> inline void CheckedDelete(T* x)
 {
     // intentionally complex - simplification causes regressions
     using type_must_be_complete = char[sizeof(T) ? 1 : -1];
-    (void) sizeof(type_must_be_complete);
+    (void)sizeof(type_must_be_complete);
     delete x;
 }
 
@@ -531,56 +533,62 @@ template <class T> class UniquePtr
 
 public:
     /// Construct empty.
-    UniquePtr() : ptr_(0) { }
+    UniquePtr()
+        : ptr_(0)
+    {
+    }
 
     /// Construct from pointer.
-    explicit UniquePtr(T* ptr) : ptr_(ptr) { }
+    explicit UniquePtr(T* ptr)
+        : ptr_(ptr)
+    {
+    }
 
     /// Assign from pointer.
-    UniquePtr& operator = (T* ptr)
+    UniquePtr& operator=(T* ptr)
     {
         Reset(ptr);
         return *this;
     }
 
     /// Construct empty.
-    UniquePtr(std::nullptr_t) { }
+    UniquePtr(std::nullptr_t) {}
 
     /// Move-construct from UniquePtr.
-    UniquePtr(UniquePtr && up) : ptr_(up.Detach()) { }
+    UniquePtr(UniquePtr&& up)
+        : ptr_(up.Detach())
+    {
+    }
 
     /// Move-assign from UniquePtr.
-    UniquePtr& operator = (UniquePtr && up)
+    UniquePtr& operator=(UniquePtr&& up)
     {
         Reset(up.Detach());
         return *this;
     }
 
     /// Point to the object.
-    T* operator ->() const
+    T* operator->() const
     {
         assert(ptr_);
         return ptr_;
     }
 
     /// Dereference the object.
-    T& operator *() const
+    T& operator*() const
     {
         assert(ptr_);
         return *ptr_;
     }
 
     /// Test for less than with another unique pointer.
-    template <class U>
-    bool operator <(const UniquePtr<U>& rhs) const { return ptr_ < rhs.ptr_; }
+    template <class U> bool operator<(const UniquePtr<U>& rhs) const { return ptr_ < rhs.ptr_; }
 
     /// Test for equality with another unique pointer.
-    template <class U>
-    bool operator ==(const UniquePtr<U>& rhs) const { return ptr_ == rhs.ptr_; }
+    template <class U> bool operator==(const UniquePtr<U>& rhs) const { return ptr_ == rhs.ptr_; }
 
     /// Test for inequality with another unique pointer.
-    template <class U>
-    bool operator !=(const UniquePtr<U>& rhs) const { return ptr_ != rhs.ptr_; }
+    template <class U> bool operator!=(const UniquePtr<U>& rhs) const { return ptr_ != rhs.ptr_; }
 
     /// Cast pointer to bool.
     operator bool() const { return !!ptr_; }
@@ -616,32 +624,24 @@ public:
     unsigned ToHash() const { return (unsigned)((size_t)ptr_ / sizeof(T)); }
 
     /// Destruct.
-    ~UniquePtr()
-    {
-        Reset();
-    }
+    ~UniquePtr() { Reset(); }
 
 private:
     T* ptr_;
-
 };
 
 /// Swap two UniquePtr-s.
-template <class T> void Swap(UniquePtr<T>& first, UniquePtr<T>& second)
-{
-    first.Swap(second);
-}
+template <class T> void Swap(UniquePtr<T>& first, UniquePtr<T>& second) { first.Swap(second); }
 
 /// Construct UniquePtr.
-template <class T, class ... Args> UniquePtr<T> MakeUnique(Args && ... args)
+template <class T, class... Args> UniquePtr<T> MakeUnique(Args&&... args)
 {
     return UniquePtr<T>(new T(std::forward<Args>(args)...));
 }
 
 /// Construct SharedPtr.
-template <class T, class ... Args> SharedPtr<T> MakeShared(Args && ... args)
+template <class T, class... Args> SharedPtr<T> MakeShared(Args&&... args)
 {
     return SharedPtr<T>(new T(std::forward<Args>(args)...));
 }
-
 }

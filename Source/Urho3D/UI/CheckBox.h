@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// %UI element that can be toggled between unchecked and checked state.
 class URHO3D_API CheckBox : public BorderImage
 {
@@ -41,10 +40,11 @@ public:
     static void RegisterObject(Context* context);
 
     /// Return UI rendering batches.
-    virtual void GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData, const IntRect& currentScissor) override;
+    virtual void GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData,
+                            const IntRect& currentScissor) override;
     /// React to mouse click begin.
-    virtual void OnClickBegin
-        (const IntVector2& position, const IntVector2& screenPosition, int button, int buttons, int qualifiers, Cursor* cursor) override;
+    virtual void OnClickBegin(const IntVector2& position, const IntVector2& screenPosition, int button, int buttons,
+                              int qualifiers, Cursor* cursor) override;
     /// React to a key press.
     virtual void OnKey(int key, int buttons, int qualifiers) override;
 
@@ -67,5 +67,4 @@ protected:
     /// Current checked state.
     bool checked_;
 };
-
 }

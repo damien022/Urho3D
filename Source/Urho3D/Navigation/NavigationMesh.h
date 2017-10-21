@@ -40,7 +40,6 @@ class dtQueryFilter;
 
 namespace Urho3D
 {
-
 enum NavmeshPartitionType
 {
     NAVMESH_PARTITION_WATERSHED = 0,
@@ -64,10 +63,10 @@ struct NavigationGeometryInfo
     Matrix3x4 transform_;
     /// Bounding box relative to the navigation mesh root node.
     BoundingBox boundingBox_;
-
 };
 
-/// A flag representing the type of path point- none, the start of a path segment, the end of one, or an off-mesh connection.
+/// A flag representing the type of path point- none, the start of a path segment, the end of one, or an off-mesh
+/// connection.
 enum NavigationPathPointFlag
 {
     NAVPATHFLAG_NONE = 0,
@@ -86,7 +85,8 @@ struct URHO3D_API NavigationPathPoint
     unsigned char areaID_;
 };
 
-/// Navigation mesh component. Collects the navigation geometry from child nodes with the Navigable component and responds to path queries.
+/// Navigation mesh component. Collects the navigation geometry from child nodes with the Navigable component and
+/// responds to path queries.
 class URHO3D_API NavigationMesh : public Component
 {
     URHO3D_OBJECT(NavigationMesh, Component);
@@ -130,7 +130,8 @@ public:
     void SetDetailSampleDistance(float distance);
     /// Set detail sampling maximum error.
     void SetDetailSampleMaxError(float error);
-    /// Set padding of the navigation mesh bounding box. Having enough padding allows to add geometry on the extremities of the navigation mesh when doing partial rebuilds.
+    /// Set padding of the navigation mesh bounding box. Having enough padding allows to add geometry on the extremities
+    /// of the navigation mesh when doing partial rebuilds.
     void SetPadding(const Vector3& padding);
     /// Set the cost of an area.
     void SetAreaCost(unsigned areaID, float cost);
@@ -156,33 +157,35 @@ public:
     BoundingBox GetTileBoudningBox(const IntVector2& tile) const;
     /// Return index of the tile at the position.
     IntVector2 GetTileIndex(const Vector3& position) const;
-    /// Find the nearest point on the navigation mesh to a given point. Extents specifies how far out from the specified point to check along each axis.
-    Vector3 FindNearestPoint
-        (const Vector3& point, const Vector3& extents = Vector3::ONE, const dtQueryFilter* filter = nullptr, dtPolyRef* nearestRef = nullptr);
+    /// Find the nearest point on the navigation mesh to a given point. Extents specifies how far out from the specified
+    /// point to check along each axis.
+    Vector3 FindNearestPoint(const Vector3& point, const Vector3& extents = Vector3::ONE,
+                             const dtQueryFilter* filter = nullptr, dtPolyRef* nearestRef = nullptr);
     /// Try to move along the surface from one point to another.
-    Vector3 MoveAlongSurface(const Vector3& start, const Vector3& end, const Vector3& extents = Vector3::ONE, int maxVisited = 3,
-        const dtQueryFilter* filter = nullptr);
-    /// Find a path between world space points. Return non-empty list of points if successful. Extents specifies how far off the navigation mesh the points can be.
-    void FindPath(PODVector<Vector3>& dest, const Vector3& start, const Vector3& end, const Vector3& extents = Vector3::ONE,
-        const dtQueryFilter* filter = nullptr);
-    /// Find a path between world space points. Return non-empty list of navigation path points if successful. Extents specifies how far off the navigation mesh the points can be.
-    void FindPath
-        (PODVector<NavigationPathPoint>& dest, const Vector3& start, const Vector3& end, const Vector3& extents = Vector3::ONE,
-            const dtQueryFilter* filter = nullptr);
+    Vector3 MoveAlongSurface(const Vector3& start, const Vector3& end, const Vector3& extents = Vector3::ONE,
+                             int maxVisited = 3, const dtQueryFilter* filter = nullptr);
+    /// Find a path between world space points. Return non-empty list of points if successful. Extents specifies how far
+    /// off the navigation mesh the points can be.
+    void FindPath(PODVector<Vector3>& dest, const Vector3& start, const Vector3& end,
+                  const Vector3& extents = Vector3::ONE, const dtQueryFilter* filter = nullptr);
+    /// Find a path between world space points. Return non-empty list of navigation path points if successful. Extents
+    /// specifies how far off the navigation mesh the points can be.
+    void FindPath(PODVector<NavigationPathPoint>& dest, const Vector3& start, const Vector3& end,
+                  const Vector3& extents = Vector3::ONE, const dtQueryFilter* filter = nullptr);
     /// Return a random point on the navigation mesh.
     Vector3 GetRandomPoint(const dtQueryFilter* filter = nullptr, dtPolyRef* randomRef = nullptr);
-    /// Return a random point on the navigation mesh within a circle. The circle radius is only a guideline and in practice the returned point may be further away.
-    Vector3 GetRandomPointInCircle
-        (const Vector3& center, float radius, const Vector3& extents = Vector3::ONE, const dtQueryFilter* filter = nullptr,
-            dtPolyRef* randomRef = nullptr);
+    /// Return a random point on the navigation mesh within a circle. The circle radius is only a guideline and in
+    /// practice the returned point may be further away.
+    Vector3 GetRandomPointInCircle(const Vector3& center, float radius, const Vector3& extents = Vector3::ONE,
+                                   const dtQueryFilter* filter = nullptr, dtPolyRef* randomRef = nullptr);
     /// Return distance to wall from a point. Maximum search radius must be specified.
-    float GetDistanceToWall
-        (const Vector3& point, float radius, const Vector3& extents = Vector3::ONE, const dtQueryFilter* filter = nullptr,
-            Vector3* hitPos = nullptr, Vector3* hitNormal = nullptr);
-    /// Perform a walkability raycast on the navigation mesh between start and end and return the point where a wall was hit, or the end point if no walls.
-    Vector3 Raycast
-        (const Vector3& start, const Vector3& end, const Vector3& extents = Vector3::ONE, const dtQueryFilter* filter = nullptr,
-            Vector3* hitNormal = nullptr);
+    float GetDistanceToWall(const Vector3& point, float radius, const Vector3& extents = Vector3::ONE,
+                            const dtQueryFilter* filter = nullptr, Vector3* hitPos = nullptr,
+                            Vector3* hitNormal = nullptr);
+    /// Perform a walkability raycast on the navigation mesh between start and end and return the point where a wall was
+    /// hit, or the end point if no walls.
+    Vector3 Raycast(const Vector3& start, const Vector3& end, const Vector3& extents = Vector3::ONE,
+                    const dtQueryFilter* filter = nullptr, Vector3* hitNormal = nullptr);
     /// Add debug geometry to the debug renderer.
     void DrawDebugGeometry(bool depthTest);
 
@@ -282,7 +285,8 @@ protected:
     /// Collect geometry from under Navigable components.
     void CollectGeometries(Vector<NavigationGeometryInfo>& geometryList);
     /// Visit nodes and collect navigable geometry.
-    void CollectGeometries(Vector<NavigationGeometryInfo>& geometryList, Node* node, HashSet<Node*>& processedNodes, bool recursive);
+    void CollectGeometries(Vector<NavigationGeometryInfo>& geometryList, Node* node, HashSet<Node*>& processedNodes,
+                           bool recursive);
     /// Get geometry data within a bounding box.
     void GetTileGeometry(NavBuildData* build, Vector<NavigationGeometryInfo>& geometryList, BoundingBox& box);
     /// Add a triangle mesh to the geometry data.
@@ -349,10 +353,9 @@ protected:
     /// Debug draw NavArea components.
     bool drawNavAreas_;
     /// NavAreas for this NavMesh
-    Vector<WeakPtr<NavArea> > areas_;
+    Vector<WeakPtr<NavArea>> areas_;
 };
 
 /// Register Navigation library objects.
 void URHO3D_API RegisterNavigationLibrary(Context* context);
-
 }

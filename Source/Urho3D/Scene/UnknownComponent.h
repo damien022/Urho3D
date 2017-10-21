@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// Placeholder for allowing unregistered components to be loaded & saved along with scenes.
 class URHO3D_API UnknownComponent : public Component
 {
@@ -99,7 +98,5 @@ private:
     PODVector<unsigned char> binaryAttributes_;
     /// Flag of whether was loaded using XML/JSON data.
     bool useXML_;
-
 };
-
 }

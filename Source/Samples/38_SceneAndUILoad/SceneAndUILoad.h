@@ -26,11 +26,9 @@
 
 namespace Urho3D
 {
-
 class Drawable;
 class Node;
 class Scene;
-
 }
 
 /// Scene & UI load example.

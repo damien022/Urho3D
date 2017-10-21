@@ -29,7 +29,6 @@
 
 namespace Urho3D
 {
-
 /// Hardware constant buffer.
 class URHO3D_API ConstantBuffer : public Object, public GPUObject
 {
@@ -69,5 +68,4 @@ private:
     /// Dirty flag.
     bool dirty_;
 };
-
 }

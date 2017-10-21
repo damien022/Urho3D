@@ -27,10 +27,10 @@
 #include "../Core/Profiler.h"
 #include "../Engine/EngineEvents.h"
 #include "../IO/FileSystem.h"
-#include "../Input/InputEvents.h"
 #include "../IO/IOEvents.h"
 #include "../IO/Log.h"
 #include "../IO/MemoryBuffer.h"
+#include "../Input/InputEvents.h"
 #include "../Network/HttpRequest.h"
 #include "../Network/Network.h"
 #include "../Network/NetworkEvents.h"
@@ -44,16 +44,15 @@
 
 namespace Urho3D
 {
-
 static const int DEFAULT_UPDATE_FPS = 30;
 
-Network::Network(Context* context) :
-    Object(context),
-    updateFps_(DEFAULT_UPDATE_FPS),
-    simulatedLatency_(0),
-    simulatedPacketLoss_(0.0f),
-    updateInterval_(1.0f / (float)DEFAULT_UPDATE_FPS),
-    updateAcc_(0.0f)
+Network::Network(Context* context)
+    : Object(context)
+    , updateFps_(DEFAULT_UPDATE_FPS)
+    , simulatedLatency_(0)
+    , simulatedPacketLoss_(0.0f)
+    , updateInterval_(1.0f / (float)DEFAULT_UPDATE_FPS)
+    , updateAcc_(0.0f)
 {
     network_ = new kNet::Network();
 
@@ -116,8 +115,8 @@ Network::~Network()
     clientConnections_.Clear();
 }
 
-void Network::HandleMessage(kNet::MessageConnection* source, kNet::packet_id_t packetId, kNet::message_id_t msgId, const char* data,
-    size_t numBytes)
+void Network::HandleMessage(kNet::MessageConnection* source, kNet::packet_id_t packetId, kNet::message_id_t msgId,
+                            const char* data, size_t numBytes)
 {
     // Only process messages from known sources
     Connection* connection = GetConnection(source);
@@ -150,11 +149,11 @@ u32 Network::ComputeContentID(kNet::message_id_t msgId, const char* data, size_t
 
     case MSG_NODELATESTDATA:
     case MSG_COMPONENTLATESTDATA:
-        {
-            // Return the node or component ID, which is first in the message
-            MemoryBuffer msg(data, (unsigned)numBytes);
-            return msg.ReadNetID();
-        }
+    {
+        // Return the node or component ID, which is first in the message
+        MemoryBuffer msg(data, (unsigned)numBytes);
+        return msg.ReadNetID();
+    }
 
     default:
         // By default return no content ID
@@ -167,7 +166,8 @@ void Network::NewConnectionEstablished(kNet::MessageConnection* connection)
     connection->RegisterInboundMessageHandler(this);
 
     // Create a new client connection corresponding to this MessageConnection
-    SharedPtr<Connection> newConnection(new Connection(context_, true, kNet::SharedPtr<kNet::MessageConnection>(connection)));
+    SharedPtr<Connection> newConnection(
+        new Connection(context_, true, kNet::SharedPtr<kNet::MessageConnection>(connection)));
     newConnection->ConfigureNetworkSimulator(simulatedLatency_, simulatedPacketLoss_);
     clientConnections_[connection] = newConnection;
     URHO3D_LOGINFO("Client " + newConnection->ToString() + " connected");
@@ -184,7 +184,7 @@ void Network::ClientDisconnected(kNet::MessageConnection* connection)
     connection->Disconnect(0);
 
     // Remove the client connection that corresponds to this MessageConnection
-    HashMap<kNet::MessageConnection*, SharedPtr<Connection> >::Iterator i = clientConnections_.Find(connection);
+    HashMap<kNet::MessageConnection*, SharedPtr<Connection>>::Iterator i = clientConnections_.Find(connection);
     if (i != clientConnections_.End())
     {
         Connection* connection = i->second_;
@@ -211,7 +211,8 @@ bool Network::Connect(const String& address, unsigned short port, Scene* scene, 
         OnServerDisconnected();
     }
 
-    kNet::SharedPtr<kNet::MessageConnection> connection = network_->Connect(address.CString(), port, kNet::SocketOverUDP, this);
+    kNet::SharedPtr<kNet::MessageConnection> connection =
+        network_->Connect(address.CString(), port, kNet::SocketOverUDP, this);
     if (connection)
     {
         serverConnection_ = new Connection(context_, false, connection);
@@ -277,7 +278,7 @@ void Network::BroadcastMessage(int msgID, bool reliable, bool inOrder, const Vec
 }
 
 void Network::BroadcastMessage(int msgID, bool reliable, bool inOrder, const unsigned char* data, unsigned numBytes,
-    unsigned contentID)
+                               unsigned contentID)
 {
     // Make sure not to use kNet internal message ID's
     if (msgID <= 0x4 || msgID >= 0x3ffffffe)
@@ -295,14 +296,14 @@ void Network::BroadcastMessage(int msgID, bool reliable, bool inOrder, const uns
 
 void Network::BroadcastRemoteEvent(StringHash eventType, bool inOrder, const VariantMap& eventData)
 {
-    for (HashMap<kNet::MessageConnection*, SharedPtr<Connection> >::Iterator i = clientConnections_.Begin();
+    for (HashMap<kNet::MessageConnection*, SharedPtr<Connection>>::Iterator i = clientConnections_.Begin();
          i != clientConnections_.End(); ++i)
         i->second_->SendRemoteEvent(eventType, inOrder, eventData);
 }
 
 void Network::BroadcastRemoteEvent(Scene* scene, StringHash eventType, bool inOrder, const VariantMap& eventData)
 {
-    for (HashMap<kNet::MessageConnection*, SharedPtr<Connection> >::Iterator i = clientConnections_.Begin();
+    for (HashMap<kNet::MessageConnection*, SharedPtr<Connection>>::Iterator i = clientConnections_.Begin();
          i != clientConnections_.End(); ++i)
     {
         if (i->second_->GetScene() == scene)
@@ -324,7 +325,7 @@ void Network::BroadcastRemoteEvent(Node* node, StringHash eventType, bool inOrde
     }
 
     Scene* scene = node->GetScene();
-    for (HashMap<kNet::MessageConnection*, SharedPtr<Connection> >::Iterator i = clientConnections_.Begin();
+    for (HashMap<kNet::MessageConnection*, SharedPtr<Connection>>::Iterator i = clientConnections_.Begin();
          i != clientConnections_.End(); ++i)
     {
         if (i->second_->GetScene() == scene)
@@ -362,20 +363,11 @@ void Network::RegisterRemoteEvent(StringHash eventType)
     allowedRemoteEvents_.Insert(eventType);
 }
 
-void Network::UnregisterRemoteEvent(StringHash eventType)
-{
-    allowedRemoteEvents_.Erase(eventType);
-}
+void Network::UnregisterRemoteEvent(StringHash eventType) { allowedRemoteEvents_.Erase(eventType); }
 
-void Network::UnregisterAllRemoteEvents()
-{
-    allowedRemoteEvents_.Clear();
-}
+void Network::UnregisterAllRemoteEvents() { allowedRemoteEvents_.Clear(); }
 
-void Network::SetPackageCacheDir(const String& path)
-{
-    packageCacheDir_ = AddTrailingSlash(path);
-}
+void Network::SetPackageCacheDir(const String& path) { packageCacheDir_ = AddTrailingSlash(path); }
 
 void Network::SendPackageToClients(Scene* scene, PackageFile* package)
 {
@@ -390,7 +382,7 @@ void Network::SendPackageToClients(Scene* scene, PackageFile* package)
         return;
     }
 
-    for (HashMap<kNet::MessageConnection*, SharedPtr<Connection> >::Iterator i = clientConnections_.Begin();
+    for (HashMap<kNet::MessageConnection*, SharedPtr<Connection>>::Iterator i = clientConnections_.Begin();
          i != clientConnections_.End(); ++i)
     {
         if (i->second_->GetScene() == scene)
@@ -399,7 +391,7 @@ void Network::SendPackageToClients(Scene* scene, PackageFile* package)
 }
 
 SharedPtr<HttpRequest> Network::MakeHttpRequest(const String& url, const String& verb, const Vector<String>& headers,
-    const String& postData)
+                                                const String& postData)
 {
     URHO3D_PROFILE(MakeHttpRequest);
 
@@ -414,7 +406,7 @@ Connection* Network::GetConnection(kNet::MessageConnection* connection) const
         return serverConnection_;
     else
     {
-        HashMap<kNet::MessageConnection*, SharedPtr<Connection> >::ConstIterator i = clientConnections_.Find(connection);
+        HashMap<kNet::MessageConnection*, SharedPtr<Connection>>::ConstIterator i = clientConnections_.Find(connection);
         if (i != clientConnections_.End())
             return i->second_;
         else
@@ -422,30 +414,21 @@ Connection* Network::GetConnection(kNet::MessageConnection* connection) const
     }
 }
 
-Connection* Network::GetServerConnection() const
-{
-    return serverConnection_;
-}
+Connection* Network::GetServerConnection() const { return serverConnection_; }
 
-Vector<SharedPtr<Connection> > Network::GetClientConnections() const
+Vector<SharedPtr<Connection>> Network::GetClientConnections() const
 {
-    Vector<SharedPtr<Connection> > ret;
-    for (HashMap<kNet::MessageConnection*, SharedPtr<Connection> >::ConstIterator i = clientConnections_.Begin();
+    Vector<SharedPtr<Connection>> ret;
+    for (HashMap<kNet::MessageConnection*, SharedPtr<Connection>>::ConstIterator i = clientConnections_.Begin();
          i != clientConnections_.End(); ++i)
         ret.Push(i->second_);
 
     return ret;
 }
 
-bool Network::IsServerRunning() const
-{
-    return network_->GetServer();
-}
+bool Network::IsServerRunning() const { return network_->GetServer(); }
 
-bool Network::CheckRemoteEvent(StringHash eventType) const
-{
-    return allowedRemoteEvents_.Contains(eventType);
-}
+bool Network::CheckRemoteEvent(StringHash eventType) const { return allowedRemoteEvents_.Contains(eventType); }
 
 void Network::Update(float timeStep)
 {
@@ -499,7 +482,7 @@ void Network::PostUpdate(float timeStep)
                 URHO3D_PROFILE(PrepareServerUpdate);
 
                 networkScenes_.Clear();
-                for (HashMap<kNet::MessageConnection*, SharedPtr<Connection> >::Iterator i = clientConnections_.Begin();
+                for (HashMap<kNet::MessageConnection*, SharedPtr<Connection>>::Iterator i = clientConnections_.Begin();
                      i != clientConnections_.End(); ++i)
                 {
                     Scene* scene = i->second_->GetScene();
@@ -515,7 +498,7 @@ void Network::PostUpdate(float timeStep)
                 URHO3D_PROFILE(SendServerUpdate);
 
                 // Then send server updates for each client connection
-                for (HashMap<kNet::MessageConnection*, SharedPtr<Connection> >::Iterator i = clientConnections_.Begin();
+                for (HashMap<kNet::MessageConnection*, SharedPtr<Connection>>::Iterator i = clientConnections_.Begin();
                      i != clientConnections_.End(); ++i)
                 {
                     i->second_->SendServerUpdate();
@@ -588,14 +571,10 @@ void Network::ConfigureNetworkSimulator()
     if (serverConnection_)
         serverConnection_->ConfigureNetworkSimulator(simulatedLatency_, simulatedPacketLoss_);
 
-    for (HashMap<kNet::MessageConnection*, SharedPtr<Connection> >::Iterator i = clientConnections_.Begin();
+    for (HashMap<kNet::MessageConnection*, SharedPtr<Connection>>::Iterator i = clientConnections_.Begin();
          i != clientConnections_.End(); ++i)
         i->second_->ConfigureNetworkSimulator(simulatedLatency_, simulatedPacketLoss_);
 }
 
-void RegisterNetworkLibrary(Context* context)
-{
-    NetworkPriority::RegisterObject(context);
-}
-
+void RegisterNetworkLibrary(Context* context) { NetworkPriority::RegisterObject(context); }
 }

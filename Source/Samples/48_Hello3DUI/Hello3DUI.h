@@ -26,9 +26,7 @@
 
 namespace Urho3D
 {
-
 class Window;
-
 }
 
 /// A 3D UI demonstration based on the HelloGUI sample. Renders UI alternatively
@@ -46,12 +44,13 @@ public:
 
 protected:
     /// Return XML patch instructions for screen joystick layout for a specific sample app, if any.
-    virtual String GetScreenJoystickPatchString() const override { return
-        "<patch>"
-        "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Hat0']]\">"
-        "        <attribute name=\"Is Visible\" value=\"false\" />"
-        "    </add>"
-        "</patch>";
+    virtual String GetScreenJoystickPatchString() const override
+    {
+        return "<patch>"
+               "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Hat0']]\">"
+               "        <attribute name=\"Is Visible\" value=\"false\" />"
+               "    </add>"
+               "</patch>";
     }
 
 private:
@@ -99,5 +98,3 @@ private:
     /// Last clicked UI element.
     WeakPtr<UIElement> current_;
 };
-
-

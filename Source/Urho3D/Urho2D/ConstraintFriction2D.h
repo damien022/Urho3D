@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// 2D friction constraint component.
 class URHO3D_API ConstraintFriction2D : public Constraint2D
 {
@@ -65,5 +64,4 @@ private:
     /// Anchor.
     Vector2 anchor_;
 };
-
 }

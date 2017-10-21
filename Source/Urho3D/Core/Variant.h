@@ -34,7 +34,6 @@
 
 namespace Urho3D
 {
-
 /// Variant's supported types.
 enum VariantType
 {
@@ -87,41 +86,39 @@ using VariantMap = HashMap<StringHash, Variant>;
 struct URHO3D_API ResourceRef
 {
     /// Construct.
-    ResourceRef()
-    {
-    }
+    ResourceRef() {}
 
     /// Construct with type only and empty id.
-    ResourceRef(StringHash type) :
-        type_(type)
+    ResourceRef(StringHash type)
+        : type_(type)
     {
     }
 
     /// Construct with type and resource name.
-    ResourceRef(StringHash type, const String& name) :
-        type_(type),
-        name_(name)
+    ResourceRef(StringHash type, const String& name)
+        : type_(type)
+        , name_(name)
     {
     }
 
     /// Construct with type and resource name.
-    ResourceRef(const String& type, const String& name) :
-        type_(type),
-        name_(name)
+    ResourceRef(const String& type, const String& name)
+        : type_(type)
+        , name_(name)
     {
     }
 
     /// Construct with type and resource name.
-    ResourceRef(const char* type, const char* name) :
-        type_(type),
-        name_(name)
+    ResourceRef(const char* type, const char* name)
+        : type_(type)
+        , name_(name)
     {
     }
 
     /// Construct from another ResourceRef.
-    ResourceRef(const ResourceRef& rhs) :
-        type_(rhs.type_),
-        name_(rhs.name_)
+    ResourceRef(const ResourceRef& rhs)
+        : type_(rhs.type_)
+        , name_(rhs.name_)
     {
     }
 
@@ -131,30 +128,28 @@ struct URHO3D_API ResourceRef
     String name_;
 
     /// Test for equality with another reference.
-    bool operator ==(const ResourceRef& rhs) const { return type_ == rhs.type_ && name_ == rhs.name_; }
+    bool operator==(const ResourceRef& rhs) const { return type_ == rhs.type_ && name_ == rhs.name_; }
 
     /// Test for inequality with another reference.
-    bool operator !=(const ResourceRef& rhs) const { return type_ != rhs.type_ || name_ != rhs.name_; }
+    bool operator!=(const ResourceRef& rhs) const { return type_ != rhs.type_ || name_ != rhs.name_; }
 };
 
 /// %List of typed resource references.
 struct URHO3D_API ResourceRefList
 {
     /// Construct.
-    ResourceRefList()
-    {
-    }
+    ResourceRefList() {}
 
     /// Construct with type only.
-    ResourceRefList(StringHash type) :
-        type_(type)
+    ResourceRefList(StringHash type)
+        : type_(type)
     {
     }
 
     /// Construct with type and id list.
-    ResourceRefList(StringHash type, const StringVector& names) :
-        type_(type),
-        names_(names)
+    ResourceRefList(StringHash type, const StringVector& names)
+        : type_(type)
+        , names_(names)
     {
     }
 
@@ -164,10 +159,10 @@ struct URHO3D_API ResourceRefList
     StringVector names_;
 
     /// Test for equality with another reference list.
-    bool operator ==(const ResourceRefList& rhs) const { return type_ == rhs.type_ && names_ == rhs.names_; }
+    bool operator==(const ResourceRefList& rhs) const { return type_ == rhs.type_ && names_ == rhs.names_; }
 
     /// Test for inequality with another reference list.
-    bool operator !=(const ResourceRefList& rhs) const { return type_ != rhs.type_ || names_ != rhs.names_; }
+    bool operator!=(const ResourceRefList& rhs) const { return type_ != rhs.type_ || names_ != rhs.names_; }
 };
 
 /// Custom variant value. This type is not abstract to store it in the VariantValue by value.
@@ -178,13 +173,19 @@ class CustomVariantValue
 
 private:
     /// Construct from type info.
-    CustomVariantValue(const std::type_info& typeInfo) : typeInfo_(typeInfo) {}
+    CustomVariantValue(const std::type_info& typeInfo)
+        : typeInfo_(typeInfo)
+    {
+    }
 
 public:
     /// Construct empty.
-    CustomVariantValue() : typeInfo_(typeid(void)) { }
+    CustomVariantValue()
+        : typeInfo_(typeid(void))
+    {
+    }
     /// Destruct.
-    virtual ~CustomVariantValue() { }
+    virtual ~CustomVariantValue() {}
     /// Get the type info.
     const std::type_info& GetTypeInfo() const { return typeInfo_; }
     /// Return whether the specified type is stored.
@@ -199,12 +200,16 @@ public:
     /// Clone.
     virtual CustomVariantValue* Clone() const { return nullptr; }
     /// Placement clone.
-    virtual void Clone(void* dest) const { }
+    virtual void Clone(void* dest) const {}
     /// Get size.
     virtual unsigned GetSize() const { return sizeof(CustomVariantValue); }
 
     /// Compare to another custom value.
-    virtual bool Compare(const CustomVariantValue& rhs) const { (void)rhs; return false; }
+    virtual bool Compare(const CustomVariantValue& rhs) const
+    {
+        (void)rhs;
+        return false;
+    }
     /// Compare to zero.
     virtual bool IsZero() const { return false; }
     /// Convert custom value to string.
@@ -219,11 +224,23 @@ private:
 template <class T> struct CustomVariantValueTraits
 {
     /// Compare types.
-    static bool Compare(const T& lhs, const T& rhs) { (void)lhs, rhs; return false; }
+    static bool Compare(const T& lhs, const T& rhs)
+    {
+        (void)lhs, rhs;
+        return false;
+    }
     /// Check whether the value is zero.
-    static bool IsZero(const T& value) { (void)value; return false; }
+    static bool IsZero(const T& value)
+    {
+        (void)value;
+        return false;
+    }
     /// Convert type to string.
-    static String ToString(const T& value) { (void)value; return String::EMPTY; }
+    static String ToString(const T& value)
+    {
+        (void)value;
+        return String::EMPTY;
+    }
 };
 
 /// Custom variant value implementation.
@@ -235,7 +252,11 @@ public:
     /// Type traits.
     using Traits = CustomVariantValueTraits<T>;
     /// Construct from value.
-    CustomVariantValueImpl(const T& value) : CustomVariantValue(typeid(T)), value_(value) {}
+    CustomVariantValueImpl(const T& value)
+        : CustomVariantValue(typeid(T))
+        , value_(value)
+    {
+    }
     /// Set value.
     void SetValue(const T& value) { value_ = value; }
     /// Get value.
@@ -267,7 +288,7 @@ public:
         return rhsValue && Traits::Compare(value_, *rhsValue);
     }
     /// Compare to zero.
-    virtual bool IsZero() const override { return Traits::IsZero(value_);}
+    virtual bool IsZero() const override { return Traits::IsZero(value_); }
     /// Convert custom value to string.
     virtual String ToString() const override { return Traits::ToString(value_); }
 
@@ -277,14 +298,16 @@ private:
 };
 
 /// Make custom variant value.
-template <typename T> CustomVariantValueImpl<T> MakeCustomValue(const T& value) { return CustomVariantValueImpl<T>(value); }
+template <typename T> CustomVariantValueImpl<T> MakeCustomValue(const T& value)
+{
+    return CustomVariantValueImpl<T>(value);
+}
 
 /// Size of variant value. 16 bytes on 32-bit platform, 32 bytes on 64-bit platform.
 static const unsigned VARIANT_VALUE_SIZE = sizeof(void*) * 4;
 
 /// Union for the possible variant values. Objects exceeding the VARIANT_VALUE_SIZE are allocated on the heap.
-union VariantValue
-{
+union VariantValue {
     unsigned char storage_[VARIANT_VALUE_SIZE];
     int int_;
     bool bool_;
@@ -316,11 +339,11 @@ union VariantValue
     CustomVariantValue customValueStack_;
 
     /// Construct uninitialized.
-    VariantValue() { }
+    VariantValue() {}
     /// Non-copyable.
     VariantValue(const VariantValue& value) = delete;
     /// Destruct.
-    ~VariantValue() { }
+    ~VariantValue() {}
 };
 
 static_assert(sizeof(VariantValue) == VARIANT_VALUE_SIZE, "Unexpected size of VariantValue");
@@ -330,248 +353,131 @@ class URHO3D_API Variant
 {
 public:
     /// Construct empty.
-    Variant() { }
+    Variant() {}
 
     /// Construct from integer.
-    Variant(int value)
-    {
-        *this = value;
-    }
+    Variant(int value) { *this = value; }
 
     /// Construct from 64 bit integer.
-    Variant(long long value)
-    {
-        *this = value;
-    }
+    Variant(long long value) { *this = value; }
 
     /// Construct from unsigned integer.
-    Variant(unsigned value)
-    {
-        *this = (int)value;
-    }
+    Variant(unsigned value) { *this = (int)value; }
 
     /// Construct from unsigned integer.
-    Variant(unsigned long long value)
-    {
-        *this = (long long)value;
-    }
+    Variant(unsigned long long value) { *this = (long long)value; }
 
     /// Construct from a string hash (convert to integer).
-    Variant(const StringHash& value)
-    {
-        *this = (int)value.Value();
-    }
+    Variant(const StringHash& value) { *this = (int)value.Value(); }
 
     /// Construct from a bool.
-    Variant(bool value)
-    {
-        *this = value;
-    }
+    Variant(bool value) { *this = value; }
 
     /// Construct from a float.
-    Variant(float value)
-    {
-        *this = value;
-    }
+    Variant(float value) { *this = value; }
 
     /// Construct from a double.
-    Variant(double value)
-    {
-        *this = value;
-    }
+    Variant(double value) { *this = value; }
 
     /// Construct from a Vector2.
-    Variant(const Vector2& value)
-    {
-        *this = value;
-    }
+    Variant(const Vector2& value) { *this = value; }
 
     /// Construct from a Vector3.
-    Variant(const Vector3& value)
-    {
-        *this = value;
-    }
+    Variant(const Vector3& value) { *this = value; }
 
     /// Construct from a Vector4.
-    Variant(const Vector4& value)
-    {
-        *this = value;
-    }
+    Variant(const Vector4& value) { *this = value; }
 
     /// Construct from a quaternion.
-    Variant(const Quaternion& value)
-    {
-        *this = value;
-    }
+    Variant(const Quaternion& value) { *this = value; }
 
     /// Construct from a color.
-    Variant(const Color& value)
-    {
-        *this = value;
-    }
+    Variant(const Color& value) { *this = value; }
 
     /// Construct from a string.
-    Variant(const String& value)
-    {
-        *this = value;
-    }
+    Variant(const String& value) { *this = value; }
 
     /// Construct from a C string.
-    Variant(const char* value)
-    {
-        *this = value;
-    }
+    Variant(const char* value) { *this = value; }
 
     /// Construct from a buffer.
-    Variant(const PODVector<unsigned char>& value)
-    {
-        *this = value;
-    }
+    Variant(const PODVector<unsigned char>& value) { *this = value; }
 
     /// Construct from a %VectorBuffer and store as a buffer.
-    Variant(const VectorBuffer& value)
-    {
-        *this = value;
-    }
+    Variant(const VectorBuffer& value) { *this = value; }
 
     /// Construct from a pointer.
-    Variant(void* value)
-    {
-        *this = value;
-    }
+    Variant(void* value) { *this = value; }
 
     /// Construct from a resource reference.
-    Variant(const ResourceRef& value)
-    {
-        *this = value;
-    }
+    Variant(const ResourceRef& value) { *this = value; }
 
     /// Construct from a resource reference list.
-    Variant(const ResourceRefList& value)
-    {
-        *this = value;
-    }
+    Variant(const ResourceRefList& value) { *this = value; }
 
     /// Construct from a variant vector.
-    Variant(const VariantVector& value)
-    {
-        *this = value;
-    }
+    Variant(const VariantVector& value) { *this = value; }
 
     /// Construct from a variant map.
-    Variant(const VariantMap& value)
-    {
-        *this = value;
-    }
+    Variant(const VariantMap& value) { *this = value; }
 
     /// Construct from a string vector.
-    Variant(const StringVector& value)
-    {
-        *this = value;
-    }
+    Variant(const StringVector& value) { *this = value; }
 
     /// Construct from a rect.
-    Variant(const Rect& value)
-    {
-        *this = value;
-    }
+    Variant(const Rect& value) { *this = value; }
 
     /// Construct from an integer rect.
-    Variant(const IntRect& value)
-    {
-        *this = value;
-    }
+    Variant(const IntRect& value) { *this = value; }
 
     /// Construct from an IntVector2.
-    Variant(const IntVector2& value)
-    {
-        *this = value;
-    }
+    Variant(const IntVector2& value) { *this = value; }
 
     /// Construct from an IntVector3.
-    Variant(const IntVector3& value)
-    {
-        *this = value;
-    }
+    Variant(const IntVector3& value) { *this = value; }
 
-    /// Construct from a RefCounted pointer. The object will be stored internally in a WeakPtr so that its expiration can be detected safely.
-    Variant(RefCounted* value)
-    {
-        *this = value;
-    }
+    /// Construct from a RefCounted pointer. The object will be stored internally in a WeakPtr so that its expiration
+    /// can be detected safely.
+    Variant(RefCounted* value) { *this = value; }
 
     /// Construct from a Matrix3.
-    Variant(const Matrix3& value)
-    {
-        *this = value;
-    }
+    Variant(const Matrix3& value) { *this = value; }
 
     /// Construct from a Matrix3x4.
-    Variant(const Matrix3x4& value)
-    {
-        *this = value;
-    }
+    Variant(const Matrix3x4& value) { *this = value; }
 
     /// Construct from a Matrix4.
-    Variant(const Matrix4& value)
-    {
-        *this = value;
-    }
+    Variant(const Matrix4& value) { *this = value; }
 
     /// Construct from custom value.
-    template <class T>
-    Variant(const CustomVariantValueImpl<T>& value)
-    {
-        *this = value;
-    }
+    template <class T> Variant(const CustomVariantValueImpl<T>& value) { *this = value; }
 
     /// Construct from type and value.
-    Variant(const String& type, const String& value)
-    {
-        FromString(type, value);
-    }
+    Variant(const String& type, const String& value) { FromString(type, value); }
 
     /// Construct from type and value.
-    Variant(VariantType type, const String& value)
-    {
-        FromString(type, value);
-    }
+    Variant(VariantType type, const String& value) { FromString(type, value); }
 
     /// Construct from type and value.
-    Variant(const char* type, const char* value)
-    {
-        FromString(type, value);
-    }
+    Variant(const char* type, const char* value) { FromString(type, value); }
 
     /// Construct from type and value.
-    Variant(VariantType type, const char* value)
-    {
-        FromString(type, value);
-    }
+    Variant(VariantType type, const char* value) { FromString(type, value); }
 
     /// Copy-construct from another variant.
-    Variant(const Variant& value)
-    {
-        *this = value;
-    }
+    Variant(const Variant& value) { *this = value; }
 
     /// Destruct.
-    ~Variant()
-    {
-        SetType(VAR_NONE);
-    }
+    ~Variant() { SetType(VAR_NONE); }
 
     /// Reset to empty.
-    void Clear()
-    {
-        SetType(VAR_NONE);
-    }
+    void Clear() { SetType(VAR_NONE); }
 
     /// Assign from another variant.
-    Variant& operator =(const Variant& rhs);
+    Variant& operator=(const Variant& rhs);
 
     /// Assign from an integer.
-    Variant& operator =(int rhs)
+    Variant& operator=(int rhs)
     {
         SetType(VAR_INT);
         value_.int_ = rhs;
@@ -579,7 +485,7 @@ public:
     }
 
     /// Assign from 64 bit integer.
-    Variant& operator =(long long rhs)
+    Variant& operator=(long long rhs)
     {
         SetType(VAR_INT64);
         value_.int64_ = rhs;
@@ -587,7 +493,7 @@ public:
     }
 
     /// Assign from unsigned 64 bit integer.
-    Variant& operator =(unsigned long long rhs)
+    Variant& operator=(unsigned long long rhs)
     {
         SetType(VAR_INT64);
         value_.int64_ = static_cast<long long>(rhs);
@@ -595,7 +501,7 @@ public:
     }
 
     /// Assign from an unsigned integer.
-    Variant& operator =(unsigned rhs)
+    Variant& operator=(unsigned rhs)
     {
         SetType(VAR_INT);
         value_.int_ = (int)rhs;
@@ -603,7 +509,7 @@ public:
     }
 
     /// Assign from a StringHash (convert to integer.)
-    Variant& operator =(const StringHash& rhs)
+    Variant& operator=(const StringHash& rhs)
     {
         SetType(VAR_INT);
         value_.int_ = (int)rhs.Value();
@@ -611,7 +517,7 @@ public:
     }
 
     /// Assign from a bool.
-    Variant& operator =(bool rhs)
+    Variant& operator=(bool rhs)
     {
         SetType(VAR_BOOL);
         value_.bool_ = rhs;
@@ -619,7 +525,7 @@ public:
     }
 
     /// Assign from a float.
-    Variant& operator =(float rhs)
+    Variant& operator=(float rhs)
     {
         SetType(VAR_FLOAT);
         value_.float_ = rhs;
@@ -627,7 +533,7 @@ public:
     }
 
     /// Assign from a double.
-    Variant& operator =(double rhs)
+    Variant& operator=(double rhs)
     {
         SetType(VAR_DOUBLE);
         value_.double_ = rhs;
@@ -635,7 +541,7 @@ public:
     }
 
     /// Assign from a Vector2.
-    Variant& operator =(const Vector2& rhs)
+    Variant& operator=(const Vector2& rhs)
     {
         SetType(VAR_VECTOR2);
         value_.vector2_ = rhs;
@@ -643,7 +549,7 @@ public:
     }
 
     /// Assign from a Vector3.
-    Variant& operator =(const Vector3& rhs)
+    Variant& operator=(const Vector3& rhs)
     {
         SetType(VAR_VECTOR3);
         value_.vector3_ = rhs;
@@ -651,7 +557,7 @@ public:
     }
 
     /// Assign from a Vector4.
-    Variant& operator =(const Vector4& rhs)
+    Variant& operator=(const Vector4& rhs)
     {
         SetType(VAR_VECTOR4);
         value_.vector4_ = rhs;
@@ -659,7 +565,7 @@ public:
     }
 
     /// Assign from a quaternion.
-    Variant& operator =(const Quaternion& rhs)
+    Variant& operator=(const Quaternion& rhs)
     {
         SetType(VAR_QUATERNION);
         value_.quaternion_ = rhs;
@@ -667,7 +573,7 @@ public:
     }
 
     /// Assign from a color.
-    Variant& operator =(const Color& rhs)
+    Variant& operator=(const Color& rhs)
     {
         SetType(VAR_COLOR);
         value_.color_ = rhs;
@@ -675,7 +581,7 @@ public:
     }
 
     /// Assign from a string.
-    Variant& operator =(const String& rhs)
+    Variant& operator=(const String& rhs)
     {
         SetType(VAR_STRING);
         value_.string_ = rhs;
@@ -683,7 +589,7 @@ public:
     }
 
     /// Assign from a C string.
-    Variant& operator =(const char* rhs)
+    Variant& operator=(const char* rhs)
     {
         SetType(VAR_STRING);
         value_.string_ = rhs;
@@ -691,7 +597,7 @@ public:
     }
 
     /// Assign from a buffer.
-    Variant& operator =(const PODVector<unsigned char>& rhs)
+    Variant& operator=(const PODVector<unsigned char>& rhs)
     {
         SetType(VAR_BUFFER);
         value_.buffer_ = rhs;
@@ -699,10 +605,10 @@ public:
     }
 
     /// Assign from a %VectorBuffer and store as a buffer.
-    Variant& operator =(const VectorBuffer& rhs);
+    Variant& operator=(const VectorBuffer& rhs);
 
     /// Assign from a void pointer.
-    Variant& operator =(void* rhs)
+    Variant& operator=(void* rhs)
     {
         SetType(VAR_VOIDPTR);
         value_.voidPtr_ = rhs;
@@ -710,7 +616,7 @@ public:
     }
 
     /// Assign from a resource reference.
-    Variant& operator =(const ResourceRef& rhs)
+    Variant& operator=(const ResourceRef& rhs)
     {
         SetType(VAR_RESOURCEREF);
         value_.resourceRef_ = rhs;
@@ -718,7 +624,7 @@ public:
     }
 
     /// Assign from a resource reference list.
-    Variant& operator =(const ResourceRefList& rhs)
+    Variant& operator=(const ResourceRefList& rhs)
     {
         SetType(VAR_RESOURCEREFLIST);
         value_.resourceRefList_ = rhs;
@@ -726,7 +632,7 @@ public:
     }
 
     /// Assign from a variant vector.
-    Variant& operator =(const VariantVector& rhs)
+    Variant& operator=(const VariantVector& rhs)
     {
         SetType(VAR_VARIANTVECTOR);
         value_.variantVector_ = rhs;
@@ -734,7 +640,7 @@ public:
     }
 
     /// Assign from a string vector.
-    Variant& operator =(const StringVector& rhs)
+    Variant& operator=(const StringVector& rhs)
     {
         SetType(VAR_STRINGVECTOR);
         value_.stringVector_ = rhs;
@@ -742,7 +648,7 @@ public:
     }
 
     /// Assign from a variant map.
-    Variant& operator =(const VariantMap& rhs)
+    Variant& operator=(const VariantMap& rhs)
     {
         SetType(VAR_VARIANTMAP);
         value_.variantMap_ = rhs;
@@ -750,7 +656,7 @@ public:
     }
 
     /// Assign from a rect.
-    Variant& operator =(const Rect& rhs)
+    Variant& operator=(const Rect& rhs)
     {
         SetType(VAR_RECT);
         value_.rect_ = rhs;
@@ -758,7 +664,7 @@ public:
     }
 
     /// Assign from an integer rect.
-    Variant& operator =(const IntRect& rhs)
+    Variant& operator=(const IntRect& rhs)
     {
         SetType(VAR_INTRECT);
         value_.intRect_ = rhs;
@@ -766,7 +672,7 @@ public:
     }
 
     /// Assign from an IntVector2.
-    Variant& operator =(const IntVector2& rhs)
+    Variant& operator=(const IntVector2& rhs)
     {
         SetType(VAR_INTVECTOR2);
         value_.intVector2_ = rhs;
@@ -774,15 +680,16 @@ public:
     }
 
     /// Assign from an IntVector3.
-    Variant& operator =(const IntVector3& rhs)
+    Variant& operator=(const IntVector3& rhs)
     {
         SetType(VAR_INTVECTOR3);
         value_.intVector3_ = rhs;
         return *this;
     }
 
-    /// Assign from a RefCounted pointer. The object will be stored internally in a WeakPtr so that its expiration can be detected safely.
-    Variant& operator =(RefCounted* rhs)
+    /// Assign from a RefCounted pointer. The object will be stored internally in a WeakPtr so that its expiration can
+    /// be detected safely.
+    Variant& operator=(RefCounted* rhs)
     {
         SetType(VAR_PTR);
         value_.weakPtr_ = rhs;
@@ -790,7 +697,7 @@ public:
     }
 
     /// Assign from a Matrix3.
-    Variant& operator =(const Matrix3& rhs)
+    Variant& operator=(const Matrix3& rhs)
     {
         SetType(VAR_MATRIX3);
         *value_.matrix3_ = rhs;
@@ -798,7 +705,7 @@ public:
     }
 
     /// Assign from a Matrix3x4.
-    Variant& operator =(const Matrix3x4& rhs)
+    Variant& operator=(const Matrix3x4& rhs)
     {
         SetType(VAR_MATRIX3X4);
         *value_.matrix3x4_ = rhs;
@@ -806,7 +713,7 @@ public:
     }
 
     /// Assign from a Matrix4.
-    Variant& operator =(const Matrix4& rhs)
+    Variant& operator=(const Matrix4& rhs)
     {
         SetType(VAR_MATRIX4);
         *value_.matrix4_ = rhs;
@@ -814,80 +721,65 @@ public:
     }
 
     /// Assign from custom value.
-    template <class T>
-    Variant& operator =(const CustomVariantValueImpl<T>& value)
+    template <class T> Variant& operator=(const CustomVariantValueImpl<T>& value)
     {
         SetCustomVariantValue(value);
         return *this;
     }
 
     /// Test for equality with another variant.
-    bool operator ==(const Variant& rhs) const;
+    bool operator==(const Variant& rhs) const;
 
     /// Test for equality with an integer. To return true, both the type and value must match.
-    bool operator ==(int rhs) const { return type_ == VAR_INT ? value_.int_ == rhs : false; }
+    bool operator==(int rhs) const { return type_ == VAR_INT ? value_.int_ == rhs : false; }
 
     /// Test for equality with an unsigned 64 bit integer. To return true, both the type and value must match.
-    bool operator ==(unsigned rhs) const { return type_ == VAR_INT ? value_.int_ == static_cast<int>(rhs) : false; }
+    bool operator==(unsigned rhs) const { return type_ == VAR_INT ? value_.int_ == static_cast<int>(rhs) : false; }
 
     /// Test for equality with an 64 bit integer. To return true, both the type and value must match.
-    bool operator ==(long long rhs) const { return type_ == VAR_INT64 ? value_.int64_ == rhs : false; }
+    bool operator==(long long rhs) const { return type_ == VAR_INT64 ? value_.int64_ == rhs : false; }
 
     /// Test for equality with an unsigned integer. To return true, both the type and value must match.
-    bool operator ==(unsigned long long rhs) const { return type_ == VAR_INT64 ? value_.int64_ == static_cast<long long>(rhs) : false; }
+    bool operator==(unsigned long long rhs) const
+    {
+        return type_ == VAR_INT64 ? value_.int64_ == static_cast<long long>(rhs) : false;
+    }
 
     /// Test for equality with a bool. To return true, both the type and value must match.
-    bool operator ==(bool rhs) const { return type_ == VAR_BOOL ? value_.bool_ == rhs : false; }
+    bool operator==(bool rhs) const { return type_ == VAR_BOOL ? value_.bool_ == rhs : false; }
 
     /// Test for equality with a float. To return true, both the type and value must match.
-    bool operator ==(float rhs) const { return type_ == VAR_FLOAT ? value_.float_ == rhs : false; }
+    bool operator==(float rhs) const { return type_ == VAR_FLOAT ? value_.float_ == rhs : false; }
 
     /// Test for equality with a double. To return true, both the type and value must match.
-    bool operator ==(double rhs) const { return type_ == VAR_DOUBLE ? value_.double_ == rhs : false; }
+    bool operator==(double rhs) const { return type_ == VAR_DOUBLE ? value_.double_ == rhs : false; }
 
     /// Test for equality with a Vector2. To return true, both the type and value must match.
-    bool operator ==(const Vector2& rhs) const
-    {
-        return type_ == VAR_VECTOR2 ? value_.vector2_ == rhs : false;
-    }
+    bool operator==(const Vector2& rhs) const { return type_ == VAR_VECTOR2 ? value_.vector2_ == rhs : false; }
 
     /// Test for equality with a Vector3. To return true, both the type and value must match.
-    bool operator ==(const Vector3& rhs) const
-    {
-        return type_ == VAR_VECTOR3 ? value_.vector3_ == rhs : false;
-    }
+    bool operator==(const Vector3& rhs) const { return type_ == VAR_VECTOR3 ? value_.vector3_ == rhs : false; }
 
     /// Test for equality with a Vector4. To return true, both the type and value must match.
-    bool operator ==(const Vector4& rhs) const
-    {
-        return type_ == VAR_VECTOR4 ? value_.vector4_ == rhs : false;
-    }
+    bool operator==(const Vector4& rhs) const { return type_ == VAR_VECTOR4 ? value_.vector4_ == rhs : false; }
 
     /// Test for equality with a quaternion. To return true, both the type and value must match.
-    bool operator ==(const Quaternion& rhs) const
-    {
-        return type_ == VAR_QUATERNION ? value_.quaternion_ == rhs : false;
-    }
+    bool operator==(const Quaternion& rhs) const { return type_ == VAR_QUATERNION ? value_.quaternion_ == rhs : false; }
 
     /// Test for equality with a color. To return true, both the type and value must match.
-    bool operator ==(const Color& rhs) const
-    {
-        return type_ == VAR_COLOR ? value_.color_ == rhs : false;
-    }
+    bool operator==(const Color& rhs) const { return type_ == VAR_COLOR ? value_.color_ == rhs : false; }
 
     /// Test for equality with a string. To return true, both the type and value must match.
-    bool operator ==(const String& rhs) const
-    {
-        return type_ == VAR_STRING ? value_.string_ == rhs : false;
-    }
+    bool operator==(const String& rhs) const { return type_ == VAR_STRING ? value_.string_ == rhs : false; }
 
     /// Test for equality with a buffer. To return true, both the type and value must match.
-    bool operator ==(const PODVector<unsigned char>& rhs) const;
+    bool operator==(const PODVector<unsigned char>& rhs) const;
     /// Test for equality with a %VectorBuffer. To return true, both the type and value must match.
-    bool operator ==(const VectorBuffer& rhs) const;
+    bool operator==(const VectorBuffer& rhs) const;
 
-    /// Test for equality with a void pointer. To return true, both the type and value must match, with the exception that a RefCounted pointer is also allowed.
-    bool operator ==(void* rhs) const
+    /// Test for equality with a void pointer. To return true, both the type and value must match, with the exception
+    /// that a RefCounted pointer is also allowed.
+    bool operator==(void* rhs) const
     {
         if (type_ == VAR_VOIDPTR)
             return value_.voidPtr_ == rhs;
@@ -898,64 +790,53 @@ public:
     }
 
     /// Test for equality with a resource reference. To return true, both the type and value must match.
-    bool operator ==(const ResourceRef& rhs) const
+    bool operator==(const ResourceRef& rhs) const
     {
         return type_ == VAR_RESOURCEREF ? value_.resourceRef_ == rhs : false;
     }
 
     /// Test for equality with a resource reference list. To return true, both the type and value must match.
-    bool operator ==(const ResourceRefList& rhs) const
+    bool operator==(const ResourceRefList& rhs) const
     {
         return type_ == VAR_RESOURCEREFLIST ? value_.resourceRefList_ == rhs : false;
     }
 
     /// Test for equality with a variant vector. To return true, both the type and value must match.
-    bool operator ==(const VariantVector& rhs) const
+    bool operator==(const VariantVector& rhs) const
     {
         return type_ == VAR_VARIANTVECTOR ? value_.variantVector_ == rhs : false;
     }
 
     /// Test for equality with a string vector. To return true, both the type and value must match.
-    bool operator ==(const StringVector& rhs) const
+    bool operator==(const StringVector& rhs) const
     {
         return type_ == VAR_STRINGVECTOR ? value_.stringVector_ == rhs : false;
     }
 
     /// Test for equality with a variant map. To return true, both the type and value must match.
-    bool operator ==(const VariantMap& rhs) const
-    {
-        return type_ == VAR_VARIANTMAP ? value_.variantMap_ == rhs : false;
-    }
+    bool operator==(const VariantMap& rhs) const { return type_ == VAR_VARIANTMAP ? value_.variantMap_ == rhs : false; }
 
     /// Test for equality with a rect. To return true, both the type and value must match.
-    bool operator ==(const Rect& rhs) const
-    {
-        return type_ == VAR_RECT ? value_.rect_ == rhs : false;
-    }
+    bool operator==(const Rect& rhs) const { return type_ == VAR_RECT ? value_.rect_ == rhs : false; }
 
     /// Test for equality with an integer rect. To return true, both the type and value must match.
-    bool operator ==(const IntRect& rhs) const
-    {
-        return type_ == VAR_INTRECT ? value_.intRect_ == rhs : false;
-    }
+    bool operator==(const IntRect& rhs) const { return type_ == VAR_INTRECT ? value_.intRect_ == rhs : false; }
 
     /// Test for equality with an IntVector2. To return true, both the type and value must match.
-    bool operator ==(const IntVector2& rhs) const
-    {
-        return type_ == VAR_INTVECTOR2 ? value_.intVector2_ == rhs : false;
-    }
+    bool operator==(const IntVector2& rhs) const { return type_ == VAR_INTVECTOR2 ? value_.intVector2_ == rhs : false; }
 
     /// Test for equality with an IntVector3. To return true, both the type and value must match.
-    bool operator ==(const IntVector3& rhs) const
-    {
-        return type_ == VAR_INTVECTOR3 ? value_.intVector3_ == rhs : false;
-    }
+    bool operator==(const IntVector3& rhs) const { return type_ == VAR_INTVECTOR3 ? value_.intVector3_ == rhs : false; }
 
     /// Test for equality with a StringHash. To return true, both the type and value must match.
-    bool operator ==(const StringHash& rhs) const { return type_ == VAR_INT ? static_cast<unsigned>(value_.int_) == rhs.Value() : false; }
+    bool operator==(const StringHash& rhs) const
+    {
+        return type_ == VAR_INT ? static_cast<unsigned>(value_.int_) == rhs.Value() : false;
+    }
 
-    /// Test for equality with a RefCounted pointer. To return true, both the type and value must match, with the exception that void pointer is also allowed.
-    bool operator ==(RefCounted* rhs) const
+    /// Test for equality with a RefCounted pointer. To return true, both the type and value must match, with the
+    /// exception that void pointer is also allowed.
+    bool operator==(RefCounted* rhs) const
     {
         if (type_ == VAR_PTR)
             return value_.weakPtr_ == rhs;
@@ -966,120 +847,115 @@ public:
     }
 
     /// Test for equality with a Matrix3. To return true, both the type and value must match.
-    bool operator ==(const Matrix3& rhs) const
-    {
-        return type_ == VAR_MATRIX3 ? *value_.matrix3_ == rhs : false;
-    }
+    bool operator==(const Matrix3& rhs) const { return type_ == VAR_MATRIX3 ? *value_.matrix3_ == rhs : false; }
 
     /// Test for equality with a Matrix3x4. To return true, both the type and value must match.
-    bool operator ==(const Matrix3x4& rhs) const
-    {
-        return type_ == VAR_MATRIX3X4 ? *value_.matrix3x4_ == rhs : false;
-    }
+    bool operator==(const Matrix3x4& rhs) const { return type_ == VAR_MATRIX3X4 ? *value_.matrix3x4_ == rhs : false; }
 
     /// Test for equality with a Matrix4. To return true, both the type and value must match.
-    bool operator ==(const Matrix4& rhs) const
-    {
-        return type_ == VAR_MATRIX4 ? *value_.matrix4_ == rhs : false;
-    }
+    bool operator==(const Matrix4& rhs) const { return type_ == VAR_MATRIX4 ? *value_.matrix4_ == rhs : false; }
 
     /// Test for inequality with another variant.
-    bool operator !=(const Variant& rhs) const { return !(*this == rhs); }
+    bool operator!=(const Variant& rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with an integer.
-    bool operator !=(int rhs) const { return !(*this == rhs); }
+    bool operator!=(int rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with an unsigned integer.
-    bool operator !=(unsigned rhs) const { return !(*this == rhs); }
+    bool operator!=(unsigned rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with an 64 bit integer.
-    bool operator !=(long long rhs) const { return !(*this == rhs); }
+    bool operator!=(long long rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with an unsigned 64 bit integer.
-    bool operator !=(unsigned long long rhs) const { return !(*this == rhs); }
+    bool operator!=(unsigned long long rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with a bool.
-    bool operator !=(bool rhs) const { return !(*this == rhs); }
+    bool operator!=(bool rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with a float.
-    bool operator !=(float rhs) const { return !(*this == rhs); }
+    bool operator!=(float rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with a double.
-    bool operator !=(double rhs) const { return !(*this == rhs); }
+    bool operator!=(double rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with a Vector2.
-    bool operator !=(const Vector2& rhs) const { return !(*this == rhs); }
+    bool operator!=(const Vector2& rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with a Vector3.
-    bool operator !=(const Vector3& rhs) const { return !(*this == rhs); }
+    bool operator!=(const Vector3& rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with an Vector4.
-    bool operator !=(const Vector4& rhs) const { return !(*this == rhs); }
+    bool operator!=(const Vector4& rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with a Quaternion.
-    bool operator !=(const Quaternion& rhs) const { return !(*this == rhs); }
+    bool operator!=(const Quaternion& rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with a string.
-    bool operator !=(const String& rhs) const { return !(*this == rhs); }
+    bool operator!=(const String& rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with a buffer.
-    bool operator !=(const PODVector<unsigned char>& rhs) const { return !(*this == rhs); }
+    bool operator!=(const PODVector<unsigned char>& rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with a %VectorBuffer.
-    bool operator !=(const VectorBuffer& rhs) const { return !(*this == rhs); }
+    bool operator!=(const VectorBuffer& rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with a pointer.
-    bool operator !=(void* rhs) const { return !(*this == rhs); }
+    bool operator!=(void* rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with a resource reference.
-    bool operator !=(const ResourceRef& rhs) const { return !(*this == rhs); }
+    bool operator!=(const ResourceRef& rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with a resource reference list.
-    bool operator !=(const ResourceRefList& rhs) const { return !(*this == rhs); }
+    bool operator!=(const ResourceRefList& rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with a variant vector.
-    bool operator !=(const VariantVector& rhs) const { return !(*this == rhs); }
+    bool operator!=(const VariantVector& rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with a string vector.
-    bool operator !=(const StringVector& rhs) const { return !(*this == rhs); }
+    bool operator!=(const StringVector& rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with a variant map.
-    bool operator !=(const VariantMap& rhs) const { return !(*this == rhs); }
+    bool operator!=(const VariantMap& rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with a rect.
-    bool operator !=(const Rect& rhs) const { return !(*this == rhs); }
+    bool operator!=(const Rect& rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with an integer rect.
-    bool operator !=(const IntRect& rhs) const { return !(*this == rhs); }
+    bool operator!=(const IntRect& rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with an IntVector2.
-    bool operator !=(const IntVector2& rhs) const { return !(*this == rhs); }
+    bool operator!=(const IntVector2& rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with an IntVector3.
-    bool operator !=(const IntVector3& rhs) const { return !(*this == rhs); }
+    bool operator!=(const IntVector3& rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with a StringHash.
-    bool operator !=(const StringHash& rhs) const { return !(*this == rhs); }
+    bool operator!=(const StringHash& rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with a RefCounted pointer.
-    bool operator !=(RefCounted* rhs) const { return !(*this == rhs); }
+    bool operator!=(RefCounted* rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with a Matrix3.
-    bool operator !=(const Matrix3& rhs) const { return !(*this == rhs); }
+    bool operator!=(const Matrix3& rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with a Matrix3x4.
-    bool operator !=(const Matrix3x4& rhs) const { return !(*this == rhs); }
+    bool operator!=(const Matrix3x4& rhs) const { return !(*this == rhs); }
 
     /// Test for inequality with a Matrix4.
-    bool operator !=(const Matrix4& rhs) const { return !(*this == rhs); }
+    bool operator!=(const Matrix4& rhs) const { return !(*this == rhs); }
 
-    /// Set from typename and value strings. Pointers will be set to null, and VariantBuffer or VariantMap types are not supported.
+    /// Set from typename and value strings. Pointers will be set to null, and VariantBuffer or VariantMap types are not
+    /// supported.
     void FromString(const String& type, const String& value);
-    /// Set from typename and value strings. Pointers will be set to null, and VariantBuffer or VariantMap types are not supported.
+    /// Set from typename and value strings. Pointers will be set to null, and VariantBuffer or VariantMap types are not
+    /// supported.
     void FromString(const char* type, const char* value);
-    /// Set from type and value string. Pointers will be set to null, and VariantBuffer or VariantMap types are not supported.
+    /// Set from type and value string. Pointers will be set to null, and VariantBuffer or VariantMap types are not
+    /// supported.
     void FromString(VariantType type, const String& value);
-    /// Set from type and value string. Pointers will be set to null, and VariantBuffer or VariantMap types are not supported.
+    /// Set from type and value string. Pointers will be set to null, and VariantBuffer or VariantMap types are not
+    /// supported.
     void FromString(VariantType type, const char* value);
     /// Set buffer type from a memory area.
     void SetBuffer(const void* data, unsigned size);
@@ -1196,16 +1072,16 @@ public:
     }
 
     /// Return color or default on type mismatch. Vector4 is aliased to Color if necessary.
-    const Color& GetColor() const { return (type_ == VAR_COLOR || type_ == VAR_VECTOR4) ? value_.color_ : Color::WHITE; }
+    const Color& GetColor() const
+    {
+        return (type_ == VAR_COLOR || type_ == VAR_VECTOR4) ? value_.color_ : Color::WHITE;
+    }
 
     /// Return string or empty on type mismatch.
     const String& GetString() const { return type_ == VAR_STRING ? value_.string_ : String::EMPTY; }
 
     /// Return buffer or empty on type mismatch.
-    const PODVector<unsigned char>& GetBuffer() const
-    {
-        return type_ == VAR_BUFFER ? value_.buffer_ : emptyBuffer;
-    }
+    const PODVector<unsigned char>& GetBuffer() const { return type_ == VAR_BUFFER ? value_.buffer_ : emptyBuffer; }
 
     /// Return %VectorBuffer containing the buffer or empty on type mismatch.
     VectorBuffer GetVectorBuffer() const;
@@ -1246,10 +1122,7 @@ public:
     }
 
     /// Return a variant map or empty on type mismatch.
-    const VariantMap& GetVariantMap() const
-    {
-        return type_ == VAR_VARIANTMAP ? value_.variantMap_ : emptyVariantMap;
-    }
+    const VariantMap& GetVariantMap() const { return type_ == VAR_VARIANTMAP ? value_.variantMap_ : emptyVariantMap; }
 
     /// Return a rect or empty on type mismatch.
     const Rect& GetRect() const { return type_ == VAR_RECT ? value_.rect_ : Rect::ZERO; }
@@ -1258,40 +1131,23 @@ public:
     const IntRect& GetIntRect() const { return type_ == VAR_INTRECT ? value_.intRect_ : IntRect::ZERO; }
 
     /// Return an IntVector2 or empty on type mismatch.
-    const IntVector2& GetIntVector2() const
-    {
-        return type_ == VAR_INTVECTOR2 ? value_.intVector2_ : IntVector2::ZERO;
-    }
+    const IntVector2& GetIntVector2() const { return type_ == VAR_INTVECTOR2 ? value_.intVector2_ : IntVector2::ZERO; }
 
     /// Return an IntVector3 or empty on type mismatch.
-    const IntVector3& GetIntVector3() const
-    {
-        return type_ == VAR_INTVECTOR3 ? value_.intVector3_ : IntVector3::ZERO;
-    }
+    const IntVector3& GetIntVector3() const { return type_ == VAR_INTVECTOR3 ? value_.intVector3_ : IntVector3::ZERO; }
 
-    /// Return a RefCounted pointer or null on type mismatch. Will return null if holding a void pointer, as it can not be safely verified that the object is a RefCounted.
-    RefCounted* GetPtr() const
-    {
-        return type_ == VAR_PTR ? value_.weakPtr_ : nullptr;
-    }
+    /// Return a RefCounted pointer or null on type mismatch. Will return null if holding a void pointer, as it can not
+    /// be safely verified that the object is a RefCounted.
+    RefCounted* GetPtr() const { return type_ == VAR_PTR ? value_.weakPtr_ : nullptr; }
 
     /// Return a Matrix3 or identity on type mismatch.
-    const Matrix3& GetMatrix3() const
-    {
-        return type_ == VAR_MATRIX3 ? *value_.matrix3_ : Matrix3::IDENTITY;
-    }
+    const Matrix3& GetMatrix3() const { return type_ == VAR_MATRIX3 ? *value_.matrix3_ : Matrix3::IDENTITY; }
 
     /// Return a Matrix3x4 or identity on type mismatch.
-    const Matrix3x4& GetMatrix3x4() const
-    {
-        return type_ == VAR_MATRIX3X4 ? *value_.matrix3x4_ : Matrix3x4::IDENTITY;
-    }
+    const Matrix3x4& GetMatrix3x4() const { return type_ == VAR_MATRIX3X4 ? *value_.matrix3x4_ : Matrix3x4::IDENTITY; }
 
     /// Return a Matrix4 or identity on type mismatch.
-    const Matrix4& GetMatrix4() const
-    {
-        return type_ == VAR_MATRIX4 ? *value_.matrix4_ : Matrix4::IDENTITY;
-    }
+    const Matrix4& GetMatrix4() const { return type_ == VAR_MATRIX4 ? *value_.matrix4_ : Matrix4::IDENTITY; }
 
     /// Return pointer to custom variant value.
     CustomVariantValue* GetCustomVariantValuePtr()
@@ -1335,7 +1191,8 @@ public:
 
     /// Return value's type name.
     String GetTypeName() const;
-    /// Convert value to string. Pointers are returned as null, and VariantBuffer or VariantMap are not supported and return empty.
+    /// Convert value to string. Pointers are returned as null, and VariantBuffer or VariantMap are not supported and
+    /// return empty.
     String ToString() const;
     /// Return true when the variant value is considered zero according to its actual type.
     bool IsZero() const;
@@ -1350,10 +1207,7 @@ public:
     template <class T> T Get() const;
 
     /// Return a pointer to a modifiable buffer or null on type mismatch.
-    PODVector<unsigned char>* GetBufferPtr()
-    {
-        return type_ == VAR_BUFFER ? &value_.buffer_ : nullptr;
-    }
+    PODVector<unsigned char>* GetBufferPtr() { return type_ == VAR_BUFFER ? &value_.buffer_ : nullptr; }
 
     /// Return a pointer to a modifiable variant vector or null on type mismatch.
     VariantVector* GetVariantVectorPtr() { return type_ == VAR_VARIANTVECTOR ? &value_.variantVector_ : nullptr; }
@@ -1439,7 +1293,7 @@ template <> inline VariantType GetVariantType<String>() { return VAR_STRING; }
 
 template <> inline VariantType GetVariantType<StringHash>() { return VAR_INT; }
 
-template <> inline VariantType GetVariantType<PODVector<unsigned char> >() { return VAR_BUFFER; }
+template <> inline VariantType GetVariantType<PODVector<unsigned char>>() { return VAR_BUFFER; }
 
 template <> inline VariantType GetVariantType<ResourceRef>() { return VAR_RESOURCEREF; }
 
@@ -1544,7 +1398,7 @@ template <> URHO3D_API IntVector2 Variant::Get<IntVector2>() const;
 
 template <> URHO3D_API IntVector3 Variant::Get<IntVector3>() const;
 
-template <> URHO3D_API PODVector<unsigned char> Variant::Get<PODVector<unsigned char> >() const;
+template <> URHO3D_API PODVector<unsigned char> Variant::Get<PODVector<unsigned char>>() const;
 
 template <> URHO3D_API Matrix3 Variant::Get<Matrix3>() const;
 
@@ -1572,5 +1426,4 @@ template <class T> const T* CustomVariantValue::GetValuePtr() const
     }
     return nullptr;
 }
-
 }

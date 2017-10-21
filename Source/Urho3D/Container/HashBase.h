@@ -34,15 +34,14 @@
 
 namespace Urho3D
 {
-
 /// Hash set/map node base class.
 struct HashNodeBase
 {
     /// Construct.
-    HashNodeBase() :
-        down_(nullptr),
-        prev_(nullptr),
-        next_(nullptr)
+    HashNodeBase()
+        : down_(nullptr)
+        , prev_(nullptr)
+        , next_(nullptr)
     {
     }
 
@@ -58,22 +57,22 @@ struct HashNodeBase
 struct HashIteratorBase
 {
     /// Construct.
-    HashIteratorBase() :
-        ptr_(nullptr)
+    HashIteratorBase()
+        : ptr_(nullptr)
     {
     }
 
     /// Construct with a node pointer.
-    explicit HashIteratorBase(HashNodeBase* ptr) :
-        ptr_(ptr)
+    explicit HashIteratorBase(HashNodeBase* ptr)
+        : ptr_(ptr)
     {
     }
 
     /// Test for equality with another iterator.
-    bool operator ==(const HashIteratorBase& rhs) const { return ptr_ == rhs.ptr_; }
+    bool operator==(const HashIteratorBase& rhs) const { return ptr_ == rhs.ptr_; }
 
     /// Test for inequality with another iterator.
-    bool operator !=(const HashIteratorBase& rhs) const { return ptr_ != rhs.ptr_; }
+    bool operator!=(const HashIteratorBase& rhs) const { return ptr_ != rhs.ptr_; }
 
     /// Go to the next node.
     void GotoNext()
@@ -94,8 +93,8 @@ struct HashIteratorBase
 };
 
 /// Hash set/map base class.
-/** Note that to prevent extra memory use due to vtable pointer, %HashBase intentionally does not declare a virtual destructor
-    and therefore %HashBase pointers should never be used.
+/** Note that to prevent extra memory use due to vtable pointer, %HashBase intentionally does not declare a virtual
+   destructor and therefore %HashBase pointers should never be used.
   */
 class URHO3D_API HashBase
 {
@@ -106,11 +105,11 @@ public:
     static const unsigned MAX_LOAD_FACTOR = 4;
 
     /// Construct.
-    HashBase() :
-        head_(nullptr),
-        tail_(nullptr),
-        ptrs_(nullptr),
-        allocator_(nullptr)
+    HashBase()
+        : head_(nullptr)
+        , tail_(nullptr)
+        , ptrs_(nullptr)
+        , allocator_(nullptr)
     {
     }
 
@@ -140,7 +139,11 @@ protected:
     void ResetPtrs();
 
     /// Set new size.
-    void SetSize(unsigned size) { if (ptrs_) (reinterpret_cast<unsigned*>(ptrs_))[0] = size; }
+    void SetSize(unsigned size)
+    {
+        if (ptrs_)
+            (reinterpret_cast<unsigned*>(ptrs_))[0] = size;
+    }
 
     /// Return bucket head pointers.
     HashNodeBase** Ptrs() const { return ptrs_ ? ptrs_ + 2 : nullptr; }
@@ -154,5 +157,4 @@ protected:
     /// Node allocator.
     AllocatorBlock* allocator_;
 };
-
 }

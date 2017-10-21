@@ -42,15 +42,16 @@
 #include "../DebugNew.h"
 
 #ifndef MAKEFOURCC
-#define MAKEFOURCC(ch0, ch1, ch2, ch3) ((unsigned)(ch0) | ((unsigned)(ch1) << 8) | ((unsigned)(ch2) << 16) | ((unsigned)(ch3) << 24))
+#define MAKEFOURCC(ch0, ch1, ch2, ch3)                                                                                 \
+    ((unsigned)(ch0) | ((unsigned)(ch1) << 8) | ((unsigned)(ch2) << 16) | ((unsigned)(ch3) << 24))
 #endif
 
-#define FOURCC_DXT1 (MAKEFOURCC('D','X','T','1'))
-#define FOURCC_DXT2 (MAKEFOURCC('D','X','T','2'))
-#define FOURCC_DXT3 (MAKEFOURCC('D','X','T','3'))
-#define FOURCC_DXT4 (MAKEFOURCC('D','X','T','4'))
-#define FOURCC_DXT5 (MAKEFOURCC('D','X','T','5'))
-#define FOURCC_DX10 (MAKEFOURCC('D','X','1','0'))
+#define FOURCC_DXT1 (MAKEFOURCC('D', 'X', 'T', '1'))
+#define FOURCC_DXT2 (MAKEFOURCC('D', 'X', 'T', '2'))
+#define FOURCC_DXT3 (MAKEFOURCC('D', 'X', 'T', '3'))
+#define FOURCC_DXT4 (MAKEFOURCC('D', 'X', 'T', '4'))
+#define FOURCC_DXT5 (MAKEFOURCC('D', 'X', 'T', '5'))
+#define FOURCC_DX10 (MAKEFOURCC('D', 'X', '1', '0'))
 
 static const unsigned DDSCAPS_COMPLEX = 0x00000008U;
 static const unsigned DDSCAPS_TEXTURE = 0x00001000U;
@@ -84,7 +85,6 @@ static const unsigned DDS_DXGI_FORMAT_BC3_UNORM_SRGB = 78;
 
 namespace Urho3D
 {
-
 /// DirectDraw color key definition.
 struct DDColorKey
 {
@@ -98,8 +98,7 @@ struct DDPixelFormat
     unsigned dwSize_;
     unsigned dwFlags_;
     unsigned dwFourCC_;
-    union
-    {
+    union {
         unsigned dwRGBBitCount_;
         unsigned dwYUVBitCount_;
         unsigned dwZBufferBitDepth_;
@@ -108,8 +107,7 @@ struct DDPixelFormat
         unsigned dwBumpBitCount_;
         unsigned dwPrivateFormatBitCount_;
     };
-    union
-    {
+    union {
         unsigned dwRBitMask_;
         unsigned dwYBitMask_;
         unsigned dwStencilBitDepth_;
@@ -117,8 +115,7 @@ struct DDPixelFormat
         unsigned dwBumpDuBitMask_;
         unsigned dwOperations_;
     };
-    union
-    {
+    union {
         unsigned dwGBitMask_;
         unsigned dwUBitMask_;
         unsigned dwZBitMask_;
@@ -129,15 +126,13 @@ struct DDPixelFormat
             unsigned short wBltMSTypes_;
         } multiSampleCaps_;
     };
-    union
-    {
+    union {
         unsigned dwBBitMask_;
         unsigned dwVBitMask_;
         unsigned dwStencilBitMask_;
         unsigned dwBumpLuminanceBitMask_;
     };
-    union
-    {
+    union {
         unsigned dwRGBAlphaBitMask_;
         unsigned dwYUVAlphaBitMask_;
         unsigned dwLuminanceAlphaBitMask_;
@@ -152,8 +147,7 @@ struct DDSCaps2
     unsigned dwCaps_;
     unsigned dwCaps2_;
     unsigned dwCaps3_;
-    union
-    {
+    union {
         unsigned dwCaps4_;
         unsigned dwVolumeDepth_;
     };
@@ -175,18 +169,15 @@ struct DDSurfaceDesc2
     unsigned dwFlags_;
     unsigned dwHeight_;
     unsigned dwWidth_;
-    union
-    {
+    union {
         unsigned lPitch_;
         unsigned dwLinearSize_;
     };
-    union
-    {
+    union {
         unsigned dwBackBufferCount_;
         unsigned dwDepth_;
     };
-    union
-    {
+    union {
         unsigned dwMipMapCount_;
         unsigned dwRefreshRate_;
         unsigned dwSrcVBHandle_;
@@ -194,16 +185,14 @@ struct DDSurfaceDesc2
     unsigned dwAlphaBitDepth_;
     unsigned dwReserved_;
     unsigned lpSurface_; // Do not define as a void pointer, as it is 8 bytes in a 64bit build
-    union
-    {
+    union {
         DDColorKey ddckCKDestOverlay_;
         unsigned dwEmptyFaceColor_;
     };
     DDColorKey ddckCKDestBlt_;
     DDColorKey ddckCKSrcOverlay_;
     DDColorKey ddckCKSrcBlt_;
-    union
-    {
+    union {
         DDPixelFormat ddpfPixelFormat_;
         unsigned dwFVF_;
     };
@@ -241,28 +230,23 @@ bool CompressedLevel::Decompress(unsigned char* dest)
     }
 }
 
-Image::Image(Context* context) :
-    Resource(context),
-    width_(0),
-    height_(0),
-    depth_(0),
-    components_(0),
-    numCompressedLevels_(0),
-    cubemap_(false),
-    array_(false),
-    sRGB_(false),
-    compressedFormat_(CF_NONE)
+Image::Image(Context* context)
+    : Resource(context)
+    , width_(0)
+    , height_(0)
+    , depth_(0)
+    , components_(0)
+    , numCompressedLevels_(0)
+    , cubemap_(false)
+    , array_(false)
+    , sRGB_(false)
+    , compressedFormat_(CF_NONE)
 {
 }
 
-Image::~Image()
-{
-}
+Image::~Image() {}
 
-void Image::RegisterObject(Context* context)
-{
-    context->RegisterFactory<Image>();
-}
+void Image::RegisterObject(Context* context) { context->RegisterFactory<Image>(); }
 
 bool Image::BeginLoad(Deserializer& source)
 {
@@ -352,7 +336,8 @@ bool Image::BeginLoad(Deserializer& source)
         }
 
         // Is it a cube map or texture array? If so determine the size of the image chain.
-        cubemap_ = (ddsd.ddsCaps_.dwCaps2_ & DDSCAPS2_CUBEMAP_ALL_FACES) != 0 || (hasDXGI && (dxgiHeader.miscFlag & DDS_RESOURCE_MISC_TEXTURECUBE) != 0);
+        cubemap_ = (ddsd.ddsCaps_.dwCaps2_ & DDSCAPS2_CUBEMAP_ALL_FACES) != 0 ||
+                   (hasDXGI && (dxgiHeader.miscFlag & DDS_RESOURCE_MISC_TEXTURECUBE) != 0);
         unsigned imageChainCount = 1;
         if (cubemap_)
             imageChainCount = 6;
@@ -366,7 +351,8 @@ bool Image::BeginLoad(Deserializer& source)
         unsigned dataSize = 0;
         if (compressedFormat_ != CF_RGBA)
         {
-            const unsigned blockSize = compressedFormat_ == CF_DXT1 ? 8 : 16; //DXT1/BC1 is 8 bytes, DXT3/BC2 and DXT5/BC3 are 16 bytes
+            const unsigned blockSize =
+                compressedFormat_ == CF_DXT1 ? 8 : 16; // DXT1/BC1 is 8 bytes, DXT3/BC2 and DXT5/BC3 are 16 bytes
             // Add 3 to ensure valid block: ie 2x2 fits uses a whole 4x4 block
             unsigned blocksWide = (ddsd.dwWidth_ + 3) / 4;
             unsigned blocksHeight = (ddsd.dwHeight_ + 3) / 4;
@@ -385,7 +371,8 @@ bool Image::BeginLoad(Deserializer& source)
         }
         else
         {
-            dataSize = (ddsd.ddpfPixelFormat_.dwRGBBitCount_ / 8) * ddsd.dwWidth_ * ddsd.dwHeight_ * Max(ddsd.dwDepth_, 1U);
+            dataSize =
+                (ddsd.ddpfPixelFormat_.dwRGBBitCount_ / 8) * ddsd.dwWidth_ * ddsd.dwHeight_ * Max(ddsd.dwDepth_, 1U);
             // Calculate mip data size
             unsigned x = ddsd.dwWidth_ / 2;
             unsigned y = ddsd.dwHeight_ / 2;
@@ -428,7 +415,8 @@ bool Image::BeginLoad(Deserializer& source)
             }
         }
 
-        // If uncompressed DDS, convert the data to 8bit RGBA as the texture classes can not currently use eg. RGB565 format
+        // If uncompressed DDS, convert the data to 8bit RGBA as the texture classes can not currently use eg. RGB565
+        // format
         if (compressedFormat_ == CF_RGBA)
         {
             URHO3D_PROFILE(ConvertDDSToRGBA);
@@ -440,17 +428,17 @@ bool Image::BeginLoad(Deserializer& source)
                 unsigned sourcePixelByteSize = ddsd.ddpfPixelFormat_.dwRGBBitCount_ >> 3;
                 unsigned numPixels = dataSize / sourcePixelByteSize;
 
-#define ADJUSTSHIFT(mask, l, r) \
-                if (mask && mask >= 0x100) \
-                { \
-                    while ((mask >> r) >= 0x100) \
-                    ++r; \
-                } \
-                else if (mask && mask < 0x80) \
-                { \
-                    while ((mask << l) < 0x80) \
-                    ++l; \
-                }
+#define ADJUSTSHIFT(mask, l, r)                                                                                        \
+    if (mask && mask >= 0x100)                                                                                         \
+    {                                                                                                                  \
+        while ((mask >> r) >= 0x100)                                                                                   \
+            ++r;                                                                                                       \
+    }                                                                                                                  \
+    else if (mask && mask < 0x80)                                                                                      \
+    {                                                                                                                  \
+        while ((mask << l) < 0x80)                                                                                     \
+            ++l;                                                                                                       \
+    }
 
                 unsigned rShiftL = 0, gShiftL = 0, bShiftL = 0, aShiftL = 0;
                 unsigned rShiftR = 0, gShiftR = 0, bShiftR = 0, aShiftR = 0;
@@ -789,11 +777,13 @@ bool Image::BeginLoad(Deserializer& source)
         bool decodeError(false);
         if (features.has_alpha)
         {
-            decodeError = WebPDecodeRGBAInto(data.Get(), dataSize, pixelData.Get(), imgSize, 4 * features.width) == nullptr;
+            decodeError =
+                WebPDecodeRGBAInto(data.Get(), dataSize, pixelData.Get(), imgSize, 4 * features.width) == nullptr;
         }
         else
         {
-            decodeError = WebPDecodeRGBInto(data.Get(), dataSize, pixelData.Get(), imgSize, 3 * features.width) == nullptr;
+            decodeError =
+                WebPDecodeRGBInto(data.Get(), dataSize, pixelData.Get(), imgSize, 3 * features.width) == nullptr;
         }
         if (decodeError)
         {
@@ -866,10 +856,7 @@ bool Image::SaveFile(const String& fileName) const
         return SavePNG(fileName);
 }
 
-bool Image::SetSize(int width, int height, unsigned components)
-{
-    return SetSize(width, height, 1, components);
-}
+bool Image::SetSize(int width, int height, unsigned components) { return SetSize(width, height, 1, components); }
 
 bool Image::SetSize(int width, int height, int depth, unsigned components)
 {
@@ -898,20 +885,11 @@ bool Image::SetSize(int width, int height, int depth, unsigned components)
     return true;
 }
 
-void Image::SetPixel(int x, int y, const Color& color)
-{
-    SetPixelInt(x, y, 0, color.ToUInt());
-}
+void Image::SetPixel(int x, int y, const Color& color) { SetPixelInt(x, y, 0, color.ToUInt()); }
 
-void Image::SetPixel(int x, int y, int z, const Color& color)
-{
-    SetPixelInt(x, y, z, color.ToUInt());
-}
+void Image::SetPixel(int x, int y, int z, const Color& color) { SetPixelInt(x, y, z, color.ToUInt()); }
 
-void Image::SetPixelInt(int x, int y, unsigned uintColor)
-{
-    SetPixelInt(x, y, 0, uintColor);
-}
+void Image::SetPixelInt(int x, int y, unsigned uintColor) { SetPixelInt(x, y, 0, uintColor); }
 
 void Image::SetPixelInt(int x, int y, int z, unsigned uintColor)
 {
@@ -1025,7 +1003,8 @@ bool Image::FlipHorizontal()
             for (int x = 0; x < width_; ++x)
             {
                 for (unsigned c = 0; c < components_; ++c)
-                    newData[y * rowSize + x * components_ + c] = data_[y * rowSize + (width_ - x - 1) * components_ + c];
+                    newData[y * rowSize + x * components_ + c] =
+                        data_[y * rowSize + (width_ - x - 1) * components_ + c];
             }
         }
 
@@ -1188,10 +1167,7 @@ bool Image::Resize(int width, int height)
     return true;
 }
 
-void Image::Clear(const Color& color)
-{
-    ClearInt(color.ToUInt());
-}
+void Image::Clear(const Color& color) { ClearInt(color.ToUInt()); }
 
 void Image::ClearInt(unsigned uintColor)
 {
@@ -1335,7 +1311,8 @@ bool Image::SaveDDS(const String& fileName) const
     memset(&ddsd, 0, sizeof(ddsd));
     ddsd.dwSize_ = sizeof(ddsd);
     ddsd.dwFlags_ = 0x00000001l /*DDSD_CAPS*/
-        | 0x00000002l /*DDSD_HEIGHT*/ | 0x00000004l /*DDSD_WIDTH*/ | 0x00020000l /*DDSD_MIPMAPCOUNT*/ | 0x00001000l /*DDSD_PIXELFORMAT*/;
+                    | 0x00000002l /*DDSD_HEIGHT*/ | 0x00000004l /*DDSD_WIDTH*/ | 0x00020000l /*DDSD_MIPMAPCOUNT*/ |
+                    0x00001000l /*DDSD_PIXELFORMAT*/;
     ddsd.dwWidth_ = width_;
     ddsd.dwHeight_ = height_;
     ddsd.dwMipMapCount_ = levels.Size();
@@ -1382,7 +1359,9 @@ bool Image::SaveWEBP(const String& fileName, float compression /* = 0.0f */) con
 
     if (components_ != 4 && components_ != 3)
     {
-        URHO3D_LOGERRORF("Can not save image with %u components to WebP, which requires 3 or 4; Try ConvertToRGBA first?", components_);
+        URHO3D_LOGERRORF(
+            "Can not save image with %u components to WebP, which requires 3 or 4; Try ConvertToRGBA first?",
+            components_);
         return false;
     }
 
@@ -1447,11 +1426,7 @@ bool Image::SaveWEBP(const String& fileName, float compression /* = 0.0f */) con
 #endif
 }
 
-
-Color Image::GetPixel(int x, int y) const
-{
-    return GetPixel(x, y, 0);
-}
+Color Image::GetPixel(int x, int y) const { return GetPixel(x, y, 0); }
 
 Color Image::GetPixel(int x, int y, int z) const
 {
@@ -1483,10 +1458,7 @@ Color Image::GetPixel(int x, int y, int z) const
     return ret;
 }
 
-unsigned Image::GetPixelInt(int x, int y) const
-{
-    return GetPixelInt(x, y, 0);
-}
+unsigned Image::GetPixelInt(int x, int y) const { return GetPixelInt(x, y, 0); }
 
 unsigned Image::GetPixelInt(int x, int y, int z) const
 {
@@ -1645,7 +1617,7 @@ SharedPtr<Image> Image::GetNextLevel() const
             break;
 
         default:
-            assert(false);  // Should never reach here
+            assert(false); // Should never reach here
             break;
         }
     }
@@ -1663,8 +1635,9 @@ SharedPtr<Image> Image::GetNextLevel() const
 
                 for (int x = 0; x < widthOut; ++x)
                 {
-                    out[x] = (unsigned char)(((unsigned)inUpper[x * 2] + inUpper[x * 2 + 1] +
-                                              inLower[x * 2] + inLower[x * 2 + 1]) >> 2);
+                    out[x] = (unsigned char)(((unsigned)inUpper[x * 2] + inUpper[x * 2 + 1] + inLower[x * 2] +
+                                              inLower[x * 2 + 1]) >>
+                                             2);
                 }
             }
             break;
@@ -1678,10 +1651,12 @@ SharedPtr<Image> Image::GetNextLevel() const
 
                 for (int x = 0; x < widthOut * 2; x += 2)
                 {
-                    out[x] = (unsigned char)(((unsigned)inUpper[x * 2] + inUpper[x * 2 + 2] +
-                                              inLower[x * 2] + inLower[x * 2 + 2]) >> 2);
+                    out[x] = (unsigned char)(((unsigned)inUpper[x * 2] + inUpper[x * 2 + 2] + inLower[x * 2] +
+                                              inLower[x * 2 + 2]) >>
+                                             2);
                     out[x + 1] = (unsigned char)(((unsigned)inUpper[x * 2 + 1] + inUpper[x * 2 + 3] +
-                                                  inLower[x * 2 + 1] + inLower[x * 2 + 3]) >> 2);
+                                                  inLower[x * 2 + 1] + inLower[x * 2 + 3]) >>
+                                                 2);
                 }
             }
             break;
@@ -1695,12 +1670,15 @@ SharedPtr<Image> Image::GetNextLevel() const
 
                 for (int x = 0; x < widthOut * 3; x += 3)
                 {
-                    out[x] = (unsigned char)(((unsigned)inUpper[x * 2] + inUpper[x * 2 + 3] +
-                                              inLower[x * 2] + inLower[x * 2 + 3]) >> 2);
+                    out[x] = (unsigned char)(((unsigned)inUpper[x * 2] + inUpper[x * 2 + 3] + inLower[x * 2] +
+                                              inLower[x * 2 + 3]) >>
+                                             2);
                     out[x + 1] = (unsigned char)(((unsigned)inUpper[x * 2 + 1] + inUpper[x * 2 + 4] +
-                                                  inLower[x * 2 + 1] + inLower[x * 2 + 4]) >> 2);
+                                                  inLower[x * 2 + 1] + inLower[x * 2 + 4]) >>
+                                                 2);
                     out[x + 2] = (unsigned char)(((unsigned)inUpper[x * 2 + 2] + inUpper[x * 2 + 5] +
-                                                  inLower[x * 2 + 2] + inLower[x * 2 + 5]) >> 2);
+                                                  inLower[x * 2 + 2] + inLower[x * 2 + 5]) >>
+                                                 2);
                 }
             }
             break;
@@ -1714,20 +1692,24 @@ SharedPtr<Image> Image::GetNextLevel() const
 
                 for (int x = 0; x < widthOut * 4; x += 4)
                 {
-                    out[x] = (unsigned char)(((unsigned)inUpper[x * 2] + inUpper[x * 2 + 4] +
-                                              inLower[x * 2] + inLower[x * 2 + 4]) >> 2);
+                    out[x] = (unsigned char)(((unsigned)inUpper[x * 2] + inUpper[x * 2 + 4] + inLower[x * 2] +
+                                              inLower[x * 2 + 4]) >>
+                                             2);
                     out[x + 1] = (unsigned char)(((unsigned)inUpper[x * 2 + 1] + inUpper[x * 2 + 5] +
-                                                  inLower[x * 2 + 1] + inLower[x * 2 + 5]) >> 2);
+                                                  inLower[x * 2 + 1] + inLower[x * 2 + 5]) >>
+                                                 2);
                     out[x + 2] = (unsigned char)(((unsigned)inUpper[x * 2 + 2] + inUpper[x * 2 + 6] +
-                                                  inLower[x * 2 + 2] + inLower[x * 2 + 6]) >> 2);
+                                                  inLower[x * 2 + 2] + inLower[x * 2 + 6]) >>
+                                                 2);
                     out[x + 3] = (unsigned char)(((unsigned)inUpper[x * 2 + 3] + inUpper[x * 2 + 7] +
-                                                  inLower[x * 2 + 3] + inLower[x * 2 + 7]) >> 2);
+                                                  inLower[x * 2 + 3] + inLower[x * 2 + 7]) >>
+                                                 2);
                 }
             }
             break;
 
         default:
-            assert(false);  // Should never reach here
+            assert(false); // Should never reach here
             break;
         }
     }
@@ -1752,10 +1734,11 @@ SharedPtr<Image> Image::GetNextLevel() const
 
                     for (int x = 0; x < widthOut; ++x)
                     {
-                        out[x] = (unsigned char)(((unsigned)inOuterUpper[x * 2] + inOuterUpper[x * 2 + 1] +
-                                                  inOuterLower[x * 2] + inOuterLower[x * 2 + 1] +
-                                                  inInnerUpper[x * 2] + inInnerUpper[x * 2 + 1] +
-                                                  inInnerLower[x * 2] + inInnerLower[x * 2 + 1]) >> 3);
+                        out[x] =
+                            (unsigned char)(((unsigned)inOuterUpper[x * 2] + inOuterUpper[x * 2 + 1] +
+                                             inOuterLower[x * 2] + inOuterLower[x * 2 + 1] + inInnerUpper[x * 2] +
+                                             inInnerUpper[x * 2 + 1] + inInnerLower[x * 2] + inInnerLower[x * 2 + 1]) >>
+                                            3);
                     }
                 }
             }
@@ -1777,14 +1760,16 @@ SharedPtr<Image> Image::GetNextLevel() const
 
                     for (int x = 0; x < widthOut * 2; x += 2)
                     {
-                        out[x] = (unsigned char)(((unsigned)inOuterUpper[x * 2] + inOuterUpper[x * 2 + 2] +
-                                                  inOuterLower[x * 2] + inOuterLower[x * 2 + 2] +
-                                                  inInnerUpper[x * 2] + inInnerUpper[x * 2 + 2] +
-                                                  inInnerLower[x * 2] + inInnerLower[x * 2 + 2]) >> 3);
+                        out[x] =
+                            (unsigned char)(((unsigned)inOuterUpper[x * 2] + inOuterUpper[x * 2 + 2] +
+                                             inOuterLower[x * 2] + inOuterLower[x * 2 + 2] + inInnerUpper[x * 2] +
+                                             inInnerUpper[x * 2 + 2] + inInnerLower[x * 2] + inInnerLower[x * 2 + 2]) >>
+                                            3);
                         out[x + 1] = (unsigned char)(((unsigned)inOuterUpper[x * 2 + 1] + inOuterUpper[x * 2 + 3] +
                                                       inOuterLower[x * 2 + 1] + inOuterLower[x * 2 + 3] +
                                                       inInnerUpper[x * 2 + 1] + inInnerUpper[x * 2 + 3] +
-                                                      inInnerLower[x * 2 + 1] + inInnerLower[x * 2 + 3]) >> 3);
+                                                      inInnerLower[x * 2 + 1] + inInnerLower[x * 2 + 3]) >>
+                                                     3);
                     }
                 }
             }
@@ -1806,18 +1791,21 @@ SharedPtr<Image> Image::GetNextLevel() const
 
                     for (int x = 0; x < widthOut * 3; x += 3)
                     {
-                        out[x] = (unsigned char)(((unsigned)inOuterUpper[x * 2] + inOuterUpper[x * 2 + 3] +
-                                                  inOuterLower[x * 2] + inOuterLower[x * 2 + 3] +
-                                                  inInnerUpper[x * 2] + inInnerUpper[x * 2 + 3] +
-                                                  inInnerLower[x * 2] + inInnerLower[x * 2 + 3]) >> 3);
+                        out[x] =
+                            (unsigned char)(((unsigned)inOuterUpper[x * 2] + inOuterUpper[x * 2 + 3] +
+                                             inOuterLower[x * 2] + inOuterLower[x * 2 + 3] + inInnerUpper[x * 2] +
+                                             inInnerUpper[x * 2 + 3] + inInnerLower[x * 2] + inInnerLower[x * 2 + 3]) >>
+                                            3);
                         out[x + 1] = (unsigned char)(((unsigned)inOuterUpper[x * 2 + 1] + inOuterUpper[x * 2 + 4] +
                                                       inOuterLower[x * 2 + 1] + inOuterLower[x * 2 + 4] +
                                                       inInnerUpper[x * 2 + 1] + inInnerUpper[x * 2 + 4] +
-                                                      inInnerLower[x * 2 + 1] + inInnerLower[x * 2 + 4]) >> 3);
+                                                      inInnerLower[x * 2 + 1] + inInnerLower[x * 2 + 4]) >>
+                                                     3);
                         out[x + 2] = (unsigned char)(((unsigned)inOuterUpper[x * 2 + 2] + inOuterUpper[x * 2 + 5] +
                                                       inOuterLower[x * 2 + 2] + inOuterLower[x * 2 + 5] +
                                                       inInnerUpper[x * 2 + 2] + inInnerUpper[x * 2 + 5] +
-                                                      inInnerLower[x * 2 + 2] + inInnerLower[x * 2 + 5]) >> 3);
+                                                      inInnerLower[x * 2 + 2] + inInnerLower[x * 2 + 5]) >>
+                                                     3);
                     }
                 }
             }
@@ -1839,25 +1827,28 @@ SharedPtr<Image> Image::GetNextLevel() const
 
                     for (int x = 0; x < widthOut * 4; x += 4)
                     {
-                        out[x] = (unsigned char)(((unsigned)inOuterUpper[x * 2] + inOuterUpper[x * 2 + 4] +
-                                                  inOuterLower[x * 2] + inOuterLower[x * 2 + 4] +
-                                                  inInnerUpper[x * 2] + inInnerUpper[x * 2 + 4] +
-                                                  inInnerLower[x * 2] + inInnerLower[x * 2 + 4]) >> 3);
+                        out[x] =
+                            (unsigned char)(((unsigned)inOuterUpper[x * 2] + inOuterUpper[x * 2 + 4] +
+                                             inOuterLower[x * 2] + inOuterLower[x * 2 + 4] + inInnerUpper[x * 2] +
+                                             inInnerUpper[x * 2 + 4] + inInnerLower[x * 2] + inInnerLower[x * 2 + 4]) >>
+                                            3);
                         out[x + 1] = (unsigned char)(((unsigned)inOuterUpper[x * 2 + 1] + inOuterUpper[x * 2 + 5] +
                                                       inOuterLower[x * 2 + 1] + inOuterLower[x * 2 + 5] +
                                                       inInnerUpper[x * 2 + 1] + inInnerUpper[x * 2 + 5] +
-                                                      inInnerLower[x * 2 + 1] + inInnerLower[x * 2 + 5]) >> 3);
+                                                      inInnerLower[x * 2 + 1] + inInnerLower[x * 2 + 5]) >>
+                                                     3);
                         out[x + 2] = (unsigned char)(((unsigned)inOuterUpper[x * 2 + 2] + inOuterUpper[x * 2 + 6] +
                                                       inOuterLower[x * 2 + 2] + inOuterLower[x * 2 + 6] +
                                                       inInnerUpper[x * 2 + 2] + inInnerUpper[x * 2 + 6] +
-                                                      inInnerLower[x * 2 + 2] + inInnerLower[x * 2 + 6]) >> 3);
+                                                      inInnerLower[x * 2 + 2] + inInnerLower[x * 2 + 6]) >>
+                                                     3);
                     }
                 }
             }
             break;
 
         default:
-            assert(false);  // Should never reach here
+            assert(false); // Should never reach here
             break;
         }
     }
@@ -1928,7 +1919,7 @@ SharedPtr<Image> Image::ConvertToRGBA() const
         break;
 
     default:
-        assert(false);  // Should never reach nere
+        assert(false); // Should never reach nere
         break;
     }
 
@@ -1977,8 +1968,8 @@ CompressedLevel Image::GetCompressedLevel(unsigned index) const
 
             if (offset + level.dataSize_ > GetMemoryUse())
             {
-                URHO3D_LOGERROR("Compressed level is outside image data. Offset: " + String(offset) + " Size: " + String(level.dataSize_) +
-                         " Datasize: " + String(GetMemoryUse()));
+                URHO3D_LOGERROR("Compressed level is outside image data. Offset: " + String(offset) +
+                                " Size: " + String(level.dataSize_) + " Datasize: " + String(GetMemoryUse()));
                 level.data_ = nullptr;
                 return level;
             }
@@ -2015,8 +2006,8 @@ CompressedLevel Image::GetCompressedLevel(unsigned index) const
 
             if (offset + level.dataSize_ > GetMemoryUse())
             {
-                URHO3D_LOGERROR("Compressed level is outside image data. Offset: " + String(offset) + " Size: " + String(level.dataSize_) +
-                         " Datasize: " + String(GetMemoryUse()));
+                URHO3D_LOGERROR("Compressed level is outside image data. Offset: " + String(offset) +
+                                " Size: " + String(level.dataSize_) + " Datasize: " + String(GetMemoryUse()));
                 level.data_ = nullptr;
                 return level;
             }
@@ -2053,8 +2044,8 @@ CompressedLevel Image::GetCompressedLevel(unsigned index) const
 
             if (offset + level.dataSize_ > GetMemoryUse())
             {
-                URHO3D_LOGERROR("Compressed level is outside image data. Offset: " + String(offset) + " Size: " + String(level.dataSize_) +
-                         " Datasize: " + String(GetMemoryUse()));
+                URHO3D_LOGERROR("Compressed level is outside image data. Offset: " + String(offset) +
+                                " Size: " + String(level.dataSize_) + " Datasize: " + String(GetMemoryUse()));
                 level.data_ = nullptr;
                 return level;
             }
@@ -2081,7 +2072,8 @@ Image* Image::GetSubimage(const IntRect& rect) const
         return nullptr;
     }
 
-    if (rect.left_ < 0 || rect.top_ < 0 || rect.right_ > width_ || rect.bottom_ > height_ || !rect.Width() || !rect.Height())
+    if (rect.left_ < 0 || rect.top_ < 0 || rect.right_ > width_ || rect.bottom_ > height_ || !rect.Width() ||
+        !rect.Height())
     {
         URHO3D_LOGERROR("Can not get subimage from image " + GetName() + " with invalid region");
         return nullptr;
@@ -2146,7 +2138,8 @@ Image* Image::GetSubimage(const IntRect& rect) const
             }
 
             ++subimageLevels;
-            if ((currentRect.left_ & 4) || (currentRect.right_ & 4) || (currentRect.top_ & 4) || (currentRect.bottom_ & 4))
+            if ((currentRect.left_ & 4) || (currentRect.right_ & 4) || (currentRect.top_ & 4) ||
+                (currentRect.bottom_ & 4))
                 break;
             else
             {
@@ -2265,10 +2258,7 @@ void Image::PrecalculateLevels()
     }
 }
 
-void Image::CleanupLevels()
-{
-    nextLevel_.Reset();
-}
+void Image::CleanupLevels() { nextLevel_.Reset(); }
 
 void Image::GetLevels(PODVector<Image*>& levels)
 {
@@ -2311,10 +2301,7 @@ void Image::FreeImageData(unsigned char* pixelData)
     stbi_image_free(pixelData);
 }
 
-bool Image::HasAlphaChannel() const
-{
-    return components_ > 3;
-}
+bool Image::HasAlphaChannel() const { return components_ > 3; }
 
 bool Image::SetSubimage(const Image* image, const IntRect& rect)
 {
@@ -2327,7 +2314,8 @@ bool Image::SetSubimage(const Image* image, const IntRect& rect)
         return false;
     }
 
-    if (rect.left_ < 0 || rect.top_ < 0 || rect.right_ > width_ || rect.bottom_ > height_ || !rect.Width() || !rect.Height())
+    if (rect.left_ < 0 || rect.top_ < 0 || rect.right_ > width_ || rect.bottom_ > height_ || !rect.Width() ||
+        !rect.Height())
     {
         URHO3D_LOGERROR("Can not set subimage in image " + GetName() + " with invalid region");
         return false;
@@ -2373,5 +2361,4 @@ bool Image::SetSubimage(const Image* image, const IntRect& rect)
 
     return true;
 }
-
 }

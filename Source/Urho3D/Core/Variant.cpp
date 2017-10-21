@@ -29,7 +29,6 @@
 
 namespace Urho3D
 {
-
 const Variant Variant::EMPTY;
 const PODVector<unsigned char> Variant::emptyBuffer;
 const ResourceRef Variant::emptyResourceRef;
@@ -38,43 +37,16 @@ const VariantMap Variant::emptyVariantMap;
 const VariantVector Variant::emptyVariantVector;
 const StringVector Variant::emptyStringVector;
 
-static const char* typeNames[] =
-{
-    "None",
-    "Int",
-    "Bool",
-    "Float",
-    "Vector2",
-    "Vector3",
-    "Vector4",
-    "Quaternion",
-    "Color",
-    "String",
-    "Buffer",
-    "VoidPtr",
-    "ResourceRef",
-    "ResourceRefList",
-    "VariantVector",
-    "VariantMap",
-    "IntRect",
-    "IntVector2",
-    "Ptr",
-    "Matrix3",
-    "Matrix3x4",
-    "Matrix4",
-    "Double",
-    "StringVector",
-    "Rect",
-    "IntVector3",
-    "Int64",
-    "CustomPtr",
-    "Custom",
-    nullptr
-};
+static const char* typeNames[] = {
+    "None",          "Int",        "Bool",         "Float",      "Vector2",    "Vector3",     "Vector4",
+    "Quaternion",    "Color",      "String",       "Buffer",     "VoidPtr",    "ResourceRef", "ResourceRefList",
+    "VariantVector", "VariantMap", "IntRect",      "IntVector2", "Ptr",        "Matrix3",     "Matrix3x4",
+    "Matrix4",       "Double",     "StringVector", "Rect",       "IntVector3", "Int64",       "CustomPtr",
+    "Custom",        nullptr};
 
 static_assert(sizeof(typeNames) / sizeof(const char*) == MAX_VAR_TYPES + 1, "Variant type name array is out-of-date");
 
-Variant& Variant::operator =(const Variant& rhs)
+Variant& Variant::operator=(const Variant& rhs)
 {
     // Handle custom types separately
     if (rhs.IsCustom())
@@ -140,14 +112,14 @@ Variant& Variant::operator =(const Variant& rhs)
     return *this;
 }
 
-Variant& Variant::operator =(const VectorBuffer& rhs)
+Variant& Variant::operator=(const VectorBuffer& rhs)
 {
     SetType(VAR_BUFFER);
     value_.buffer_ = rhs.GetBuffer();
     return *this;
 }
 
-bool Variant::operator ==(const Variant& rhs) const
+bool Variant::operator==(const Variant& rhs) const
 {
     if (type_ == VAR_VOIDPTR || type_ == VAR_PTR)
         return GetVoidPtr() == rhs.GetVoidPtr();
@@ -235,21 +207,23 @@ bool Variant::operator ==(const Variant& rhs) const
     }
 }
 
-bool Variant::operator ==(const PODVector<unsigned char>& rhs) const
+bool Variant::operator==(const PODVector<unsigned char>& rhs) const
 {
     // Use strncmp() instead of PODVector<unsigned char>::operator ==()
     const PODVector<unsigned char>& buffer = value_.buffer_;
-    return type_ == VAR_BUFFER && buffer.Size() == rhs.Size() ?
-        strncmp(reinterpret_cast<const char*>(&buffer[0]), reinterpret_cast<const char*>(&rhs[0]), buffer.Size()) == 0 :
-        false;
+    return type_ == VAR_BUFFER && buffer.Size() == rhs.Size()
+               ? strncmp(reinterpret_cast<const char*>(&buffer[0]), reinterpret_cast<const char*>(&rhs[0]),
+                         buffer.Size()) == 0
+               : false;
 }
 
-bool Variant::operator ==(const VectorBuffer& rhs) const
+bool Variant::operator==(const VectorBuffer& rhs) const
 {
     const PODVector<unsigned char>& buffer = value_.buffer_;
-    return type_ == VAR_BUFFER && buffer.Size() == rhs.GetSize() ?
-        strncmp(reinterpret_cast<const char*>(&buffer[0]), reinterpret_cast<const char*>(rhs.GetData()), buffer.Size()) == 0 :
-        false;
+    return type_ == VAR_BUFFER && buffer.Size() == rhs.GetSize()
+               ? strncmp(reinterpret_cast<const char*>(&buffer[0]), reinterpret_cast<const char*>(rhs.GetData()),
+                         buffer.Size()) == 0
+               : false;
 }
 
 void Variant::FromString(const String& type, const String& value)
@@ -257,15 +231,9 @@ void Variant::FromString(const String& type, const String& value)
     return FromString(GetTypeFromName(type), value.CString());
 }
 
-void Variant::FromString(const char* type, const char* value)
-{
-    return FromString(GetTypeFromName(type), value);
-}
+void Variant::FromString(const char* type, const char* value) { return FromString(GetTypeFromName(type), value); }
 
-void Variant::FromString(VariantType type, const String& value)
-{
-    return FromString(type, value.CString());
-}
+void Variant::FromString(VariantType type, const String& value) { return FromString(type, value.CString()); }
 
 void Variant::FromString(VariantType type, const char* value)
 {
@@ -432,10 +400,7 @@ VectorBuffer Variant::GetVectorBuffer() const
     return VectorBuffer(type_ == VAR_BUFFER ? value_.buffer_ : emptyBuffer);
 }
 
-String Variant::GetTypeName() const
-{
-    return typeNames[type_];
-}
+String Variant::GetTypeName() const { return typeNames[type_]; }
 
 String Variant::ToString() const
 {
@@ -472,12 +437,12 @@ String Variant::ToString() const
         return value_.string_;
 
     case VAR_BUFFER:
-        {
-            const PODVector<unsigned char>& buffer = value_.buffer_;
-            String ret;
-            BufferToString(ret, buffer.Begin().ptr_, buffer.Size());
-            return ret;
-        }
+    {
+        const PODVector<unsigned char>& buffer = value_.buffer_;
+        String ret;
+        BufferToString(ret, buffer.Begin().ptr_, buffer.Size());
+        return ret;
+    }
 
     case VAR_VOIDPTR:
     case VAR_PTR:
@@ -688,35 +653,35 @@ void Variant::SetType(VariantType newType)
     switch (type_)
     {
     case VAR_STRING:
-        new(&value_.string_) String();
+        new (&value_.string_) String();
         break;
 
     case VAR_BUFFER:
-        new(&value_.buffer_) PODVector<unsigned char>();
+        new (&value_.buffer_) PODVector<unsigned char>();
         break;
 
     case VAR_RESOURCEREF:
-        new(&value_.resourceRef_) ResourceRef();
+        new (&value_.resourceRef_) ResourceRef();
         break;
 
     case VAR_RESOURCEREFLIST:
-        new(&value_.resourceRefList_) ResourceRefList();
+        new (&value_.resourceRefList_) ResourceRefList();
         break;
 
     case VAR_VARIANTVECTOR:
-        new(&value_.variantVector_) VariantVector();
+        new (&value_.variantVector_) VariantVector();
         break;
 
     case VAR_STRINGVECTOR:
-        new(&value_.stringVector_) StringVector();
+        new (&value_.stringVector_) StringVector();
         break;
 
     case VAR_VARIANTMAP:
-        new(&value_.variantMap_) VariantMap();
+        new (&value_.variantMap_) VariantMap();
         break;
 
     case VAR_PTR:
-        new(&value_.weakPtr_) WeakPtr<RefCounted>();
+        new (&value_.weakPtr_) WeakPtr<RefCounted>();
         break;
 
     case VAR_MATRIX3:
@@ -746,234 +711,101 @@ void Variant::SetType(VariantType newType)
     }
 }
 
-template <> int Variant::Get<int>() const
-{
-    return GetInt();
-}
+template <> int Variant::Get<int>() const { return GetInt(); }
 
-template <> unsigned Variant::Get<unsigned>() const
-{
-    return GetUInt();
-}
+template <> unsigned Variant::Get<unsigned>() const { return GetUInt(); }
 
-template <> long long Variant::Get<long long>() const
-{
-    return GetInt64();
-}
+template <> long long Variant::Get<long long>() const { return GetInt64(); }
 
-template <> unsigned long long Variant::Get<unsigned long long>() const
-{
-    return GetUInt64();
-}
+template <> unsigned long long Variant::Get<unsigned long long>() const { return GetUInt64(); }
 
-template <> StringHash Variant::Get<StringHash>() const
-{
-    return GetStringHash();
-}
+template <> StringHash Variant::Get<StringHash>() const { return GetStringHash(); }
 
-template <> bool Variant::Get<bool>() const
-{
-    return GetBool();
-}
+template <> bool Variant::Get<bool>() const { return GetBool(); }
 
-template <> float Variant::Get<float>() const
-{
-    return GetFloat();
-}
+template <> float Variant::Get<float>() const { return GetFloat(); }
 
-template <> double Variant::Get<double>() const
-{
-    return GetDouble();
-}
+template <> double Variant::Get<double>() const { return GetDouble(); }
 
-template <> const Vector2& Variant::Get<const Vector2&>() const
-{
-    return GetVector2();
-}
+template <> const Vector2& Variant::Get<const Vector2&>() const { return GetVector2(); }
 
-template <> const Vector3& Variant::Get<const Vector3&>() const
-{
-    return GetVector3();
-}
+template <> const Vector3& Variant::Get<const Vector3&>() const { return GetVector3(); }
 
-template <> const Vector4& Variant::Get<const Vector4&>() const
-{
-    return GetVector4();
-}
+template <> const Vector4& Variant::Get<const Vector4&>() const { return GetVector4(); }
 
-template <> const Quaternion& Variant::Get<const Quaternion&>() const
-{
-    return GetQuaternion();
-}
+template <> const Quaternion& Variant::Get<const Quaternion&>() const { return GetQuaternion(); }
 
-template <> const Color& Variant::Get<const Color&>() const
-{
-    return GetColor();
-}
+template <> const Color& Variant::Get<const Color&>() const { return GetColor(); }
 
-template <> const String& Variant::Get<const String&>() const
-{
-    return GetString();
-}
+template <> const String& Variant::Get<const String&>() const { return GetString(); }
 
-template <> const Rect& Variant::Get<const Rect&>() const
-{
-    return GetRect();
-}
+template <> const Rect& Variant::Get<const Rect&>() const { return GetRect(); }
 
-template <> const IntRect& Variant::Get<const IntRect&>() const
-{
-    return GetIntRect();
-}
+template <> const IntRect& Variant::Get<const IntRect&>() const { return GetIntRect(); }
 
-template <> const IntVector2& Variant::Get<const IntVector2&>() const
-{
-    return GetIntVector2();
-}
+template <> const IntVector2& Variant::Get<const IntVector2&>() const { return GetIntVector2(); }
 
-template <> const IntVector3& Variant::Get<const IntVector3&>() const
-{
-    return GetIntVector3();
-}
+template <> const IntVector3& Variant::Get<const IntVector3&>() const { return GetIntVector3(); }
 
 template <> const PODVector<unsigned char>& Variant::Get<const PODVector<unsigned char>&>() const
 {
     return GetBuffer();
 }
 
-template <> void* Variant::Get<void*>() const
-{
-    return GetVoidPtr();
-}
+template <> void* Variant::Get<void*>() const { return GetVoidPtr(); }
 
-template <> RefCounted* Variant::Get<RefCounted*>() const
-{
-    return GetPtr();
-}
+template <> RefCounted* Variant::Get<RefCounted*>() const { return GetPtr(); }
 
-template <> const Matrix3& Variant::Get<const Matrix3&>() const
-{
-    return GetMatrix3();
-}
+template <> const Matrix3& Variant::Get<const Matrix3&>() const { return GetMatrix3(); }
 
-template <> const Matrix3x4& Variant::Get<const Matrix3x4&>() const
-{
-    return GetMatrix3x4();
-}
+template <> const Matrix3x4& Variant::Get<const Matrix3x4&>() const { return GetMatrix3x4(); }
 
-template <> const Matrix4& Variant::Get<const Matrix4&>() const
-{
-    return GetMatrix4();
-}
+template <> const Matrix4& Variant::Get<const Matrix4&>() const { return GetMatrix4(); }
 
-template <> ResourceRef Variant::Get<ResourceRef>() const
-{
-    return GetResourceRef();
-}
+template <> ResourceRef Variant::Get<ResourceRef>() const { return GetResourceRef(); }
 
-template <> ResourceRefList Variant::Get<ResourceRefList>() const
-{
-    return GetResourceRefList();
-}
+template <> ResourceRefList Variant::Get<ResourceRefList>() const { return GetResourceRefList(); }
 
-template <> VariantVector Variant::Get<VariantVector>() const
-{
-    return GetVariantVector();
-}
+template <> VariantVector Variant::Get<VariantVector>() const { return GetVariantVector(); }
 
-template <> StringVector Variant::Get<StringVector >() const
-{
-    return GetStringVector();
-}
+template <> StringVector Variant::Get<StringVector>() const { return GetStringVector(); }
 
-template <> VariantMap Variant::Get<VariantMap>() const
-{
-    return GetVariantMap();
-}
+template <> VariantMap Variant::Get<VariantMap>() const { return GetVariantMap(); }
 
-template <> Vector2 Variant::Get<Vector2>() const
-{
-    return GetVector2();
-}
+template <> Vector2 Variant::Get<Vector2>() const { return GetVector2(); }
 
-template <> Vector3 Variant::Get<Vector3>() const
-{
-    return GetVector3();
-}
+template <> Vector3 Variant::Get<Vector3>() const { return GetVector3(); }
 
-template <> Vector4 Variant::Get<Vector4>() const
-{
-    return GetVector4();
-}
+template <> Vector4 Variant::Get<Vector4>() const { return GetVector4(); }
 
-template <> Quaternion Variant::Get<Quaternion>() const
-{
-    return GetQuaternion();
-}
+template <> Quaternion Variant::Get<Quaternion>() const { return GetQuaternion(); }
 
-template <> Color Variant::Get<Color>() const
-{
-    return GetColor();
-}
+template <> Color Variant::Get<Color>() const { return GetColor(); }
 
-template <> String Variant::Get<String>() const
-{
-    return GetString();
-}
+template <> String Variant::Get<String>() const { return GetString(); }
 
-template <> Rect Variant::Get<Rect>() const
-{
-    return GetRect();
-}
+template <> Rect Variant::Get<Rect>() const { return GetRect(); }
 
-template <> IntRect Variant::Get<IntRect>() const
-{
-    return GetIntRect();
-}
+template <> IntRect Variant::Get<IntRect>() const { return GetIntRect(); }
 
-template <> IntVector2 Variant::Get<IntVector2>() const
-{
-    return GetIntVector2();
-}
+template <> IntVector2 Variant::Get<IntVector2>() const { return GetIntVector2(); }
 
-template <> IntVector3 Variant::Get<IntVector3>() const
-{
-    return GetIntVector3();
-}
+template <> IntVector3 Variant::Get<IntVector3>() const { return GetIntVector3(); }
 
-template <> PODVector<unsigned char> Variant::Get<PODVector<unsigned char> >() const
-{
-    return GetBuffer();
-}
+template <> PODVector<unsigned char> Variant::Get<PODVector<unsigned char>>() const { return GetBuffer(); }
 
-template <> Matrix3 Variant::Get<Matrix3>() const
-{
-    return GetMatrix3();
-}
+template <> Matrix3 Variant::Get<Matrix3>() const { return GetMatrix3(); }
 
-template <> Matrix3x4 Variant::Get<Matrix3x4>() const
-{
-    return GetMatrix3x4();
-}
+template <> Matrix3x4 Variant::Get<Matrix3x4>() const { return GetMatrix3x4(); }
 
-template <> Matrix4 Variant::Get<Matrix4>() const
-{
-    return GetMatrix4();
-}
+template <> Matrix4 Variant::Get<Matrix4>() const { return GetMatrix4(); }
 
-String Variant::GetTypeName(VariantType type)
-{
-    return typeNames[type];
-}
+String Variant::GetTypeName(VariantType type) { return typeNames[type]; }
 
-VariantType Variant::GetTypeFromName(const String& typeName)
-{
-    return GetTypeFromName(typeName.CString());
-}
+VariantType Variant::GetTypeFromName(const String& typeName) { return GetTypeFromName(typeName.CString()); }
 
 VariantType Variant::GetTypeFromName(const char* typeName)
 {
     return (VariantType)GetStringListIndex(typeName, typeNames, VAR_NONE);
 }
-
 }

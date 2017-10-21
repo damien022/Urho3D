@@ -35,32 +35,31 @@
 
 namespace Urho3D
 {
-
 MessageBox::MessageBox(Context* context, const String& messageString, const String& titleString, XMLFile* layoutFile,
-    XMLFile* styleFile) :
-    Object(context),
-    window_(nullptr),
-    titleText_(nullptr),
-    messageText_(nullptr),
-    okButton_(nullptr)
+                       XMLFile* styleFile)
+    : Object(context)
+    , window_(nullptr)
+    , titleText_(nullptr)
+    , messageText_(nullptr)
+    , okButton_(nullptr)
 {
     // If layout file is not given, use the default message box layout
     if (!layoutFile)
     {
         ResourceCache* cache = GetSubsystem<ResourceCache>();
         layoutFile = cache->GetResource<XMLFile>("UI/MessageBox.xml");
-        if (!layoutFile)    // Error is already logged
-            return;         // Note: windowless MessageBox should not be used!
+        if (!layoutFile) // Error is already logged
+            return;      // Note: windowless MessageBox should not be used!
     }
 
     UI* ui = GetSubsystem<UI>();
     UIElement* root = ui->GetRoot();
     {
         SharedPtr<UIElement> holder = ui->LoadLayout(layoutFile, styleFile);
-        if (!holder)    // Error is already logged
+        if (!holder) // Error is already logged
             return;
         window_ = holder;
-        root->AddChild(window_);    // Take ownership of the object before SharedPtr goes out of scope
+        root->AddChild(window_); // Take ownership of the object before SharedPtr goes out of scope
     }
 
     // Set the title and message strings if they are given
@@ -106,10 +105,7 @@ MessageBox::~MessageBox()
         window_->Remove();
 }
 
-void MessageBox::RegisterObject(Context* context)
-{
-    context->RegisterFactory<MessageBox>();
-}
+void MessageBox::RegisterObject(Context* context) { context->RegisterFactory<MessageBox>(); }
 
 void MessageBox::SetTitle(const String& text)
 {
@@ -123,15 +119,9 @@ void MessageBox::SetMessage(const String& text)
         messageText_->SetText(text);
 }
 
-const String& MessageBox::GetTitle() const
-{
-    return titleText_ ? titleText_->GetText() : String::EMPTY;
-}
+const String& MessageBox::GetTitle() const { return titleText_ ? titleText_->GetText() : String::EMPTY; }
 
-const String& MessageBox::GetMessage() const
-{
-    return messageText_ ? messageText_->GetText() : String::EMPTY;
-}
+const String& MessageBox::GetMessage() const { return messageText_ ? messageText_->GetText() : String::EMPTY; }
 
 void MessageBox::HandleMessageAcknowledged(StringHash eventType, VariantMap& eventData)
 {
@@ -144,5 +134,4 @@ void MessageBox::HandleMessageAcknowledged(StringHash eventType, VariantMap& eve
     // Self destruct
     ReleaseRef();
 }
-
 }

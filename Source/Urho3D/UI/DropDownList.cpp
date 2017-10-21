@@ -23,8 +23,8 @@
 #include "../Precompiled.h"
 
 #include "../Core/Context.h"
-#include "../Input/InputEvents.h"
 #include "../IO/Log.h"
+#include "../Input/InputEvents.h"
 #include "../UI/DropDownList.h"
 #include "../UI/ListView.h"
 #include "../UI/Text.h"
@@ -36,13 +36,12 @@
 
 namespace Urho3D
 {
-
 extern const char* UI_CATEGORY;
 
-DropDownList::DropDownList(Context* context) :
-    Menu(context),
-    resizePopup_(false),
-    selectionAttr_(0)
+DropDownList::DropDownList(Context* context)
+    : Menu(context)
+    , resizePopup_(false)
+    , selectionAttr_(0)
 {
     focusMode_ = FM_FOCUSABLE_DEFOCUSABLE;
 
@@ -66,9 +65,7 @@ DropDownList::DropDownList(Context* context) :
     SubscribeToEvent(listView_, E_SELECTIONCHANGED, URHO3D_HANDLER(DropDownList, HandleSelectionChanged));
 }
 
-DropDownList::~DropDownList()
-{
-}
+DropDownList::~DropDownList() {}
 
 void DropDownList::RegisterObject(Context* context)
 {
@@ -120,7 +117,7 @@ void DropDownList::OnShowPopup()
     const IntVector2& contentSize = content->GetSize();
     const IntRect& border = popup_->GetLayoutBorder();
     popup_->SetSize(resizePopup_ ? GetWidth() : contentSize.x_ + border.left_ + border.right_,
-        contentSize.y_ + border.top_ + border.bottom_);
+                    contentSize.y_ + border.top_ + border.bottom_);
 
     // Check if popup fits below the button. If not, show above instead
     bool showAbove = false;
@@ -128,7 +125,8 @@ void DropDownList::OnShowPopup()
     if (root)
     {
         const IntVector2& screenPos = GetScreenPosition();
-        if (screenPos.y_ + GetHeight() + popup_->GetHeight() > root->GetHeight() && screenPos.y_ - popup_->GetHeight() >= 0)
+        if (screenPos.y_ + GetHeight() + popup_->GetHeight() > root->GetHeight() &&
+            screenPos.y_ - popup_->GetHeight() >= 0)
             showAbove = true;
     }
     SetPopupOffset(0, showAbove ? -popup_->GetHeight() : GetHeight());
@@ -148,15 +146,9 @@ void DropDownList::OnHidePopup()
     SendEvent(E_ITEMSELECTED, eventData);
 }
 
-void DropDownList::OnSetEditable()
-{
-    listView_->SetEditable(editable_);
-}
+void DropDownList::OnSetEditable() { listView_->SetEditable(editable_); }
 
-void DropDownList::AddItem(UIElement* item)
-{
-    InsertItem(M_MAX_UNSIGNED, item);
-}
+void DropDownList::AddItem(UIElement* item) { InsertItem(M_MAX_UNSIGNED, item); }
 
 void DropDownList::InsertItem(unsigned index, UIElement* item)
 {
@@ -167,65 +159,29 @@ void DropDownList::InsertItem(unsigned index, UIElement* item)
         SetSelection(0);
 }
 
-void DropDownList::RemoveItem(UIElement* item)
-{
-    listView_->RemoveItem(item);
-}
+void DropDownList::RemoveItem(UIElement* item) { listView_->RemoveItem(item); }
 
-void DropDownList::RemoveItem(unsigned index)
-{
-    listView_->RemoveItem(index);
-}
+void DropDownList::RemoveItem(unsigned index) { listView_->RemoveItem(index); }
 
-void DropDownList::RemoveAllItems()
-{
-    listView_->RemoveAllItems();
-}
+void DropDownList::RemoveAllItems() { listView_->RemoveAllItems(); }
 
-void DropDownList::SetSelection(unsigned index)
-{
-    listView_->SetSelection(index);
-}
+void DropDownList::SetSelection(unsigned index) { listView_->SetSelection(index); }
 
-void DropDownList::SetPlaceholderText(const String& text)
-{
-    placeholder_->GetChildStaticCast<Text>(0)->SetText(text);
-}
+void DropDownList::SetPlaceholderText(const String& text) { placeholder_->GetChildStaticCast<Text>(0)->SetText(text); }
 
-void DropDownList::SetResizePopup(bool enable)
-{
-    resizePopup_ = enable;
-}
+void DropDownList::SetResizePopup(bool enable) { resizePopup_ = enable; }
 
-unsigned DropDownList::GetNumItems() const
-{
-    return listView_->GetNumItems();
-}
+unsigned DropDownList::GetNumItems() const { return listView_->GetNumItems(); }
 
-UIElement* DropDownList::GetItem(unsigned index) const
-{
-    return listView_->GetItem(index);
-}
+UIElement* DropDownList::GetItem(unsigned index) const { return listView_->GetItem(index); }
 
-PODVector<UIElement*> DropDownList::GetItems() const
-{
-    return listView_->GetItems();
-}
+PODVector<UIElement*> DropDownList::GetItems() const { return listView_->GetItems(); }
 
-unsigned DropDownList::GetSelection() const
-{
-    return listView_->GetSelection();
-}
+unsigned DropDownList::GetSelection() const { return listView_->GetSelection(); }
 
-UIElement* DropDownList::GetSelectedItem() const
-{
-    return listView_->GetSelectedItem();
-}
+UIElement* DropDownList::GetSelectedItem() const { return listView_->GetSelectedItem(); }
 
-const String& DropDownList::GetPlaceholderText() const
-{
-    return placeholder_->GetChildStaticCast<Text>(0)->GetText();
-}
+const String& DropDownList::GetPlaceholderText() const { return placeholder_->GetChildStaticCast<Text>(0)->GetText(); }
 
 void DropDownList::SetSelectionAttr(unsigned index)
 {
@@ -341,8 +297,8 @@ void DropDownList::HandleListViewKey(StringHash eventType, VariantMap& eventData
 
 void DropDownList::HandleSelectionChanged(StringHash eventType, VariantMap& eventData)
 {
-    // Display the place holder text when there is no selection, however, the place holder text is only visible when the place holder itself is set to visible
+    // Display the place holder text when there is no selection, however, the place holder text is only visible when the
+    // place holder itself is set to visible
     placeholder_->GetChild(0)->SetVisible(GetSelection() == M_MAX_UNSIGNED);
 }
-
 }

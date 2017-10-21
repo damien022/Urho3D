@@ -32,18 +32,15 @@
 
 namespace Urho3D
 {
-
 extern const char* URHO2D_CATEGORY;
 
-CollisionPolygon2D::CollisionPolygon2D(Context* context) :
-    CollisionShape2D(context)
+CollisionPolygon2D::CollisionPolygon2D(Context* context)
+    : CollisionShape2D(context)
 {
     fixtureDef_.shape = &polygonShape_;
 }
 
-CollisionPolygon2D::~CollisionPolygon2D()
-{
-}
+CollisionPolygon2D::~CollisionPolygon2D() {}
 
 void CollisionPolygon2D::RegisterObject(Context* context)
 {
@@ -51,13 +48,11 @@ void CollisionPolygon2D::RegisterObject(Context* context)
 
     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
     URHO3D_COPY_BASE_ATTRIBUTES(CollisionShape2D);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Vertices", GetVerticesAttr, SetVerticesAttr, PODVector<unsigned char>, Variant::emptyBuffer, AM_FILE);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Vertices", GetVerticesAttr, SetVerticesAttr, PODVector<unsigned char>,
+                                    Variant::emptyBuffer, AM_FILE);
 }
 
-void CollisionPolygon2D::SetVertexCount(unsigned count)
-{
-    vertices_.Resize(count);
-}
+void CollisionPolygon2D::SetVertexCount(unsigned count) { vertices_.Resize(count); }
 
 void CollisionPolygon2D::SetVertex(unsigned index, const Vector2& vertex)
 {
@@ -105,10 +100,7 @@ PODVector<unsigned char> CollisionPolygon2D::GetVerticesAttr() const
     return ret.GetBuffer();
 }
 
-void CollisionPolygon2D::ApplyNodeWorldScale()
-{
-    RecreateFixture();
-}
+void CollisionPolygon2D::ApplyNodeWorldScale() { RecreateFixture(); }
 
 void CollisionPolygon2D::RecreateFixture()
 {
@@ -129,5 +121,4 @@ void CollisionPolygon2D::RecreateFixture()
 
     CreateFixture();
 }
-
 }

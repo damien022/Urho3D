@@ -33,16 +33,7 @@
 
 namespace Urho3D
 {
-
-static const char* shaderParameterGroups[] = {
-    "frame",
-    "camera",
-    "zone",
-    "light",
-    "material",
-    "object",
-    "custom"
-};
+static const char* shaderParameterGroups[] = {"frame", "camera", "zone", "light", "material", "object", "custom"};
 
 static unsigned NumberPostfix(const String& str)
 {
@@ -58,12 +49,12 @@ static unsigned NumberPostfix(const String& str)
 unsigned ShaderProgram::globalFrameNumber = 0;
 const void* ShaderProgram::globalParameterSources[MAX_SHADER_PARAMETER_GROUPS];
 
-ShaderProgram::ShaderProgram(Graphics* graphics, ShaderVariation* vertexShader, ShaderVariation* pixelShader) :
-    GPUObject(graphics),
-    vertexShader_(vertexShader),
-    pixelShader_(pixelShader),
-    usedVertexAttributes_(0),
-    frameNumber_(0)
+ShaderProgram::ShaderProgram(Graphics* graphics, ShaderVariation* vertexShader, ShaderVariation* pixelShader)
+    : GPUObject(graphics)
+    , vertexShader_(vertexShader)
+    , pixelShader_(pixelShader)
+    , usedVertexAttributes_(0)
+    , frameNumber_(0)
 {
     for (unsigned i = 0; i < MAX_TEXTURE_UNITS; ++i)
         useTextureUnit_[i] = false;
@@ -71,10 +62,7 @@ ShaderProgram::ShaderProgram(Graphics* graphics, ShaderVariation* vertexShader, 
         parameterSources_[i] = (const void*)M_MAX_UNSIGNED;
 }
 
-ShaderProgram::~ShaderProgram()
-{
-    Release();
-}
+ShaderProgram::~ShaderProgram() { Release(); }
 
 void ShaderProgram::OnDeviceLost()
 {
@@ -181,8 +169,8 @@ bool ShaderProgram::Link()
 
         if (semantic == MAX_VERTEX_ELEMENT_SEMANTICS)
         {
-            URHO3D_LOGWARNING("Found vertex attribute " + name + " with no known semantic in shader program " + 
-                vertexShader_->GetFullName() + " " + pixelShader_->GetFullName());
+            URHO3D_LOGWARNING("Found vertex attribute " + name + " with no known semantic in shader program " +
+                              vertexShader_->GetFullName() + " " + pixelShader_->GetFullName());
             continue;
         }
 
@@ -191,7 +179,7 @@ bool ShaderProgram::Link()
         usedVertexAttributes_ |= (1 << location);
     }
 
-    // Check for constant buffers
+        // Check for constant buffers
 #ifndef GL_ES_VERSION_2_0
     HashMap<unsigned, unsigned> blockToBinding;
 
@@ -225,8 +213,8 @@ bool ShaderProgram::Link()
 
             if (group >= MAX_SHADER_PARAMETER_GROUPS)
             {
-                URHO3D_LOGWARNING("Skipping unrecognized uniform block " + name + " in shader program " + vertexShader_->GetFullName() +
-                           " " + pixelShader_->GetFullName());
+                URHO3D_LOGWARNING("Skipping unrecognized uniform block " + name + " in shader program " +
+                                  vertexShader_->GetFullName() + " " + pixelShader_->GetFullName());
                 continue;
             }
 
@@ -237,8 +225,8 @@ bool ShaderProgram::Link()
                 continue;
 
             unsigned bindingIndex = group;
-            // Vertex shader constant buffer bindings occupy slots starting from zero to maximum supported, pixel shader bindings
-            // from that point onward
+            // Vertex shader constant buffer bindings occupy slots starting from zero to maximum supported, pixel shader
+            // bindings from that point onward
             ShaderType shaderType = VS;
             if (name.Contains("PS", false))
             {
@@ -249,7 +237,8 @@ bool ShaderProgram::Link()
             glUniformBlockBinding(object_.name_, blockIndex, bindingIndex);
             blockToBinding[blockIndex] = bindingIndex;
 
-            constantBuffers_[bindingIndex] = graphics_->GetOrCreateConstantBuffer(shaderType, bindingIndex, (unsigned)dataSize);
+            constantBuffers_[bindingIndex] =
+                graphics_->GetOrCreateConstantBuffer(shaderType, bindingIndex, (unsigned)dataSize);
         }
     }
 #endif
@@ -324,15 +313,9 @@ bool ShaderProgram::Link()
     return true;
 }
 
-ShaderVariation* ShaderProgram::GetVertexShader() const
-{
-    return vertexShader_;
-}
+ShaderVariation* ShaderProgram::GetVertexShader() const { return vertexShader_; }
 
-ShaderVariation* ShaderProgram::GetPixelShader() const
-{
-    return pixelShader_;
-}
+ShaderVariation* ShaderProgram::GetPixelShader() const { return pixelShader_; }
 
 bool ShaderProgram::HasParameter(StringHash param) const
 {
@@ -358,7 +341,7 @@ bool ShaderProgram::NeedParameterUpdate(ShaderParameterGroup group, const void* 
         frameNumber_ = globalFrameNumber;
     }
 
-    // The shader program may use a mixture of constant buffers and individual uniforms even in the same group
+        // The shader program may use a mixture of constant buffers and individual uniforms even in the same group
 #ifndef GL_ES_VERSION_2_0
     bool useBuffer = constantBuffers_[group].Get() || constantBuffers_[group + MAX_SHADER_PARAMETER_GROUPS].Get();
     bool useIndividual = !constantBuffers_[group].Get() || !constantBuffers_[group + MAX_SHADER_PARAMETER_GROUPS].Get();
@@ -390,7 +373,7 @@ bool ShaderProgram::NeedParameterUpdate(ShaderParameterGroup group, const void* 
 
 void ShaderProgram::ClearParameterSource(ShaderParameterGroup group)
 {
-    // The shader program may use a mixture of constant buffers and individual uniforms even in the same group
+// The shader program may use a mixture of constant buffers and individual uniforms even in the same group
 #ifndef GL_ES_VERSION_2_0
     bool useBuffer = constantBuffers_[group].Get() || constantBuffers_[group + MAX_SHADER_PARAMETER_GROUPS].Get();
     bool useIndividual = !constantBuffers_[group].Get() || !constantBuffers_[group + MAX_SHADER_PARAMETER_GROUPS].Get();
@@ -420,5 +403,4 @@ void ShaderProgram::ClearGlobalParameterSource(ShaderParameterGroup group)
 {
     globalParameterSources[group] = (const void*)M_MAX_UNSIGNED;
 }
-
 }

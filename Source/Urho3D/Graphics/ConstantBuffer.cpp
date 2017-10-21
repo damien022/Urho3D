@@ -22,25 +22,21 @@
 
 #include "../Precompiled.h"
 
-#include "../Graphics/Graphics.h"
 #include "../Graphics/ConstantBuffer.h"
+#include "../Graphics/Graphics.h"
 #include "../IO/Log.h"
 
 #include "../DebugNew.h"
 
 namespace Urho3D
 {
-
-ConstantBuffer::ConstantBuffer(Context* context) :
-    Object(context),
-    GPUObject(GetSubsystem<Graphics>())
+ConstantBuffer::ConstantBuffer(Context* context)
+    : Object(context)
+    , GPUObject(GetSubsystem<Graphics>())
 {
 }
 
-ConstantBuffer::~ConstantBuffer()
-{
-    Release();
-}
+ConstantBuffer::~ConstantBuffer() { Release(); }
 
 void ConstantBuffer::SetParameter(unsigned offset, unsigned size, const void* data)
 {
@@ -69,5 +65,4 @@ void ConstantBuffer::SetVector3ArrayParameter(unsigned offset, unsigned rows, co
 
     dirty_ = true;
 }
-
 }

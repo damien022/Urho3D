@@ -34,8 +34,8 @@
 #include "../Graphics/Material.h"
 #include "../Graphics/OcclusionBuffer.h"
 #include "../Graphics/Octree.h"
-#include "../Graphics/Renderer.h"
 #include "../Graphics/RenderPath.h"
+#include "../Graphics/Renderer.h"
 #include "../Graphics/ShaderVariation.h"
 #include "../Graphics/Technique.h"
 #include "../Graphics/Texture2D.h"
@@ -51,204 +51,90 @@
 #include "../DebugNew.h"
 
 #ifdef _MSC_VER
-#pragma warning(disable:6293)
+#pragma warning(disable : 6293)
 #endif
 
 namespace Urho3D
 {
-
-static const float dirLightVertexData[] =
-{
-    -1, 1, 0,
-    1, 1, 0,
-    1, -1, 0,
-    -1, -1, 0,
+static const float dirLightVertexData[] = {
+    -1, 1, 0, 1, 1, 0, 1, -1, 0, -1, -1, 0,
 };
 
-static const unsigned short dirLightIndexData[] =
-{
-    0, 1, 2,
-    2, 3, 0,
+static const unsigned short dirLightIndexData[] = {
+    0, 1, 2, 2, 3, 0,
 };
 
-static const float pointLightVertexData[] =
-{
-    -0.423169f, -1.000000f, 0.423169f,
-    -0.423169f, -1.000000f, -0.423169f,
-    0.423169f, -1.000000f, -0.423169f,
-    0.423169f, -1.000000f, 0.423169f,
-    0.423169f, 1.000000f, -0.423169f,
-    -0.423169f, 1.000000f, -0.423169f,
-    -0.423169f, 1.000000f, 0.423169f,
-    0.423169f, 1.000000f, 0.423169f,
-    -1.000000f, 0.423169f, -0.423169f,
-    -1.000000f, -0.423169f, -0.423169f,
-    -1.000000f, -0.423169f, 0.423169f,
-    -1.000000f, 0.423169f, 0.423169f,
-    0.423169f, 0.423169f, -1.000000f,
-    0.423169f, -0.423169f, -1.000000f,
-    -0.423169f, -0.423169f, -1.000000f,
-    -0.423169f, 0.423169f, -1.000000f,
-    1.000000f, 0.423169f, 0.423169f,
-    1.000000f, -0.423169f, 0.423169f,
-    1.000000f, -0.423169f, -0.423169f,
-    1.000000f, 0.423169f, -0.423169f,
-    0.423169f, -0.423169f, 1.000000f,
-    0.423169f, 0.423169f, 1.000000f,
-    -0.423169f, 0.423169f, 1.000000f,
-    -0.423169f, -0.423169f, 1.000000f
+static const float pointLightVertexData[] = {
+    -0.423169f, -1.000000f, 0.423169f,  -0.423169f, -1.000000f, -0.423169f, 0.423169f,  -1.000000f, -0.423169f,
+    0.423169f,  -1.000000f, 0.423169f,  0.423169f,  1.000000f,  -0.423169f, -0.423169f, 1.000000f,  -0.423169f,
+    -0.423169f, 1.000000f,  0.423169f,  0.423169f,  1.000000f,  0.423169f,  -1.000000f, 0.423169f,  -0.423169f,
+    -1.000000f, -0.423169f, -0.423169f, -1.000000f, -0.423169f, 0.423169f,  -1.000000f, 0.423169f,  0.423169f,
+    0.423169f,  0.423169f,  -1.000000f, 0.423169f,  -0.423169f, -1.000000f, -0.423169f, -0.423169f, -1.000000f,
+    -0.423169f, 0.423169f,  -1.000000f, 1.000000f,  0.423169f,  0.423169f,  1.000000f,  -0.423169f, 0.423169f,
+    1.000000f,  -0.423169f, -0.423169f, 1.000000f,  0.423169f,  -0.423169f, 0.423169f,  -0.423169f, 1.000000f,
+    0.423169f,  0.423169f,  1.000000f,  -0.423169f, 0.423169f,  1.000000f,  -0.423169f, -0.423169f, 1.000000f};
+
+static const unsigned short pointLightIndexData[] = {
+    0,  1,  2,  0,  2,  3,  4,  5,  6,  4,  6,  7,  8, 9,  10, 8,  10, 11, 12, 13, 14, 12, 14, 15, 16, 17, 18,
+    16, 18, 19, 20, 21, 22, 20, 22, 23, 0,  10, 9,  0, 9,  1,  13, 2,  1,  13, 1,  14, 23, 0,  3,  23, 3,  20,
+    17, 3,  2,  17, 2,  18, 21, 7,  6,  21, 6,  22, 7, 16, 19, 7,  19, 4,  5,  8,  11, 5,  11, 6,  4,  12, 15,
+    4,  15, 5,  22, 11, 10, 22, 10, 23, 8,  15, 14, 8, 14, 9,  12, 19, 18, 12, 18, 13, 16, 21, 20, 16, 20, 17,
+    0,  23, 10, 1,  9,  14, 2,  13, 18, 3,  17, 20, 6, 11, 22, 5,  15, 8,  4,  19, 12, 7,  21, 16};
+
+static const float spotLightVertexData[] = {
+    0.00001f,  0.00001f,  0.00001f,  0.00001f,  -0.00001f, 0.00001f,  -0.00001f, -0.00001f,
+    0.00001f,  -0.00001f, 0.00001f,  0.00001f,  1.00000f,  1.00000f,  0.99999f,  1.00000f,
+    -1.00000f, 0.99999f,  -1.00000f, -1.00000f, 0.99999f,  -1.00000f, 1.00000f,  0.99999f,
 };
 
-static const unsigned short pointLightIndexData[] =
-{
-    0, 1, 2,
-    0, 2, 3,
-    4, 5, 6,
-    4, 6, 7,
-    8, 9, 10,
-    8, 10, 11,
-    12, 13, 14,
-    12, 14, 15,
-    16, 17, 18,
-    16, 18, 19,
-    20, 21, 22,
-    20, 22, 23,
-    0, 10, 9,
-    0, 9, 1,
-    13, 2, 1,
-    13, 1, 14,
-    23, 0, 3,
-    23, 3, 20,
-    17, 3, 2,
-    17, 2, 18,
-    21, 7, 6,
-    21, 6, 22,
-    7, 16, 19,
-    7, 19, 4,
-    5, 8, 11,
-    5, 11, 6,
-    4, 12, 15,
-    4, 15, 5,
-    22, 11, 10,
-    22, 10, 23,
-    8, 15, 14,
-    8, 14, 9,
-    12, 19, 18,
-    12, 18, 13,
-    16, 21, 20,
-    16, 20, 17,
-    0, 23, 10,
-    1, 9, 14,
-    2, 13, 18,
-    3, 17, 20,
-    6, 11, 22,
-    5, 15, 8,
-    4, 19, 12,
-    7, 21, 16
+static const unsigned short spotLightIndexData[] = {3, 0, 1, 3, 1, 2, 0, 4, 5, 0, 5, 1, 3, 7, 4, 3, 4, 0,
+                                                    7, 3, 2, 7, 2, 6, 6, 2, 1, 6, 1, 5, 7, 5, 4, 7, 6, 5};
+
+static const char* geometryVSVariations[] = {
+    "", "SKINNED ", "INSTANCED ", "BILLBOARD ", "DIRBILLBOARD ", "TRAILFACECAM ", "TRAILBONE "};
+
+static const char* lightVSVariations[] = {"PERPIXEL DIRLIGHT ",
+                                          "PERPIXEL SPOTLIGHT ",
+                                          "PERPIXEL POINTLIGHT ",
+                                          "PERPIXEL DIRLIGHT SHADOW ",
+                                          "PERPIXEL SPOTLIGHT SHADOW ",
+                                          "PERPIXEL POINTLIGHT SHADOW ",
+                                          "PERPIXEL DIRLIGHT SHADOW NORMALOFFSET ",
+                                          "PERPIXEL SPOTLIGHT SHADOW NORMALOFFSET ",
+                                          "PERPIXEL POINTLIGHT SHADOW NORMALOFFSET "};
+
+static const char* vertexLightVSVariations[] = {
+    "", "NUMVERTEXLIGHTS=1 ", "NUMVERTEXLIGHTS=2 ", "NUMVERTEXLIGHTS=3 ", "NUMVERTEXLIGHTS=4 ",
 };
 
-static const float spotLightVertexData[] =
-{
-    0.00001f, 0.00001f, 0.00001f,
-    0.00001f, -0.00001f, 0.00001f,
-    -0.00001f, -0.00001f, 0.00001f,
-    -0.00001f, 0.00001f, 0.00001f,
-    1.00000f, 1.00000f, 0.99999f,
-    1.00000f, -1.00000f, 0.99999f,
-    -1.00000f, -1.00000f, 0.99999f,
-    -1.00000f, 1.00000f, 0.99999f,
-};
+static const char* deferredLightVSVariations[] = {"", "DIRLIGHT ", "ORTHO ", "DIRLIGHT ORTHO "};
 
-static const unsigned short spotLightIndexData[] =
-{
-    3, 0, 1,
-    3, 1, 2,
-    0, 4, 5,
-    0, 5, 1,
-    3, 7, 4,
-    3, 4, 0,
-    7, 3, 2,
-    7, 2, 6,
-    6, 2, 1,
-    6, 1, 5,
-    7, 5, 4,
-    7, 6, 5
-};
+static const char* lightPSVariations[] = {"PERPIXEL DIRLIGHT ",
+                                          "PERPIXEL SPOTLIGHT ",
+                                          "PERPIXEL POINTLIGHT ",
+                                          "PERPIXEL POINTLIGHT CUBEMASK ",
+                                          "PERPIXEL DIRLIGHT SPECULAR ",
+                                          "PERPIXEL SPOTLIGHT SPECULAR ",
+                                          "PERPIXEL POINTLIGHT SPECULAR ",
+                                          "PERPIXEL POINTLIGHT CUBEMASK SPECULAR ",
+                                          "PERPIXEL DIRLIGHT SHADOW ",
+                                          "PERPIXEL SPOTLIGHT SHADOW ",
+                                          "PERPIXEL POINTLIGHT SHADOW ",
+                                          "PERPIXEL POINTLIGHT CUBEMASK SHADOW ",
+                                          "PERPIXEL DIRLIGHT SPECULAR SHADOW ",
+                                          "PERPIXEL SPOTLIGHT SPECULAR SHADOW ",
+                                          "PERPIXEL POINTLIGHT SPECULAR SHADOW ",
+                                          "PERPIXEL POINTLIGHT CUBEMASK SPECULAR SHADOW ",
+                                          "PERPIXEL DIRLIGHT SHADOW NORMALOFFSET ",
+                                          "PERPIXEL SPOTLIGHT SHADOW NORMALOFFSET ",
+                                          "PERPIXEL POINTLIGHT SHADOW NORMALOFFSET ",
+                                          "PERPIXEL POINTLIGHT CUBEMASK SHADOW NORMALOFFSET ",
+                                          "PERPIXEL DIRLIGHT SPECULAR SHADOW NORMALOFFSET ",
+                                          "PERPIXEL SPOTLIGHT SPECULAR SHADOW NORMALOFFSET ",
+                                          "PERPIXEL POINTLIGHT SPECULAR SHADOW NORMALOFFSET ",
+                                          "PERPIXEL POINTLIGHT CUBEMASK SPECULAR SHADOW NORMALOFFSET "};
 
-static const char* geometryVSVariations[] =
-{
-    "",
-    "SKINNED ",
-    "INSTANCED ",
-    "BILLBOARD ",
-    "DIRBILLBOARD ",
-    "TRAILFACECAM ",
-    "TRAILBONE "
-};
-
-static const char* lightVSVariations[] =
-{
-    "PERPIXEL DIRLIGHT ",
-    "PERPIXEL SPOTLIGHT ",
-    "PERPIXEL POINTLIGHT ",
-    "PERPIXEL DIRLIGHT SHADOW ",
-    "PERPIXEL SPOTLIGHT SHADOW ",
-    "PERPIXEL POINTLIGHT SHADOW ",
-    "PERPIXEL DIRLIGHT SHADOW NORMALOFFSET ",
-    "PERPIXEL SPOTLIGHT SHADOW NORMALOFFSET ",
-    "PERPIXEL POINTLIGHT SHADOW NORMALOFFSET "
-};
-
-static const char* vertexLightVSVariations[] =
-{
-    "",
-    "NUMVERTEXLIGHTS=1 ",
-    "NUMVERTEXLIGHTS=2 ",
-    "NUMVERTEXLIGHTS=3 ",
-    "NUMVERTEXLIGHTS=4 ",
-};
-
-static const char* deferredLightVSVariations[] =
-{
-    "",
-    "DIRLIGHT ",
-    "ORTHO ",
-    "DIRLIGHT ORTHO "
-};
-
-static const char* lightPSVariations[] =
-{
-    "PERPIXEL DIRLIGHT ",
-    "PERPIXEL SPOTLIGHT ",
-    "PERPIXEL POINTLIGHT ",
-    "PERPIXEL POINTLIGHT CUBEMASK ",
-    "PERPIXEL DIRLIGHT SPECULAR ",
-    "PERPIXEL SPOTLIGHT SPECULAR ",
-    "PERPIXEL POINTLIGHT SPECULAR ",
-    "PERPIXEL POINTLIGHT CUBEMASK SPECULAR ",
-    "PERPIXEL DIRLIGHT SHADOW ",
-    "PERPIXEL SPOTLIGHT SHADOW ",
-    "PERPIXEL POINTLIGHT SHADOW ",
-    "PERPIXEL POINTLIGHT CUBEMASK SHADOW ",
-    "PERPIXEL DIRLIGHT SPECULAR SHADOW ",
-    "PERPIXEL SPOTLIGHT SPECULAR SHADOW ",
-    "PERPIXEL POINTLIGHT SPECULAR SHADOW ",
-    "PERPIXEL POINTLIGHT CUBEMASK SPECULAR SHADOW ",
-    "PERPIXEL DIRLIGHT SHADOW NORMALOFFSET ",
-    "PERPIXEL SPOTLIGHT SHADOW NORMALOFFSET ",
-    "PERPIXEL POINTLIGHT SHADOW NORMALOFFSET ",
-    "PERPIXEL POINTLIGHT CUBEMASK SHADOW NORMALOFFSET ",
-    "PERPIXEL DIRLIGHT SPECULAR SHADOW NORMALOFFSET ",
-    "PERPIXEL SPOTLIGHT SPECULAR SHADOW NORMALOFFSET ",
-    "PERPIXEL POINTLIGHT SPECULAR SHADOW NORMALOFFSET ",
-    "PERPIXEL POINTLIGHT CUBEMASK SPECULAR SHADOW NORMALOFFSET "
-};
-
-static const char* heightFogVariations[] =
-{
-    "",
-    "HEIGHTFOG "
-};
+static const char* heightFogVariations[] = {"", "HEIGHTFOG "};
 
 static const unsigned MAX_BUFFER_AGE = 1000;
 
@@ -265,42 +151,42 @@ inline PODVector<VertexElement> CreateInstancingBufferElements(unsigned numExtra
     return elements;
 }
 
-Renderer::Renderer(Context* context) :
-    Object(context),
-    defaultZone_(new Zone(context)),
-    shadowMapFilterInstance_(nullptr),
-    shadowMapFilter_(nullptr),
-    textureAnisotropy_(4),
-    textureFilterMode_(FILTER_TRILINEAR),
-    textureQuality_(QUALITY_HIGH),
-    materialQuality_(QUALITY_HIGH),
-    shadowMapSize_(1024),
-    shadowQuality_(SHADOWQUALITY_PCF_16BIT),
-    shadowSoftness_(1.0f),
-    vsmShadowParams_(0.0000001f, 0.9f),
-    vsmMultiSample_(1),
-    maxShadowMaps_(1),
-    minInstances_(2),
-    maxSortedInstances_(1000),
-    maxOccluderTriangles_(5000),
-    occlusionBufferSize_(256),
-    occluderSizeThreshold_(0.025f),
-    mobileShadowBiasMul_(1.0f),
-    mobileShadowBiasAdd_(0.0f),
-    mobileNormalOffsetMul_(1.0f),
-    numOcclusionBuffers_(0),
-    numShadowCameras_(0),
-    shadersChangedFrameNumber_(M_MAX_UNSIGNED),
-    hdrRendering_(false),
-    specularLighting_(true),
-    drawShadows_(true),
-    reuseShadowMaps_(true),
-    dynamicInstancing_(true),
-    numExtraInstancingBufferElements_(0),
-    threadedOcclusion_(false),
-    shadersDirty_(true),
-    initialized_(false),
-    resetViews_(false)
+Renderer::Renderer(Context* context)
+    : Object(context)
+    , defaultZone_(new Zone(context))
+    , shadowMapFilterInstance_(nullptr)
+    , shadowMapFilter_(nullptr)
+    , textureAnisotropy_(4)
+    , textureFilterMode_(FILTER_TRILINEAR)
+    , textureQuality_(QUALITY_HIGH)
+    , materialQuality_(QUALITY_HIGH)
+    , shadowMapSize_(1024)
+    , shadowQuality_(SHADOWQUALITY_PCF_16BIT)
+    , shadowSoftness_(1.0f)
+    , vsmShadowParams_(0.0000001f, 0.9f)
+    , vsmMultiSample_(1)
+    , maxShadowMaps_(1)
+    , minInstances_(2)
+    , maxSortedInstances_(1000)
+    , maxOccluderTriangles_(5000)
+    , occlusionBufferSize_(256)
+    , occluderSizeThreshold_(0.025f)
+    , mobileShadowBiasMul_(1.0f)
+    , mobileShadowBiasAdd_(0.0f)
+    , mobileNormalOffsetMul_(1.0f)
+    , numOcclusionBuffers_(0)
+    , numShadowCameras_(0)
+    , shadersChangedFrameNumber_(M_MAX_UNSIGNED)
+    , hdrRendering_(false)
+    , specularLighting_(true)
+    , drawShadows_(true)
+    , reuseShadowMaps_(true)
+    , dynamicInstancing_(true)
+    , numExtraInstancingBufferElements_(0)
+    , threadedOcclusion_(false)
+    , shadersDirty_(true)
+    , initialized_(false)
+    , resetViews_(false)
 {
     SubscribeToEvent(E_SCREENMODE, URHO3D_HANDLER(Renderer, HandleScreenMode));
 
@@ -308,14 +194,9 @@ Renderer::Renderer(Context* context) :
     Initialize();
 }
 
-Renderer::~Renderer()
-{
-}
+Renderer::~Renderer() {}
 
-void Renderer::SetNumViewports(unsigned num)
-{
-    viewports_.Resize(num);
-}
+void Renderer::SetNumViewports(unsigned num) { viewports_.Resize(num); }
 
 void Renderer::SetViewport(unsigned index, Viewport* viewport)
 {
@@ -338,30 +219,15 @@ void Renderer::SetDefaultRenderPath(XMLFile* xmlFile)
         defaultRenderPath_ = newRenderPath;
 }
 
-void Renderer::SetDefaultTechnique(Technique* technique)
-{
-    defaultTechnique_ = technique;
-}
+void Renderer::SetDefaultTechnique(Technique* technique) { defaultTechnique_ = technique; }
 
-void Renderer::SetHDRRendering(bool enable)
-{
-    hdrRendering_ = enable;
-}
+void Renderer::SetHDRRendering(bool enable) { hdrRendering_ = enable; }
 
-void Renderer::SetSpecularLighting(bool enable)
-{
-    specularLighting_ = enable;
-}
+void Renderer::SetSpecularLighting(bool enable) { specularLighting_ = enable; }
 
-void Renderer::SetTextureAnisotropy(int level)
-{
-    textureAnisotropy_ = Max(level, 1);
-}
+void Renderer::SetTextureAnisotropy(int level) { textureAnisotropy_ = Max(level, 1); }
 
-void Renderer::SetTextureFilterMode(TextureFilterMode mode)
-{
-    textureFilterMode_ = mode;
-}
+void Renderer::SetTextureFilterMode(TextureFilterMode mode) { textureFilterMode_ = mode; }
 
 void Renderer::SetTextureQuality(int quality)
 {
@@ -382,7 +248,8 @@ void Renderer::SetMaterialQuality(int quality)
     {
         materialQuality_ = quality;
         shadersDirty_ = true;
-        // Reallocate views to not store eg. pass information that might be unnecessary on the new material quality level
+        // Reallocate views to not store eg. pass information that might be unnecessary on the new material quality
+        // level
         resetViews_ = true;
     }
 }
@@ -420,7 +287,7 @@ void Renderer::SetShadowQuality(ShadowQuality quality)
     {
         if (quality == SHADOWQUALITY_SIMPLE_16BIT)
             quality = SHADOWQUALITY_PCF_16BIT;
-        
+
         if (quality == SHADOWQUALITY_SIMPLE_24BIT)
             quality = SHADOWQUALITY_PCF_24BIT;
     }
@@ -446,10 +313,7 @@ void Renderer::SetShadowQuality(ShadowQuality quality)
     }
 }
 
-void Renderer::SetShadowSoftness(float shadowSoftness)
-{
-    shadowSoftness_ = Max(shadowSoftness, 0.0f);
-}
+void Renderer::SetShadowSoftness(float shadowSoftness) { shadowSoftness_ = Max(shadowSoftness, 0.0f); }
 
 void Renderer::SetVSMShadowParameters(float minVariance, float lightBleedingReduction)
 {
@@ -473,10 +337,7 @@ void Renderer::SetShadowMapFilter(Object* instance, ShadowMapFilter functionPtr)
     shadowMapFilter_ = functionPtr;
 }
 
-void Renderer::SetReuseShadowMaps(bool enable)
-{
-    reuseShadowMaps_ = enable;
-}
+void Renderer::SetReuseShadowMaps(bool enable) { reuseShadowMaps_ = enable; }
 
 void Renderer::SetMaxShadowMaps(int shadowMaps)
 {
@@ -484,7 +345,7 @@ void Renderer::SetMaxShadowMaps(int shadowMaps)
         return;
 
     maxShadowMaps_ = shadowMaps;
-    for (HashMap<int, Vector<SharedPtr<Texture2D> > >::Iterator i = shadowMaps_.Begin(); i != shadowMaps_.End(); ++i)
+    for (HashMap<int, Vector<SharedPtr<Texture2D>>>::Iterator i = shadowMaps_.Begin(); i != shadowMaps_.End(); ++i)
     {
         if ((int)i->second_.Size() > maxShadowMaps_)
             i->second_.Resize((unsigned)maxShadowMaps_);
@@ -508,20 +369,11 @@ void Renderer::SetNumExtraInstancingBufferElements(int elements)
     }
 }
 
-void Renderer::SetMinInstances(int instances)
-{
-    minInstances_ = Max(instances, 1);
-}
+void Renderer::SetMinInstances(int instances) { minInstances_ = Max(instances, 1); }
 
-void Renderer::SetMaxSortedInstances(int instances)
-{
-    maxSortedInstances_ = Max(instances, 0);
-}
+void Renderer::SetMaxSortedInstances(int instances) { maxSortedInstances_ = Max(instances, 0); }
 
-void Renderer::SetMaxOccluderTriangles(int triangles)
-{
-    maxOccluderTriangles_ = Max(triangles, 0);
-}
+void Renderer::SetMaxOccluderTriangles(int triangles) { maxOccluderTriangles_ = Max(triangles, 0); }
 
 void Renderer::SetOcclusionBufferSize(int size)
 {
@@ -529,25 +381,13 @@ void Renderer::SetOcclusionBufferSize(int size)
     occlusionBuffers_.Clear();
 }
 
-void Renderer::SetMobileShadowBiasMul(float mul)
-{
-    mobileShadowBiasMul_ = mul;
-}
+void Renderer::SetMobileShadowBiasMul(float mul) { mobileShadowBiasMul_ = mul; }
 
-void Renderer::SetMobileShadowBiasAdd(float add)
-{
-    mobileShadowBiasAdd_ = add;
-}
+void Renderer::SetMobileShadowBiasAdd(float add) { mobileShadowBiasAdd_ = add; }
 
-void Renderer::SetMobileNormalOffsetMul(float mul)
-{
-    mobileNormalOffsetMul_ = mul;
-}
+void Renderer::SetMobileNormalOffsetMul(float mul) { mobileNormalOffsetMul_ = mul; }
 
-void Renderer::SetOccluderSizeThreshold(float screenSize)
-{
-    occluderSizeThreshold_ = Max(screenSize, 0.0f);
-}
+void Renderer::SetOccluderSizeThreshold(float screenSize) { occluderSizeThreshold_ = Max(screenSize, 0.0f); }
 
 void Renderer::SetThreadedOcclusion(bool enable)
 {
@@ -558,10 +398,7 @@ void Renderer::SetThreadedOcclusion(bool enable)
     }
 }
 
-void Renderer::ReloadShaders()
-{
-    shadersDirty_ = true;
-}
+void Renderer::ReloadShaders() { shadersDirty_ = true; }
 
 void Renderer::ApplyShadowMapFilter(View* view, Texture2D* shadowMap, float blurScale)
 {
@@ -590,17 +427,14 @@ Viewport* Renderer::GetViewportForScene(Scene* scene, unsigned index) const
     return nullptr;
 }
 
-
-RenderPath* Renderer::GetDefaultRenderPath() const
-{
-    return defaultRenderPath_;
-}
+RenderPath* Renderer::GetDefaultRenderPath() const { return defaultRenderPath_; }
 
 Technique* Renderer::GetDefaultTechnique() const
 {
     // Assign default when first asked if not assigned yet
     if (!defaultTechnique_)
-        const_cast<SharedPtr<Technique>& >(defaultTechnique_) = GetSubsystem<ResourceCache>()->GetResource<Technique>("Techniques/NoTexture.xml");
+        const_cast<SharedPtr<Technique>&>(defaultTechnique_) =
+            GetSubsystem<ResourceCache>()->GetResource<Technique>("Techniques/NoTexture.xml");
 
     return defaultTechnique_;
 }
@@ -686,8 +520,8 @@ void Renderer::Update(float timeStep)
     views_.Clear();
     preparedViews_.Clear();
 
-    // If device lost, do not perform update. This is because any dynamic vertex/index buffer updates happen already here,
-    // and if the device is lost, the updates queue up, causing memory use to rise constantly
+    // If device lost, do not perform update. This is because any dynamic vertex/index buffer updates happen already
+    // here, and if the device is lost, the updates queue up, causing memory use to rise constantly
     if (!graphics_ || !graphics_->IsInitialized() || graphics_->IsDeviceLost())
         return;
 
@@ -738,7 +572,8 @@ void Renderer::Render()
     graphics_->SetDefaultTextureFilterMode(textureFilterMode_);
     graphics_->SetDefaultTextureAnisotropy((unsigned)textureAnisotropy_);
 
-    // If no views that render to the backbuffer, clear the screen so that e.g. the UI is not rendered on top of previous frame
+    // If no views that render to the backbuffer, clear the screen so that e.g. the UI is not rendered on top of
+    // previous frame
     bool hasBackbufferViews = false;
     for (unsigned i = 0; i < views_.Size(); ++i)
     {
@@ -785,7 +620,8 @@ void Renderer::DrawDebugGeometry(bool depthTest)
 {
     URHO3D_PROFILE(RendererDrawDebug);
 
-    /// \todo Because debug geometry is per-scene, if two cameras show views of the same area, occlusion is not shown correctly
+    /// \todo Because debug geometry is per-scene, if two cameras show views of the same area, occlusion is not shown
+    /// correctly
     HashSet<Drawable*> processedGeometries;
     HashSet<Light*> processedLights;
 
@@ -839,7 +675,7 @@ void Renderer::QueueViewport(RenderSurface* renderTarget, Viewport* viewport)
 {
     if (viewport)
     {
-        Pair<WeakPtr<RenderSurface>, WeakPtr<Viewport> > newView = 
+        Pair<WeakPtr<RenderSurface>, WeakPtr<Viewport>> newView =
             MakePair(WeakPtr<RenderSurface>(renderTarget), WeakPtr<Viewport>(viewport));
 
         // Prevent double add of the same rendertarget/viewport combination
@@ -863,10 +699,7 @@ Geometry* Renderer::GetLightGeometry(Light* light)
     return nullptr;
 }
 
-Geometry* Renderer::GetQuadGeometry()
-{
-    return dirLightGeometry_;
-}
+Geometry* Renderer::GetQuadGeometry() { return dirLightGeometry_; }
 
 Texture2D* Renderer::GetShadowMap(Light* light, Camera* camera, unsigned viewWidth, unsigned viewHeight)
 {
@@ -995,12 +828,12 @@ Texture2D* Renderer::GetShadowMap(Light* light, Camera* camera, unsigned viewWid
             newShadowMap->SetShadowCompare(shadowMapUsage == TEXTURE_DEPTHSTENCIL);
 #endif
 #ifndef URHO3D_OPENGL
-            // Direct3D9: when shadow compare must be done manually, use nearest filtering so that the filtering of point lights
-            // and other shadowed lights matches
+            // Direct3D9: when shadow compare must be done manually, use nearest filtering so that the filtering of
+            // point lights and other shadowed lights matches
             newShadowMap->SetFilterMode(graphics_->GetHardwareShadowSupport() ? FILTER_BILINEAR : FILTER_NEAREST);
 #endif
-            // Create dummy color texture for the shadow map if necessary: Direct3D9, or OpenGL when working around an OS X +
-            // Intel driver bug
+            // Create dummy color texture for the shadow map if necessary: Direct3D9, or OpenGL when working around an
+            // OS X + Intel driver bug
             if (shadowMapUsage == TEXTURE_DEPTHSTENCIL && dummyColorFormat)
             {
                 // If no dummy color rendertarget for this size exists yet, create one now
@@ -1011,7 +844,8 @@ Texture2D* Renderer::GetShadowMap(Light* light, Camera* camera, unsigned viewWid
                     colorShadowMaps_[searchKey]->SetSize(width, height, dummyColorFormat, TEXTURE_RENDERTARGET);
                 }
                 // Link the color rendertarget to the shadow map
-                newShadowMap->GetRenderSurface()->SetLinkedRenderTarget(colorShadowMaps_[searchKey]->GetRenderSurface());
+                newShadowMap->GetRenderSurface()->SetLinkedRenderTarget(
+                    colorShadowMaps_[searchKey]->GetRenderSurface());
             }
             break;
         }
@@ -1028,8 +862,8 @@ Texture2D* Renderer::GetShadowMap(Light* light, Camera* camera, unsigned viewWid
     return newShadowMap;
 }
 
-Texture* Renderer::GetScreenBuffer(int width, int height, unsigned format, int multiSample, bool autoResolve, bool cubemap, bool filtered, bool srgb,
-    unsigned persistentKey)
+Texture* Renderer::GetScreenBuffer(int width, int height, unsigned format, int multiSample, bool autoResolve,
+                                   bool cubemap, bool filtered, bool srgb, unsigned persistentKey)
 {
     bool depthStencil = (format == Graphics::GetDepthStencilFormat()) || (format == Graphics::GetReadableDepthFormat());
     if (depthStencil)
@@ -1078,11 +912,12 @@ Texture* Renderer::GetScreenBuffer(int width, int height, unsigned format, int m
             SharedPtr<Texture2D> newTex2D(new Texture2D(context_));
             /// \todo Mipmaps disabled for now. Allow to request mipmapped buffer?
             newTex2D->SetNumLevels(1);
-            newTex2D->SetSize(width, height, format, depthStencil ? TEXTURE_DEPTHSTENCIL : TEXTURE_RENDERTARGET, multiSample, autoResolve);
+            newTex2D->SetSize(width, height, format, depthStencil ? TEXTURE_DEPTHSTENCIL : TEXTURE_RENDERTARGET,
+                              multiSample, autoResolve);
 
 #ifdef URHO3D_OPENGL
-            // OpenGL hack: clear persistent floating point screen buffers to ensure the initial contents aren't illegal (NaN)?
-            // Otherwise eg. the AutoExposure post process will not work correctly
+            // OpenGL hack: clear persistent floating point screen buffers to ensure the initial contents aren't illegal
+            // (NaN)? Otherwise eg. the AutoExposure post process will not work correctly
             if (persistentKey && Texture::GetDataType(format) == GL_FLOAT)
             {
                 // Note: this loses current rendertarget assignment
@@ -1110,7 +945,8 @@ Texture* Renderer::GetScreenBuffer(int width, int height, unsigned format, int m
         newBuffer->ResetUseTimer();
         screenBuffers_[searchKey].Push(newBuffer);
 
-        URHO3D_LOGDEBUG("Allocated new screen buffer size " + String(width) + "x" + String(height) + " format " + String(format));
+        URHO3D_LOGDEBUG("Allocated new screen buffer size " + String(width) + "x" + String(height) + " format " +
+                        String(format));
         return newBuffer;
     }
     else
@@ -1130,8 +966,9 @@ RenderSurface* Renderer::GetDepthStencil(int width, int height, int multiSample,
         return nullptr;
     else
     {
-        return static_cast<Texture2D*>(GetScreenBuffer(width, height, Graphics::GetDepthStencilFormat(), multiSample, autoResolve,
-            false, false, false))->GetRenderSurface();
+        return static_cast<Texture2D*>(GetScreenBuffer(width, height, Graphics::GetDepthStencilFormat(), multiSample,
+                                                       autoResolve, false, false, false))
+            ->GetRenderSurface();
     }
 }
 
@@ -1182,7 +1019,7 @@ void Renderer::StorePreparedView(View* view, Camera* camera)
 
 View* Renderer::GetPreparedView(Camera* camera)
 {
-    HashMap<Camera*, WeakPtr<View> >::Iterator i = preparedViews_.Find(camera);
+    HashMap<Camera*, WeakPtr<View>>::Iterator i = preparedViews_.Find(camera);
     return i != preparedViews_.End() ? i->second_ : nullptr;
 }
 
@@ -1202,9 +1039,11 @@ void Renderer::SetBatchShaders(Batch& batch, Technique* tech, bool allowShadows,
     if (pass->GetShadersLoadedFrameNumber() != shadersChangedFrameNumber_)
         pass->ReleaseShaders();
 
-    Vector<SharedPtr<ShaderVariation> >& vertexShaders = queue.hasExtraDefines_ ? pass->GetVertexShaders(queue.vsExtraDefinesHash_) : pass->GetVertexShaders();
-    Vector<SharedPtr<ShaderVariation> >& pixelShaders = queue.hasExtraDefines_ ? pass->GetPixelShaders(queue.psExtraDefinesHash_) : pass->GetPixelShaders();
-    
+    Vector<SharedPtr<ShaderVariation>>& vertexShaders =
+        queue.hasExtraDefines_ ? pass->GetVertexShaders(queue.vsExtraDefinesHash_) : pass->GetVertexShaders();
+    Vector<SharedPtr<ShaderVariation>>& pixelShaders =
+        queue.hasExtraDefines_ ? pass->GetPixelShaders(queue.psExtraDefinesHash_) : pass->GetPixelShaders();
+
     // Load shaders now if necessary
     if (!vertexShaders.Size() || !pixelShaders.Size())
         LoadPassShaders(pass, vertexShaders, pixelShaders, queue);
@@ -1309,8 +1148,8 @@ void Renderer::SetBatchShaders(Batch& batch, Technique* tech, bool allowShadows,
     }
 }
 
-void Renderer::SetLightVolumeBatchShaders(Batch& batch, Camera* camera, const String& vsName, const String& psName, const String& vsDefines,
-    const String& psDefines)
+void Renderer::SetLightVolumeBatchShaders(Batch& batch, Camera* camera, const String& vsName, const String& psName,
+                                          const String& vsDefines, const String& psDefines)
 {
     assert(deferredLightPSVariations_.Size());
 
@@ -1391,7 +1230,8 @@ bool Renderer::ResizeInstancingBuffer(unsigned numInstances)
     while (newSize < numInstances)
         newSize <<= 1;
 
-    const PODVector<VertexElement> instancingBufferElements = CreateInstancingBufferElements(numExtraInstancingBufferElements_);
+    const PODVector<VertexElement> instancingBufferElements =
+        CreateInstancingBufferElements(numExtraInstancingBufferElements_);
     if (!instancingBuffer_->SetSize(newSize, instancingBufferElements, true))
     {
         URHO3D_LOGERROR("Failed to resize instancing buffer to " + String(newSize));
@@ -1448,8 +1288,8 @@ void Renderer::OptimizeLightByStencil(Light* light, Camera* camera)
             lightStencilValue_ = 1;
         }
 
-        // If possible, render the stencil volume front faces. However, close to the near clip plane render back faces instead
-        // to avoid clipping.
+        // If possible, render the stencil volume front faces. However, close to the near clip plane render back faces
+        // instead to avoid clipping.
         if (lightDist < camera->GetNearClip() * 2.0f)
         {
             SetCullMode(CULL_CW, camera);
@@ -1576,17 +1416,18 @@ void Renderer::RemoveUnusedBuffers()
         }
     }
 
-    for (HashMap<long long, Vector<SharedPtr<Texture> > >::Iterator i = screenBuffers_.Begin(); i != screenBuffers_.End();)
+    for (HashMap<long long, Vector<SharedPtr<Texture>>>::Iterator i = screenBuffers_.Begin();
+         i != screenBuffers_.End();)
     {
-        HashMap<long long, Vector<SharedPtr<Texture> > >::Iterator current = i++;
-        Vector<SharedPtr<Texture> >& buffers = current->second_;
+        HashMap<long long, Vector<SharedPtr<Texture>>>::Iterator current = i++;
+        Vector<SharedPtr<Texture>>& buffers = current->second_;
         for (unsigned j = buffers.Size() - 1; j < buffers.Size(); --j)
         {
             Texture* buffer = buffers[j];
             if (buffer->GetUseTimer() > MAX_BUFFER_AGE)
             {
-                URHO3D_LOGDEBUG("Removed unused screen buffer size " + String(buffer->GetWidth()) + "x" + String(buffer->GetHeight()) +
-                         " format " + String(buffer->GetFormat()));
+                URHO3D_LOGDEBUG("Removed unused screen buffer size " + String(buffer->GetWidth()) + "x" +
+                                String(buffer->GetHeight()) + " format " + String(buffer->GetFormat()));
                 buffers.Erase(j);
             }
         }
@@ -1600,13 +1441,15 @@ void Renderer::RemoveUnusedBuffers()
 
 void Renderer::ResetShadowMapAllocations()
 {
-    for (HashMap<int, PODVector<Light*> >::Iterator i = shadowMapAllocations_.Begin(); i != shadowMapAllocations_.End(); ++i)
+    for (HashMap<int, PODVector<Light*>>::Iterator i = shadowMapAllocations_.Begin(); i != shadowMapAllocations_.End();
+         ++i)
         i->second_.Clear();
 }
 
 void Renderer::ResetScreenBufferAllocations()
 {
-    for (HashMap<long long, unsigned>::Iterator i = screenBufferAllocations_.Begin(); i != screenBufferAllocations_.End(); ++i)
+    for (HashMap<long long, unsigned>::Iterator i = screenBufferAllocations_.Begin();
+         i != screenBufferAllocations_.End(); ++i)
         i->second_ = 0;
 }
 
@@ -1659,7 +1502,7 @@ void Renderer::LoadShaders()
 
     // Construct new names for deferred light volume pixel shaders based on rendering options
     deferredLightPSVariations_.Resize(MAX_DEFERRED_LIGHT_PS_VARIATIONS);
-    
+
     for (unsigned i = 0; i < MAX_DEFERRED_LIGHT_PS_VARIATIONS; ++i)
     {
         deferredLightPSVariations_[i] = lightPSVariations[i % DLPS_ORTHO];
@@ -1672,7 +1515,8 @@ void Renderer::LoadShaders()
     shadersDirty_ = false;
 }
 
-void Renderer::LoadPassShaders(Pass* pass, Vector<SharedPtr<ShaderVariation> >& vertexShaders, Vector<SharedPtr<ShaderVariation> >& pixelShaders, const BatchQueue& queue)
+void Renderer::LoadPassShaders(Pass* pass, Vector<SharedPtr<ShaderVariation>>& vertexShaders,
+                               Vector<SharedPtr<ShaderVariation>>& pixelShaders, const BatchQueue& queue)
 {
     URHO3D_PROFILE(LoadPassShaders);
 
@@ -1702,8 +1546,8 @@ void Renderer::LoadPassShaders(Pass* pass, Vector<SharedPtr<ShaderVariation> >& 
     }
 
     // Add defines for VSM in the shadow pass if necessary
-    if (pass->GetName() == "shadow"
-        && (shadowQuality_ == SHADOWQUALITY_VSM || shadowQuality_ == SHADOWQUALITY_BLUR_VSM))
+    if (pass->GetName() == "shadow" &&
+        (shadowQuality_ == SHADOWQUALITY_VSM || shadowQuality_ == SHADOWQUALITY_BLUR_VSM))
     {
         vsDefines += "VSM_SHADOW ";
         psDefines += "VSM_SHADOW ";
@@ -1721,7 +1565,7 @@ void Renderer::LoadPassShaders(Pass* pass, Vector<SharedPtr<ShaderVariation> >& 
             unsigned l = j % MAX_LIGHT_VS_VARIATIONS;
 
             vertexShaders[j] = graphics_->GetShader(VS, pass->GetVertexShader(),
-                vsDefines + lightVSVariations[l] + geometryVSVariations[g]);
+                                                    vsDefines + lightVSVariations[l] + geometryVSVariations[g]);
         }
         for (unsigned j = 0; j < MAX_LIGHT_PS_VARIATIONS * 2; ++j)
         {
@@ -1731,12 +1575,12 @@ void Renderer::LoadPassShaders(Pass* pass, Vector<SharedPtr<ShaderVariation> >& 
             if (l & LPS_SHADOW)
             {
                 pixelShaders[j] = graphics_->GetShader(PS, pass->GetPixelShader(),
-                    psDefines + lightPSVariations[l] + GetShadowVariations() +
-                    heightFogVariations[h]);
+                                                       psDefines + lightPSVariations[l] + GetShadowVariations() +
+                                                           heightFogVariations[h]);
             }
             else
                 pixelShaders[j] = graphics_->GetShader(PS, pass->GetPixelShader(),
-                    psDefines + lightPSVariations[l] + heightFogVariations[h]);
+                                                       psDefines + lightPSVariations[l] + heightFogVariations[h]);
         }
     }
     else
@@ -1749,8 +1593,8 @@ void Renderer::LoadPassShaders(Pass* pass, Vector<SharedPtr<ShaderVariation> >& 
             {
                 unsigned g = j / MAX_VERTEXLIGHT_VS_VARIATIONS;
                 unsigned l = j % MAX_VERTEXLIGHT_VS_VARIATIONS;
-                vertexShaders[j] = graphics_->GetShader(VS, pass->GetVertexShader(),
-                    vsDefines + vertexLightVSVariations[l] + geometryVSVariations[g]);
+                vertexShaders[j] = graphics_->GetShader(
+                    VS, pass->GetVertexShader(), vsDefines + vertexLightVSVariations[l] + geometryVSVariations[g]);
             }
         }
         else
@@ -1758,16 +1602,15 @@ void Renderer::LoadPassShaders(Pass* pass, Vector<SharedPtr<ShaderVariation> >& 
             vertexShaders.Resize(MAX_GEOMETRYTYPES);
             for (unsigned j = 0; j < MAX_GEOMETRYTYPES; ++j)
             {
-                vertexShaders[j] = graphics_->GetShader(VS, pass->GetVertexShader(),
-                    vsDefines + geometryVSVariations[j]);
+                vertexShaders[j] =
+                    graphics_->GetShader(VS, pass->GetVertexShader(), vsDefines + geometryVSVariations[j]);
             }
         }
 
         pixelShaders.Resize(2);
         for (unsigned j = 0; j < 2; ++j)
         {
-            pixelShaders[j] =
-                graphics_->GetShader(PS, pass->GetPixelShader(), psDefines + heightFogVariations[j]);
+            pixelShaders[j] = graphics_->GetShader(PS, pass->GetPixelShader(), psDefines + heightFogVariations[j]);
         }
     }
 
@@ -1923,7 +1766,8 @@ void Renderer::CreateInstancingBuffer()
     }
 
     instancingBuffer_ = new VertexBuffer(context_);
-    const PODVector<VertexElement> instancingBufferElements = CreateInstancingBufferElements(numExtraInstancingBufferElements_);
+    const PODVector<VertexElement> instancingBufferElements =
+        CreateInstancingBufferElements(numExtraInstancingBufferElements_);
     if (!instancingBuffer_->SetSize(INSTANCING_BUFFER_DEFAULT_SIZE, instancingBufferElements, true))
     {
         instancingBuffer_.Reset();
@@ -1949,32 +1793,32 @@ String Renderer::GetShadowVariations() const
 {
     switch (shadowQuality_)
     {
-        case SHADOWQUALITY_SIMPLE_16BIT:
-        #ifdef URHO3D_OPENGL
+    case SHADOWQUALITY_SIMPLE_16BIT:
+#ifdef URHO3D_OPENGL
+        return "SIMPLE_SHADOW ";
+#else
+        if (graphics_->GetHardwareShadowSupport())
             return "SIMPLE_SHADOW ";
-        #else
-            if (graphics_->GetHardwareShadowSupport())
-                return "SIMPLE_SHADOW ";
-            else
-                return "SIMPLE_SHADOW SHADOWCMP ";
-        #endif
-        case SHADOWQUALITY_SIMPLE_24BIT:
-            return "SIMPLE_SHADOW ";
-        case SHADOWQUALITY_PCF_16BIT:
-        #ifdef URHO3D_OPENGL
+        else
+            return "SIMPLE_SHADOW SHADOWCMP ";
+#endif
+    case SHADOWQUALITY_SIMPLE_24BIT:
+        return "SIMPLE_SHADOW ";
+    case SHADOWQUALITY_PCF_16BIT:
+#ifdef URHO3D_OPENGL
+        return "PCF_SHADOW ";
+#else
+        if (graphics_->GetHardwareShadowSupport())
             return "PCF_SHADOW ";
-        #else
-            if (graphics_->GetHardwareShadowSupport())
-                return "PCF_SHADOW ";
-            else
-                return "PCF_SHADOW SHADOWCMP ";
-        #endif
-        case SHADOWQUALITY_PCF_24BIT:
-            return "PCF_SHADOW ";
-        case SHADOWQUALITY_VSM:
-            return "VSM_SHADOW ";
-        case SHADOWQUALITY_BLUR_VSM:
-            return "VSM_SHADOW ";
+        else
+            return "PCF_SHADOW SHADOWCMP ";
+#endif
+    case SHADOWQUALITY_PCF_24BIT:
+        return "PCF_SHADOW ";
+    case SHADOWQUALITY_VSM:
+        return "VSM_SHADOW ";
+    case SHADOWQUALITY_BLUR_VSM:
+        return "VSM_SHADOW ";
     }
     return "";
 };
@@ -1994,7 +1838,6 @@ void Renderer::HandleRenderUpdate(StringHash eventType, VariantMap& eventData)
     Update(eventData[P_TIMESTEP].GetFloat());
 }
 
-
 void Renderer::BlurShadowMap(View* view, Texture2D* shadowMap, float blurScale)
 {
     graphics_->SetBlendMode(BLEND_REPLACE);
@@ -2003,11 +1846,11 @@ void Renderer::BlurShadowMap(View* view, Texture2D* shadowMap, float blurScale)
     graphics_->SetScissorTest(false);
 
     // Get a temporary render buffer
-    Texture2D* tmpBuffer = static_cast<Texture2D*>(GetScreenBuffer(shadowMap->GetWidth(), shadowMap->GetHeight(),
-        shadowMap->GetFormat(), 1, false, false, false, false));
+    Texture2D* tmpBuffer = static_cast<Texture2D*>(GetScreenBuffer(
+        shadowMap->GetWidth(), shadowMap->GetHeight(), shadowMap->GetFormat(), 1, false, false, false, false));
     graphics_->SetRenderTarget(0, tmpBuffer->GetRenderSurface());
-    graphics_->SetDepthStencil(GetDepthStencil(shadowMap->GetWidth(), shadowMap->GetHeight(), shadowMap->GetMultiSample(),
-        shadowMap->GetAutoResolve()));
+    graphics_->SetDepthStencil(GetDepthStencil(shadowMap->GetWidth(), shadowMap->GetHeight(),
+                                               shadowMap->GetMultiSample(), shadowMap->GetAutoResolve()));
     graphics_->SetViewport(IntRect(0, 0, shadowMap->GetWidth(), shadowMap->GetHeight()));
 
     // Get shaders
@@ -2016,7 +1859,8 @@ void Renderer::BlurShadowMap(View* view, Texture2D* shadowMap, float blurScale)
     ShaderVariation* ps = graphics_->GetShader(PS, shaderName);
     graphics_->SetShaders(vs, ps);
 
-    view->SetGBufferShaderParameters(IntVector2(shadowMap->GetWidth(), shadowMap->GetHeight()), IntRect(0, 0, shadowMap->GetWidth(), shadowMap->GetHeight()));
+    view->SetGBufferShaderParameters(IntVector2(shadowMap->GetWidth(), shadowMap->GetHeight()),
+                                     IntRect(0, 0, shadowMap->GetWidth(), shadowMap->GetHeight()));
 
     // Horizontal blur of the shadow map
     static const StringHash blurOffsetParam("BlurOffsets");

@@ -31,34 +31,32 @@
 
 namespace Urho3D
 {
-
 extern const char* URHO2D_CATEGORY;
 
-ConstraintPulley2D::ConstraintPulley2D(Context* context) :
-    Constraint2D(context),
-    ownerBodyGroundAnchor_(-1.0f, 1.0f),
-    otherBodyGroundAnchor_(1.0f, 1.0f),
-    ownerBodyAnchor_(-1.0f, 0.0f),
-    otherBodyAnchor_(1.0f, 0.0f)
-{
-
-}
-
-ConstraintPulley2D::~ConstraintPulley2D()
+ConstraintPulley2D::ConstraintPulley2D(Context* context)
+    : Constraint2D(context)
+    , ownerBodyGroundAnchor_(-1.0f, 1.0f)
+    , otherBodyGroundAnchor_(1.0f, 1.0f)
+    , ownerBodyAnchor_(-1.0f, 0.0f)
+    , otherBodyAnchor_(1.0f, 0.0f)
 {
 }
+
+ConstraintPulley2D::~ConstraintPulley2D() {}
 
 void ConstraintPulley2D::RegisterObject(Context* context)
 {
     context->RegisterFactory<ConstraintPulley2D>(URHO2D_CATEGORY);
 
     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Owner Body Ground Anchor", GetOwnerBodyGroundAnchor, SetOwnerBodyGroundAnchor, Vector2, Vector2::ZERO,
-        AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Other Body Ground Anchor", GetOtherBodyGroundAnchor, SetOtherBodyGroundAnchor, Vector2, Vector2::ZERO,
-        AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Owner Body Anchor", GetOwnerBodyAnchor, SetOwnerBodyAnchor, Vector2, Vector2::ZERO, AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Other Body Anchor", GetOtherBodyAnchor, SetOtherBodyAnchor, Vector2, Vector2::ZERO, AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Owner Body Ground Anchor", GetOwnerBodyGroundAnchor, SetOwnerBodyGroundAnchor, Vector2,
+                              Vector2::ZERO, AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Other Body Ground Anchor", GetOtherBodyGroundAnchor, SetOtherBodyGroundAnchor, Vector2,
+                              Vector2::ZERO, AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Owner Body Anchor", GetOwnerBodyAnchor, SetOwnerBodyAnchor, Vector2, Vector2::ZERO,
+                              AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Other Body Anchor", GetOtherBodyAnchor, SetOtherBodyAnchor, Vector2, Vector2::ZERO,
+                              AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Ratio", GetRatio, SetRatio, float, 0.0f, AM_DEFAULT);
     URHO3D_COPY_BASE_ATTRIBUTES(Constraint2D);
 }
@@ -129,9 +127,8 @@ b2JointDef* ConstraintPulley2D::GetJointDef()
         return nullptr;
 
     jointDef_.Initialize(bodyA, bodyB, ToB2Vec2(ownerBodyGroundAnchor_), ToB2Vec2(otherBodyGroundAnchor_),
-        ToB2Vec2(ownerBodyAnchor_), ToB2Vec2(otherBodyAnchor_), jointDef_.ratio);
+                         ToB2Vec2(ownerBodyAnchor_), ToB2Vec2(otherBodyAnchor_), jointDef_.ratio);
 
     return &jointDef_;
 }
-
 }

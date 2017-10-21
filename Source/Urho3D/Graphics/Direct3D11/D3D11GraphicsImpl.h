@@ -33,14 +33,18 @@
 
 namespace Urho3D
 {
-
-#define URHO3D_SAFE_RELEASE(p) if (p) { ((IUnknown*)p)->Release();  p = 0; }
+#define URHO3D_SAFE_RELEASE(p)                                                                                         \
+    if (p)                                                                                                             \
+    {                                                                                                                  \
+        ((IUnknown*)p)->Release();                                                                                     \
+        p = 0;                                                                                                         \
+    }
 
 #define URHO3D_LOGD3DERROR(msg, hr) URHO3D_LOGERRORF("%s (HRESULT %x)", msg, (unsigned)hr)
 
-using ShaderProgramMap = HashMap<Pair<ShaderVariation*, ShaderVariation*>, SharedPtr<ShaderProgram> >;
-using VertexDeclarationMap = HashMap<unsigned long long, SharedPtr<VertexDeclaration> >;
-using ConstantBufferMap = HashMap<unsigned, SharedPtr<ConstantBuffer> >;
+using ShaderProgramMap = HashMap<Pair<ShaderVariation*, ShaderVariation*>, SharedPtr<ShaderProgram>>;
+using VertexDeclarationMap = HashMap<unsigned long long, SharedPtr<VertexDeclaration>>;
+using ConstantBufferMap = HashMap<unsigned, SharedPtr<ConstantBuffer>>;
 
 /// %Graphics implementation. Holds API-specific objects.
 class URHO3D_API GraphicsImpl
@@ -63,7 +67,8 @@ public:
     /// Return whether multisampling is supported for a given texture format and sample count.
     bool CheckMultiSampleSupport(DXGI_FORMAT format, unsigned sampleCount) const;
 
-    /// Return multisample quality level for a given texture format and sample count. The sample count must be supported. On D3D feature level 10.1+, uses the standard level. Below that uses the best quality.
+    /// Return multisample quality level for a given texture format and sample count. The sample count must be
+    /// supported. On D3D feature level 10.1+, uses the standard level. Below that uses the best quality.
     unsigned GetMultiSampleQuality(DXGI_FORMAT format, unsigned sampleCount) const;
 
 private:
@@ -89,7 +94,8 @@ private:
     HashMap<unsigned, ID3D11DepthStencilState*> depthStates_;
     /// Created rasterizer state objects.
     HashMap<unsigned, ID3D11RasterizerState*> rasterizerStates_;
-    /// Intermediate texture for multisampled screenshots and less than whole viewport multisampled resolve, created on demand.
+    /// Intermediate texture for multisampled screenshots and less than whole viewport multisampled resolve, created on
+    /// demand.
     ID3D11Texture2D* resolveTexture_;
     /// Bound shader resource views.
     ID3D11ShaderResourceView* shaderResourceViews_[MAX_TEXTURE_UNITS];
@@ -144,5 +150,4 @@ private:
     /// Shader program in use.
     ShaderProgram* shaderProgram_;
 };
-
 }

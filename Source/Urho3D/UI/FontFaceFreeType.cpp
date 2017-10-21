@@ -42,11 +42,7 @@
 
 namespace Urho3D
 {
-
-inline float FixedToFloat(FT_Pos value)
-{
-    return value / 64.0f;
-}
+inline float FixedToFloat(FT_Pos value) { return value / 64.0f; }
 
 /// FreeType library subsystem.
 class FreeTypeLibrary : public Object
@@ -55,8 +51,8 @@ class FreeTypeLibrary : public Object
 
 public:
     /// Construct.
-    FreeTypeLibrary(Context* context) :
-        Object(context)
+    FreeTypeLibrary(Context* context)
+        : Object(context)
     {
         FT_Error error = FT_Init_FreeType(&library_);
         if (error)
@@ -64,10 +60,7 @@ public:
     }
 
     /// Destruct.
-    virtual ~FreeTypeLibrary() override
-    {
-        FT_Done_FreeType(library_);
-    }
+    virtual ~FreeTypeLibrary() override { FT_Done_FreeType(library_); }
 
     FT_Library GetLibrary() const { return library_; }
 
@@ -76,11 +69,11 @@ private:
     FT_Library library_;
 };
 
-FontFaceFreeType::FontFaceFreeType(Font* font) :
-    FontFace(font),
-    face_(nullptr),
-    loadMode_(FT_LOAD_DEFAULT),
-    hasMutableGlyph_(false)
+FontFaceFreeType::FontFaceFreeType(Font* font)
+    : FontFace(font)
+    , face_(nullptr)
+    , loadMode_(FT_LOAD_DEFAULT)
+    , hasMutableGlyph_(false)
 {
 }
 
@@ -146,7 +139,8 @@ bool FontFaceFreeType::Load(const unsigned char* fontData, unsigned fontDataSize
     face_ = face;
 
     unsigned numGlyphs = (unsigned)face->num_glyphs;
-    URHO3D_LOGDEBUGF("Font face %s (%fpt) has %d glyphs", GetFileName(font_->GetName()).CString(), pointSize, numGlyphs);
+    URHO3D_LOGDEBUGF("Font face %s (%fpt) has %d glyphs", GetFileName(font_->GetName()).CString(), pointSize,
+                     numGlyphs);
 
     PODVector<unsigned> charCodes(numGlyphs + 1, 0);
 
@@ -229,8 +223,8 @@ bool FontFaceFreeType::Load(const unsigned char* fontData, unsigned fontDataSize
     // Store kerning if face has kerning information
     if (FT_HAS_KERNING(face))
     {
-        // Read kerning manually to be more efficient and avoid out of memory crash when use large font file, for example there
-        // are 29354 glyphs in msyh.ttf
+        // Read kerning manually to be more efficient and avoid out of memory crash when use large font file, for
+        // example there are 29354 glyphs in msyh.ttf
         FT_ULong tagKern = FT_MAKE_TAG('k', 'e', 'r', 'n');
         FT_ULong kerningTableSize = 0;
         FT_Error error = FT_Load_Sfnt_Table(face, tagKern, 0, nullptr, &kerningTableSize);
@@ -289,7 +283,8 @@ bool FontFaceFreeType::Load(const unsigned char* fontData, unsigned fontDataSize
                 }
                 else
                 {
-                    // Kerning table contains information we do not support; skip and move to the next (length includes header)
+                    // Kerning table contains information we do not support; skip and move to the next (length includes
+                    // header)
                     deserializer.Seek((unsigned)(deserializer.GetPosition() + length - 3 * sizeof(unsigned short)));
                 }
             }
@@ -388,7 +383,7 @@ void FontFaceFreeType::BoxFilter(unsigned char* dest, size_t destSize, const uns
     }
     else
     {
-        for ( ; i < filterSize; ++i)
+        for (; i < filterSize; ++i)
         {
             accumulator += src[i];
             dest[i] = accumulator / filterSize;
@@ -479,7 +474,8 @@ bool FontFaceFreeType::LoadCharGlyph(unsigned charCode, Image* image)
 
             if (!allocator_.Allocate(fontGlyph.texWidth_ + 1, fontGlyph.texHeight_ + 1, x, y))
             {
-                URHO3D_LOGWARNINGF("FontFaceFreeType::LoadCharGlyph: failed to position char code %u in blank page", charCode);
+                URHO3D_LOGWARNINGF("FontFaceFreeType::LoadCharGlyph: failed to position char code %u in blank page",
+                                   charCode);
                 return false;
             }
         }
@@ -507,7 +503,7 @@ bool FontFaceFreeType::LoadCharGlyph(unsigned charCode, Image* image)
             for (unsigned y = 0; y < (unsigned)slot->bitmap.rows; ++y)
             {
                 unsigned char* src = slot->bitmap.buffer + slot->bitmap.pitch * y;
-                unsigned char* rowDest = dest + (oversampling_ - 1)/2 + y * pitch;
+                unsigned char* rowDest = dest + (oversampling_ - 1) / 2 + y * pitch;
 
                 // Don't do any oversampling, just unpack the bits directly.
                 for (unsigned x = 0; x < (unsigned)slot->bitmap.width; ++x)
@@ -541,5 +537,4 @@ bool FontFaceFreeType::LoadCharGlyph(unsigned charCode, Image* image)
 
     return true;
 }
-
 }

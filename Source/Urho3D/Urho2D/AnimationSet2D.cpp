@@ -34,14 +34,14 @@
 #include "../Resource/XMLFile.h"
 #include "../Urho2D/AnimationSet2D.h"
 #include "../Urho2D/Sprite2D.h"
-#include "../Urho2D/SpriterData2D.h"
 #include "../Urho2D/SpriteSheet2D.h"
+#include "../Urho2D/SpriterData2D.h"
 
 #include "../DebugNew.h"
 
 #ifdef URHO3D_SPINE
-#include <spine/spine.h>
 #include <spine/extension.h>
+#include <spine/spine.h>
 #endif
 
 #ifdef URHO3D_SPINE
@@ -79,7 +79,7 @@ void _spAtlasPage_disposeTexture(spAtlasPage* self)
 char* _spUtil_readFile(const char* path, int* length)
 {
     using namespace Urho3D;
-    
+
     if (!currentAnimationSet)
         return 0;
 
@@ -93,7 +93,7 @@ char* _spUtil_readFile(const char* path, int* length)
     char* data = MALLOC(char, size + 1);
     file->Read(data, size);
     data[size] = '\0';
-    
+
     file.Reset();
     *length = size;
 
@@ -103,26 +103,21 @@ char* _spUtil_readFile(const char* path, int* length)
 
 namespace Urho3D
 {
-
-AnimationSet2D::AnimationSet2D(Context* context) :
-    Resource(context),
+AnimationSet2D::AnimationSet2D(Context* context)
+    : Resource(context)
+    ,
 #ifdef URHO3D_SPINE
-    skeletonData_(0),
-    atlas_(0),
+    skeletonData_(0)
+    , atlas_(0)
+    ,
 #endif
     hasSpriteSheet_(false)
 {
 }
 
-AnimationSet2D::~AnimationSet2D()
-{
-    Dispose();
-}
+AnimationSet2D::~AnimationSet2D() { Dispose(); }
 
-void AnimationSet2D::RegisterObject(Context* context)
-{
-    context->RegisterFactory<AnimationSet2D>();
-}
+void AnimationSet2D::RegisterObject(Context* context) { context->RegisterFactory<AnimationSet2D>(); }
 
 bool AnimationSet2D::BeginLoad(Deserializer& source)
 {
@@ -207,15 +202,12 @@ bool AnimationSet2D::HasAnimation(const String& animationName) const
     return false;
 }
 
-Sprite2D* AnimationSet2D::GetSprite() const
-{
-    return sprite_;
-}
+Sprite2D* AnimationSet2D::GetSprite() const { return sprite_; }
 
 Sprite2D* AnimationSet2D::GetSpriterFileSprite(int folderId, int fileId) const
 {
     int key = (folderId << 16) + fileId;
-    HashMap<int, SharedPtr<Sprite2D> >::ConstIterator i = spriterFileSprites_.Find(key);
+    HashMap<int, SharedPtr<Sprite2D>>::ConstIterator i = spriterFileSprites_.Find(key);
     if (i != spriterFileSprites_.End())
         return i->second_;
 
@@ -352,7 +344,7 @@ bool AnimationSet2D::EndLoadSpriter()
 {
     if (!spriterData_)
         return false;
-    
+
     ResourceCache* cache = GetSubsystem<ResourceCache>();
     if (hasSpriteSheet_)
     {
@@ -472,7 +464,7 @@ bool AnimationSet2D::EndLoadSpriter()
                 for (int y = 0; y < image->GetHeight(); ++y)
                 {
                     memcpy(textureData.Get() + ((info.y + y) * allocator.GetWidth() + info.x) * 4,
-                        image->GetData() + y * image->GetWidth() * 4, image->GetWidth() * 4);
+                           image->GetData() + y * image->GetWidth() * 4, image->GetWidth() * 4);
                 }
 
                 SharedPtr<Sprite2D> sprite(new Sprite2D(context_));
@@ -492,12 +484,13 @@ bool AnimationSet2D::EndLoadSpriter()
             texture->SetMipsToSkip(QUALITY_LOW, 0);
             texture->SetNumLevels(1);
 
-            SpriteInfo& info = spriteInfos[0];        
+            SpriteInfo& info = spriteInfos[0];
             texture->SetData(info.image_, true);
 
             sprite_ = new Sprite2D(context_);
             sprite_->SetTexture(texture);
-            sprite_->SetRectangle(IntRect(info.x, info.y, info.x + info.image_->GetWidth(), info.y + info.image_->GetHeight()));
+            sprite_->SetRectangle(
+                IntRect(info.x, info.y, info.x + info.image_->GetWidth(), info.y + info.image_->GetHeight()));
             sprite_->SetHotSpot(Vector2(info.file_->pivotX_, info.file_->pivotY_));
 
             int key = (info.file_->folder_->id_ << 16) + info.file_->id_;
@@ -530,5 +523,4 @@ void AnimationSet2D::Dispose()
     spriteSheet_.Reset();
     spriterFileSprites_.Clear();
 }
-
 }

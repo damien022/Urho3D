@@ -29,7 +29,6 @@
 
 namespace Urho3D
 {
-
 class Color;
 class IntRect;
 class IntVector2;
@@ -131,5 +130,4 @@ public:
     /// Write a text line. Char codes 13 & 10 will be automatically appended.
     bool WriteLine(const String& value);
 };
-
 }

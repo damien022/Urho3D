@@ -26,31 +26,28 @@
 
 namespace Urho3D
 {
-
 /// %Pair template class.
 template <class T, class U> class Pair
 {
 public:
     /// Construct undefined.
-    Pair()
-    {
-    }
+    Pair() {}
 
     /// Construct with values.
-    Pair(const T& first, const U& second) :
-        first_(first),
-        second_(second)
+    Pair(const T& first, const U& second)
+        : first_(first)
+        , second_(second)
     {
     }
 
     /// Test for equality with another pair.
-    bool operator ==(const Pair<T, U>& rhs) const { return first_ == rhs.first_ && second_ == rhs.second_; }
+    bool operator==(const Pair<T, U>& rhs) const { return first_ == rhs.first_ && second_ == rhs.second_; }
 
     /// Test for inequality with another pair.
-    bool operator !=(const Pair<T, U>& rhs) const { return first_ != rhs.first_ || second_ != rhs.second_; }
+    bool operator!=(const Pair<T, U>& rhs) const { return first_ != rhs.first_ || second_ != rhs.second_; }
 
     /// Test for less than with another pair.
-    bool operator <(const Pair<T, U>& rhs) const
+    bool operator<(const Pair<T, U>& rhs) const
     {
         if (first_ < rhs.first_)
             return true;
@@ -60,7 +57,7 @@ public:
     }
 
     /// Test for greater than with another pair.
-    bool operator >(const Pair<T, U>& rhs) const
+    bool operator>(const Pair<T, U>& rhs) const
     {
         if (first_ > rhs.first_)
             return true;
@@ -79,10 +76,7 @@ public:
 };
 
 /// Construct a pair.
-template <class T, class U> Pair<T, U> MakePair(const T& first, const U& second)
-{
-    return Pair<T, U>(first, second);
-}
+template <class T, class U> Pair<T, U> MakePair(const T& first, const U& second) { return Pair<T, U>(first, second); }
 
 template <class T> T begin(Urho3D::Pair<T, T>& range) { return range.first_; }
 
@@ -91,5 +85,4 @@ template <class T> T end(Urho3D::Pair<T, T>& range) { return range.second_; }
 template <class T> T begin(const Urho3D::Pair<T, T>& range) { return range.first_; }
 
 template <class T> T end(const Urho3D::Pair<T, T>& range) { return range.second_; }
-
 }

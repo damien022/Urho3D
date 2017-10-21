@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 class BoundingBox;
 class Frustum;
 class Matrix3;
@@ -38,39 +37,31 @@ class URHO3D_API Polyhedron
 {
 public:
     /// Construct empty.
-    Polyhedron()
-    {
-    }
+    Polyhedron() {}
 
     /// Copy-construct from another polyhedron.
-    Polyhedron(const Polyhedron& polyhedron) :
-        faces_(polyhedron.faces_)
+    Polyhedron(const Polyhedron& polyhedron)
+        : faces_(polyhedron.faces_)
     {
     }
 
     /// Construct from a list of faces.
-    Polyhedron(const Vector<PODVector<Vector3> >& faces) :
-        faces_(faces)
+    Polyhedron(const Vector<PODVector<Vector3>>& faces)
+        : faces_(faces)
     {
     }
 
     /// Construct from a bounding box.
-    Polyhedron(const BoundingBox& box)
-    {
-        Define(box);
-    }
+    Polyhedron(const BoundingBox& box) { Define(box); }
 
     /// Construct from a frustum.
-    Polyhedron(const Frustum& frustum)
-    {
-        Define(frustum);
-    }
+    Polyhedron(const Frustum& frustum) { Define(frustum); }
 
     /// Destruct.
     ~Polyhedron();
 
     /// Assign from another polyhedron.
-    Polyhedron& operator =(const Polyhedron& rhs)
+    Polyhedron& operator=(const Polyhedron& rhs)
     {
         faces_ = rhs.faces_;
         return *this;
@@ -108,7 +99,7 @@ public:
     bool Empty() const { return faces_.Empty(); }
 
     /// Polygon faces.
-    Vector<PODVector<Vector3> > faces_;
+    Vector<PODVector<Vector3>> faces_;
 
 private:
     /// Set a triangle face by index.
@@ -120,5 +111,4 @@ private:
     /// Internal vector for the new face being constructed.
     PODVector<Vector3> outFace_;
 };
-
 }

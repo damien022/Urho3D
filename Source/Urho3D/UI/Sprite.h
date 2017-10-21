@@ -27,8 +27,8 @@
 
 namespace Urho3D
 {
-
-/// %UI element which allows sub-pixel positioning and size, as well as rotation. Only other Sprites should be added as child elements.
+/// %UI element which allows sub-pixel positioning and size, as well as rotation. Only other Sprites should be added as
+/// child elements.
 class URHO3D_API Sprite : public UIElement
 {
     URHO3D_OBJECT(Sprite, UIElement);
@@ -46,7 +46,8 @@ public:
     /// Update and return screen position.
     virtual const IntVector2& GetScreenPosition() const override;
     /// Return UI rendering batches.
-    virtual void GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData, const IntRect& currentScissor) override;
+    virtual void GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData,
+                            const IntRect& currentScissor) override;
     /// React to position change.
     virtual void OnPositionSet(const IntVector2& newPosition) override;
     /// Convert screen coordinates to element coordinates.
@@ -125,5 +126,4 @@ protected:
     /// Transform matrix.
     mutable Matrix3x4 transform_;
 };
-
 }

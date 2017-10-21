@@ -21,66 +21,48 @@
 // THE SOFTWARE.
 //
 
+#include "SystemMessageBox.h"
 #include "../Core/Context.h"
 #include "../Core/CoreEvents.h"
 #include "../Graphics/Graphics.h"
 #include "../IO/Log.h"
-#include "SystemUIEvents.h"
 #include "SystemUI.h"
-#include "SystemMessageBox.h"
+#include "SystemUIEvents.h"
 
 namespace Urho3D
 {
-
-SystemMessageBox::SystemMessageBox(Context* context, const String& messageString, const String& titleString) :
-    Object(context),
-    titleText_(0),
-    messageText_(messageString),
-    isOpen_(true)
+SystemMessageBox::SystemMessageBox(Context* context, const String& messageString, const String& titleString)
+    : Object(context)
+    , titleText_(0)
+    , messageText_(messageString)
+    , isOpen_(true)
 {
     SetTitle(titleString);
     Graphics* graphics = GetSubsystem<Graphics>();
     windowSize_ = ImVec2(300, 150);
-    windowPosition_ = ImVec2(graphics->GetWidth() / 2 - windowSize_.x / 2, graphics->GetHeight() / 2 - windowSize_.y / 2);
+    windowPosition_ =
+        ImVec2(graphics->GetWidth() / 2 - windowSize_.x / 2, graphics->GetHeight() / 2 - windowSize_.y / 2);
     SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(SystemMessageBox, RenderFrame));
 }
 
-SystemMessageBox::~SystemMessageBox()
-{
-    UnsubscribeFromAllEvents();
-}
+SystemMessageBox::~SystemMessageBox() { UnsubscribeFromAllEvents(); }
 
-void SystemMessageBox::RegisterObject(Context* context)
-{
-    context->RegisterFactory<SystemMessageBox>();
-}
+void SystemMessageBox::RegisterObject(Context* context) { context->RegisterFactory<SystemMessageBox>(); }
 
-void SystemMessageBox::SetTitle(const String& text)
-{
-    titleText_ = ToString("%s##%p", text.CString(), this);
-}
+void SystemMessageBox::SetTitle(const String& text) { titleText_ = ToString("%s##%p", text.CString(), this); }
 
-void SystemMessageBox::SetMessage(const String& text)
-{
-    messageText_ = text;
-}
+void SystemMessageBox::SetMessage(const String& text) { messageText_ = text; }
 
-const String& SystemMessageBox::GetTitle() const
-{
-    return titleText_;
-}
+const String& SystemMessageBox::GetTitle() const { return titleText_; }
 
-const String& SystemMessageBox::GetMessage() const
-{
-    return messageText_;
-}
+const String& SystemMessageBox::GetMessage() const { return messageText_; }
 
 void SystemMessageBox::RenderFrame(StringHash eventType, VariantMap& eventData)
 {
     using namespace MessageACK;
     ImGui::SetNextWindowPos(windowPosition_, ImGuiCond_FirstUseEver);
-    if (ImGui::Begin(titleText_.CString(), &isOpen_, windowSize_, -1, ImGuiWindowFlags_NoCollapse|
-                     ImGuiWindowFlags_NoSavedSettings))
+    if (ImGui::Begin(titleText_.CString(), &isOpen_, windowSize_, -1,
+                     ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings))
     {
         ImGui::TextUnformatted(messageText_.CString());
         auto region = ImGui::GetContentRegionAvail();
@@ -109,5 +91,4 @@ void SystemMessageBox::RenderFrame(StringHash eventType, VariantMap& eventData)
     }
     ImGui::End();
 }
-
 }

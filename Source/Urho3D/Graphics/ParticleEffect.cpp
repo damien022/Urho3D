@@ -24,9 +24,9 @@
 
 #include "../Core/Context.h"
 #include "../Core/StringUtils.h"
+#include "../Graphics/BillboardSet.h"
 #include "../Graphics/Material.h"
 #include "../Graphics/ParticleEffect.h"
-#include "../Graphics/BillboardSet.h"
 #include "../IO/Log.h"
 #include "../Resource/ResourceCache.h"
 #include "../Resource/XMLFile.h"
@@ -35,15 +35,9 @@
 
 namespace Urho3D
 {
-
 extern const char* faceCameraModeNames[];
 
-static const char* emitterTypeNames[] =
-{
-    "Sphere",
-    "Box",
-    nullptr
-};
+static const char* emitterTypeNames[] = {"Sphere", "Box", nullptr};
 
 static const Vector2 DEFAULT_PARTICLE_SIZE(0.1f, 0.1f);
 static const float DEFAULT_EMISSION_RATE = 10.0f;
@@ -53,49 +47,44 @@ static const float DEFAULT_VELOCITY = 1.0f;
 static const Vector3 DEFAULT_DIRECTION_MIN(-1.0f, -1.0f, -1.0f);
 static const Vector3 DEFAULT_DIRECTION_MAX(1.0f, 1.0f, 1.0f);
 
-ParticleEffect::ParticleEffect(Context* context) :
-    Resource(context),
-    numParticles_(DEFAULT_NUM_PARTICLES),
-    updateInvisible_(false),
-    relative_(true),
-    scaled_(true),
-    sorted_(false),
-    fixedScreenSize_(false),
-    animationLodBias_(0.0f),
-    emitterType_(EMITTER_SPHERE),
-    emitterSize_(Vector3::ZERO),
-    directionMin_(DEFAULT_DIRECTION_MIN),
-    directionMax_(DEFAULT_DIRECTION_MAX),
-    constantForce_(Vector3::ZERO),
-    dampingForce_(0.0f),
-    activeTime_(0.0f),
-    inactiveTime_(0.0f),
-    emissionRateMin_(DEFAULT_EMISSION_RATE),
-    emissionRateMax_(DEFAULT_EMISSION_RATE),
-    sizeMin_(DEFAULT_PARTICLE_SIZE),
-    sizeMax_(DEFAULT_PARTICLE_SIZE),
-    timeToLiveMin_(DEFAULT_TIME_TO_LIVE),
-    timeToLiveMax_(DEFAULT_TIME_TO_LIVE),
-    velocityMin_(DEFAULT_VELOCITY),
-    velocityMax_(DEFAULT_VELOCITY),
-    rotationMin_(0.0f),
-    rotationMax_(0.0f),
-    rotationSpeedMin_(0.0f),
-    rotationSpeedMax_(0.0f),
-    sizeAdd_(0.0f),
-    sizeMul_(1.0f),
-    faceCameraMode_(FC_ROTATE_XYZ)
+ParticleEffect::ParticleEffect(Context* context)
+    : Resource(context)
+    , numParticles_(DEFAULT_NUM_PARTICLES)
+    , updateInvisible_(false)
+    , relative_(true)
+    , scaled_(true)
+    , sorted_(false)
+    , fixedScreenSize_(false)
+    , animationLodBias_(0.0f)
+    , emitterType_(EMITTER_SPHERE)
+    , emitterSize_(Vector3::ZERO)
+    , directionMin_(DEFAULT_DIRECTION_MIN)
+    , directionMax_(DEFAULT_DIRECTION_MAX)
+    , constantForce_(Vector3::ZERO)
+    , dampingForce_(0.0f)
+    , activeTime_(0.0f)
+    , inactiveTime_(0.0f)
+    , emissionRateMin_(DEFAULT_EMISSION_RATE)
+    , emissionRateMax_(DEFAULT_EMISSION_RATE)
+    , sizeMin_(DEFAULT_PARTICLE_SIZE)
+    , sizeMax_(DEFAULT_PARTICLE_SIZE)
+    , timeToLiveMin_(DEFAULT_TIME_TO_LIVE)
+    , timeToLiveMax_(DEFAULT_TIME_TO_LIVE)
+    , velocityMin_(DEFAULT_VELOCITY)
+    , velocityMax_(DEFAULT_VELOCITY)
+    , rotationMin_(0.0f)
+    , rotationMax_(0.0f)
+    , rotationSpeedMin_(0.0f)
+    , rotationSpeedMax_(0.0f)
+    , sizeAdd_(0.0f)
+    , sizeMul_(1.0f)
+    , faceCameraMode_(FC_ROTATE_XYZ)
 {
 }
 
-ParticleEffect::~ParticleEffect()
-{
-}
+ParticleEffect::~ParticleEffect() {}
 
-void ParticleEffect::RegisterObject(Context* context)
-{
-    context->RegisterFactory<ParticleEffect>();
-}
+void ParticleEffect::RegisterObject(Context* context) { context->RegisterFactory<ParticleEffect>(); }
 
 bool ParticleEffect::BeginLoad(Deserializer& source)
 {
@@ -436,156 +425,65 @@ bool ParticleEffect::Save(XMLElement& dest) const
     return true;
 }
 
-void ParticleEffect::SetMaterial(Material* material)
-{
-    material_ = material;
-}
+void ParticleEffect::SetMaterial(Material* material) { material_ = material; }
 
-void ParticleEffect::SetNumParticles(unsigned num)
-{
-    numParticles_ = Max(0U, num);
-}
+void ParticleEffect::SetNumParticles(unsigned num) { numParticles_ = Max(0U, num); }
 
-void ParticleEffect::SetUpdateInvisible(bool enable)
-{
-    updateInvisible_ = enable;
-}
+void ParticleEffect::SetUpdateInvisible(bool enable) { updateInvisible_ = enable; }
 
-void ParticleEffect::SetRelative(bool enable)
-{
-    relative_ = enable;
-}
+void ParticleEffect::SetRelative(bool enable) { relative_ = enable; }
 
-void ParticleEffect::SetScaled(bool enable)
-{
-    scaled_ = enable;
-}
+void ParticleEffect::SetScaled(bool enable) { scaled_ = enable; }
 
-void ParticleEffect::SetSorted(bool enable)
-{
-    sorted_ = enable;
-}
+void ParticleEffect::SetSorted(bool enable) { sorted_ = enable; }
 
-void ParticleEffect::SetFixedScreenSize(bool enable)
-{
-    fixedScreenSize_ = enable;
-}
+void ParticleEffect::SetFixedScreenSize(bool enable) { fixedScreenSize_ = enable; }
 
-void ParticleEffect::SetAnimationLodBias(float lodBias)
-{
-    animationLodBias_ = lodBias;
-}
+void ParticleEffect::SetAnimationLodBias(float lodBias) { animationLodBias_ = lodBias; }
 
-void ParticleEffect::SetEmitterType(EmitterType type)
-{
-    emitterType_ = type;
-}
+void ParticleEffect::SetEmitterType(EmitterType type) { emitterType_ = type; }
 
-void ParticleEffect::SetEmitterSize(const Vector3& size)
-{
-    emitterSize_ = size;
-}
+void ParticleEffect::SetEmitterSize(const Vector3& size) { emitterSize_ = size; }
 
-void ParticleEffect::SetMinDirection(const Vector3& direction)
-{
-    directionMin_ = direction;
-}
+void ParticleEffect::SetMinDirection(const Vector3& direction) { directionMin_ = direction; }
 
-void ParticleEffect::SetMaxDirection(const Vector3& direction)
-{
-    directionMax_ = direction;
-}
+void ParticleEffect::SetMaxDirection(const Vector3& direction) { directionMax_ = direction; }
 
-void ParticleEffect::SetConstantForce(const Vector3& force)
-{
-    constantForce_ = force;
-}
+void ParticleEffect::SetConstantForce(const Vector3& force) { constantForce_ = force; }
 
-void ParticleEffect::SetDampingForce(float force)
-{
-    dampingForce_ = force;
-}
+void ParticleEffect::SetDampingForce(float force) { dampingForce_ = force; }
 
-void ParticleEffect::SetActiveTime(float time)
-{
-    activeTime_ = time;
-}
+void ParticleEffect::SetActiveTime(float time) { activeTime_ = time; }
 
-void ParticleEffect::SetInactiveTime(float time)
-{
-    inactiveTime_ = time;
-}
+void ParticleEffect::SetInactiveTime(float time) { inactiveTime_ = time; }
 
-void ParticleEffect::SetMinEmissionRate(float rate)
-{
-    emissionRateMin_ = Max(rate, MIN_EMISSION_RATE);
-}
+void ParticleEffect::SetMinEmissionRate(float rate) { emissionRateMin_ = Max(rate, MIN_EMISSION_RATE); }
 
-void ParticleEffect::SetMaxEmissionRate(float rate)
-{
-    emissionRateMax_ = Max(rate, MIN_EMISSION_RATE);
-}
+void ParticleEffect::SetMaxEmissionRate(float rate) { emissionRateMax_ = Max(rate, MIN_EMISSION_RATE); }
 
-void ParticleEffect::SetMinParticleSize(const Vector2& size)
-{
-    sizeMin_ = size;
-}
+void ParticleEffect::SetMinParticleSize(const Vector2& size) { sizeMin_ = size; }
 
-void ParticleEffect::SetMaxParticleSize(const Vector2& size)
-{
-    sizeMax_ = size;
-}
+void ParticleEffect::SetMaxParticleSize(const Vector2& size) { sizeMax_ = size; }
 
-void ParticleEffect::SetMinTimeToLive(float time)
-{
-    timeToLiveMin_ = Max(time, 0.0f);
-}
+void ParticleEffect::SetMinTimeToLive(float time) { timeToLiveMin_ = Max(time, 0.0f); }
 
-void ParticleEffect::SetMaxTimeToLive(float time)
-{
-    timeToLiveMax_ = Max(time, 0.0f);
-}
+void ParticleEffect::SetMaxTimeToLive(float time) { timeToLiveMax_ = Max(time, 0.0f); }
 
-void ParticleEffect::SetMinVelocity(float velocity)
-{
-    velocityMin_ = velocity;
-}
+void ParticleEffect::SetMinVelocity(float velocity) { velocityMin_ = velocity; }
 
-void ParticleEffect::SetMaxVelocity(float velocity)
-{
-    velocityMax_ = velocity;
-}
+void ParticleEffect::SetMaxVelocity(float velocity) { velocityMax_ = velocity; }
 
-void ParticleEffect::SetMinRotation(float rotation)
-{
-    rotationMin_ = rotation;
-}
+void ParticleEffect::SetMinRotation(float rotation) { rotationMin_ = rotation; }
 
-void ParticleEffect::SetMaxRotation(float rotation)
-{
-    rotationMax_ = rotation;
-}
+void ParticleEffect::SetMaxRotation(float rotation) { rotationMax_ = rotation; }
 
-void ParticleEffect::SetMinRotationSpeed(float speed)
-{
-    rotationSpeedMin_ = speed;
-}
+void ParticleEffect::SetMinRotationSpeed(float speed) { rotationSpeedMin_ = speed; }
 
-void ParticleEffect::SetMaxRotationSpeed(float speed)
-{
-    rotationSpeedMax_ = speed;
-}
+void ParticleEffect::SetMaxRotationSpeed(float speed) { rotationSpeedMax_ = speed; }
 
+void ParticleEffect::SetSizeAdd(float sizeAdd) { sizeAdd_ = sizeAdd; }
 
-void ParticleEffect::SetSizeAdd(float sizeAdd)
-{
-    sizeAdd_ = sizeAdd;
-}
-
-void ParticleEffect::SetSizeMul(float sizeMul)
-{
-    sizeMul_ = sizeMul;
-}
+void ParticleEffect::SetSizeMul(float sizeMul) { sizeMul_ = sizeMul; }
 
 void ParticleEffect::AddColorTime(const Color& color, const float time)
 {
@@ -612,10 +510,7 @@ void ParticleEffect::AddColorTime(const Color& color, const float time)
     colorFrames_[s].time_ = time;
 }
 
-void ParticleEffect::AddColorFrame(const ColorFrame& colorFrame)
-{
-    AddColorTime(colorFrame.color_, colorFrame.time_);
-}
+void ParticleEffect::AddColorFrame(const ColorFrame& colorFrame) { AddColorTime(colorFrame.color_, colorFrame.time_); }
 
 void ParticleEffect::RemoveColorFrame(unsigned index)
 {
@@ -630,10 +525,7 @@ void ParticleEffect::RemoveColorFrame(unsigned index)
     colorFrames_.Resize(s - 1);
 }
 
-void ParticleEffect::SetColorFrames(const Vector<ColorFrame>& colorFrames)
-{
-    colorFrames_ = colorFrames;
-}
+void ParticleEffect::SetColorFrames(const Vector<ColorFrame>& colorFrames) { colorFrames_ = colorFrames; }
 
 void ParticleEffect::SetColorFrame(unsigned index, const ColorFrame& colorFrame)
 {
@@ -649,10 +541,7 @@ void ParticleEffect::SetNumColorFrames(unsigned number)
         colorFrames_.Resize(number);
 }
 
-void ParticleEffect::SetFaceCameraMode(FaceCameraMode mode)
-{
-    faceCameraMode_ = mode;
-}
+void ParticleEffect::SetFaceCameraMode(FaceCameraMode mode) { faceCameraMode_ = mode; }
 
 void ParticleEffect::SortColorFrames()
 {
@@ -705,10 +594,7 @@ void ParticleEffect::RemoveTextureFrame(unsigned index)
     textureFrames_.Resize(s - 1);
 }
 
-void ParticleEffect::SetTextureFrames(const Vector<TextureFrame>& textureFrames)
-{
-    textureFrames_ = textureFrames;
-}
+void ParticleEffect::SetTextureFrames(const Vector<TextureFrame>& textureFrames) { textureFrames_ = textureFrames; }
 
 void ParticleEffect::SetTextureFrame(unsigned index, const TextureFrame& textureFrame)
 {
@@ -788,34 +674,23 @@ const TextureFrame* ParticleEffect::GetTextureFrame(unsigned index) const
 
 Vector3 ParticleEffect::GetRandomDirection() const
 {
-    return Vector3(Lerp(directionMin_.x_, directionMax_.x_, Random(1.0f)), Lerp(directionMin_.y_, directionMax_.y_, Random(1.0f)),
-        Lerp(directionMin_.z_, directionMax_.z_, Random(1.0f)));
+    return Vector3(Lerp(directionMin_.x_, directionMax_.x_, Random(1.0f)),
+                   Lerp(directionMin_.y_, directionMax_.y_, Random(1.0f)),
+                   Lerp(directionMin_.z_, directionMax_.z_, Random(1.0f)));
 }
 
-Vector2 ParticleEffect::GetRandomSize() const
-{
-    return sizeMin_.Lerp(sizeMax_, Random(1.0f));
-}
+Vector2 ParticleEffect::GetRandomSize() const { return sizeMin_.Lerp(sizeMax_, Random(1.0f)); }
 
-float ParticleEffect::GetRandomVelocity() const
-{
-    return Lerp(velocityMin_, velocityMax_, Random(1.0f));
-}
+float ParticleEffect::GetRandomVelocity() const { return Lerp(velocityMin_, velocityMax_, Random(1.0f)); }
 
-float ParticleEffect::GetRandomTimeToLive() const
-{
-    return Lerp(timeToLiveMin_, timeToLiveMax_, Random(1.0f));
-}
+float ParticleEffect::GetRandomTimeToLive() const { return Lerp(timeToLiveMin_, timeToLiveMax_, Random(1.0f)); }
 
 float ParticleEffect::GetRandomRotationSpeed() const
 {
     return Lerp(rotationSpeedMin_, rotationSpeedMax_, Random(1.0f));
 }
 
-float ParticleEffect::GetRandomRotation() const
-{
-    return Lerp(rotationMin_, rotationMax_, Random(1.0f));
-}
+float ParticleEffect::GetRandomRotation() const { return Lerp(rotationMin_, rotationMax_, Random(1.0f)); }
 
 void ParticleEffect::GetFloatMinMax(const XMLElement& element, float& minValue, float& maxValue)
 {
@@ -861,6 +736,4 @@ void ParticleEffect::GetVector3MinMax(const XMLElement& element, Vector3& minVal
         maxValue = element.GetVector3("max");
     }
 }
-
-
 }

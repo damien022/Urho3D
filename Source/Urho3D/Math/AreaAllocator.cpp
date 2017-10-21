@@ -28,16 +28,9 @@
 
 namespace Urho3D
 {
+AreaAllocator::AreaAllocator() { Reset(0, 0); }
 
-AreaAllocator::AreaAllocator()
-{
-    Reset(0, 0);
-}
-
-AreaAllocator::AreaAllocator(int width, int height, bool fastMode)
-{
-    Reset(width, height, width, height, fastMode);
-}
+AreaAllocator::AreaAllocator(int width, int height, bool fastMode) { Reset(width, height, width, height, fastMode); }
 
 AreaAllocator::AreaAllocator(int width, int height, int maxWidth, int maxHeight, bool fastMode)
 {
@@ -212,19 +205,15 @@ void AreaAllocator::Cleanup()
         bool erased = false;
         for (unsigned j = i + 1; j < freeAreas_.Size();)
         {
-            if ((freeAreas_[i].left_ >= freeAreas_[j].left_) &&
-                (freeAreas_[i].top_ >= freeAreas_[j].top_) &&
-                (freeAreas_[i].right_ <= freeAreas_[j].right_) &&
-                (freeAreas_[i].bottom_ <= freeAreas_[j].bottom_))
+            if ((freeAreas_[i].left_ >= freeAreas_[j].left_) && (freeAreas_[i].top_ >= freeAreas_[j].top_) &&
+                (freeAreas_[i].right_ <= freeAreas_[j].right_) && (freeAreas_[i].bottom_ <= freeAreas_[j].bottom_))
             {
                 freeAreas_.Erase(i);
                 erased = true;
                 break;
             }
-            if ((freeAreas_[j].left_ >= freeAreas_[i].left_) &&
-                (freeAreas_[j].top_ >= freeAreas_[i].top_) &&
-                (freeAreas_[j].right_ <= freeAreas_[i].right_) &&
-                (freeAreas_[j].bottom_ <= freeAreas_[i].bottom_))
+            if ((freeAreas_[j].left_ >= freeAreas_[i].left_) && (freeAreas_[j].top_ >= freeAreas_[i].top_) &&
+                (freeAreas_[j].right_ <= freeAreas_[i].right_) && (freeAreas_[j].bottom_ <= freeAreas_[i].bottom_))
                 freeAreas_.Erase(j);
             else
                 ++j;
@@ -233,5 +222,4 @@ void AreaAllocator::Cleanup()
             ++i;
     }
 }
-
 }

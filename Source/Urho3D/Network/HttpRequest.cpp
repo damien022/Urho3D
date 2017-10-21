@@ -32,20 +32,19 @@
 
 namespace Urho3D
 {
-
 static const unsigned ERROR_BUFFER_SIZE = 256;
 static const unsigned READ_BUFFER_SIZE = 65536; // Must be a power of two
 
-HttpRequest::HttpRequest(const String& url, const String& verb, const Vector<String>& headers, const String& postData) :
-    url_(url.Trimmed()),
-    verb_(!verb.Empty() ? verb : "GET"),
-    headers_(headers),
-    postData_(postData),
-    state_(HTTP_INITIALIZING),
-    httpReadBuffer_(new unsigned char[READ_BUFFER_SIZE]),
-    readBuffer_(new unsigned char[READ_BUFFER_SIZE]),
-    readPosition_(0),
-    writePosition_(0)
+HttpRequest::HttpRequest(const String& url, const String& verb, const Vector<String>& headers, const String& postData)
+    : url_(url.Trimmed())
+    , verb_(!verb.Empty() ? verb : "GET")
+    , headers_(headers)
+    , postData_(postData)
+    , state_(HTTP_INITIALIZING)
+    , httpReadBuffer_(new unsigned char[READ_BUFFER_SIZE])
+    , readBuffer_(new unsigned char[READ_BUFFER_SIZE])
+    , readPosition_(0)
+    , writePosition_(0)
 {
     // Size of response is unknown, so just set maximum value. The position will also be changed
     // to maximum value once the request is done, signaling end for Deserializer::IsEof().
@@ -61,10 +60,7 @@ HttpRequest::HttpRequest(const String& url, const String& verb, const Vector<Str
 #endif
 }
 
-HttpRequest::~HttpRequest()
-{
-    Stop();
-}
+HttpRequest::~HttpRequest() { Stop(); }
 
 void HttpRequest::ThreadFunction()
 {
@@ -113,21 +109,26 @@ void HttpRequest::ThreadFunction()
     mg_connection* connection = nullptr;
     if (postData_.Empty())
     {
-        connection = mg_download(host.CString(), port, protocol.Compare("https", false) ? 0 : 1, errorBuffer, sizeof(errorBuffer),
-            "%s %s HTTP/1.0\r\n"
-            "Host: %s\r\n"
-            "%s"
-            "\r\n", verb_.CString(), path.CString(), host.CString(), headersStr.CString());
+        connection = mg_download(host.CString(), port, protocol.Compare("https", false) ? 0 : 1, errorBuffer,
+                                 sizeof(errorBuffer),
+                                 "%s %s HTTP/1.0\r\n"
+                                 "Host: %s\r\n"
+                                 "%s"
+                                 "\r\n",
+                                 verb_.CString(), path.CString(), host.CString(), headersStr.CString());
     }
     else
     {
-        connection = mg_download(host.CString(), port, protocol.Compare("https", false) ? 0 : 1, errorBuffer, sizeof(errorBuffer),
-            "%s %s HTTP/1.0\r\n"
-            "Host: %s\r\n"
-            "%s"
-            "Content-Length: %d\r\n"
-            "\r\n"
-            "%s", verb_.CString(), path.CString(), host.CString(), headersStr.CString(), postData_.Length(), postData_.CString());
+        connection = mg_download(host.CString(), port, protocol.Compare("https", false) ? 0 : 1, errorBuffer,
+                                 sizeof(errorBuffer),
+                                 "%s %s HTTP/1.0\r\n"
+                                 "Host: %s\r\n"
+                                 "%s"
+                                 "Content-Length: %d\r\n"
+                                 "\r\n"
+                                 "%s",
+                                 verb_.CString(), path.CString(), host.CString(), headersStr.CString(),
+                                 postData_.Length(), postData_.CString());
     }
 
     {
@@ -257,10 +258,7 @@ unsigned HttpRequest::Read(void* dest, unsigned size)
 #endif
 }
 
-unsigned HttpRequest::Seek(unsigned position)
-{
-    return 0;
-}
+unsigned HttpRequest::Seek(unsigned position) { return 0; }
 
 bool HttpRequest::IsEof() const
 {
@@ -293,5 +291,4 @@ Pair<unsigned, bool> HttpRequest::CheckAvailableSizeAndEof() const
     ret.second_ = (state_ == HTTP_ERROR || (state_ == HTTP_CLOSED && !ret.first_));
     return ret;
 }
-
 }

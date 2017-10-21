@@ -28,7 +28,6 @@
 
 namespace Urho3D
 {
-
 Intersection PointOctreeQuery::TestOctant(const BoundingBox& box, bool inside)
 {
     if (inside)
@@ -117,11 +116,7 @@ void FrustumOctreeQuery::TestDrawables(Drawable** start, Drawable** end, bool in
     }
 }
 
-
-Intersection AllContentOctreeQuery::TestOctant(const BoundingBox& box, bool inside)
-{
-    return INSIDE;
-}
+Intersection AllContentOctreeQuery::TestOctant(const BoundingBox& box, bool inside) { return INSIDE; }
 
 void AllContentOctreeQuery::TestDrawables(Drawable** start, Drawable** end, bool inside)
 {
@@ -133,5 +128,4 @@ void AllContentOctreeQuery::TestDrawables(Drawable** start, Drawable** end, bool
             result_.Push(drawable);
     }
 }
-
 }

@@ -26,15 +26,14 @@
 #include "../IO/Deserializer.h"
 #include "../IO/Log.h"
 #include "../IO/Serializer.h"
-#include "../Resource/XMLElement.h"
 #include "../Resource/JSONValue.h"
+#include "../Resource/XMLElement.h"
 #include "../Scene/UnknownComponent.h"
 
 #include "../DebugNew.h"
 
 namespace Urho3D
 {
-
 static HashMap<StringHash, String> unknownTypeToName;
 static String letters("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
@@ -81,16 +80,13 @@ static String GenerateNameFromType(StringHash typeHash)
     return test;
 }
 
-UnknownComponent::UnknownComponent(Context* context) :
-    Component(context),
-    useXML_(false)
+UnknownComponent::UnknownComponent(Context* context)
+    : Component(context)
+    , useXML_(false)
 {
 }
 
-void UnknownComponent::RegisterObject(Context* context)
-{
-    context->RegisterFactory<UnknownComponent>();
-}
+void UnknownComponent::RegisterObject(Context* context) { context->RegisterFactory<UnknownComponent>(); }
 
 bool UnknownComponent::Load(Deserializer& source, bool setInstanceDefault)
 {
@@ -137,7 +133,6 @@ bool UnknownComponent::LoadXML(const XMLElement& source, bool setInstanceDefault
     return true;
 }
 
-
 bool UnknownComponent::LoadJSON(const JSONValue& source, bool setInstanceDefault)
 {
     useXML_ = true;
@@ -170,7 +165,6 @@ bool UnknownComponent::LoadJSON(const JSONValue& source, bool setInstanceDefault
 
     return true;
 }
-
 
 bool UnknownComponent::Save(Serializer& dest) const
 {
@@ -223,7 +217,7 @@ bool UnknownComponent::SaveJSON(JSONValue& dest) const
 
     // Write type and ID
     dest.Set("type", GetTypeName());
-    dest.Set("id", (int) id_);
+    dest.Set("id", (int)id_);
 
     JSONArray attributesArray;
     attributesArray.Reserve(xmlAttributeInfos_.Size());
@@ -250,5 +244,4 @@ void UnknownComponent::SetType(StringHash typeHash)
     typeName_ = GenerateNameFromType(typeHash);
     typeHash_ = typeHash;
 }
-
 }

@@ -34,20 +34,19 @@
 
 namespace Urho3D
 {
-
 const float PIXEL_SIZE = 0.01f;
 
-SourceBatch2D::SourceBatch2D() :
-    distance_(0.0f),
-    drawOrder_(0)
+SourceBatch2D::SourceBatch2D()
+    : distance_(0.0f)
+    , drawOrder_(0)
 {
 }
 
-Drawable2D::Drawable2D(Context* context) :
-    Drawable(context, DRAWABLE_GEOMETRY2D),
-    layer_(0),
-    orderInLayer_(0),
-    sourceBatchesDirty_(true)
+Drawable2D::Drawable2D(Context* context)
+    : Drawable(context, DRAWABLE_GEOMETRY2D)
+    , layer_(0)
+    , orderInLayer_(0)
+    , sourceBatchesDirty_(true)
 {
 }
 
@@ -128,5 +127,4 @@ void Drawable2D::OnMarkedDirty(Node* node)
 
     sourceBatchesDirty_ = true;
 }
-
 }

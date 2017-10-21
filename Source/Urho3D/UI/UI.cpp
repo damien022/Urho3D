@@ -22,25 +22,25 @@
 
 #include "../Precompiled.h"
 
+#include "../Container/Sort.h"
 #include "../Core/Context.h"
 #include "../Core/CoreEvents.h"
 #include "../Core/Profiler.h"
-#include "../Container/Sort.h"
+#include "../Graphics/Camera.h"
 #include "../Graphics/Graphics.h"
 #include "../Graphics/GraphicsEvents.h"
+#include "../Graphics/Octree.h"
 #include "../Graphics/Shader.h"
 #include "../Graphics/ShaderVariation.h"
 #include "../Graphics/Texture2D.h"
 #include "../Graphics/VertexBuffer.h"
-#include "../Graphics/Octree.h"
 #include "../Graphics/Viewport.h"
-#include "../Graphics/Camera.h"
-#include "../Scene/Scene.h"
+#include "../IO/Log.h"
 #include "../Input/Input.h"
 #include "../Input/InputEvents.h"
-#include "../IO/Log.h"
 #include "../Math/Matrix3x4.h"
 #include "../Resource/ResourceCache.h"
+#include "../Scene/Scene.h"
 #include "../UI/CheckBox.h"
 #include "../UI/Cursor.h"
 #include "../UI/DropDownList.h"
@@ -57,16 +57,16 @@
 #include "../UI/Text3D.h"
 #include "../UI/ToolTip.h"
 #include "../UI/UI.h"
-#include "../UI/UIEvents.h"
-#include "../UI/Window.h"
-#include "../UI/View3D.h"
 #include "../UI/UIComponent.h"
+#include "../UI/UIEvents.h"
+#include "../UI/View3D.h"
+#include "../UI/Window.h"
 #ifdef URHO3D_SYSTEMUI
 #include "../SystemUI/SystemUI.h"
 #endif
 
-#include <assert.h>
 #include <SDL/SDL.h>
+#include <assert.h>
 
 #include "../DebugNew.h"
 
@@ -74,7 +74,6 @@
 
 namespace Urho3D
 {
-
 StringHash VAR_ORIGIN("Origin");
 const StringHash VAR_ORIGINAL_PARENT("OriginalParent");
 const StringHash VAR_ORIGINAL_CHILD_INDEX("OriginalChildIndex");
@@ -88,42 +87,48 @@ const int DEFAULT_FONT_TEXTURE_MAX_SIZE = 2048;
 
 const char* UI_CATEGORY = "UI";
 
-UI::UI(Context* context) :
-    Object(context),
-    rootElement_(new UIElement(context)),
-    rootModalElement_(new UIElement(context)),
-    doubleClickInterval_(DEFAULT_DOUBLECLICK_INTERVAL),
-    dragBeginInterval_(DEFAULT_DRAGBEGIN_INTERVAL),
-    defaultToolTipDelay_(DEFAULT_TOOLTIP_DELAY),
-    dragBeginDistance_(DEFAULT_DRAGBEGIN_DISTANCE),
-    mouseButtons_(0),
-    lastMouseButtons_(0),
-    qualifiers_(0),
-    maxFontTextureSize_(DEFAULT_FONT_TEXTURE_MAX_SIZE),
-    initialized_(false),
-    usingTouchInput_(false),
+UI::UI(Context* context)
+    : Object(context)
+    , rootElement_(new UIElement(context))
+    , rootModalElement_(new UIElement(context))
+    , doubleClickInterval_(DEFAULT_DOUBLECLICK_INTERVAL)
+    , dragBeginInterval_(DEFAULT_DRAGBEGIN_INTERVAL)
+    , defaultToolTipDelay_(DEFAULT_TOOLTIP_DELAY)
+    , dragBeginDistance_(DEFAULT_DRAGBEGIN_DISTANCE)
+    , mouseButtons_(0)
+    , lastMouseButtons_(0)
+    , qualifiers_(0)
+    , maxFontTextureSize_(DEFAULT_FONT_TEXTURE_MAX_SIZE)
+    , initialized_(false)
+    , usingTouchInput_(false)
+    ,
 #ifdef _WIN32
-    nonFocusedMouseWheel_(false),    // Default MS Windows behaviour
+    nonFocusedMouseWheel_(false)
+    , // Default MS Windows behaviour
 #else
-    nonFocusedMouseWheel_(true),     // Default Mac OS X and Linux behaviour
+    nonFocusedMouseWheel_(true)
+    , // Default Mac OS X and Linux behaviour
 #endif
-    useSystemClipboard_(false),
+    useSystemClipboard_(false)
+    ,
 #if defined(__ANDROID__) || defined(IOS) || defined(TVOS)
-    useScreenKeyboard_(true),
+    useScreenKeyboard_(true)
+    ,
 #else
-    useScreenKeyboard_(false),
+    useScreenKeyboard_(false)
+    ,
 #endif
-    useMutableGlyphs_(false),
-    forceAutoHint_(false),
-    fontHintLevel_(FONT_HINT_LEVEL_NORMAL),
-    fontSubpixelThreshold_(12),
-    fontOversampling_(2),
-    uiRendered_(false),
-    nonModalBatchSize_(0),
-    dragElementsCount_(0),
-    dragConfirmedCount_(0),
-    uiScale_(1.0f),
-    customSize_(IntVector2::ZERO)
+    useMutableGlyphs_(false)
+    , forceAutoHint_(false)
+    , fontHintLevel_(FONT_HINT_LEVEL_NORMAL)
+    , fontSubpixelThreshold_(12)
+    , fontOversampling_(2)
+    , uiRendered_(false)
+    , nonModalBatchSize_(0)
+    , dragElementsCount_(0)
+    , dragConfirmedCount_(0)
+    , uiScale_(1.0f)
+    , customSize_(IntVector2::ZERO)
 {
     rootElement_->SetTraversalMode(TM_DEPTH_FIRST);
     rootModalElement_->SetTraversalMode(TM_DEPTH_FIRST);
@@ -147,9 +152,7 @@ UI::UI(Context* context) :
     Initialize();
 }
 
-UI::~UI()
-{
-}
+UI::~UI() {}
 
 void UI::SetCursor(Cursor* cursor)
 {
@@ -191,7 +194,7 @@ void UI::SetFocusElement(UIElement* element, bool byKey)
             UIElement* topLevel = element->GetParent();
             while (topLevel && topLevel->GetParent() != rootElement_)
                 topLevel = topLevel->GetParent();
-            if (topLevel)   // If parented to non-modal root then ignore
+            if (topLevel) // If parented to non-modal root then ignore
                 return;
         }
 
@@ -248,7 +251,8 @@ bool UI::SetModalElement(UIElement* modalElement, bool enable)
 
         // Adopt modal root as parent
         modalElement->SetVar(VAR_ORIGINAL_PARENT, currParent);
-        modalElement->SetVar(VAR_ORIGINAL_CHILD_INDEX, currParent ? currParent->FindChild(modalElement) : M_MAX_UNSIGNED);
+        modalElement->SetVar(VAR_ORIGINAL_CHILD_INDEX,
+                             currParent ? currParent->FindChild(modalElement) : M_MAX_UNSIGNED);
         modalElement->SetParent(rootModalElement_);
 
         // If it is a popup element, bring along its top-level parent
@@ -278,7 +282,7 @@ bool UI::SetModalElement(UIElement* modalElement, bool enable)
 
         // Revert back to original parent
         modalElement->SetParent(static_cast<UIElement*>(modalElement->GetVar(VAR_ORIGINAL_PARENT).GetPtr()),
-            modalElement->GetVar(VAR_ORIGINAL_CHILD_INDEX).GetUInt());
+                                modalElement->GetVar(VAR_ORIGINAL_CHILD_INDEX).GetUInt());
         VariantMap& vars = const_cast<VariantMap&>(modalElement->GetVars());
         vars.Erase(VAR_ORIGINAL_PARENT);
         vars.Erase(VAR_ORIGINAL_CHILD_INDEX);
@@ -292,7 +296,7 @@ bool UI::SetModalElement(UIElement* modalElement, bool enable)
             {
                 const_cast<VariantMap&>(originElement->GetVars()).Erase(VAR_PARENT_CHANGED);
                 element->SetParent(static_cast<UIElement*>(element->GetVar(VAR_ORIGINAL_PARENT).GetPtr()),
-                    element->GetVar(VAR_ORIGINAL_CHILD_INDEX).GetUInt());
+                                   element->GetVar(VAR_ORIGINAL_CHILD_INDEX).GetUInt());
                 vars = const_cast<VariantMap&>(element->GetVars());
                 vars.Erase(VAR_ORIGINAL_PARENT);
                 vars.Erase(VAR_ORIGINAL_CHILD_INDEX);
@@ -354,10 +358,11 @@ void UI::Update(float timeStep)
                 IntVector2 beginSendPos = dragData->dragBeginSumPos / dragData->numDragButtons;
                 dragConfirmedCount_++;
                 if (!usingTouchInput_)
-                    dragElement->OnDragBegin(dragElement->ScreenToElement(beginSendPos), beginSendPos, dragData->dragButtons,
-                        qualifiers_, cursor_);
+                    dragElement->OnDragBegin(dragElement->ScreenToElement(beginSendPos), beginSendPos,
+                                             dragData->dragButtons, qualifiers_, cursor_);
                 else
-                    dragElement->OnDragBegin(dragElement->ScreenToElement(beginSendPos), beginSendPos, dragData->dragButtons, 0, nullptr);
+                    dragElement->OnDragBegin(dragElement->ScreenToElement(beginSendPos), beginSendPos,
+                                             dragData->dragButtons, 0, nullptr);
 
                 SendDragOrHoverEvent(E_DRAGBEGIN, dragElement, beginSendPos, IntVector2::ZERO, dragData);
             }
@@ -451,8 +456,9 @@ void UI::RenderUpdate()
         GetBatches(batches_, vertexData_, cursor_, currentScissor);
     }
 
-    // Get batches for UI elements rendered into textures. Each element rendered into texture is treated as root element.
-    for (Vector<WeakPtr<UIComponent> >::Iterator it = renderToTexture_.Begin(); it != renderToTexture_.End();)
+    // Get batches for UI elements rendered into textures. Each element rendered into texture is treated as root
+    // element.
+    for (Vector<WeakPtr<UIComponent>>::Iterator it = renderToTexture_.Begin(); it != renderToTexture_.End();)
     {
         WeakPtr<UIComponent> component = *it;
         if (component.Null() || !component->IsEnabled())
@@ -508,25 +514,27 @@ void UI::Render(bool renderUICommand)
         // Render modal batches
         Render(vertexBuffer_, batches_, nonModalBatchSize_, batches_.Size());
     }
-    
+
     // Render to UIComponent textures. This is skipped when called from the RENDERUI command
     if (!renderUICommand)
     {
-        for (Vector<WeakPtr<UIComponent> >::ConstIterator it = renderToTexture_.Begin(); it != renderToTexture_.End(); it++)
+        for (Vector<WeakPtr<UIComponent>>::ConstIterator it = renderToTexture_.Begin(); it != renderToTexture_.End();
+             it++)
         {
             WeakPtr<UIComponent> component = *it;
             if (component->IsEnabled())
             {
                 SetVertexData(component->vertexBuffer_, component->vertexData_);
                 SetVertexData(component->debugVertexBuffer_, component->debugVertexData_);
-                
+
                 RenderSurface* surface = component->GetTexture()->GetRenderSurface();
                 graphics_->SetRenderTarget(0, surface);
                 graphics_->SetViewport(IntRect(0, 0, surface->GetWidth(), surface->GetHeight()));
                 graphics_->Clear(Urho3D::CLEAR_COLOR);
 
                 Render(component->vertexBuffer_, component->batches_, 0, component->batches_.Size());
-                Render(component->debugVertexBuffer_, component->debugDrawBatches_, 0, component->debugDrawBatches_.Size());
+                Render(component->debugVertexBuffer_, component->debugDrawBatches_, 0,
+                       component->debugDrawBatches_.Size());
                 component->debugDrawBatches_.Clear();
                 component->debugVertexData_.Clear();
             }
@@ -557,7 +565,8 @@ void UI::DebugDraw(UIElement* element)
             element->GetDebugDrawBatches(debugDrawBatches_, debugVertexData_, scissor);
         else
         {
-            for (Vector<WeakPtr<UIComponent> >::Iterator it = renderToTexture_.Begin(); it != renderToTexture_.End(); it++)
+            for (Vector<WeakPtr<UIComponent>>::Iterator it = renderToTexture_.Begin(); it != renderToTexture_.End();
+                 it++)
             {
                 WeakPtr<UIComponent> component = *it;
                 if (component.NotNull() && component->GetRoot() == root && component->IsEnabled())
@@ -636,25 +645,13 @@ void UI::SetClipboardText(const String& text)
         SDL_SetClipboardText(text.CString());
 }
 
-void UI::SetDoubleClickInterval(float interval)
-{
-    doubleClickInterval_ = Max(interval, 0.0f);
-}
+void UI::SetDoubleClickInterval(float interval) { doubleClickInterval_ = Max(interval, 0.0f); }
 
-void UI::SetDragBeginInterval(float interval)
-{
-    dragBeginInterval_ = Max(interval, 0.0f);
-}
+void UI::SetDragBeginInterval(float interval) { dragBeginInterval_ = Max(interval, 0.0f); }
 
-void UI::SetDragBeginDistance(int pixels)
-{
-    dragBeginDistance_ = Max(pixels, 0);
-}
+void UI::SetDragBeginDistance(int pixels) { dragBeginDistance_ = Max(pixels, 0); }
 
-void UI::SetDefaultToolTipDelay(float delay)
-{
-    defaultToolTipDelay_ = Max(delay, 0.0f);
-}
+void UI::SetDefaultToolTipDelay(float delay) { defaultToolTipDelay_ = Max(delay, 0.0f); }
 
 void UI::SetMaxFontTextureSize(int size)
 {
@@ -668,20 +665,11 @@ void UI::SetMaxFontTextureSize(int size)
     }
 }
 
-void UI::SetNonFocusedMouseWheel(bool nonFocusedMouseWheel)
-{
-    nonFocusedMouseWheel_ = nonFocusedMouseWheel;
-}
+void UI::SetNonFocusedMouseWheel(bool nonFocusedMouseWheel) { nonFocusedMouseWheel_ = nonFocusedMouseWheel; }
 
-void UI::SetUseSystemClipboard(bool enable)
-{
-    useSystemClipboard_ = enable;
-}
+void UI::SetUseSystemClipboard(bool enable) { useSystemClipboard_ = enable; }
 
-void UI::SetUseScreenKeyboard(bool enable)
-{
-    useScreenKeyboard_ = enable;
-}
+void UI::SetUseScreenKeyboard(bool enable) { useScreenKeyboard_ = enable; }
 
 void UI::SetUseMutableGlyphs(bool enable)
 {
@@ -779,7 +767,7 @@ UIElement* UI::GetElementAt(const IntVector2& position, bool enabledOnly, IntVec
     // Mouse was not hovering UI element. Check elements rendered on 3D objects.
     if (!result && renderToTexture_.Size())
     {
-        for (Vector<WeakPtr<UIComponent> >::Iterator it = renderToTexture_.Begin(); it != renderToTexture_.End(); it++)
+        for (Vector<WeakPtr<UIComponent>>::Iterator it = renderToTexture_.Begin(); it != renderToTexture_.End(); it++)
         {
             WeakPtr<UIComponent> component = *it;
             if (component.Null() || !component->IsEnabled())
@@ -836,14 +824,11 @@ UIElement* UI::GetElementAt(UIElement* root, const IntVector2& position, bool en
     return result;
 }
 
-UIElement* UI::GetElementAt(int x, int y, bool enabledOnly)
-{
-    return GetElementAt(IntVector2(x, y), enabledOnly);
-}
+UIElement* UI::GetElementAt(int x, int y, bool enabledOnly) { return GetElementAt(IntVector2(x, y), enabledOnly); }
 
 UIElement* UI::GetFrontElement() const
 {
-    const Vector<SharedPtr<UIElement> >& rootChildren = rootElement_->GetChildren();
+    const Vector<SharedPtr<UIElement>>& rootChildren = rootElement_->GetChildren();
     int maxPriority = M_MIN_INT;
     UIElement* front = nullptr;
 
@@ -912,10 +897,7 @@ const String& UI::GetClipboardText() const
     return clipBoard_;
 }
 
-bool UI::HasModalElement() const
-{
-    return rootModalElement_->GetNumChildren() > 0;
-}
+bool UI::HasModalElement() const { return rootModalElement_->GetNumChildren() > 0; }
 
 void UI::Initialize()
 {
@@ -959,7 +941,7 @@ void UI::Update(float timeStep, UIElement* element)
     if (elementWeak.Expired())
         return;
 
-    const Vector<SharedPtr<UIElement> >& children = element->GetChildren();
+    const Vector<SharedPtr<UIElement>>& children = element->GetChildren();
     // Update of an element may modify its child vector. Use just index-based iteration to be safe
     for (unsigned i = 0; i < children.Size(); ++i)
         Update(timeStep, children[i]);
@@ -1035,7 +1017,6 @@ void UI::Render(VertexBuffer* buffer, const PODVector<UIBatch>& batches, unsigne
     ShaderVariation* diffMaskTexturePS = graphics_->GetShader(PS, "Basic", "DIFFMAP ALPHAMASK VERTEXCOLOR");
     ShaderVariation* alphaTexturePS = graphics_->GetShader(PS, "Basic", "ALPHAMAP VERTEXCOLOR");
 
-
     for (unsigned i = batchStart; i < batchEnd; ++i)
     {
         const UIBatch& batch = batches[i];
@@ -1057,7 +1038,8 @@ void UI::Render(VertexBuffer* buffer, const PODVector<UIBatch>& batches, unsigne
 
             if (batch.texture_->GetFormat() == alphaFormat)
                 ps = alphaTexturePS;
-            else if (batch.blendMode_ != BLEND_ALPHA && batch.blendMode_ != BLEND_ADDALPHA && batch.blendMode_ != BLEND_PREMULALPHA)
+            else if (batch.blendMode_ != BLEND_ALPHA && batch.blendMode_ != BLEND_ADDALPHA &&
+                     batch.blendMode_ != BLEND_PREMULALPHA)
                 ps = diffMaskTexturePS;
             else
                 ps = diffTexturePS;
@@ -1096,11 +1078,12 @@ void UI::Render(VertexBuffer* buffer, const PODVector<UIBatch>& batches, unsigne
         graphics_->SetScissorTest(true, scissor);
         graphics_->SetTexture(0, batch.texture_);
         graphics_->Draw(TRIANGLE_LIST, batch.vertexStart_ / UI_VERTEX_SIZE,
-            (batch.vertexEnd_ - batch.vertexStart_) / UI_VERTEX_SIZE);
+                        (batch.vertexEnd_ - batch.vertexStart_) / UI_VERTEX_SIZE);
     }
 }
 
-void UI::GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData, UIElement* element, IntRect currentScissor)
+void UI::GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData, UIElement* element,
+                    IntRect currentScissor)
 {
     // Set clipping scissor for child elements. No need to draw if zero size
     element->AdjustScissor(currentScissor);
@@ -1108,16 +1091,16 @@ void UI::GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData, U
         return;
 
     element->SortChildren();
-    const Vector<SharedPtr<UIElement> >& children = element->GetChildren();
+    const Vector<SharedPtr<UIElement>>& children = element->GetChildren();
     if (children.Empty())
         return;
 
-    // For non-root elements draw all children of same priority before recursing into their children: assumption is that they have
-    // same renderstate
-    Vector<SharedPtr<UIElement> >::ConstIterator i = children.Begin();
+    // For non-root elements draw all children of same priority before recursing into their children: assumption is that
+    // they have same renderstate
+    Vector<SharedPtr<UIElement>>::ConstIterator i = children.Begin();
     if (element->GetTraversalMode() == TM_BREADTH_FIRST)
     {
-        Vector<SharedPtr<UIElement> >::ConstIterator j = i;
+        Vector<SharedPtr<UIElement>>::ConstIterator j = i;
         while (i != children.End())
         {
             int currentPriority = (*i)->GetPriority();
@@ -1159,7 +1142,7 @@ void UI::GetElementAt(UIElement*& result, UIElement* current, const IntVector2& 
         return;
 
     current->SortChildren();
-    const Vector<SharedPtr<UIElement> >& children = current->GetChildren();
+    const Vector<SharedPtr<UIElement>>& children = current->GetChildren();
     LayoutMode parentLayoutMode = current->GetLayoutMode();
 
     for (unsigned i = 0; i < children.Size(); ++i)
@@ -1189,14 +1172,14 @@ void UI::GetElementAt(UIElement*& result, UIElement* current, const IntVector2& 
                     if (element->IsInsideCombined(position, true))
                         GetElementAt(result, element, position, enabledOnly);
                 }
-                // Layout optimization: if position is much beyond the visible screen, check how many elements we can skip,
-                // or if we already passed all visible elements
+                // Layout optimization: if position is much beyond the visible screen, check how many elements we can
+                // skip, or if we already passed all visible elements
                 else if (parentLayoutMode != LM_FREE)
                 {
                     if (!i)
                     {
-                        int screenPos = (parentLayoutMode == LM_HORIZONTAL) ? element->GetScreenPosition().x_ :
-                            element->GetScreenPosition().y_;
+                        int screenPos = (parentLayoutMode == LM_HORIZONTAL) ? element->GetScreenPosition().x_
+                                                                            : element->GetScreenPosition().y_;
                         int layoutMaxSize = current->GetLayoutElementMaxSize();
 
                         if (screenPos < 0 && layoutMaxSize > 0)
@@ -1206,17 +1189,19 @@ void UI::GetElementAt(UIElement*& result, UIElement* current, const IntVector2& 
                                 i += (toSkip - 1);
                         }
                     }
-                    // Note: we cannot check for the up / left limits of positioning, since the element may be off the visible
-                    // screen but some of its layouted children will yet be visible. In down & right directions we can terminate
-                    // the loop, since all further children will be further down or right.
+                    // Note: we cannot check for the up / left limits of positioning, since the element may be off the
+                    // visible screen but some of its layouted children will yet be visible. In down & right directions
+                    // we can terminate the loop, since all further children will be further down or right.
                     else if (parentLayoutMode == LM_HORIZONTAL)
                     {
-                        if (element->GetScreenPosition().x_ >= rootElement_->GetPosition().x_ + rootElement_->GetSize().x_)
+                        if (element->GetScreenPosition().x_ >=
+                            rootElement_->GetPosition().x_ + rootElement_->GetSize().x_)
                             break;
                     }
                     else if (parentLayoutMode == LM_VERTICAL)
                     {
-                        if (element->GetScreenPosition().y_ >= rootElement_->GetPosition().y_ + rootElement_->GetSize().y_)
+                        if (element->GetScreenPosition().y_ >=
+                            rootElement_->GetPosition().y_ + rootElement_->GetSize().y_)
                             break;
                     }
                 }
@@ -1366,7 +1351,8 @@ void UI::ProcessHover(const IntVector2& windowCursorPos, int buttons, int qualif
     }
 }
 
-void UI::ProcessClickBegin(const IntVector2& windowCursorPos, int button, int buttons, int qualifiers, Cursor* cursor, bool cursorVisible)
+void UI::ProcessClickBegin(const IntVector2& windowCursorPos, int button, int buttons, int qualifiers, Cursor* cursor,
+                           bool cursorVisible)
 {
     if (cursorVisible)
     {
@@ -1397,7 +1383,8 @@ void UI::ProcessClickBegin(const IntVector2& windowCursorPos, int button, int bu
             if (doubleClickElement_ && element == doubleClickElement_ &&
                 clickTimer_.GetMSec(true) < (unsigned)(doubleClickInterval_ * 1000) && lastMouseButtons_ == buttons)
             {
-                element->OnDoubleClick(element->ScreenToElement(cursorPos), cursorPos, button, buttons, qualifiers, cursor);
+                element->OnDoubleClick(element->ScreenToElement(cursorPos), cursorPos, button, buttons, qualifiers,
+                                       cursor);
                 doubleClickElement_.Reset();
                 SendClickEvent(E_UIMOUSEDOUBLECLICK, nullptr, element, cursorPos, button, buttons, qualifiers);
             }
@@ -1407,7 +1394,8 @@ void UI::ProcessClickBegin(const IntVector2& windowCursorPos, int button, int bu
                 clickTimer_.Reset();
             }
 
-            // Handle start of drag. Click handling may have caused destruction of the element, so check the pointer again
+            // Handle start of drag. Click handling may have caused destruction of the element, so check the pointer
+            // again
             bool dragElementsContain = dragElements_.Contains(element);
             if (element && !dragElementsContain)
             {
@@ -1447,7 +1435,8 @@ void UI::ProcessClickBegin(const IntVector2& windowCursorPos, int button, int bu
     }
 }
 
-void UI::ProcessClickEnd(const IntVector2& windowCursorPos, int button, int buttons, int qualifiers, Cursor* cursor, bool cursorVisible)
+void UI::ProcessClickEnd(const IntVector2& windowCursorPos, int button, int buttons, int qualifiers, Cursor* cursor,
+                         bool cursorVisible)
 {
     WeakPtr<UIElement> element;
     IntVector2 cursorPos = windowCursorPos;
@@ -1471,14 +1460,14 @@ void UI::ProcessClickEnd(const IntVector2& windowCursorPos, int button, int butt
             // Handle end of click
             if (element)
                 element->OnClickEnd(element->ScreenToElement(cursorPos), cursorPos, button, buttons, qualifiers, cursor,
-                    dragElement);
+                                    dragElement);
 
             SendClickEvent(E_UIMOUSECLICKEND, dragElement, element, cursorPos, button, buttons, qualifiers);
 
             if (dragElement && dragElement->IsEnabled() && dragElement->IsVisible() && !dragData->dragBeginPending)
             {
-                dragElement->OnDragEnd(dragElement->ScreenToElement(cursorPos), cursorPos, dragData->dragButtons, buttons,
-                    cursor);
+                dragElement->OnDragEnd(dragElement->ScreenToElement(cursorPos), cursorPos, dragData->dragButtons,
+                                       buttons, cursor);
                 SendDragOrHoverEvent(E_DRAGEND, dragElement, cursorPos, IntVector2::ZERO, dragData);
 
                 bool dragSource = dragElement && (dragElement->GetDragDropMode() & DD_SOURCE) != 0;
@@ -1513,8 +1502,8 @@ void UI::ProcessClickEnd(const IntVector2& windowCursorPos, int button, int butt
     }
 }
 
-void UI::ProcessMove(const IntVector2& windowCursorPos, const IntVector2& cursorDeltaPos, int buttons, int qualifiers, Cursor* cursor,
-    bool cursorVisible)
+void UI::ProcessMove(const IntVector2& windowCursorPos, const IntVector2& cursorDeltaPos, int buttons, int qualifiers,
+                     Cursor* cursor, bool cursorVisible)
 {
     if (cursorVisible && dragElementsCount_ > 0 && buttons)
     {
@@ -1569,22 +1558,23 @@ void UI::ProcessMove(const IntVector2& windowCursorPos, const IntVector2& cursor
                     {
                         dragData->dragBeginPending = false;
                         dragConfirmedCount_++;
-                        dragElement->OnDragBegin(dragElement->ScreenToElement(beginSendPos), beginSendPos, buttons, qualifiers,
-                            cursor);
+                        dragElement->OnDragBegin(dragElement->ScreenToElement(beginSendPos), beginSendPos, buttons,
+                                                 qualifiers, cursor);
                         SendDragOrHoverEvent(E_DRAGBEGIN, dragElement, beginSendPos, IntVector2::ZERO, dragData);
                     }
                 }
 
                 if (!dragData->dragBeginPending)
                 {
-                    dragElement->OnDragMove(dragElement->ScreenToElement(sendPos), sendPos, cursorDeltaPos, buttons, qualifiers,
-                        cursor);
+                    dragElement->OnDragMove(dragElement->ScreenToElement(sendPos), sendPos, cursorDeltaPos, buttons,
+                                            qualifiers, cursor);
                     SendDragOrHoverEvent(E_DRAGMOVE, dragElement, sendPos, cursorDeltaPos, dragData);
                 }
             }
             else
             {
-                dragElement->OnDragEnd(dragElement->ScreenToElement(sendPos), sendPos, dragData->dragButtons, buttons, cursor);
+                dragElement->OnDragEnd(dragElement->ScreenToElement(sendPos), sendPos, dragData->dragButtons, buttons,
+                                       cursor);
                 SendDragOrHoverEvent(E_DRAGEND, dragElement, sendPos, IntVector2::ZERO, dragData);
                 dragElement.Reset();
             }
@@ -1594,8 +1584,8 @@ void UI::ProcessMove(const IntVector2& windowCursorPos, const IntVector2& cursor
     }
 }
 
-void UI::SendDragOrHoverEvent(StringHash eventType, UIElement* element, const IntVector2& screenPos, const IntVector2& deltaPos,
-    UI::DragData* dragData)
+void UI::SendDragOrHoverEvent(StringHash eventType, UIElement* element, const IntVector2& screenPos,
+                              const IntVector2& deltaPos, UI::DragData* dragData)
 {
     if (!element)
         return;
@@ -1626,8 +1616,8 @@ void UI::SendDragOrHoverEvent(StringHash eventType, UIElement* element, const In
     element->SendEvent(eventType, eventData);
 }
 
-void UI::SendClickEvent(StringHash eventType, UIElement* beginElement, UIElement* endElement, const IntVector2& pos, int button,
-    int buttons, int qualifiers)
+void UI::SendClickEvent(StringHash eventType, UIElement* beginElement, UIElement* endElement, const IntVector2& pos,
+                        int button, int buttons, int qualifiers)
 {
     VariantMap& eventData = GetEventDataMap();
     eventData[UIMouseClick::P_ELEMENT] = endElement;
@@ -2007,10 +1997,7 @@ void UI::HandlePostUpdate(StringHash eventType, VariantMap& eventData)
     Update(eventData[P_TIMESTEP].GetFloat());
 }
 
-void UI::HandleRenderUpdate(StringHash eventType, VariantMap& eventData)
-{
-    RenderUpdate();
-}
+void UI::HandleRenderUpdate(StringHash eventType, VariantMap& eventData) { RenderUpdate(); }
 
 void UI::HandleDropFile(StringHash eventType, VariantMap& eventData)
 {
@@ -2044,9 +2031,11 @@ void UI::HandleDropFile(StringHash eventType, VariantMap& eventData)
     }
 }
 
-HashMap<WeakPtr<UIElement>, UI::DragData*>::Iterator UI::DragElementErase(HashMap<WeakPtr<UIElement>, UI::DragData*>::Iterator i)
+HashMap<WeakPtr<UIElement>, UI::DragData*>::Iterator
+UI::DragElementErase(HashMap<WeakPtr<UIElement>, UI::DragData*>::Iterator i)
 {
-    // If running the engine frame in response to an event (re-entering UI frame logic) the dragElements_ may already be empty
+    // If running the engine frame in response to an event (re-entering UI frame logic) the dragElements_ may already be
+    // empty
     if (dragElements_.Empty())
         return dragElements_.End();
 
@@ -2080,8 +2069,8 @@ void UI::ProcessDragCancel()
 
         if (dragElement && dragElement->IsEnabled() && dragElement->IsVisible() && !dragData->dragBeginPending)
         {
-            dragElement->OnDragCancel(dragElement->ScreenToElement(cursorPos), cursorPos, dragData->dragButtons, mouseButtons_,
-                cursor_);
+            dragElement->OnDragCancel(dragElement->ScreenToElement(cursorPos), cursorPos, dragData->dragButtons,
+                                      mouseButtons_, cursor_);
             SendDragOrHoverEvent(E_DRAGCANCEL, dragElement, cursorPos, IntVector2::ZERO, dragData);
             i = DragElementErase(i);
         }
@@ -2178,5 +2167,4 @@ void RegisterUILibrary(Context* context)
     ToolTip::RegisterObject(context);
     UIComponent::RegisterObject(context);
 }
-
 }

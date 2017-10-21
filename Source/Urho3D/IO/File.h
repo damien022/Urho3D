@@ -32,13 +32,13 @@ struct SDL_RWops;
 
 namespace Urho3D
 {
-
 #ifdef __ANDROID__
 extern const char* APK;
 
 // Macro for checking if a given pathname is inside APK's assets directory
 #define URHO3D_IS_ASSET(p) p.StartsWith(APK)
-// Macro for truncating the APK prefix string from the asset pathname and at the same time patching the directory name components (see custom_rules.xml)
+// Macro for truncating the APK prefix string from the asset pathname and at the same time patching the directory name
+// components (see custom_rules.xml)
 #ifdef ASSET_DIR_INDICATOR
 #define URHO3D_ASSET(p) p.Substring(5).Replaced("/", ASSET_DIR_INDICATOR "/").CString()
 #else
@@ -111,16 +111,23 @@ public:
     virtual void ReadText(String& text);
 
     /// Reads a text file, ensuring data from file is 0 terminated
-    virtual String ReadText() { String retValue; ReadText(retValue); return retValue; }
+    virtual String ReadText()
+    {
+        String retValue;
+        ReadText(retValue);
+        return retValue;
+    }
 
     /// Copy a file from a source file, must be opened and FILE_WRITE
     /// Unlike FileSystem.Copy this copy works when the source file is in a package file
     bool Copy(File* srcFile);
 
 private:
-    /// Open file internally using either C standard IO functions or SDL RWops for Android asset files. Return true if successful.
+    /// Open file internally using either C standard IO functions or SDL RWops for Android asset files. Return true if
+    /// successful.
     bool OpenInternal(const String& fileName, FileMode mode, bool fromPackage = false);
-    /// Perform the file read internally using either C standard IO functions or SDL RWops for Android asset files. Return true if successful. This does not handle compressed package file reading.
+    /// Perform the file read internally using either C standard IO functions or SDL RWops for Android asset files.
+    /// Return true if successful. This does not handle compressed package file reading.
     bool ReadInternal(void* dest, unsigned size);
     /// Seek in file internally using either C standard IO functions or SDL RWops for Android asset files.
     void SeekInternal(unsigned newPosition);
@@ -154,5 +161,4 @@ private:
     /// Synchronization needed before write -flag.
     bool writeSyncNeeded_;
 };
-
 }

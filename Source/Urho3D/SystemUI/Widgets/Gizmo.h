@@ -22,15 +22,12 @@
 
 #pragma once
 
-
 #include "../../Core/Object.h"
 #include "../../Graphics/Camera.h"
 #include "../../Scene/Node.h"
 
-
 namespace Urho3D
 {
-
 enum GizmoOperation
 {
     GIZMOOP_TRANSLATE,
@@ -42,6 +39,7 @@ enum GizmoOperation
 class URHO3D_API Gizmo : public Object
 {
     URHO3D_OBJECT(Gizmo, Object);
+
 public:
     /// Construct.
     Gizmo(Context* context);
@@ -92,7 +90,6 @@ protected:
     /// Current operation origin. This is center point between all nodes that are being manipulated.
     Matrix4 currentOrigin_;
     /// Current node selection. Nodes removed from the scene are automatically unselected.
-    Vector<WeakPtr<Node> > nodeSelection_;
+    Vector<WeakPtr<Node>> nodeSelection_;
 };
-
 }

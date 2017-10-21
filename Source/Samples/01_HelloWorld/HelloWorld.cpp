@@ -34,8 +34,8 @@
 // Expands to this example's entry-point
 URHO3D_DEFINE_APPLICATION_MAIN(HelloWorld)
 
-HelloWorld::HelloWorld(Context* context) :
-    Sample(context)
+HelloWorld::HelloWorld(Context* context)
+    : Sample(context)
 {
 }
 
@@ -47,9 +47,9 @@ void HelloWorld::Start()
     // Create "Hello World" Text
     CreateText();
 
-    // Finally subscribe to the update event. Note that by subscribing events at this point we have already missed some events
-    // like the ScreenMode event sent by the Graphics subsystem when opening the application window. To catch those as well we
-    // could subscribe in the constructor instead.
+    // Finally subscribe to the update event. Note that by subscribing events at this point we have already missed some
+    // events like the ScreenMode event sent by the Graphics subsystem when opening the application window. To catch
+    // those as well we could subscribe in the constructor instead.
     SubscribeToEvents();
 
     // Set the mouse mode to use in the sample

@@ -29,10 +29,8 @@ class xml_node;
 
 namespace Urho3D
 {
-
 namespace Spriter
 {
-
 struct Animation;
 struct BoneTimelineKey;
 struct CharacterMap;
@@ -210,7 +208,7 @@ struct Timeline
 };
 
 /// Curve type.
-enum CurveType 
+enum CurveType
 {
     INSTANT = 0,
     LINEAR,
@@ -250,7 +248,8 @@ struct SpatialInfo
     float alpha_;
     int spin;
 
-    SpatialInfo(float x = 0.0f, float y = 0.0f, float angle = 0.0f, float scale_x = 1, float scale_y = 1, float a = 1, int spin = 1);
+    SpatialInfo(float x = 0.0f, float y = 0.0f, float angle = 0.0f, float scale_x = 1, float scale_y = 1, float a = 1,
+                int spin = 1);
     SpatialInfo UnmapFromParent(const SpatialInfo& parentInfo) const;
     void Interpolate(const SpatialInfo& other, float t);
 };
@@ -305,7 +304,5 @@ struct SpriteTimelineKey : SpatialTimelineKey
     virtual void Interpolate(const TimelineKey& other, float t) override;
     SpriteTimelineKey& operator=(const SpriteTimelineKey& rhs);
 };
-
 }
-
 }

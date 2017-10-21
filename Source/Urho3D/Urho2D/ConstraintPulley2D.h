@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// 2D pulley constraint component.
 class URHO3D_API ConstraintPulley2D : public Constraint2D
 {
@@ -66,7 +65,6 @@ public:
     /// Return ratio.
     float GetRatio() const { return jointDef_.ratio; }
 
-
 private:
     /// Return Joint def.
     virtual b2JointDef* GetJointDef() override;
@@ -82,5 +80,4 @@ private:
     /// Other body anchor.
     Vector2 otherBodyAnchor_;
 };
-
 }

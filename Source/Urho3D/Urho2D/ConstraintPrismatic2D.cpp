@@ -31,19 +31,16 @@
 
 namespace Urho3D
 {
-
 extern const char* URHO2D_CATEGORY;
 
-ConstraintPrismatic2D::ConstraintPrismatic2D(Context* context) :
-    Constraint2D(context),
-    anchor_(Vector2::ZERO),
-    axis_(Vector2::RIGHT)
+ConstraintPrismatic2D::ConstraintPrismatic2D(Context* context)
+    : Constraint2D(context)
+    , anchor_(Vector2::ZERO)
+    , axis_(Vector2::RIGHT)
 {
 }
 
-ConstraintPrismatic2D::~ConstraintPrismatic2D()
-{
-}
+ConstraintPrismatic2D::~ConstraintPrismatic2D() {}
 
 void ConstraintPrismatic2D::RegisterObject(Context* context)
 {
@@ -187,5 +184,4 @@ b2JointDef* ConstraintPrismatic2D::GetJointDef()
 
     return &jointDef_;
 }
-
 }

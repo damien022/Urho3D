@@ -22,10 +22,10 @@
 
 #include "../Precompiled.h"
 
+#include "../Core/Profiler.h"
 #include "../Engine/Application.h"
 #include "../IO/IOEvents.h"
 #include "../IO/Log.h"
-#include "../Core/Profiler.h"
 
 #if defined(IOS) || defined(TVOS)
 #include "../Graphics/Graphics.h"
@@ -36,25 +36,22 @@
 
 namespace Urho3D
 {
-
 #if defined(IOS) || defined(TVOS) || defined(__EMSCRIPTEN__)
 // Code for supporting SDL_iPhoneSetAnimationCallback() and emscripten_set_main_loop_arg()
 #if defined(__EMSCRIPTEN__)
 #include <emscripten/emscripten.h>
 #endif
-void RunFrame(void* data)
-{
-    static_cast<Engine*>(data)->RunFrame();
-}
+void RunFrame(void* data) { static_cast<Engine*>(data)->RunFrame(); }
 #endif
 
-Application::Application(Context* context) :
-    Object(context),
-    exitCode_(EXIT_SUCCESS)
+Application::Application(Context* context)
+    : Object(context)
+    , exitCode_(EXIT_SUCCESS)
 {
     engineParameters_ = Engine::ParseParameters(GetArguments());
 
-    // Create the Engine, but do not initialize it yet. Subsystems except Graphics & Renderer are registered at this point
+    // Create the Engine, but do not initialize it yet. Subsystems except Graphics & Renderer are registered at this
+    // point
     engine_ = new Engine(context);
 
     // Subscribe to log messages so that can show errors if ErrorExit() is called with empty message
@@ -83,7 +80,7 @@ int Application::Run()
         if (exitCode_)
             return exitCode_;
 
-        // Platforms other than iOS/tvOS and Emscripten run a blocking main loop
+            // Platforms other than iOS/tvOS and Emscripten run a blocking main loop
 #if !defined(IOS) && !defined(TVOS) && !defined(__EMSCRIPTEN__)
         while (!engine_->IsExiting())
             engine_->RunFrame();
@@ -93,9 +90,9 @@ int Application::Run()
         // support calling the Stop() function, as the application will never stop manually
 #else
 #if defined(IOS) || defined(TVOS)
-        SDL_iPhoneSetAnimationCallback(GetSubsystem<Graphics>()->GetWindow(), 1, &RunFrame, engine_);
+    SDL_iPhoneSetAnimationCallback(GetSubsystem<Graphics>()->GetWindow(), 1, &RunFrame, engine_);
 #elif defined(__EMSCRIPTEN__)
-        emscripten_set_main_loop_arg(RunFrame, engine_, 0, 1);
+    emscripten_set_main_loop_arg(RunFrame, engine_, 0, 1);
 #endif
 #endif
 
@@ -117,8 +114,9 @@ void Application::ErrorExit(const String& message)
 
     if (!message.Length())
     {
-        ErrorDialog(GetTypeName(), startupErrors_.Length() ? startupErrors_ :
-            "Application has been terminated due to unexpected error.");
+        ErrorDialog(GetTypeName(), startupErrors_.Length()
+                                       ? startupErrors_
+                                       : "Application has been terminated due to unexpected error.");
     }
     else
         ErrorDialog(GetTypeName(), message);
@@ -139,6 +137,4 @@ void Application::HandleLogMessage(StringHash eventType, VariantMap& eventData)
         startupErrors_ += error + "\n";
     }
 }
-
-
 }

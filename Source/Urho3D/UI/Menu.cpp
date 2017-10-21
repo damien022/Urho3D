@@ -23,8 +23,8 @@
 #include "../Precompiled.h"
 
 #include "../Core/Context.h"
-#include "../Input/InputEvents.h"
 #include "../IO/Log.h"
+#include "../Input/InputEvents.h"
 #include "../UI/LineEdit.h"
 #include "../UI/Menu.h"
 #include "../UI/UI.h"
@@ -35,19 +35,18 @@
 
 namespace Urho3D
 {
-
 const StringHash VAR_SHOW_POPUP("ShowPopup");
 extern StringHash VAR_ORIGIN;
 
 extern const char* UI_CATEGORY;
 
-Menu::Menu(Context* context) :
-    Button(context),
-    popupOffset_(IntVector2::ZERO),
-    showPopup_(false),
-    acceleratorKey_(0),
-    acceleratorQualifiers_(0),
-    autoPopup_(true)
+Menu::Menu(Context* context)
+    : Button(context)
+    , popupOffset_(IntVector2::ZERO)
+    , showPopup_(false)
+    , acceleratorKey_(0)
+    , acceleratorQualifiers_(0)
+    , autoPopup_(true)
 {
     focusMode_ = FM_NOTFOCUSABLE;
 
@@ -78,7 +77,7 @@ void Menu::Update(float timeStep)
 
     if (popup_ && showPopup_)
     {
-        const Vector<SharedPtr<UIElement> >& children = popup_->GetChildren();
+        const Vector<SharedPtr<UIElement>>& children = popup_->GetChildren();
         for (unsigned i = 0; i < children.Size(); ++i)
         {
             Menu* menu = dynamic_cast<Menu*>(children[i].Get());
@@ -88,7 +87,8 @@ void Menu::Update(float timeStep)
     }
 }
 
-void Menu::OnHover(const IntVector2& position, const IntVector2& screenPosition, int buttons, int qualifiers, Cursor* cursor)
+void Menu::OnHover(const IntVector2& position, const IntVector2& screenPosition, int buttons, int qualifiers,
+                   Cursor* cursor)
 {
     Button::OnHover(position, screenPosition, buttons, qualifiers, cursor);
 
@@ -120,9 +120,7 @@ void Menu::OnHover(const IntVector2& position, const IntVector2& screenPosition,
     }
 }
 
-void Menu::OnShowPopup()
-{
-}
+void Menu::OnShowPopup() {}
 
 bool Menu::LoadXML(const XMLElement& source, XMLFile* styleFile, bool setInstanceDefault)
 {
@@ -138,7 +136,8 @@ bool Menu::LoadXML(const XMLElement& source, XMLFile* styleFile, bool setInstanc
 
         SetStyle(styleName, styleFile);
     }
-    // The 'style' attribute value in the style file cannot be equals to original's applied style to prevent infinite loop
+    // The 'style' attribute value in the style file cannot be equals to original's applied style to prevent infinite
+    // loop
     else if (!styleName.Empty() && styleName != appliedStyle_)
     {
         // Attempt to use the default style file
@@ -206,7 +205,8 @@ bool Menu::LoadXML(const XMLElement& source, XMLFile* styleFile, bool setInstanc
                 }
 
                 if (!child)
-                    URHO3D_LOGWARNING("Could not find matching internal child element of type " + typeName + " in " + GetTypeName());
+                    URHO3D_LOGWARNING("Could not find matching internal child element of type " + typeName + " in " +
+                                      GetTypeName());
             }
         }
 
@@ -215,8 +215,9 @@ bool Menu::LoadXML(const XMLElement& source, XMLFile* styleFile, bool setInstanc
             if (!styleFile)
                 styleFile = GetDefaultStyle();
 
-            // As popup is not a child element in itself, the parental chain to acquire the default style file is broken for popup's child elements
-            // To recover from this, popup needs to have the default style set in its own instance so the popup's child elements can find it later
+            // As popup is not a child element in itself, the parental chain to acquire the default style file is broken
+            // for popup's child elements To recover from this, popup needs to have the default style set in its own
+            // instance so the popup's child elements can find it later
             if (popupElem)
                 child->SetDefaultStyle(styleFile);
 
@@ -264,7 +265,8 @@ void Menu::SetPopup(UIElement* popup)
     // Currently only allow popup 'window'
     if (popup->GetType() != Window::GetTypeStatic())
     {
-        URHO3D_LOGERROR("Could not set popup element of type " + popup->GetTypeName() + ", only support popup window for now");
+        URHO3D_LOGERROR("Could not set popup element of type " + popup->GetTypeName() +
+                        ", only support popup window for now");
         return;
     }
 
@@ -278,15 +280,9 @@ void Menu::SetPopup(UIElement* popup)
         popup_->Remove();
 }
 
-void Menu::SetPopupOffset(const IntVector2& offset)
-{
-    popupOffset_ = offset;
-}
+void Menu::SetPopupOffset(const IntVector2& offset) { popupOffset_ = offset; }
 
-void Menu::SetPopupOffset(int x, int y)
-{
-    popupOffset_ = IntVector2(x, y);
-}
+void Menu::SetPopupOffset(int x, int y) { popupOffset_ = IntVector2(x, y); }
 
 void Menu::ShowPopup(bool enable)
 {
@@ -440,5 +436,4 @@ void Menu::HandleKeyDown(StringHash eventType, VariantMap& eventData)
         HandlePressedReleased(eventType, eventData);
     }
 }
-
 }

@@ -44,7 +44,6 @@ class URHO3D_API IKSolver : public Component
     URHO3D_OBJECT(IKSolver, Component)
 
 public:
-
     enum Algorithm
     {
         ONE_BONE = 0,
@@ -311,11 +310,14 @@ public:
 private:
     friend class IKEffector;
 
-    /// Indicates that the internal structures of the IK library need to be updated. See the documentation of ik_solver_rebuild_chain_trees() for more info on when this happens.
+    /// Indicates that the internal structures of the IK library need to be updated. See the documentation of
+    /// ik_solver_rebuild_chain_trees() for more info on when this happens.
     void MarkChainsNeedUpdating();
-    /// Indicates that the tree structure has changed in some way and needs updating (nodes added or removed, components added or removed)
+    /// Indicates that the tree structure has changed in some way and needs updating (nodes added or removed, components
+    /// added or removed)
     void MarkTreeNeedsRebuild();
-    /// Returns false if calling Solve() would cause the IK library to abort. Urho3D's error handling philosophy is to log an error and continue, not crash.
+    /// Returns false if calling Solve() would cause the IK library to abort. Urho3D's error handling philosophy is to
+    /// log an error and continue, not crash.
     bool IsSolverTreeValid() const;
 
     /// Subscribe to drawable update finished event here
@@ -348,7 +350,8 @@ private:
     /// Invokes the IK solver
     void HandleSceneDrawableUpdateFinished(StringHash eventType, VariantMap& eventData);
 
-    /// Need these wrapper functions flags of GetFeature/SetFeature can be correctly exposed to the editor and to AngelScript and lua
+    /// Need these wrapper functions flags of GetFeature/SetFeature can be correctly exposed to the editor and to
+    /// AngelScript and lua
 public:
     bool GetJOINT_ROTATIONS() const;
     bool GetTARGET_ROTATIONS() const;

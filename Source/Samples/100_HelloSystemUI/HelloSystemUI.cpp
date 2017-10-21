@@ -22,16 +22,16 @@
 
 #include <Urho3D/Core/CoreEvents.h>
 #include <Urho3D/Core/ProcessUtils.h>
-#include <Urho3D/Input/Input.h>
+#include <Urho3D/Graphics/Camera.h>
 #include <Urho3D/Graphics/Graphics.h>
 #include <Urho3D/Graphics/Octree.h>
-#include <Urho3D/Graphics/Zone.h>
-#include <Urho3D/Graphics/Camera.h>
 #include <Urho3D/Graphics/Renderer.h>
+#include <Urho3D/Graphics/Zone.h>
+#include <Urho3D/Input/Input.h>
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Scene/Scene.h>
-#include <Urho3D/SystemUI/SystemUI.h>
 #include <Urho3D/SystemUI/Console.h>
+#include <Urho3D/SystemUI/SystemUI.h>
 
 #include "HelloSystemUI.h"
 
@@ -40,8 +40,8 @@
 // Expands to this example's entry-point
 URHO3D_DEFINE_APPLICATION_MAIN(HelloSystemUi)
 
-HelloSystemUi::HelloSystemUi(Context* context) :
-    Sample(context)
+HelloSystemUi::HelloSystemUi(Context* context)
+    : Sample(context)
 {
 }
 
@@ -53,9 +53,9 @@ void HelloSystemUi::Start()
     // Create scene providing a colored background.
     CreateScene();
 
-    // Finally subscribe to the update event. Note that by subscribing events at this point we have already missed some events
-    // like the ScreenMode event sent by the Graphics subsystem when opening the application window. To catch those as well we
-    // could subscribe in the constructor instead.
+    // Finally subscribe to the update event. Note that by subscribing events at this point we have already missed some
+    // events like the ScreenMode event sent by the Graphics subsystem when opening the application window. To catch
+    // those as well we could subscribe in the constructor instead.
     SubscribeToEvents();
 
     // Set the mouse mode to use in the sample
@@ -84,9 +84,7 @@ void HelloSystemUi::RenderUi(StringHash eventType, VariantMap& eventData)
             if (ui::Button("Show message box"))
             {
                 messageBox_ = new SystemMessageBox(context_, "Hello from SystemUI", "Sample Message Box");
-                SubscribeToEvent(E_MESSAGEACK, [&](StringHash, VariantMap&) {
-                    messageBox_ = nullptr;
-                });
+                SubscribeToEvent(E_MESSAGEACK, [&](StringHash, VariantMap&) { messageBox_ = nullptr; });
             }
         }
 
@@ -110,9 +108,10 @@ void HelloSystemUi::CreateScene()
     // (-1000, -1000, -1000) to (1000, 1000, 1000)
     scene_->CreateComponent<Octree>();
 
-    // Create a Zone component into a child scene node. The Zone controls ambient lighting and fog settings. Like the Octree,
-    // it also defines its volume with a bounding box, but can be rotated (so it does not need to be aligned to the world X, Y
-    // and Z axes.) Drawable objects "pick up" the zone they belong to and use it when rendering; several zones can exist
+    // Create a Zone component into a child scene node. The Zone controls ambient lighting and fog settings. Like the
+    // Octree, it also defines its volume with a bounding box, but can be rotated (so it does not need to be aligned to
+    // the world X, Y and Z axes.) Drawable objects "pick up" the zone they belong to and use it when rendering; several
+    // zones can exist
     Node* zoneNode = scene_->CreateChild("Zone");
     Zone* zone = zoneNode->CreateComponent<Zone>();
     // Set same volume as the Octree, set a close bluish fog and some ambient light

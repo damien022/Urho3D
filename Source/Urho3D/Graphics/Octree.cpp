@@ -37,12 +37,11 @@
 #include "../DebugNew.h"
 
 #ifdef _MSC_VER
-#pragma warning(disable:4355)
+#pragma warning(disable : 4355)
 #endif
 
 namespace Urho3D
 {
-
 static const float DEFAULT_OCTREE_SIZE = 1000.0f;
 static const int DEFAULT_OCTREE_LEVELS = 8;
 
@@ -68,12 +67,12 @@ inline bool CompareRayQueryResults(const RayQueryResult& lhs, const RayQueryResu
     return lhs.distance_ < rhs.distance_;
 }
 
-Octant::Octant(const BoundingBox& box, unsigned level, Octant* parent, Octree* root, unsigned index) :
-    level_(level),
-    numDrawables_(0),
-    parent_(parent),
-    root_(root),
-    index_(index)
+Octant::Octant(const BoundingBox& box, unsigned level, Octant* parent, Octree* root, unsigned index)
+    : level_(level)
+    , numDrawables_(0)
+    , parent_(parent)
+    , root_(root)
+    , index_(index)
 {
     Initialize(box);
 
@@ -312,10 +311,10 @@ void Octant::GetDrawablesOnlyInternal(RayOctreeQuery& query, PODVector<Drawable*
     }
 }
 
-Octree::Octree(Context* context) :
-    Component(context),
-    Octant(BoundingBox(-DEFAULT_OCTREE_SIZE, DEFAULT_OCTREE_SIZE), 0, nullptr, this),
-    numLevels_(DEFAULT_OCTREE_LEVELS)
+Octree::Octree(Context* context)
+    : Component(context)
+    , Octant(BoundingBox(-DEFAULT_OCTREE_SIZE, DEFAULT_OCTREE_SIZE), 0, nullptr, this)
+    , numLevels_(DEFAULT_OCTREE_LEVELS)
 {
     // If the engine is running headless, subscribe to RenderUpdate events for manually updating the octree
     // to allow raycasts and animation update
@@ -423,7 +422,8 @@ void Octree::Update(const FrameInfo& frame)
     {
         URHO3D_PROFILE(UpdateDrawablesQueuedDuringUpdate);
 
-        for (PODVector<Drawable*>::ConstIterator i = threadedDrawableUpdates_.Begin(); i != threadedDrawableUpdates_.End(); ++i)
+        for (PODVector<Drawable*>::ConstIterator i = threadedDrawableUpdates_.Begin();
+             i != threadedDrawableUpdates_.End(); ++i)
         {
             Drawable* drawable = *i;
             if (drawable)
@@ -448,8 +448,8 @@ void Octree::Update(const FrameInfo& frame)
         scene->SendEvent(E_SCENEDRAWABLEUPDATEFINISHED, eventData);
     }
 
-    // Reinsert drawables that have been moved or resized, or that have been newly added to the octree and do not sit inside
-    // the proper octant yet
+    // Reinsert drawables that have been moved or resized, or that have been newly added to the octree and do not sit
+    // inside the proper octant yet
     if (!drawableUpdates_.Empty())
     {
         URHO3D_PROFILE(ReinsertToOctree);
@@ -465,7 +465,8 @@ void Octree::Update(const FrameInfo& frame)
             if (!octant || octant->GetRoot() != this)
                 continue;
             // Skip if still fits the current octant
-            if (drawable->IsOccludee() && octant->GetCullingBox().IsInside(box) == INSIDE && octant->CheckDrawableFit(box))
+            if (drawable->IsOccludee() && octant->GetCullingBox().IsInside(box) == INSIDE &&
+                octant->CheckDrawableFit(box))
                 continue;
 
             InsertDrawable(drawable);
@@ -475,8 +476,8 @@ void Octree::Update(const FrameInfo& frame)
             octant = drawable->GetOctant();
             if (octant != this && octant->GetCullingBox().IsInside(box) != INSIDE)
             {
-                URHO3D_LOGERROR("Drawable is not fully inside its octant's culling bounds: drawable box " + box.ToString() +
-                         " octant box " + octant->GetCullingBox().ToString());
+                URHO3D_LOGERROR("Drawable is not fully inside its octant's culling bounds: drawable box " +
+                                box.ToString() + " octant box " + octant->GetCullingBox().ToString());
             }
 #endif
         }
@@ -602,5 +603,4 @@ void Octree::HandleRenderUpdate(StringHash eventType, VariantMap& eventData)
 
     Update(frame);
 }
-
 }

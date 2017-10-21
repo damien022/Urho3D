@@ -28,7 +28,6 @@
 
 namespace Urho3D
 {
-
 /// Template wrapper class for using Serializer / Deserializer or their subclasses through SDL's RWOps structure.
 template <class T> class RWOpsWrapper
 {
@@ -80,7 +79,7 @@ private:
             break;
 
         default:
-            assert(false);  // Should never reach here
+            assert(false); // Should never reach here
             break;
         }
 
@@ -116,5 +115,4 @@ private:
     /// SDL RWOps structure associated with the object.
     SDL_RWops ops_;
 };
-
 }

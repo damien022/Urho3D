@@ -41,28 +41,26 @@
 
 namespace Urho3D
 {
-
 extern const char* GEOMETRY_CATEGORY;
 
-StaticModel::StaticModel(Context* context) :
-    Drawable(context, DRAWABLE_GEOMETRY),
-    occlusionLodLevel_(M_MAX_UNSIGNED),
-    materialsAttr_(Material::GetTypeStatic())
+StaticModel::StaticModel(Context* context)
+    : Drawable(context, DRAWABLE_GEOMETRY)
+    , occlusionLodLevel_(M_MAX_UNSIGNED)
+    , materialsAttr_(Material::GetTypeStatic())
 {
 }
 
-StaticModel::~StaticModel()
-{
-}
+StaticModel::~StaticModel() {}
 
 void StaticModel::RegisterObject(Context* context)
 {
     context->RegisterFactory<StaticModel>(GEOMETRY_CATEGORY);
 
     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Model", GetModelAttr, SetModelAttr, ResourceRef, ResourceRef(Model::GetTypeStatic()), AM_DEFAULT);
-    URHO3D_ACCESSOR_ATTRIBUTE("Material", GetMaterialsAttr, SetMaterialsAttr, ResourceRefList, ResourceRefList(Material::GetTypeStatic()),
-        AM_DEFAULT);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Model", GetModelAttr, SetModelAttr, ResourceRef,
+                                    ResourceRef(Model::GetTypeStatic()), AM_DEFAULT);
+    URHO3D_ACCESSOR_ATTRIBUTE("Material", GetMaterialsAttr, SetMaterialsAttr, ResourceRefList,
+                              ResourceRefList(Material::GetTypeStatic()), AM_DEFAULT);
     URHO3D_ATTRIBUTE("Is Occluder", bool, occluder_, false, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Can Be Occluded", IsOccludee, SetOccludee, bool, true, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Cast Shadows", bool, castShadows_, false, AM_DEFAULT);
@@ -103,8 +101,9 @@ void StaticModel::ProcessRayQuery(const RayOctreeQuery& query, PODVector<RayQuer
                 if (geometry)
                 {
                     Vector3 geometryNormal;
-                    float geometryDistance = level == RAY_TRIANGLE ? geometry->GetHitDistance(localRay, &geometryNormal) :
-                        geometry->GetHitDistance(localRay, &geometryNormal, &geometryUV);
+                    float geometryDistance = level == RAY_TRIANGLE
+                                                 ? geometry->GetHitDistance(localRay, &geometryNormal)
+                                                 : geometry->GetHitDistance(localRay, &geometryNormal, &geometryUV);
                     if (geometryDistance < query.maxDistance_ && geometryDistance < distance)
                     {
                         distance = geometryDistance;
@@ -215,14 +214,16 @@ bool StaticModel::DrawOcclusion(OcclusionBuffer* buffer)
 
         geometry->GetRawData(vertexData, vertexSize, indexData, indexSize, elements);
         // Check for valid geometry data
-        if (!vertexData || !indexData || !elements || VertexBuffer::GetElementOffset(*elements, TYPE_VECTOR3, SEM_POSITION) != 0)
+        if (!vertexData || !indexData || !elements ||
+            VertexBuffer::GetElementOffset(*elements, TYPE_VECTOR3, SEM_POSITION) != 0)
             continue;
 
         unsigned indexStart = geometry->GetIndexStart();
         unsigned indexCount = geometry->GetIndexCount();
 
         // Draw and check for running out of triangles
-        if (!buffer->AddTriangles(node_->GetWorldTransform(), vertexData, vertexSize, indexData, indexSize, indexStart, indexCount))
+        if (!buffer->AddTriangles(node_->GetWorldTransform(), vertexData, vertexSize, indexData, indexSize, indexStart,
+                                  indexCount))
             return false;
     }
 
@@ -252,7 +253,7 @@ void StaticModel::SetModel(Model* model)
 
         // Copy the subgeometry & LOD level structure
         SetNumGeometries(model->GetNumGeometries());
-        const Vector<Vector<SharedPtr<Geometry> > >& geometries = model->GetGeometries();
+        const Vector<Vector<SharedPtr<Geometry>>>& geometries = model->GetGeometries();
         const PODVector<Vector3>& geometryCenters = model->GetGeometryCenters();
         const Matrix3x4* worldTransform = node_ ? &node_->GetWorldTransform() : nullptr;
         for (unsigned i = 0; i < geometries.Size(); ++i)
@@ -385,10 +386,7 @@ void StaticModel::SetMaterialsAttr(const ResourceRefList& value)
         SetMaterial(i, cache->GetResource<Material>(value.names_[i]));
 }
 
-ResourceRef StaticModel::GetModelAttr() const
-{
-    return GetResourceRef(model_, Model::GetTypeStatic());
-}
+ResourceRef StaticModel::GetModelAttr() const { return GetResourceRef(model_, Model::GetTypeStatic()); }
 
 const ResourceRefList& StaticModel::GetMaterialsAttr() const
 {
@@ -423,7 +421,7 @@ void StaticModel::CalculateLodLevels()
 {
     for (unsigned i = 0; i < batches_.Size(); ++i)
     {
-        const Vector<SharedPtr<Geometry> >& batchGeometries = geometries_[i];
+        const Vector<SharedPtr<Geometry>>& batchGeometries = geometries_[i];
         // If only one LOD geometry, no reason to go through the LOD calculation
         if (batchGeometries.Size() <= 1)
             continue;
@@ -451,5 +449,4 @@ void StaticModel::HandleModelReloadFinished(StringHash eventType, VariantMap& ev
     model_.Reset(); // Set null to allow to be re-set
     SetModel(currentModel);
 }
-
 }

@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 class Geometry;
 class Terrain;
 class VertexBuffer;
@@ -46,7 +45,8 @@ public:
 
     /// Process octree raycast. May be called from a worker thread.
     virtual void ProcessRayQuery(const RayOctreeQuery& query, PODVector<RayQueryResult>& results) override;
-    /// Calculate distance and prepare batches for rendering. May be called from worker thread(s), possibly re-entrantly.
+    /// Calculate distance and prepare batches for rendering. May be called from worker thread(s), possibly
+    /// re-entrantly.
     virtual void UpdateBatches(const FrameInfo& frame) override;
     /// Prepare geometry for rendering. Called from a worker thread if possible (no GPU update.)
     virtual void UpdateGeometry(const FrameInfo& frame) override;
@@ -139,5 +139,4 @@ private:
     /// Current LOD level.
     unsigned lodLevel_;
 };
-
 }

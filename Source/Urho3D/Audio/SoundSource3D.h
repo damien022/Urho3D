@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 class Audio;
 
 /// %Sound source component with three-dimensional position.
@@ -53,9 +52,11 @@ public:
     void SetNearDistance(float distance);
     /// Set far distance. Outside this range sound will be completely attenuated.
     void SetFarDistance(float distance);
-    /// Set inner angle in degrees. Inside this angle sound will not be attenuated.By default 360, meaning direction never has an effect.
+    /// Set inner angle in degrees. Inside this angle sound will not be attenuated.By default 360, meaning direction
+    /// never has an effect.
     void SetInnerAngle(float angle);
-    /// Set outer angle in degrees. Outside this angle sound will be completely attenuated. By default 360, meaning direction never has an effect.
+    /// Set outer angle in degrees. Outside this angle sound will be completely attenuated. By default 360, meaning
+    /// direction never has an effect.
     void SetOuterAngle(float angle);
     /// Set rolloff power factor, defines attenuation function shape.
     void SetRolloffFactor(float factor);
@@ -89,5 +90,4 @@ protected:
     /// Rolloff power factor.
     float rolloffFactor_;
 };
-
 }

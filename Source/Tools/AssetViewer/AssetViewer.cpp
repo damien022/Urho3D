@@ -20,17 +20,16 @@
 // THE SOFTWARE.
 //
 
-#include <Urho3D/Urho3DAll.h>
 #include <Poco/Process.h>
+#include <Urho3D/Urho3DAll.h>
 #include <time.h>
 
-
 using namespace std::placeholders;
-
 
 class AssetViewer : public Application
 {
     URHO3D_OBJECT(AssetViewer, Application);
+
 public:
     SharedPtr<Scene> scene_;
     SharedPtr<Viewport> viewport_;
@@ -44,24 +43,26 @@ public:
     Gizmo gizmo_;
     bool showHelp_ = false;
 
-    explicit AssetViewer(Context* context) : Application(context), gizmo_(context)
+    explicit AssetViewer(Context* context)
+        : Application(context)
+        , gizmo_(context)
     {
     }
 
     void Setup() override
     {
-        engineParameters_[EP_WINDOW_TITLE]   = GetTypeName();
-        engineParameters_[EP_WINDOW_WIDTH]   = 1024;
-        engineParameters_[EP_WINDOW_HEIGHT]  = 768;
-        engineParameters_[EP_FULL_SCREEN]    = false;
-        engineParameters_[EP_HEADLESS]       = false;
-        engineParameters_[EP_SOUND]          = false;
+        engineParameters_[EP_WINDOW_TITLE] = GetTypeName();
+        engineParameters_[EP_WINDOW_WIDTH] = 1024;
+        engineParameters_[EP_WINDOW_HEIGHT] = 768;
+        engineParameters_[EP_FULL_SCREEN] = false;
+        engineParameters_[EP_HEADLESS] = false;
+        engineParameters_[EP_SOUND] = false;
         engineParameters_[EP_RESOURCE_PATHS] = "CoreData";
         engineParameters_[EP_RESOURCE_PREFIX_PATHS] =
             context_->GetFileSystem()->GetProgramDir() + ";;..;../share/Urho3D/Resources";
         engineParameters_[EP_WINDOW_RESIZABLE] = true;
 
-        ui::GetIO().IniFilename = nullptr;    // Disable saving of settings.
+        ui::GetIO().IniFilename = nullptr; // Disable saving of settings.
     }
 
     void Start() override
@@ -90,7 +91,7 @@ public:
         SubscribeToEvent(E_UPDATE, std::bind(&AssetViewer::OnUpdate, this, _2));
         SubscribeToEvent(E_DROPFILE, std::bind(&AssetViewer::OnFileDrop, this, _2));
 
-        for (const auto& arg: GetArguments())
+        for (const auto& arg : GetArguments())
             LoadFile(arg);
     }
 
@@ -112,12 +113,12 @@ public:
 
                     if (input->GetMouseMove() != IntVector2::ZERO)
                     {
-                        camera_->GetNode()->RotateAround(Vector3::ZERO,
+                        camera_->GetNode()->RotateAround(
+                            Vector3::ZERO,
                             Quaternion(input->GetMouseMoveX() * 0.1f * lookSensitivity_, camera_->GetNode()->GetUp()) *
                                 Quaternion(input->GetMouseMoveY() * 0.1f * lookSensitivity_,
-                                    camera_->GetNode()->GetRight()),
-                            TS_WORLD
-                        );
+                                           camera_->GetNode()->GetRight()),
+                            TS_WORLD);
                     }
                 }
                 else if (input->GetMouseButtonDown(MOUSEB_MIDDLE))
@@ -139,9 +140,10 @@ public:
         if (GetInput()->GetKeyPress(KEY_F1))
             showHelp_ = true;
 
-
         ui::SetNextWindowPos({0, 0}, ImGuiCond_Always);
-        if (ui::Begin("Settings", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings))
+        if (ui::Begin("Settings", nullptr,
+                      ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar |
+                          ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings))
         {
             gizmo_.RenderUI();
 
@@ -167,10 +169,7 @@ public:
             gizmo_.Manipulate(camera_, parentNode_);
     }
 
-    void OnFileDrop(VariantMap& args)
-    {
-        LoadFile(args[DropFile::P_FILENAME].GetString());
-    }
+    void OnFileDrop(VariantMap& args) { LoadFile(args[DropFile::P_FILENAME].GetString()); }
 
     void LoadFile(const String& file_path)
     {
@@ -182,7 +181,7 @@ public:
             LoadFbx(file_path);
     }
 
-    void LoadModel(const String& file_path, const Vector<String>& materials={})
+    void LoadModel(const String& file_path, const Vector<String>& materials = {})
     {
         if (node_.NotNull())
             node_->Remove();
@@ -241,7 +240,8 @@ public:
         fs->Delete(model_file);
 
         Poco::Process::launch((fs->GetProgramDir() + "AssetImporter").CString(),
-            {"model", file_path.CString(), model_file.CString(), "-na", "-l"}, ".").wait();
+                              {"model", file_path.CString(), model_file.CString(), "-na", "-l"}, ".")
+            .wait();
 
         if (fs->FileExists(model_file))
         {
@@ -260,8 +260,10 @@ public:
         for (const auto& filename : animations)
             fs->Delete(animation_path + "/" + filename);
 
-        Poco::Process::launch("./AssetImporter", {"anim", file_path.CString(),
-            (animation_path + "/out_" + ToString("%ld", time(nullptr))).CString()}, ".").wait();
+        Poco::Process::launch(
+            "./AssetImporter",
+            {"anim", file_path.CString(), (animation_path + "/out_" + ToString("%ld", time(nullptr))).CString()}, ".")
+            .wait();
 
         fs->ScanDir(animations, animation_path, "*.ani", SCAN_FILES, false);
 

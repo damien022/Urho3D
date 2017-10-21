@@ -27,7 +27,6 @@
 
 namespace Urho3D
 {
-
 class FontFace;
 
 static const int FONT_TEXTURE_MIN_SIZE = 128;
@@ -82,7 +81,8 @@ public:
     /// Return the total effective offset for a point size.
     IntVector2 GetTotalGlyphOffset(float pointSize) const;
 
-    /// Release font faces and recreate them next time when requested. Called when font textures lost or global font properties change.
+    /// Release font faces and recreate them next time when requested. Called when font textures lost or global font
+    /// properties change.
     void ReleaseFaces();
 
 private:
@@ -94,7 +94,7 @@ private:
     FontFace* GetFaceBitmap(float pointSize);
 
     /// Created faces.
-    HashMap<int, SharedPtr<FontFace> > faces_;
+    HashMap<int, SharedPtr<FontFace>> faces_;
     /// Font data.
     SharedArrayPtr<unsigned char> fontData_;
     /// Size of font data.
@@ -108,5 +108,4 @@ private:
     /// Signed distance field font flag.
     bool sdfFont_;
 };
-
 }

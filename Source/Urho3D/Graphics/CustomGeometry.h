@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// Custom geometry vertex.
 struct CustomGeometryVertex
 {
@@ -70,7 +69,8 @@ public:
     void Clear();
     /// Set number of geometries.
     void SetNumGeometries(unsigned num);
-    /// Set vertex buffer dynamic mode. A dynamic buffer should be faster to update frequently. Effective at the next Commit() call.
+    /// Set vertex buffer dynamic mode. A dynamic buffer should be faster to update frequently. Effective at the next
+    /// Commit() call.
     void SetDynamic(bool enable);
     /// Begin defining a geometry. Clears existing vertices in that index.
     void BeginGeometry(unsigned index, PrimitiveType type);
@@ -84,10 +84,10 @@ public:
     void DefineTexCoord(const Vector2& texCoord);
     /// Define a vertex tangent.
     void DefineTangent(const Vector4& tangent);
-    /// Set the primitive type, number of vertices and elements in a geometry, after which the vertices can be edited with GetVertex(). An alternative to BeginGeometry() / DefineVertex().
-    void DefineGeometry
-        (unsigned index, PrimitiveType type, unsigned numVertices, bool hasNormals, bool hasColors, bool hasTexCoords,
-            bool hasTangents);
+    /// Set the primitive type, number of vertices and elements in a geometry, after which the vertices can be edited
+    /// with GetVertex(). An alternative to BeginGeometry() / DefineVertex().
+    void DefineGeometry(unsigned index, PrimitiveType type, unsigned numVertices, bool hasNormals, bool hasColors,
+                        bool hasTexCoords, bool hasTangents);
     /// Update vertex buffer and calculate the bounding box. Call after finishing defining geometry.
     void Commit();
     /// Set material on all geometries.
@@ -108,9 +108,10 @@ public:
     Material* GetMaterial(unsigned index = 0) const;
 
     /// Return all vertices. These can be edited; calling Commit() updates the vertex buffer.
-    Vector<PODVector<CustomGeometryVertex> >& GetVertices() { return vertices_; }
+    Vector<PODVector<CustomGeometryVertex>>& GetVertices() { return vertices_; }
 
-    /// Return a vertex in a geometry for editing, or null if out of bounds. After the edits are finished, calling Commit() updates  the vertex buffer.
+    /// Return a vertex in a geometry for editing, or null if out of bounds. After the edits are finished, calling
+    /// Commit() updates  the vertex buffer.
     CustomGeometryVertex* GetVertex(unsigned geometryIndex, unsigned vertexNum);
 
     /// Set geometry data attribute.
@@ -130,9 +131,9 @@ private:
     /// Primitive type per geometry.
     PODVector<PrimitiveType> primitiveTypes_;
     /// Source vertices per geometry.
-    Vector<PODVector<CustomGeometryVertex> > vertices_;
+    Vector<PODVector<CustomGeometryVertex>> vertices_;
     /// All geometries.
-    Vector<SharedPtr<Geometry> > geometries_;
+    Vector<SharedPtr<Geometry>> geometries_;
     /// Vertex buffer.
     SharedPtr<VertexBuffer> vertexBuffer_;
     /// Element mask used so far.
@@ -144,5 +145,4 @@ private:
     /// Vertex buffer dynamic flag.
     bool dynamic_;
 };
-
 }

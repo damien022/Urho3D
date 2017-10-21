@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 class FreeTypeLibrary;
 class Texture2D;
 
@@ -72,5 +71,4 @@ private:
     /// Glyph area allocator.
     AreaAllocator allocator_;
 };
-
 }

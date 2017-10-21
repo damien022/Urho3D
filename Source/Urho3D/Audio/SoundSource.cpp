@@ -37,56 +37,55 @@
 
 namespace Urho3D
 {
+#define INC_POS_LOOPED()                                                                                               \
+    pos += intAdd;                                                                                                     \
+    fractPos += fractAdd;                                                                                              \
+    if (fractPos > 65535)                                                                                              \
+    {                                                                                                                  \
+        fractPos &= 65535;                                                                                             \
+        ++pos;                                                                                                         \
+    }                                                                                                                  \
+    while (pos >= end)                                                                                                 \
+        pos -= (end - repeat);
 
-#define INC_POS_LOOPED() \
-    pos += intAdd; \
-    fractPos += fractAdd; \
-    if (fractPos > 65535) \
-    { \
-        fractPos &= 65535; \
-        ++pos; \
-    } \
-    while (pos >= end) \
-        pos -= (end - repeat); \
+#define INC_POS_ONESHOT()                                                                                              \
+    pos += intAdd;                                                                                                     \
+    fractPos += fractAdd;                                                                                              \
+    if (fractPos > 65535)                                                                                              \
+    {                                                                                                                  \
+        fractPos &= 65535;                                                                                             \
+        ++pos;                                                                                                         \
+    }                                                                                                                  \
+    if (pos >= end)                                                                                                    \
+    {                                                                                                                  \
+        pos = 0;                                                                                                       \
+        break;                                                                                                         \
+    }
 
-#define INC_POS_ONESHOT() \
-    pos += intAdd; \
-    fractPos += fractAdd; \
-    if (fractPos > 65535) \
-    { \
-        fractPos &= 65535; \
-        ++pos; \
-    } \
-    if (pos >= end) \
-    { \
-        pos = 0; \
-        break; \
-    } \
+#define INC_POS_STEREO_LOOPED()                                                                                        \
+    pos += (intAdd << 1);                                                                                              \
+    fractPos += fractAdd;                                                                                              \
+    if (fractPos > 65535)                                                                                              \
+    {                                                                                                                  \
+        fractPos &= 65535;                                                                                             \
+        pos += 2;                                                                                                      \
+    }                                                                                                                  \
+    while (pos >= end)                                                                                                 \
+        pos -= (end - repeat);
 
-#define INC_POS_STEREO_LOOPED() \
-    pos += (intAdd << 1); \
-    fractPos += fractAdd; \
-    if (fractPos > 65535) \
-    { \
-        fractPos &= 65535; \
-        pos += 2; \
-    } \
-    while (pos >= end) \
-        pos -= (end - repeat); \
-
-#define INC_POS_STEREO_ONESHOT() \
-    pos += (intAdd << 1); \
-    fractPos += fractAdd; \
-    if (fractPos > 65535) \
-    { \
-        fractPos &= 65535; \
-        pos += 2; \
-    } \
-    if (pos >= end) \
-    { \
-        pos = 0; \
-        break; \
-    } \
+#define INC_POS_STEREO_ONESHOT()                                                                                       \
+    pos += (intAdd << 1);                                                                                              \
+    fractPos += fractAdd;                                                                                              \
+    if (fractPos > 65535)                                                                                              \
+    {                                                                                                                  \
+        fractPos &= 65535;                                                                                             \
+        pos += 2;                                                                                                      \
+    }                                                                                                                  \
+    if (pos >= end)                                                                                                    \
+    {                                                                                                                  \
+        pos = 0;                                                                                                       \
+        break;                                                                                                         \
+    }
 
 #define GET_IP_SAMPLE() (((((int)pos[1] - (int)pos[0]) * fractPos) / 65536) + (int)pos[0])
 
@@ -100,19 +99,19 @@ extern const char* AUDIO_CATEGORY;
 
 extern const char* autoRemoveModeNames[];
 
-SoundSource::SoundSource(Context* context) :
-    Component(context),
-    soundType_(SOUND_EFFECT),
-    frequency_(0.0f),
-    gain_(1.0f),
-    attenuation_(1.0f),
-    panning_(0.0f),
-    sendFinishedEvent_(false),
-    autoRemove_(REMOVE_DISABLED),
-    position_(nullptr),
-    fractPosition_(0),
-    timePosition_(0.0f),
-    unusedStreamSize_(0)
+SoundSource::SoundSource(Context* context)
+    : Component(context)
+    , soundType_(SOUND_EFFECT)
+    , frequency_(0.0f)
+    , gain_(1.0f)
+    , attenuation_(1.0f)
+    , panning_(0.0f)
+    , sendFinishedEvent_(false)
+    , autoRemove_(REMOVE_DISABLED)
+    , position_(nullptr)
+    , fractPosition_(0)
+    , timePosition_(0.0f)
+    , unusedStreamSize_(0)
 {
     audio_ = GetSubsystem<Audio>();
 
@@ -133,7 +132,8 @@ void SoundSource::RegisterObject(Context* context)
     context->RegisterFactory<SoundSource>(AUDIO_CATEGORY);
 
     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Sound", GetSoundAttr, SetSoundAttr, ResourceRef, ResourceRef(Sound::GetTypeStatic()), AM_DEFAULT);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Sound", GetSoundAttr, SetSoundAttr, ResourceRef,
+                                    ResourceRef(Sound::GetTypeStatic()), AM_DEFAULT);
     URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Type", GetSoundType, SetSoundType, String, SOUND_EFFECT, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Frequency", float, frequency_, 0.0f, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Gain", float, gain_, 1.0f, AM_DEFAULT);
@@ -311,10 +311,7 @@ void SoundSource::SetAutoRemoveMode(AutoRemoveMode mode)
     MarkNetworkUpdate();
 }
 
-bool SoundSource::IsPlaying() const
-{
-    return (sound_ || soundStream_) && position_ != nullptr;
-}
+bool SoundSource::IsPlaying() const { return (sound_ || soundStream_) && position_ != nullptr; }
 
 void SoundSource::SetPlayPosition(signed char* pos)
 {
@@ -454,7 +451,8 @@ void SoundSource::Mix(int* dest, unsigned samples, int mixRate, bool stereo, boo
         }
     }
     else if (sound_)
-        timePosition_ = ((float)(int)(size_t)(position_ - sound_->GetStart())) / (sound_->GetSampleSize() * sound_->GetFrequency());
+        timePosition_ =
+            ((float)(int)(size_t)(position_ - sound_->GetStart())) / (sound_->GetSampleSize() * sound_->GetFrequency());
 }
 
 void SoundSource::UpdateMasterGain()
@@ -495,10 +493,7 @@ void SoundSource::SetPositionAttr(int value)
         SetPlayPosition(sound_->GetStart() + value);
 }
 
-ResourceRef SoundSource::GetSoundAttr() const
-{
-    return GetResourceRef(sound_, Sound::GetTypeStatic());
-}
+ResourceRef SoundSource::GetSoundAttr() const { return GetResourceRef(sound_, Sound::GetTypeStatic()); }
 
 int SoundSource::GetPositionAttr() const
 {
@@ -599,7 +594,8 @@ void SoundSource::SetPlayPositionLockless(signed char* pos)
         pos = end;
 
     position_ = pos;
-    timePosition_ = ((float)(int)(size_t)(pos - sound_->GetStart())) / (sound_->GetSampleSize() * sound_->GetFrequency());
+    timePosition_ =
+        ((float)(int)(size_t)(pos - sound_->GetStart())) / (sound_->GetSampleSize() * sound_->GetFrequency());
 }
 
 void SoundSource::MixMonoToMono(Sound* sound, int* dest, unsigned samples, int mixRate)
@@ -1283,5 +1279,4 @@ void SoundSource::MixNull(float timeStep)
         }
     }
 }
-
 }

@@ -22,22 +22,26 @@
 
 #pragma once
 
-#include "../IO/Serializer.h"
 #include "../IO/Deserializer.h"
+#include "../IO/Serializer.h"
 
 namespace Urho3D
 {
-
 /// A common root class for objects that implement both Serializer and Deserializer.
 class URHO3D_API AbstractFile : public Deserializer, public Serializer
 {
 public:
     /// Construct.
-    AbstractFile() : Deserializer() { }
+    AbstractFile()
+        : Deserializer()
+    {
+    }
     /// Construct.
-    AbstractFile(unsigned int size) : Deserializer(size) { }
+    AbstractFile(unsigned int size)
+        : Deserializer(size)
+    {
+    }
     /// Destruct.
-    virtual ~AbstractFile() override { }
+    virtual ~AbstractFile() override {}
 };
-
 };

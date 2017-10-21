@@ -27,8 +27,8 @@
 #include "../IO/Deserializer.h"
 #include "../IO/Log.h"
 #include "../IO/Serializer.h"
-#include "../Resource/XMLFile.h"
 #include "../Resource/JSONFile.h"
+#include "../Resource/XMLFile.h"
 #include "../Scene/Animatable.h"
 #include "../Scene/ObjectAnimation.h"
 #include "../Scene/ValueAnimation.h"
@@ -37,36 +37,24 @@
 
 namespace Urho3D
 {
+const char* interpMethodNames[] = {"None", "Linear", "Spline", nullptr};
 
-const char* interpMethodNames[] =
-{
-    "None",
-    "Linear",
-    "Spline",
-    nullptr
-};
-
-ValueAnimation::ValueAnimation(Context* context) :
-    Resource(context),
-    owner_(nullptr),
-    interpolationMethod_(IM_LINEAR),
-    splineTension_(0.5f),
-    valueType_(VAR_NONE),
-    interpolatable_(false),
-    beginTime_(M_INFINITY),
-    endTime_(-M_INFINITY),
-    splineTangentsDirty_(false)
+ValueAnimation::ValueAnimation(Context* context)
+    : Resource(context)
+    , owner_(nullptr)
+    , interpolationMethod_(IM_LINEAR)
+    , splineTension_(0.5f)
+    , valueType_(VAR_NONE)
+    , interpolatable_(false)
+    , beginTime_(M_INFINITY)
+    , endTime_(-M_INFINITY)
+    , splineTangentsDirty_(false)
 {
 }
 
-ValueAnimation::~ValueAnimation()
-{
-}
+ValueAnimation::~ValueAnimation() {}
 
-void ValueAnimation::RegisterObject(Context* context)
-{
-    context->RegisterFactory<ValueAnimation>();
-}
+void ValueAnimation::RegisterObject(Context* context) { context->RegisterFactory<ValueAnimation>(); }
 
 bool ValueAnimation::BeginLoad(Deserializer& source)
 {
@@ -190,7 +178,7 @@ bool ValueAnimation::SaveJSON(JSONValue& dest) const
 {
     dest.Set("interpolationmethod", interpMethodNames[interpolationMethod_]);
     if (interpolationMethod_ == IM_SPLINE)
-        dest.Set("splinetension", (float) splineTension_);
+        dest.Set("splinetension", (float)splineTension_);
 
     JSONArray keyFramesArray;
     keyFramesArray.Reserve(keyFrames_.Size());
@@ -231,9 +219,8 @@ void ValueAnimation::SetValueType(VariantType valueType)
         return;
 
     valueType_ = valueType;
-    interpolatable_ =
-        (valueType_ == VAR_FLOAT) || (valueType_ == VAR_VECTOR2) || (valueType_ == VAR_VECTOR3) || (valueType_ == VAR_VECTOR4) ||
-        (valueType_ == VAR_QUATERNION) || (valueType_ == VAR_COLOR);
+    interpolatable_ = (valueType_ == VAR_FLOAT) || (valueType_ == VAR_VECTOR2) || (valueType_ == VAR_VECTOR3) ||
+                      (valueType_ == VAR_VECTOR4) || (valueType_ == VAR_QUATERNION) || (valueType_ == VAR_COLOR);
 
     if ((valueType_ == VAR_INTRECT) || (valueType_ == VAR_INTVECTOR2) || (valueType_ == VAR_INTVECTOR3))
     {
@@ -249,10 +236,7 @@ void ValueAnimation::SetValueType(VariantType valueType)
     endTime_ = -M_INFINITY;
 }
 
-void ValueAnimation::SetOwner(void* owner)
-{
-    owner_ = owner;
-}
+void ValueAnimation::SetOwner(void* owner) { owner_ = owner; }
 
 void ValueAnimation::SetInterpolationMethod(InterpMethod method)
 {
@@ -260,7 +244,8 @@ void ValueAnimation::SetInterpolationMethod(InterpMethod method)
         return;
 
     // Force linear interpolation for IntRect, IntVector2 and IntVector3
-    if (method == IM_SPLINE && (valueType_ == VAR_INTRECT || valueType_ == VAR_INTVECTOR2 || valueType_ == VAR_INTVECTOR3))
+    if (method == IM_SPLINE &&
+        (valueType_ == VAR_INTRECT || valueType_ == VAR_INTVECTOR2 || valueType_ == VAR_INTVECTOR3))
         method = IM_LINEAR;
 
     interpolationMethod_ = method;
@@ -335,8 +320,7 @@ void ValueAnimation::SetEventFrame(float time, const StringHash& eventType, cons
 
 bool ValueAnimation::IsValid() const
 {
-    return (interpolationMethod_ == IM_NONE) ||
-           (interpolationMethod_ == IM_LINEAR && keyFrames_.Size() > 1) ||
+    return (interpolationMethod_ == IM_NONE) || (interpolationMethod_ == IM_LINEAR && keyFrames_.Size() > 1) ||
            (interpolationMethod_ == IM_SPLINE && keyFrames_.Size() > 2);
 }
 
@@ -360,7 +344,8 @@ Variant ValueAnimation::GetAnimationValue(float scaledTime) const
     }
 }
 
-void ValueAnimation::GetEventFrames(float beginTime, float endTime, PODVector<const VAnimEventFrame*>& eventFrames) const
+void ValueAnimation::GetEventFrames(float beginTime, float endTime,
+                                    PODVector<const VAnimEventFrame*>& eventFrames) const
 {
     for (unsigned i = 0; i < eventFrames_.Size(); ++i)
     {
@@ -403,29 +388,29 @@ Variant ValueAnimation::LinearInterpolation(unsigned index1, unsigned index2, fl
         return value1.GetColor().Lerp(value2.GetColor(), t);
 
     case VAR_INTRECT:
-        {
-            float s = 1.0f - t;
-            const IntRect& r1 = value1.GetIntRect();
-            const IntRect& r2 = value2.GetIntRect();
-            return IntRect((int)(r1.left_ * s + r2.left_ * t), (int)(r1.top_ * s + r2.top_ * t), (int)(r1.right_ * s + r2.right_ * t),
-                (int)(r1.bottom_ * s + r2.bottom_ * t));
-        }
+    {
+        float s = 1.0f - t;
+        const IntRect& r1 = value1.GetIntRect();
+        const IntRect& r2 = value2.GetIntRect();
+        return IntRect((int)(r1.left_ * s + r2.left_ * t), (int)(r1.top_ * s + r2.top_ * t),
+                       (int)(r1.right_ * s + r2.right_ * t), (int)(r1.bottom_ * s + r2.bottom_ * t));
+    }
 
     case VAR_INTVECTOR2:
-        {
-            float s = 1.0f - t;
-            const IntVector2& v1 = value1.GetIntVector2();
-            const IntVector2& v2 = value2.GetIntVector2();
-            return IntVector2((int)(v1.x_ * s + v2.x_ * t), (int)(v1.y_ * s + v2.y_ * t));
-        }
+    {
+        float s = 1.0f - t;
+        const IntVector2& v1 = value1.GetIntVector2();
+        const IntVector2& v2 = value2.GetIntVector2();
+        return IntVector2((int)(v1.x_ * s + v2.x_ * t), (int)(v1.y_ * s + v2.y_ * t));
+    }
 
     case VAR_INTVECTOR3:
-        {
-            float s = 1.0f - t;
-            const IntVector3& v1 = value1.GetIntVector3();
-            const IntVector3& v2 = value2.GetIntVector3();
-            return IntVector3((int)(v1.x_ * s + v2.x_ * t), (int)(v1.y_ * s + v2.y_ * t), (int)(v1.z_ * s + v2.z_ * t));
-        }
+    {
+        float s = 1.0f - t;
+        const IntVector3& v1 = value1.GetIntVector3();
+        const IntVector3& v2 = value2.GetIntVector3();
+        return IntVector3((int)(v1.x_ * s + v2.x_ * t), (int)(v1.y_ * s + v2.y_ * t), (int)(v1.z_ * s + v2.z_ * t));
+    }
 
     case VAR_DOUBLE:
         return value1.GetDouble() * (1.0f - t) + value2.GetDouble() * t;
@@ -542,5 +527,4 @@ Variant ValueAnimation::SubstractAndMultiply(const Variant& value1, const Varian
         return Variant::EMPTY;
     }
 }
-
 }

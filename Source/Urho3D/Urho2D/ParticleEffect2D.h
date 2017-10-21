@@ -27,7 +27,6 @@
 
 namespace Urho3D
 {
-
 class XMLElement;
 class Sprite2D;
 
@@ -327,5 +326,4 @@ private:
     /// Sprite name acquired during BeginLoad().
     String loadSpriteName_;
 };
-
 }

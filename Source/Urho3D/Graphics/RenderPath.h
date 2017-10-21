@@ -30,7 +30,6 @@
 
 namespace Urho3D
 {
-
 class XMLElement;
 class XMLFile;
 
@@ -66,16 +65,16 @@ enum RenderTargetSizeMode
 struct URHO3D_API RenderTargetInfo
 {
     /// Construct.
-    RenderTargetInfo() :
-        size_(Vector2::ZERO),
-        sizeMode_(SIZE_ABSOLUTE),
-        multiSample_(1),
-        autoResolve_(true),
-        enabled_(true),
-        cubemap_(false),
-        filtered_(false),
-        sRGB_(false),
-        persistent_(false)
+    RenderTargetInfo()
+        : size_(Vector2::ZERO)
+        , sizeMode_(SIZE_ABSOLUTE)
+        , multiSample_(1)
+        , autoResolve_(true)
+        , enabled_(true)
+        , cubemap_(false)
+        , filtered_(false)
+        , sRGB_(false)
+        , persistent_(false)
     {
     }
 
@@ -112,14 +111,14 @@ struct URHO3D_API RenderTargetInfo
 struct URHO3D_API RenderPathCommand
 {
     /// Construct.
-    RenderPathCommand() :
-        clearFlags_(0),
-        blendMode_(BLEND_REPLACE),
-        enabled_(true),
-        useFogColor_(false),
-        markToStencil_(false),
-        useLitBase_(true),
-        vertexLights_(false)
+    RenderPathCommand()
+        : clearFlags_(0)
+        , blendMode_(BLEND_REPLACE)
+        , enabled_(true)
+        , useFogColor_(false)
+        , markToStencil_(false)
+        , useLitBase_(true)
+        , vertexLights_(false)
     {
     }
 
@@ -183,7 +182,7 @@ struct URHO3D_API RenderPathCommand
     /// %Shader parameters.
     HashMap<StringHash, Variant> shaderParameters_;
     /// Output rendertarget names and faces.
-    Vector<Pair<String, CubeMapFace> > outputs_;
+    Vector<Pair<String, CubeMapFace>> outputs_;
     /// Depth-stencil output name.
     String depthStencilName_;
     /// Clear flags. Affects clear command only.
@@ -210,7 +209,8 @@ struct URHO3D_API RenderPathCommand
     String eventName_;
 };
 
-/// Rendering path definition. A sequence of commands (e.g. clear screen, draw objects with specific pass) that yields the scene rendering result.
+/// Rendering path definition. A sequence of commands (e.g. clear screen, draw objects with specific pass) that yields
+/// the scene rendering result.
 class URHO3D_API RenderPath : public RefCounted
 {
 public:
@@ -269,5 +269,4 @@ public:
     /// Rendering commands.
     Vector<RenderPathCommand> commands_;
 };
-
 }

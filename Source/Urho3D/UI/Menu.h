@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// %Menu %UI element that optionally shows a popup.
 class URHO3D_API Menu : public Button
 {
@@ -50,12 +49,13 @@ public:
     /// Perform UI element update.
     virtual void Update(float timeStep) override;
     /// React to mouse hover.
-    virtual void OnHover(const IntVector2& position, const IntVector2& screenPosition, int buttons, int qualifiers, Cursor* cursor) override;
+    virtual void OnHover(const IntVector2& position, const IntVector2& screenPosition, int buttons, int qualifiers,
+                         Cursor* cursor) override;
     /// React to the popup being shown.
     virtual void OnShowPopup();
 
     /// React to the popup being hidden.
-    virtual void OnHidePopup() { }
+    virtual void OnHidePopup() {}
 
     /// Set popup element to show on selection.
     void SetPopup(UIElement* element);
@@ -107,5 +107,4 @@ private:
     /// Auto popup flag.
     bool autoPopup_;
 };
-
 }

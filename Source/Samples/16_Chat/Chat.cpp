@@ -25,11 +25,11 @@
 #include <Urho3D/Engine/Engine.h>
 #include <Urho3D/Graphics/Graphics.h>
 #include <Urho3D/Graphics/Zone.h>
-#include <Urho3D/Input/Input.h>
 #include <Urho3D/IO/IOEvents.h>
 #include <Urho3D/IO/Log.h>
 #include <Urho3D/IO/MemoryBuffer.h>
 #include <Urho3D/IO/VectorBuffer.h>
+#include <Urho3D/Input/Input.h>
 #include <Urho3D/Network/Network.h>
 #include <Urho3D/Network/NetworkEvents.h>
 #include <Urho3D/Resource/ResourceCache.h>
@@ -57,8 +57,8 @@ const unsigned short CHAT_SERVER_PORT = 2345;
 
 URHO3D_DEFINE_APPLICATION_MAIN(Chat)
 
-Chat::Chat(Context* context) :
-    Sample(context)
+Chat::Chat(Context* context)
+    : Sample(context)
 {
 }
 
@@ -280,7 +280,4 @@ void Chat::HandleNetworkMessage(StringHash eventType, VariantMap& eventData)
     }
 }
 
-void Chat::HandleConnectionStatus(StringHash eventType, VariantMap& eventData)
-{
-    UpdateButtons();
-}
+void Chat::HandleConnectionStatus(StringHash eventType, VariantMap& eventData) { UpdateButtons(); }

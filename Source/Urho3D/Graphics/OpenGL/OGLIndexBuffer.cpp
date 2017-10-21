@@ -32,11 +32,7 @@
 
 namespace Urho3D
 {
-
-void IndexBuffer::OnDeviceLost()
-{
-    GPUObject::OnDeviceLost();
-}
+void IndexBuffer::OnDeviceLost() { GPUObject::OnDeviceLost(); }
 
 void IndexBuffer::OnDeviceReset()
 {
@@ -94,7 +90,8 @@ bool IndexBuffer::SetData(const void* data)
         if (!graphics_->IsDeviceLost())
         {
             graphics_->SetIndexBuffer(this);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount_ * indexSize_, data, dynamic_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount_ * indexSize_, data,
+                         dynamic_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
         }
         else
         {
@@ -144,7 +141,8 @@ bool IndexBuffer::SetDataRange(const void* data, unsigned start, unsigned count,
             if (!discard || start != 0)
                 glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, start * indexSize_, count * indexSize_, data);
             else
-                glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * indexSize_, data, dynamic_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+                glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * indexSize_, data,
+                             dynamic_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
         }
         else
         {
@@ -245,7 +243,8 @@ bool IndexBuffer::Create()
         }
 
         graphics_->SetIndexBuffer(this);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount_ * indexSize_, nullptr, dynamic_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount_ * indexSize_, nullptr,
+                     dynamic_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
     }
 
     return true;
@@ -269,5 +268,4 @@ void IndexBuffer::UnmapBuffer()
 {
     // Never called on OpenGL
 }
-
 }

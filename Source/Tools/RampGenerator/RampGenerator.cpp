@@ -22,10 +22,10 @@
 
 #include <Urho3D/Container/ArrayPtr.h>
 #include <Urho3D/Core/Context.h>
-#include <Urho3D/IO/File.h>
-#include <Urho3D/IO/FileSystem.h>
 #include <Urho3D/Core/ProcessUtils.h>
 #include <Urho3D/Core/StringUtils.h>
+#include <Urho3D/IO/File.h>
+#include <Urho3D/IO/FileSystem.h>
 
 #ifdef WIN32
 #include <windows.h>
@@ -39,7 +39,7 @@ using namespace Urho3D;
 
 // Kernel used for blurring IES lights
 static const float sigma3Kernel9x9[9 * 9] = {
-    0.00401f, 0.005895f, 0.007763f, 0.009157f, 0.009675f, 0.009157f, 0.007763f, 0.005895f, 0.00401f,
+    0.00401f,  0.005895f, 0.007763f, 0.009157f, 0.009675f, 0.009157f, 0.007763f, 0.005895f, 0.00401f,
     0.005895f, 0.008667f, 0.011412f, 0.013461f, 0.014223f, 0.013461f, 0.011412f, 0.008667f, 0.005895f,
     0.007763f, 0.011412f, 0.015028f, 0.017726f, 0.018729f, 0.017726f, 0.015028f, 0.011412f, 0.007763f,
     0.009157f, 0.013461f, 0.017726f, 0.020909f, 0.022092f, 0.020909f, 0.017726f, 0.013461f, 0.009157f,
@@ -47,25 +47,25 @@ static const float sigma3Kernel9x9[9 * 9] = {
     0.009157f, 0.013461f, 0.017726f, 0.020909f, 0.022092f, 0.020909f, 0.017726f, 0.013461f, 0.009157f,
     0.007763f, 0.011412f, 0.015028f, 0.017726f, 0.018729f, 0.017726f, 0.015028f, 0.011412f, 0.007763f,
     0.005895f, 0.008667f, 0.011412f, 0.013461f, 0.014223f, 0.013461f, 0.011412f, 0.008667f, 0.005895f,
-    0.00401f, 0.005895f, 0.007763f, 0.009157f, 0.009675f, 0.009157f, 0.007763f, 0.005895f, 0.00401f
-};
+    0.00401f,  0.005895f, 0.007763f, 0.009157f, 0.009675f, 0.009157f, 0.007763f, 0.005895f, 0.00401f};
 
 int main(int argc, char** argv);
 void Run(const Vector<String>& arguments);
 
 bool ReadIES(File* data, PODVector<float>& vertical, PODVector<float>& horizontal, PODVector<float>& luminance);
-void WriteIES(unsigned char* data, unsigned width, unsigned height, PODVector<float>& horizontal, PODVector<float>& vertical, PODVector<float>& luminance);
+void WriteIES(unsigned char* data, unsigned width, unsigned height, PODVector<float>& horizontal,
+              PODVector<float>& vertical, PODVector<float>& luminance);
 void Blur(unsigned char* data, unsigned width, unsigned height, const float* kernel, unsigned kernelWidth);
 
 int main(int argc, char** argv)
 {
     Vector<String> arguments;
 
-    #ifdef WIN32
+#ifdef WIN32
     arguments = ParseArguments(GetCommandLineW());
-    #else
+#else
     arguments = ParseArguments(argc, argv);
-    #endif
+#endif
 
     Run(arguments);
     return 0;
@@ -273,9 +273,9 @@ bool ReadIES(File* data, PODVector<float>& vertical, PODVector<float>& horizonta
 
     const int sampleCount = PopFirstInt(words);
     const float lumens = PopFirstFloat(words);
-    const float multiplier = PopFirstFloat(words); // Scales the candelas, used below
-    const int verticalCount = PopFirstInt(words); //longitude
-    const int horizontalCount = PopFirstInt(words); //latitude
+    const float multiplier = PopFirstFloat(words);  // Scales the candelas, used below
+    const int verticalCount = PopFirstInt(words);   // longitude
+    const int horizontalCount = PopFirstInt(words); // latitude
     const int photometricType = PopFirstInt(words);
     const int measureType = PopFirstInt(words); // feet or meters
     const float width = PopFirstFloat(words);
@@ -306,7 +306,8 @@ bool ReadIES(File* data, PODVector<float>& vertical, PODVector<float>& horizonta
     return true;
 }
 
-void WriteIES(unsigned char* data, unsigned width, unsigned height, PODVector<float>& horizontal, PODVector<float>& vertical, PODVector<float>& luminance)
+void WriteIES(unsigned char* data, unsigned width, unsigned height, PODVector<float>& horizontal,
+              PODVector<float>& vertical, PODVector<float>& luminance)
 {
     // Find maximum luminance value
     float maximum = -1;

@@ -23,20 +23,21 @@
 
 #pragma once
 
-#include "Urho3D/Core/Object.h"
 #include "SystemUI.h"
+#include "Urho3D/Core/Object.h"
 
 namespace Urho3D
 {
-
 /// Message box dialog.
 class URHO3D_API SystemMessageBox : public Object
 {
     URHO3D_OBJECT(SystemMessageBox, Object);
 
 public:
-    /// Construct. If layout file is not given, use the default message box layout. If style file is not given, use the default style file from root UI element.
-    SystemMessageBox(Context* context, const String& messageString = String::EMPTY, const String& titleString = String::EMPTY);
+    /// Construct. If layout file is not given, use the default message box layout. If style file is not given, use the
+    /// default style file from root UI element.
+    SystemMessageBox(Context* context, const String& messageString = String::EMPTY,
+                     const String& titleString = String::EMPTY);
     /// Destruct.
     virtual ~SystemMessageBox();
     /// Register object factory.
@@ -69,5 +70,4 @@ private:
     /// Initial message box window size.
     ImVec2 windowSize_;
 };
-
 }

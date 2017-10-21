@@ -38,15 +38,12 @@
 
 namespace Urho3D
 {
-
-FontFaceBitmap::FontFaceBitmap(Font* font) :
-    FontFace(font)
+FontFaceBitmap::FontFaceBitmap(Font* font)
+    : FontFace(font)
 {
 }
 
-FontFaceBitmap::~FontFaceBitmap()
-{
-}
+FontFaceBitmap::~FontFaceBitmap() {}
 
 bool FontFaceBitmap::Load(const unsigned char* fontData, unsigned fontDataSize, float pointSize)
 {
@@ -189,7 +186,8 @@ bool FontFaceBitmap::Load(FontFace* fontFace, bool usedGlyphs)
     int maxTextureSize = font_->GetSubsystem<UI>()->GetMaxFontTextureSize();
     AreaAllocator allocator(FONT_TEXTURE_MIN_SIZE, FONT_TEXTURE_MIN_SIZE, maxTextureSize, maxTextureSize);
 
-    for (HashMap<unsigned, FontGlyph>::ConstIterator i = fontFace->glyphMapping_.Begin(); i != fontFace->glyphMapping_.End(); ++i)
+    for (HashMap<unsigned, FontGlyph>::ConstIterator i = fontFace->glyphMapping_.Begin();
+         i != fontFace->glyphMapping_.End(); ++i)
     {
         FontGlyph fontGlyph = i->second_;
         if (!fontGlyph.used_)
@@ -216,11 +214,11 @@ bool FontFaceBitmap::Load(FontFace* fontFace, bool usedGlyphs)
     unsigned components = ConvertFormatToNumComponents(fontFace->textures_[0]->GetFormat());
 
     // Save the existing textures as image resources
-    Vector<SharedPtr<Image> > oldImages;
+    Vector<SharedPtr<Image>> oldImages;
     for (unsigned i = 0; i < fontFace->textures_.Size(); ++i)
         oldImages.Push(SaveFaceTexture(fontFace->textures_[i]));
 
-    Vector<SharedPtr<Image> > newImages(numPages);
+    Vector<SharedPtr<Image>> newImages(numPages);
     for (unsigned i = 0; i < numPages; ++i)
     {
         SharedPtr<Image> image(new Image(font_->GetContext()));
@@ -243,15 +241,16 @@ bool FontFaceBitmap::Load(FontFace* fontFace, bool usedGlyphs)
     {
         FontGlyph& newGlyph = i->second_;
         const FontGlyph& oldGlyph = fontFace->glyphMapping_[i->first_];
-        Blit(newImages[newGlyph.page_], newGlyph.x_, newGlyph.y_, newGlyph.width_, newGlyph.height_, oldImages[oldGlyph.page_],
-            oldGlyph.x_, oldGlyph.y_, components);
+        Blit(newImages[newGlyph.page_], newGlyph.x_, newGlyph.y_, newGlyph.width_, newGlyph.height_,
+             oldImages[oldGlyph.page_], oldGlyph.x_, oldGlyph.y_, components);
     }
 
     textures_.Resize(newImages.Size());
     for (unsigned i = 0; i < newImages.Size(); ++i)
         textures_[i] = LoadFaceTexture(newImages[i]);
 
-    for (HashMap<unsigned, float>::ConstIterator i = fontFace->kerningMapping_.Begin(); i != fontFace->kerningMapping_.End(); ++i)
+    for (HashMap<unsigned, float>::ConstIterator i = fontFace->kerningMapping_.Begin();
+         i != fontFace->kerningMapping_.End(); ++i)
     {
         unsigned first = (i->first_) >> 16;
         unsigned second = (i->first_) & 0xffff;
@@ -371,7 +370,8 @@ bool FontFaceBitmap::SaveFaceTexture(Texture2D* texture, const String& fileName)
     return image ? image->SavePNG(fileName) : false;
 }
 
-void FontFaceBitmap::Blit(Image* dest, int x, int y, int width, int height, Image* source, int sourceX, int sourceY, int components)
+void FontFaceBitmap::Blit(Image* dest, int x, int y, int width, int height, Image* source, int sourceX, int sourceY,
+                          int components)
 {
     unsigned char* destData = dest->GetData() + (y * dest->GetWidth() + x) * components;
     unsigned char* sourceData = source->GetData() + (sourceY * source->GetWidth() + sourceX) * components;
@@ -382,5 +382,4 @@ void FontFaceBitmap::Blit(Image* dest, int x, int y, int width, int height, Imag
         sourceData += source->GetWidth() * components;
     }
 }
-
 }

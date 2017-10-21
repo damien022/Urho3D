@@ -26,11 +26,9 @@
 
 namespace Urho3D
 {
-
 class Node;
 class Scene;
 class RibbonTrail;
-
 }
 
 /// Ribbon trail demo.
@@ -75,5 +73,4 @@ private:
     void SubscribeToEvents();
     /// Handle the logic update event.
     void HandleUpdate(StringHash eventType, VariantMap& eventData);
-
 };

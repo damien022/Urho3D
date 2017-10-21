@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// 2D circle collision component.
 class URHO3D_API CollisionCircle2D : public CollisionShape2D
 {
@@ -66,5 +65,4 @@ private:
     /// Center.
     Vector2 center_;
 };
-
 }

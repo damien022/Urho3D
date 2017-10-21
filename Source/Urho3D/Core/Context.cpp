@@ -38,7 +38,6 @@
 
 namespace Urho3D
 {
-
 #ifndef MINI_URHO
 // Keeps track of how many times SDL was initialised so we know when to call SDL_Quit().
 static int sdlInitCounter = 0;
@@ -47,17 +46,10 @@ static int sdlInitCounter = 0;
 static int ikInitCounter = 0;
 
 // Reroute all messages from the ik library to the Urho3D log
-static void HandleIKLog(const char* msg)
-{
-    URHO3D_LOGINFOF("[IK] %s", msg);
-}
+static void HandleIKLog(const char* msg) { URHO3D_LOGINFOF("[IK] %s", msg); }
 #endif
 
-
-void EventReceiverGroup::BeginSendEvent()
-{
-    ++inSend_;
-}
+void EventReceiverGroup::BeginSendEvent() { ++inSend_; }
 
 void EventReceiverGroup::EndSendEvent()
 {
@@ -98,9 +90,10 @@ void EventReceiverGroup::Remove(Object* object)
         receivers_.Remove(object);
 }
 
-void RemoveNamedAttribute(HashMap<StringHash, Vector<AttributeInfo> >& attributes, StringHash objectType, const char* name)
+void RemoveNamedAttribute(HashMap<StringHash, Vector<AttributeInfo>>& attributes, StringHash objectType,
+                          const char* name)
 {
-    HashMap<StringHash, Vector<AttributeInfo> >::Iterator i = attributes.Find(objectType);
+    HashMap<StringHash, Vector<AttributeInfo>>::Iterator i = attributes.Find(objectType);
     if (i == attributes.End())
         return;
 
@@ -120,8 +113,8 @@ void RemoveNamedAttribute(HashMap<StringHash, Vector<AttributeInfo> >& attribute
         attributes.Erase(i);
 }
 
-Context::Context() :
-    eventHandler_(nullptr)
+Context::Context()
+    : eventHandler_(nullptr)
 {
 #ifdef __ANDROID__
     // Always reset the random seed on Android, as the Urho3D library might not be unloaded between runs
@@ -153,7 +146,7 @@ Context::~Context()
 
 SharedPtr<Object> Context::CreateObject(StringHash objectType)
 {
-    HashMap<StringHash, SharedPtr<ObjectFactory> >::ConstIterator i = factories_.Find(objectType);
+    HashMap<StringHash, SharedPtr<ObjectFactory>>::ConstIterator i = factories_.Find(objectType);
     if (i != factories_.End())
         return i->second_->CreateObject();
     else
@@ -188,7 +181,7 @@ void Context::RegisterSubsystem(Object* object)
 
 void Context::RemoveSubsystem(StringHash objectType)
 {
-    HashMap<StringHash, SharedPtr<Object> >::Iterator i = subsystems_.Find(objectType);
+    HashMap<StringHash, SharedPtr<Object>>::Iterator i = subsystems_.Find(objectType);
     if (i != subsystems_.End())
         subsystems_.Erase(i);
 }
@@ -196,11 +189,11 @@ void Context::RemoveSubsystem(StringHash objectType)
 AttributeHandle Context::RegisterAttribute(StringHash objectType, const AttributeInfo& attr)
 {
     // None or pointer types can not be supported
-    if (attr.type_ == VAR_NONE || attr.type_ == VAR_VOIDPTR || attr.type_ == VAR_PTR
-        || attr.type_ == VAR_CUSTOM_HEAP || attr.type_ == VAR_CUSTOM_STACK)
+    if (attr.type_ == VAR_NONE || attr.type_ == VAR_VOIDPTR || attr.type_ == VAR_PTR || attr.type_ == VAR_CUSTOM_HEAP ||
+        attr.type_ == VAR_CUSTOM_STACK)
     {
-        URHO3D_LOGWARNING("Attempt to register unsupported attribute type " + Variant::GetTypeName(attr.type_) + " to class " +
-            GetTypeName(objectType));
+        URHO3D_LOGWARNING("Attempt to register unsupported attribute type " + Variant::GetTypeName(attr.type_) +
+                          " to class " + GetTypeName(objectType));
         return AttributeHandle();
     }
 
@@ -347,7 +340,7 @@ void Context::CopyBaseAttributes(StringHash baseType, StringHash derivedType)
 
 Object* Context::GetSubsystem(StringHash type) const
 {
-    HashMap<StringHash, SharedPtr<Object> >::ConstIterator i = subsystems_.Find(type);
+    HashMap<StringHash, SharedPtr<Object>>::ConstIterator i = subsystems_.Find(type);
     if (i != subsystems_.End())
         return i->second_;
     else
@@ -360,10 +353,7 @@ const Variant& Context::GetGlobalVar(StringHash key) const
     return i != globalVars_.End() ? i->second_ : Variant::EMPTY;
 }
 
-void Context::SetGlobalVar(StringHash key, const Variant& value)
-{
-    globalVars_[key] = value;
-}
+void Context::SetGlobalVar(StringHash key, const Variant& value) { globalVars_[key] = value; }
 
 Object* Context::GetEventSender() const
 {
@@ -376,13 +366,13 @@ Object* Context::GetEventSender() const
 const String& Context::GetTypeName(StringHash objectType) const
 {
     // Search factories to find the hash-to-name mapping
-    HashMap<StringHash, SharedPtr<ObjectFactory> >::ConstIterator i = factories_.Find(objectType);
+    HashMap<StringHash, SharedPtr<ObjectFactory>>::ConstIterator i = factories_.Find(objectType);
     return i != factories_.End() ? i->second_->GetTypeName() : String::EMPTY;
 }
 
 AttributeInfo* Context::GetAttribute(StringHash objectType, const char* name)
 {
-    HashMap<StringHash, Vector<AttributeInfo> >::Iterator i = attributes_.Find(objectType);
+    HashMap<StringHash, Vector<AttributeInfo>>::Iterator i = attributes_.Find(objectType);
     if (i == attributes_.End())
         return nullptr;
 
@@ -415,12 +405,15 @@ void Context::AddEventReceiver(Object* receiver, Object* sender, StringHash even
 
 void Context::RemoveEventSender(Object* sender)
 {
-    HashMap<Object*, HashMap<StringHash, SharedPtr<EventReceiverGroup> > >::Iterator i = specificEventReceivers_.Find(sender);
+    HashMap<Object*, HashMap<StringHash, SharedPtr<EventReceiverGroup>>>::Iterator i =
+        specificEventReceivers_.Find(sender);
     if (i != specificEventReceivers_.End())
     {
-        for (HashMap<StringHash, SharedPtr<EventReceiverGroup> >::Iterator j = i->second_.Begin(); j != i->second_.End(); ++j)
+        for (HashMap<StringHash, SharedPtr<EventReceiverGroup>>::Iterator j = i->second_.Begin(); j != i->second_.End();
+             ++j)
         {
-            for (PODVector<Object*>::Iterator k = j->second_->receivers_.Begin(); k != j->second_->receivers_.End(); ++k)
+            for (PODVector<Object*>::Iterator k = j->second_->receivers_.Begin(); k != j->second_->receivers_.End();
+                 ++k)
             {
                 Object* receiver = *k;
                 if (receiver)
@@ -445,14 +438,7 @@ void Context::RemoveEventReceiver(Object* receiver, Object* sender, StringHash e
         group->Remove(receiver);
 }
 
-void Context::BeginSendEvent(Object* sender, StringHash eventType)
-{
-    eventSenders_.Push(sender);
-}
+void Context::BeginSendEvent(Object* sender, StringHash eventType) { eventSenders_.Push(sender); }
 
-void Context::EndSendEvent()
-{
-    eventSenders_.Pop();
-}
-
+void Context::EndSendEvent() { eventSenders_.Pop(); }
 }

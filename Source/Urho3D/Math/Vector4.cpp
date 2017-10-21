@@ -30,7 +30,6 @@
 
 namespace Urho3D
 {
-
 const Vector4 Vector4::ZERO;
 const Vector4 Vector4::ONE(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -40,5 +39,4 @@ String Vector4::ToString() const
     sprintf(tempBuffer, "%g %g %g %g", x_, y_, z_, w_);
     return String(tempBuffer);
 }
-
 }

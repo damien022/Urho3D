@@ -27,7 +27,6 @@
 
 namespace Urho3D
 {
-
 /// Particle emitter shapes.
 enum EmitterType
 {
@@ -39,22 +38,22 @@ enum EmitterType
 struct ColorFrame
 {
     /// Construct with default values.
-    ColorFrame() :
-        time_(0.0f)
+    ColorFrame()
+        : time_(0.0f)
     {
     }
 
     /// Construct with a color and zero time.
-    ColorFrame(const Color& color) :
-        color_(color),
-        time_(0.0f)
+    ColorFrame(const Color& color)
+        : color_(color)
+        , time_(0.0f)
     {
     }
 
     /// Construct from a color and time.
-    ColorFrame(const Color& color, float time) :
-        color_(color),
-        time_(time)
+    ColorFrame(const Color& color, float time)
+        : color_(color)
+        , time_(time)
     {
     }
 
@@ -81,9 +80,9 @@ struct ColorFrame
 struct TextureFrame
 {
     /// Construct with default values.
-    TextureFrame() :
-        uv_(0.0f, 0.0f, 1.0f, 1.0f),
-        time_(0.0f)
+    TextureFrame()
+        : uv_(0.0f, 0.0f, 1.0f, 1.0f)
+        , time_(0.0f)
     {
     }
 
@@ -183,7 +182,8 @@ public:
     void SetSizeAdd(float sizeAdd);
     /// Set particle size multiplicative modifier.
     void SetSizeMul(float sizeMul);
-    /// Set how the particles should rotate in relation to the camera. Default is to follow camera rotation on all axes (FC_ROTATE_XYZ.)
+    /// Set how the particles should rotate in relation to the camera. Default is to follow camera rotation on all axes
+    /// (FC_ROTATE_XYZ.)
     void SetFaceCameraMode(FaceCameraMode mode);
 
     /// Add a color frame sorted in the correct position based on time.
@@ -419,5 +419,4 @@ private:
     /// Particle rotation mode in relation to the camera.
     FaceCameraMode faceCameraMode_;
 };
-
 }

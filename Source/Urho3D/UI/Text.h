@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 static const float DEFAULT_FONT_SIZE = 12;
 
 class Font;
@@ -54,10 +53,10 @@ struct CharLocation
 struct GlyphLocation
 {
     /// Construct.
-    GlyphLocation(float x, float y, const FontGlyph* glyph) :
-        x_(x),
-        y_(y),
-        glyph_(glyph)
+    GlyphLocation(float x, float y, const FontGlyph* glyph)
+        : x_(x)
+        , y_(y)
+        , glyph_(glyph)
     {
     }
 
@@ -87,7 +86,8 @@ public:
     /// Apply attribute changes that can not be applied immediately.
     virtual void ApplyAttributes() override;
     /// Return UI rendering batches.
-    virtual void GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData, const IntRect& currentScissor) override;
+    virtual void GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData,
+                            const IntRect& currentScissor) override;
     /// React to resize.
     virtual void OnResize(const IntVector2& newSize, const IntVector2& delta) override;
     /// React to indent change.
@@ -105,7 +105,8 @@ public:
     void SetTextAlignment(HorizontalAlignment align);
     /// Set row spacing, 1.0 for original font spacing.
     void SetRowSpacing(float spacing);
-    /// Set wordwrap. In wordwrap mode the text element will respect its current width. Otherwise it resizes itself freely.
+    /// Set wordwrap. In wordwrap mode the text element will respect its current width. Otherwise it resizes itself
+    /// freely.
     void SetWordwrap(bool enable);
     /// The text will be automatically translated. The text value used as string identifier.
     void SetAutoLocalizable(bool enable);
@@ -219,9 +220,8 @@ protected:
     /// Return row start X position.
     int GetRowStartPosition(unsigned rowIndex) const;
     /// Contruct batch.
-    void ConstructBatch
-        (UIBatch& pageBatch, const PODVector<GlyphLocation>& pageGlyphLocation, float dx = 0, float dy = 0, Color* color = nullptr,
-            float depthBias = 0.0f);
+    void ConstructBatch(UIBatch& pageBatch, const PODVector<GlyphLocation>& pageGlyphLocation, float dx = 0,
+                        float dy = 0, Color* color = nullptr, float depthBias = 0.0f);
 
     /// Font.
     SharedPtr<Font> font_;
@@ -270,7 +270,7 @@ protected:
     /// Row widths.
     PODVector<float> rowWidths_;
     /// Glyph locations per each texture in the font.
-    Vector<PODVector<GlyphLocation> > pageGlyphLocations_;
+    Vector<PODVector<GlyphLocation>> pageGlyphLocations_;
     /// Cached locations of each character in the text.
     PODVector<CharLocation> charLocations_;
     /// The text will be automatically translated.
@@ -282,5 +282,4 @@ protected:
     /// UTF8 to Unicode.
     void DecodeToUnicode();
 };
-
 }

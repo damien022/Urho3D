@@ -31,7 +31,6 @@
 
 namespace Urho3D
 {
-
 void VertexBuffer::OnDeviceLost()
 {
     // No-op on Direct3D11
@@ -98,7 +97,8 @@ bool VertexBuffer::SetData(const void* data)
             destBox.front = 0;
             destBox.back = 1;
 
-            graphics_->GetImpl()->GetDeviceContext()->UpdateSubresource((ID3D11Buffer*)object_.ptr_, 0, &destBox, data, 0, 0);
+            graphics_->GetImpl()->GetDeviceContext()->UpdateSubresource((ID3D11Buffer*)object_.ptr_, 0, &destBox, data,
+                                                                        0, 0);
         }
     }
 
@@ -157,7 +157,8 @@ bool VertexBuffer::SetDataRange(const void* data, unsigned start, unsigned count
             destBox.front = 0;
             destBox.back = 1;
 
-            graphics_->GetImpl()->GetDeviceContext()->UpdateSubresource((ID3D11Buffer*)object_.ptr_, 0, &destBox, data, 0, 0);
+            graphics_->GetImpl()->GetDeviceContext()->UpdateSubresource((ID3D11Buffer*)object_.ptr_, 0, &destBox, data,
+                                                                        0, 0);
         }
     }
 
@@ -229,7 +230,8 @@ void VertexBuffer::Unlock()
         lockState_ = LOCK_NONE;
         break;
 
-    default: break;
+    default:
+        break;
     }
 }
 
@@ -249,7 +251,8 @@ bool VertexBuffer::Create()
         bufferDesc.Usage = dynamic_ ? D3D11_USAGE_DYNAMIC : D3D11_USAGE_DEFAULT;
         bufferDesc.ByteWidth = (UINT)(vertexCount_ * vertexSize_);
 
-        HRESULT hr = graphics_->GetImpl()->GetDevice()->CreateBuffer(&bufferDesc, nullptr, (ID3D11Buffer**)&object_.ptr_);
+        HRESULT hr =
+            graphics_->GetImpl()->GetDevice()->CreateBuffer(&bufferDesc, nullptr, (ID3D11Buffer**)&object_.ptr_);
         if (FAILED(hr))
         {
             URHO3D_SAFE_RELEASE(object_.ptr_);
@@ -278,8 +281,8 @@ void* VertexBuffer::MapBuffer(unsigned start, unsigned count, bool discard)
         D3D11_MAPPED_SUBRESOURCE mappedData;
         mappedData.pData = nullptr;
 
-        HRESULT hr = graphics_->GetImpl()->GetDeviceContext()->Map((ID3D11Buffer*)object_.ptr_, 0, discard ? D3D11_MAP_WRITE_DISCARD :
-            D3D11_MAP_WRITE, 0, &mappedData);
+        HRESULT hr = graphics_->GetImpl()->GetDeviceContext()->Map(
+            (ID3D11Buffer*)object_.ptr_, 0, discard ? D3D11_MAP_WRITE_DISCARD : D3D11_MAP_WRITE, 0, &mappedData);
         if (FAILED(hr) || !mappedData.pData)
             URHO3D_LOGD3DERROR("Failed to map vertex buffer", hr);
         else
@@ -300,5 +303,4 @@ void VertexBuffer::UnmapBuffer()
         lockState_ = LOCK_NONE;
     }
 }
-
 }

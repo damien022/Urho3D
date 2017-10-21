@@ -26,10 +26,11 @@
 
 namespace Urho3D
 {
-
-/// Parse a bool from a string. Check for the first non-empty character (converted to lowercase) being either 't', 'y' or '1'.
+/// Parse a bool from a string. Check for the first non-empty character (converted to lowercase) being either 't', 'y'
+/// or '1'.
 URHO3D_API bool ToBool(const String& source);
-/// Parse a bool from a C string. Check for the first non-empty character (converted to lowercase) being either 't', 'y' or '1'.
+/// Parse a bool from a C string. Check for the first non-empty character (converted to lowercase) being either 't', 'y'
+/// or '1'.
 URHO3D_API bool ToBool(const char* source);
 /// Parse a float from a string.
 URHO3D_API float ToFloat(const String& source);
@@ -43,17 +44,23 @@ URHO3D_API double ToDouble(const char* source);
 URHO3D_API int ToInt(const String& source, int base = 10);
 /// Parse an integer from a C string. Assumed to be decimal by default (base 10). Use base 0 to autodetect from string.
 URHO3D_API int ToInt(const char* source, int base = 10);
-/// Parse an unsigned integer from a string. Assumed to be decimal by default (base 10). Use base 0 to autodetect from string.
+/// Parse an unsigned integer from a string. Assumed to be decimal by default (base 10). Use base 0 to autodetect from
+/// string.
 URHO3D_API unsigned ToUInt(const String& source, int base = 10);
-/// Parse an unsigned integer from a C string. Assumed to be decimal by default (base 10). Use base 0 to autodetect from string.
+/// Parse an unsigned integer from a C string. Assumed to be decimal by default (base 10). Use base 0 to autodetect from
+/// string.
 URHO3D_API unsigned ToUInt(const char* source, int base = 10);
-/// Parse an 64 bit integer from a string. Assumed to be decimal by default (base 10). Use base 0 to autodetect from string.
+/// Parse an 64 bit integer from a string. Assumed to be decimal by default (base 10). Use base 0 to autodetect from
+/// string.
 URHO3D_API long long ToInt64(const String& source, int base = 10);
-/// Parse an 64 bit integer from a C string. Assumed to be decimal by default (base 10). Use base 0 to autodetect from string.
+/// Parse an 64 bit integer from a C string. Assumed to be decimal by default (base 10). Use base 0 to autodetect from
+/// string.
 URHO3D_API long long ToInt64(const char* source, int base = 10);
-/// Parse an unsigned 64 bit integer from a string. Assumed to be decimal by default (base 10). Use base 0 to autodetect from string.
+/// Parse an unsigned 64 bit integer from a string. Assumed to be decimal by default (base 10). Use base 0 to autodetect
+/// from string.
 URHO3D_API unsigned long long ToUInt64(const String& source, int base = 10);
-/// Parse an unsigned 64 bit integer from a C string. Assumed to be decimal by default (base 10). Use base 0 to autodetect from string.
+/// Parse an unsigned 64 bit integer from a C string. Assumed to be decimal by default (base 10). Use base 0 to
+/// autodetect from string.
 URHO3D_API unsigned long long ToUInt64(const char* source, int base = 10);
 /// Parse a Color from a string.
 URHO3D_API Color ToColor(const String& source);
@@ -117,12 +124,18 @@ URHO3D_API void BufferToString(String& dest, const void* data, unsigned size);
 URHO3D_API void StringToBuffer(PODVector<unsigned char>& dest, const String& source);
 /// Convert a C string to a byte buffer.
 URHO3D_API void StringToBuffer(PODVector<unsigned char>& dest, const char* source);
-/// Return an index to a string list corresponding to the given string, or a default value if not found. The string list must be empty-terminated.
-URHO3D_API unsigned GetStringListIndex(const String& value, const String* strings, unsigned defaultIndex, bool caseSensitive = false);
-/// Return an index to a string list corresponding to the given C string, or a default value if not found. The string list must be empty-terminated.
-URHO3D_API unsigned GetStringListIndex(const char* value, const String* strings, unsigned defaultIndex, bool caseSensitive = false);
-/// Return an index to a C string list corresponding to the given C string, or a default value if not found. The string list must be empty-terminated.
-URHO3D_API unsigned GetStringListIndex(const char* value, const char** strings, unsigned defaultIndex, bool caseSensitive = false);
+/// Return an index to a string list corresponding to the given string, or a default value if not found. The string list
+/// must be empty-terminated.
+URHO3D_API unsigned GetStringListIndex(const String& value, const String* strings, unsigned defaultIndex,
+                                       bool caseSensitive = false);
+/// Return an index to a string list corresponding to the given C string, or a default value if not found. The string
+/// list must be empty-terminated.
+URHO3D_API unsigned GetStringListIndex(const char* value, const String* strings, unsigned defaultIndex,
+                                       bool caseSensitive = false);
+/// Return an index to a C string list corresponding to the given C string, or a default value if not found. The string
+/// list must be empty-terminated.
+URHO3D_API unsigned GetStringListIndex(const char* value, const char** strings, unsigned defaultIndex,
+                                       bool caseSensitive = false);
 /// Return a formatted string.
 URHO3D_API String ToString(const char* formatString, ...);
 /// Return whether a char is an alphabet letter.
@@ -163,5 +176,4 @@ template <> inline Matrix4 FromString<Matrix4>(const char* source) { return ToMa
 
 /// Parse type from a string.
 template <class T> T FromString(const String& source) { return FromString<T>(source.CString()); }
-
 }

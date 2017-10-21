@@ -20,38 +20,38 @@
 // THE SOFTWARE.
 //
 
+#include <Urho3D/Core/Profiler.h>
+#include <Urho3D/Core/Timer.h>
 #include <Urho3D/Engine/Application.h>
-#include <Urho3D/Graphics/Camera.h>
-#include <Urho3D/SystemUI/Console.h>
-#include <Urho3D/UI/Cursor.h>
-#include <Urho3D/SystemUI/DebugHud.h>
 #include <Urho3D/Engine/Engine.h>
 #include <Urho3D/Engine/EngineDefs.h>
-#include <Urho3D/IO/FileSystem.h>
+#include <Urho3D/Graphics/Camera.h>
 #include <Urho3D/Graphics/Graphics.h>
+#include <Urho3D/Graphics/Renderer.h>
+#include <Urho3D/Graphics/Texture2D.h>
+#include <Urho3D/IO/FileSystem.h>
+#include <Urho3D/IO/Log.h>
 #include <Urho3D/Input/Input.h>
 #include <Urho3D/Input/InputEvents.h>
-#include <Urho3D/Graphics/Renderer.h>
 #include <Urho3D/Resource/ResourceCache.h>
+#include <Urho3D/Resource/XMLFile.h>
 #include <Urho3D/Scene/Scene.h>
 #include <Urho3D/Scene/SceneEvents.h>
+#include <Urho3D/SystemUI/Console.h>
+#include <Urho3D/SystemUI/DebugHud.h>
+#include <Urho3D/UI/Cursor.h>
 #include <Urho3D/UI/Sprite.h>
-#include <Urho3D/Graphics/Texture2D.h>
-#include <Urho3D/Core/Timer.h>
 #include <Urho3D/UI/UI.h>
-#include <Urho3D/Resource/XMLFile.h>
-#include <Urho3D/IO/Log.h>
-#include <Urho3D/Core/Profiler.h>
 
-Sample::Sample(Context* context) :
-    Application(context),
-    yaw_(0.0f),
-    pitch_(0.0f),
-    touchEnabled_(false),
-    useMouseMode_(MM_ABSOLUTE),
-    screenJoystickIndex_(M_MAX_UNSIGNED),
-    screenJoystickSettingsIndex_(M_MAX_UNSIGNED),
-    paused_(false)
+Sample::Sample(Context* context)
+    : Application(context)
+    , yaw_(0.0f)
+    , pitch_(0.0f)
+    , touchEnabled_(false)
+    , useMouseMode_(MM_ABSOLUTE)
+    , screenJoystickIndex_(M_MAX_UNSIGNED)
+    , screenJoystickSettingsIndex_(M_MAX_UNSIGNED)
+    , paused_(false)
 {
 }
 
@@ -59,16 +59,18 @@ void Sample::Setup()
 {
     // Modify engine startup parameters
     engineParameters_[EP_WINDOW_TITLE] = GetTypeName();
-    engineParameters_[EP_LOG_NAME]     = GetSubsystem<FileSystem>()->GetAppPreferencesDir("urho3d", "logs") + GetTypeName() + ".log";
-    engineParameters_[EP_FULL_SCREEN]  = false;
-    engineParameters_[EP_HEADLESS]     = false;
-    engineParameters_[EP_SOUND]        = false;
+    engineParameters_[EP_LOG_NAME] =
+        GetSubsystem<FileSystem>()->GetAppPreferencesDir("urho3d", "logs") + GetTypeName() + ".log";
+    engineParameters_[EP_FULL_SCREEN] = false;
+    engineParameters_[EP_HEADLESS] = false;
+    engineParameters_[EP_SOUND] = false;
 
     // Construct a search path to find the resource prefix with two entries:
-    // The first entry is an empty path which will be substituted with program/bin directory -- this entry is for binary when it is still in build tree
-    // The second entry is relative paths from the installed program/bin directory to the asset directory -- these entries are for binary when it is in the Urho3D SDK installation location
-    // The fourth entry is a relative path from cmake build tree to data directory symlink in bin dir
-    // The fifth entry is for msvc build tree
+    // The first entry is an empty path which will be substituted with program/bin directory -- this entry is for binary
+    // when it is still in build tree The second entry is relative paths from the installed program/bin directory to the
+    // asset directory -- these entries are for binary when it is in the Urho3D SDK installation location The fourth
+    // entry is a relative path from cmake build tree to data directory symlink in bin dir The fifth entry is for msvc
+    // build tree
     if (!engineParameters_.Contains(EP_RESOURCE_PREFIX_PATHS))
         engineParameters_[EP_RESOURCE_PREFIX_PATHS] = ";../Resources;../../../bin;..";
 }
@@ -103,10 +105,7 @@ void Sample::Start()
     SubscribeToEvent(E_SCENEUPDATE, URHO3D_HANDLER(Sample, HandleSceneUpdate));
 }
 
-void Sample::Stop()
-{
-    engine_->DumpResources(true);
-}
+void Sample::Stop() { engine_->DumpResources(true); }
 
 void Sample::InitTouchInput()
 {
@@ -123,7 +122,8 @@ void Sample::InitTouchInput()
         if (patchFile->FromString(patchString))
             layout->Patch(patchFile);
     }
-    screenJoystickIndex_ = (unsigned)input->AddScreenJoystick(layout, cache->GetResource<XMLFile>("UI/DefaultStyle.xml"));
+    screenJoystickIndex_ =
+        (unsigned)input->AddScreenJoystick(layout, cache->GetResource<XMLFile>("UI/DefaultStyle.xml"));
     input->SetScreenJoystickVisible(screenJoystickSettingsIndex_, true);
 }
 
@@ -217,7 +217,6 @@ void Sample::CreateConsoleAndDebugHud()
     DebugHud* debugHud = engine_->CreateDebugHud();
 }
 
-
 void Sample::HandleKeyUp(StringHash /*eventType*/, VariantMap& eventData)
 {
     using namespace KeyUp;
@@ -282,7 +281,9 @@ void Sample::HandleKeyDown(StringHash /*eventType*/, VariantMap& eventData)
             {
                 // Lazy initialization
                 ResourceCache* cache = GetSubsystem<ResourceCache>();
-                screenJoystickSettingsIndex_ = (unsigned)input->AddScreenJoystick(cache->GetResource<XMLFile>("UI/ScreenJoystickSettings_Samples.xml"), cache->GetResource<XMLFile>("UI/DefaultStyle.xml"));
+                screenJoystickSettingsIndex_ = (unsigned)input->AddScreenJoystick(
+                    cache->GetResource<XMLFile>("UI/ScreenJoystickSettings_Samples.xml"),
+                    cache->GetResource<XMLFile>("UI/DefaultStyle.xml"));
             }
             else
                 input->SetScreenJoystickVisible(screenJoystickSettingsIndex_, paused_);
@@ -356,7 +357,7 @@ void Sample::HandleKeyDown(StringHash /*eventType*/, VariantMap& eventData)
             graphics->TakeScreenShot(screenshot);
             // Here we save in the Data folder with date and time appended
             screenshot.SavePNG(GetSubsystem<FileSystem>()->GetProgramDir() + "Data/Screenshot_" +
-                Time::GetTimeStamp().Replaced(':', '_').Replaced('.', '_').Replaced(' ', '_') + ".png");
+                               Time::GetTimeStamp().Replaced(':', '_').Replaced('.', '_').Replaced(' ', '_') + ".png");
         }
     }
 }
@@ -370,9 +371,9 @@ void Sample::HandleSceneUpdate(StringHash /*eventType*/, VariantMap& eventData)
         for (unsigned i = 0; i < input->GetNumTouches(); ++i)
         {
             TouchState* state = input->GetTouch(i);
-            if (!state->touchedElement_)    // Touch on empty space
+            if (!state->touchedElement_) // Touch on empty space
             {
-                if (state->delta_.x_ ||state->delta_.y_)
+                if (state->delta_.x_ || state->delta_.y_)
                 {
                     Camera* camera = cameraNode_->GetComponent<Camera>();
                     if (!camera)

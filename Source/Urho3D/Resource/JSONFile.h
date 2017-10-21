@@ -22,12 +22,11 @@
 
 #pragma once
 
-#include "../Resource/Resource.h"
 #include "../Resource/JSONValue.h"
+#include "../Resource/Resource.h"
 
 namespace Urho3D
 {
-
 /// JSON document resource.
 class URHO3D_API JSONFile : public Resource
 {
@@ -45,9 +44,10 @@ public:
     virtual bool BeginLoad(Deserializer& source) override;
     /// Save resource with default indentation (one tab). Return true if successful.
     virtual bool Save(Serializer& dest) const override;
-    /// Save resource with user-defined indentation, only the first character (if any) of the string is used and the length of the string defines the character count. Return true if successful.
+    /// Save resource with user-defined indentation, only the first character (if any) of the string is used and the
+    /// length of the string defines the character count. Return true if successful.
     bool Save(Serializer& dest, const String& indendation) const;
-    
+
     /// Deserialize from a string. Return true if successful.
     bool FromString(const String& source);
 
@@ -58,9 +58,9 @@ public:
 
     /// Return true if parsing json string into JSONValue succeeds.
     static bool ParseJSON(const String& json, JSONValue& value, bool reportError = true);
+
 private:
     /// JSON root value.
     JSONValue root_;
 };
-
 }

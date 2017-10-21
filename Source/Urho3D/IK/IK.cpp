@@ -27,13 +27,12 @@
 
 namespace Urho3D
 {
-
 const char* IK_CATEGORY = "Inverse Kinematics";
 
 // ----------------------------------------------------------------------------
 void RegisterIKLibrary(Context* context)
 {
-    //IKConstraint::RegisterObject(context);
+    // IKConstraint::RegisterObject(context);
     IKEffector::RegisterObject(context);
     IKSolver::RegisterObject(context);
 }

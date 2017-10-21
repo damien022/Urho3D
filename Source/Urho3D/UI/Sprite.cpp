@@ -31,26 +31,23 @@
 
 namespace Urho3D
 {
-
 extern const char* blendModeNames[];
 extern const char* horizontalAlignments[];
 extern const char* verticalAlignments[];
 extern const char* UI_CATEGORY;
 
-Sprite::Sprite(Context* context) :
-    UIElement(context),
-    floatPosition_(Vector2::ZERO),
-    hotSpot_(IntVector2::ZERO),
-    scale_(Vector2::ONE),
-    rotation_(0.0f),
-    imageRect_(IntRect::ZERO),
-    blendMode_(BLEND_REPLACE)
+Sprite::Sprite(Context* context)
+    : UIElement(context)
+    , floatPosition_(Vector2::ZERO)
+    , hotSpot_(IntVector2::ZERO)
+    , scale_(Vector2::ONE)
+    , rotation_(0.0f)
+    , imageRect_(IntRect::ZERO)
+    , blendMode_(BLEND_REPLACE)
 {
 }
 
-Sprite::~Sprite()
-{
-}
+Sprite::~Sprite() {}
 
 void Sprite::RegisterObject(Context* context)
 {
@@ -62,14 +59,14 @@ void Sprite::RegisterObject(Context* context)
     URHO3D_ACCESSOR_ATTRIBUTE("Hotspot", GetHotSpot, SetHotSpot, IntVector2, IntVector2::ZERO, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Scale", GetScale, SetScale, Vector2, Vector2::ONE, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Rotation", GetRotation, SetRotation, float, 0.0f, AM_FILE);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Texture", GetTextureAttr, SetTextureAttr, ResourceRef, ResourceRef(Texture2D::GetTypeStatic()),
-        AM_FILE);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Texture", GetTextureAttr, SetTextureAttr, ResourceRef,
+                                    ResourceRef(Texture2D::GetTypeStatic()), AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Image Rect", GetImageRect, SetImageRect, IntRect, IntRect::ZERO, AM_FILE);
     URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Blend Mode", GetBlendMode, SetBlendMode, BlendMode, blendModeNames, 0, AM_FILE);
-    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Horiz Alignment", GetHorizontalAlignment, SetHorizontalAlignment, HorizontalAlignment,
-        horizontalAlignments, HA_LEFT, AM_FILE);
-    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Vert Alignment", GetVerticalAlignment, SetVerticalAlignment, VerticalAlignment, verticalAlignments,
-        VA_TOP, AM_FILE);
+    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Horiz Alignment", GetHorizontalAlignment, SetHorizontalAlignment,
+                                   HorizontalAlignment, horizontalAlignments, HA_LEFT, AM_FILE);
+    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Vert Alignment", GetVerticalAlignment, SetVerticalAlignment, VerticalAlignment,
+                                   verticalAlignments, VA_TOP, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Priority", GetPriority, SetPriority, int, 0, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Opacity", GetOpacity, SetOpacity, float, 1.0f, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Color", GetColorAttr, SetColor, Color, Color::WHITE, AM_FILE);
@@ -117,11 +114,11 @@ void Sprite::GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexDat
         allOpaque = false;
 
     const IntVector2& size = GetSize();
-    UIBatch
-        batch(this, blendMode_ == BLEND_REPLACE && !allOpaque ? BLEND_ALPHA : blendMode_, currentScissor, texture_, &vertexData);
+    UIBatch batch(this, blendMode_ == BLEND_REPLACE && !allOpaque ? BLEND_ALPHA : blendMode_, currentScissor, texture_,
+                  &vertexData);
 
-    batch.AddQuad(GetTransform(), 0, 0, size.x_, size.y_, imageRect_.left_, imageRect_.top_, imageRect_.right_ - imageRect_.left_,
-        imageRect_.bottom_ - imageRect_.top_);
+    batch.AddQuad(GetTransform(), 0, 0, size.x_, size.y_, imageRect_.left_, imageRect_.top_,
+                  imageRect_.right_ - imageRect_.left_, imageRect_.bottom_ - imageRect_.top_);
 
     UIBatch::AddOrMerge(batch, batches);
 
@@ -146,10 +143,7 @@ void Sprite::SetPosition(const Vector2& position)
     }
 }
 
-void Sprite::SetPosition(float x, float y)
-{
-    SetPosition(Vector2(x, y));
-}
+void Sprite::SetPosition(float x, float y) { SetPosition(Vector2(x, y)); }
 
 void Sprite::SetHotSpot(const IntVector2& hotSpot)
 {
@@ -160,10 +154,7 @@ void Sprite::SetHotSpot(const IntVector2& hotSpot)
     }
 }
 
-void Sprite::SetHotSpot(int x, int y)
-{
-    SetHotSpot(IntVector2(x, y));
-}
+void Sprite::SetHotSpot(int x, int y) { SetHotSpot(IntVector2(x, y)); }
 
 void Sprite::SetScale(const Vector2& scale)
 {
@@ -174,15 +165,9 @@ void Sprite::SetScale(const Vector2& scale)
     }
 }
 
-void Sprite::SetScale(float x, float y)
-{
-    SetScale(Vector2(x, y));
-}
+void Sprite::SetScale(float x, float y) { SetScale(Vector2(x, y)); }
 
-void Sprite::SetScale(float scale)
-{
-    SetScale(Vector2(scale, scale));
-}
+void Sprite::SetScale(float scale) { SetScale(Vector2(scale, scale)); }
 
 void Sprite::SetRotation(float angle)
 {
@@ -212,10 +197,7 @@ void Sprite::SetFullImageRect()
         SetImageRect(IntRect(0, 0, texture_->GetWidth(), texture_->GetHeight()));
 }
 
-void Sprite::SetBlendMode(BlendMode mode)
-{
-    blendMode_ = mode;
-}
+void Sprite::SetBlendMode(BlendMode mode) { blendMode_ = mode; }
 
 const Matrix3x4& Sprite::GetTransform() const
 {
@@ -289,9 +271,5 @@ void Sprite::SetTextureAttr(const ResourceRef& value)
     SetTexture(cache->GetResource<Texture2D>(value.name_));
 }
 
-ResourceRef Sprite::GetTextureAttr() const
-{
-    return GetResourceRef(texture_, Texture2D::GetTypeStatic());
-}
-
+ResourceRef Sprite::GetTextureAttr() const { return GetResourceRef(texture_, Texture2D::GetTypeStatic()); }
 }

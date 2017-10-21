@@ -29,7 +29,6 @@
 
 namespace Urho3D
 {
-
 /// Combined information for specific vertex and pixel shaders.
 class URHO3D_API ShaderProgram : public RefCounted
 {
@@ -69,13 +68,10 @@ public:
 
         // Optimize shader parameter lookup by rehashing to next power of two
         parameters_.Rehash(NextPowerOfTwo(parameters_.Size()));
-
     }
 
     /// Destruct.
-    virtual ~ShaderProgram() override
-    {
-    }
+    virtual ~ShaderProgram() override {}
 
     /// Combined parameters from the vertex and pixel shader.
     HashMap<StringHash, ShaderParameter> parameters_;
@@ -84,5 +80,4 @@ public:
     /// Pixel shader constant buffers.
     SharedPtr<ConstantBuffer> psConstantBuffers_[MAX_SHADER_PARAMETER_GROUPS];
 };
-
 }

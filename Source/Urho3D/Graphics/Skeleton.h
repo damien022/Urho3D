@@ -27,7 +27,6 @@
 
 namespace Urho3D
 {
-
 static const unsigned BONECOLLISION_NONE = 0x0;
 static const unsigned BONECOLLISION_SPHERE = 0x1;
 static const unsigned BONECOLLISION_BOX = 0x2;
@@ -40,14 +39,14 @@ class Serializer;
 struct Bone
 {
     /// Construct with defaults.
-    Bone() :
-        parentIndex_(0),
-        initialPosition_(Vector3::ZERO),
-        initialRotation_(Quaternion::IDENTITY),
-        initialScale_(Vector3::ONE),
-        animated_(true),
-        collisionMask_(0),
-        radius_(0.0f)
+    Bone()
+        : parentIndex_(0)
+        , initialPosition_(Vector3::ZERO)
+        , initialRotation_(Quaternion::IDENTITY)
+        , initialScale_(Vector3::ONE)
+        , animated_(true)
+        , collisionMask_(0)
+        , radius_(0.0f)
     {
     }
 
@@ -119,7 +118,8 @@ public:
     /// Return bone by name hash.
     Bone* GetBone(StringHash boneNameHash);
 
-    /// Reset all animating bones to initial positions without marking the nodes dirty. Requires the node dirtying to be performed later.
+    /// Reset all animating bones to initial positions without marking the nodes dirty. Requires the node dirtying to be
+    /// performed later.
     void ResetSilent();
 
 private:
@@ -128,5 +128,4 @@ private:
     /// Root bone index.
     unsigned rootBoneIndex_;
 };
-
 }

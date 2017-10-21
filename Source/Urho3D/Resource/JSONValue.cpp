@@ -31,32 +31,15 @@
 
 namespace Urho3D
 {
+static const char* valueTypeNames[] = {"Null", "Bool", "Number", "String", "Array", "Object", nullptr};
 
-static const char* valueTypeNames[] =
-{
-    "Null",
-    "Bool",
-    "Number",
-    "String",
-    "Array",
-    "Object",
-    nullptr
-};
-
-static const char* numberTypeNames[] =
-{
-    "NaN",
-    "Int",
-    "Unsigned",
-    "Real",
-    nullptr
-};
+static const char* numberTypeNames[] = {"NaN", "Int", "Unsigned", "Real", nullptr};
 
 const JSONValue JSONValue::EMPTY;
 const JSONArray JSONValue::emptyArray;
 const JSONObject JSONValue::emptyObject;
 
-JSONValue& JSONValue::operator =(bool rhs)
+JSONValue& JSONValue::operator=(bool rhs)
 {
     SetType(JSON_BOOL);
     boolValue_ = rhs;
@@ -64,15 +47,15 @@ JSONValue& JSONValue::operator =(bool rhs)
     return *this;
 }
 
-JSONValue& JSONValue::operator =(int rhs)
+JSONValue& JSONValue::operator=(int rhs)
 {
     SetType(JSON_NUMBER, JSONNT_INT);
-    numberValue_ = rhs;    
+    numberValue_ = rhs;
 
     return *this;
 }
 
-JSONValue& JSONValue::operator =(unsigned rhs)
+JSONValue& JSONValue::operator=(unsigned rhs)
 {
     SetType(JSON_NUMBER, JSONNT_UINT);
     numberValue_ = rhs;
@@ -80,7 +63,7 @@ JSONValue& JSONValue::operator =(unsigned rhs)
     return *this;
 }
 
-JSONValue& JSONValue::operator =(float rhs)
+JSONValue& JSONValue::operator=(float rhs)
 {
     SetType(JSON_NUMBER, JSONNT_FLOAT_DOUBLE);
     numberValue_ = rhs;
@@ -88,7 +71,7 @@ JSONValue& JSONValue::operator =(float rhs)
     return *this;
 }
 
-JSONValue& JSONValue::operator =(double rhs)
+JSONValue& JSONValue::operator=(double rhs)
 {
     SetType(JSON_NUMBER, JSONNT_FLOAT_DOUBLE);
     numberValue_ = rhs;
@@ -96,7 +79,7 @@ JSONValue& JSONValue::operator =(double rhs)
     return *this;
 }
 
-JSONValue& JSONValue::operator =(const String& rhs)
+JSONValue& JSONValue::operator=(const String& rhs)
 {
     SetType(JSON_STRING);
     *stringValue_ = rhs;
@@ -104,7 +87,7 @@ JSONValue& JSONValue::operator =(const String& rhs)
     return *this;
 }
 
-JSONValue& JSONValue::operator =(const char* rhs)
+JSONValue& JSONValue::operator=(const char* rhs)
 {
     SetType(JSON_STRING);
     *stringValue_ = rhs;
@@ -112,7 +95,7 @@ JSONValue& JSONValue::operator =(const char* rhs)
     return *this;
 }
 
-JSONValue& JSONValue::operator =(const JSONArray& rhs)
+JSONValue& JSONValue::operator=(const JSONArray& rhs)
 {
     SetType(JSON_ARRAY);
     *arrayValue_ = rhs;
@@ -120,7 +103,7 @@ JSONValue& JSONValue::operator =(const JSONArray& rhs)
     return *this;
 }
 
-JSONValue& JSONValue::operator =(const JSONObject& rhs)
+JSONValue& JSONValue::operator=(const JSONObject& rhs)
 {
     SetType(JSON_OBJECT);
     *objectValue_ = rhs;
@@ -128,7 +111,7 @@ JSONValue& JSONValue::operator =(const JSONObject& rhs)
     return *this;
 }
 
-JSONValue& JSONValue::operator =(const JSONValue& rhs)
+JSONValue& JSONValue::operator=(const JSONValue& rhs)
 {
     if (this == &rhs)
         return *this;
@@ -163,27 +146,15 @@ JSONValue& JSONValue::operator =(const JSONValue& rhs)
     return *this;
 }
 
-JSONValueType JSONValue::GetValueType() const
-{
-    return (JSONValueType)(type_ >> 16);
-}
+JSONValueType JSONValue::GetValueType() const { return (JSONValueType)(type_ >> 16); }
 
-JSONNumberType JSONValue::GetNumberType() const
-{
-    return (JSONNumberType)(type_ & 0xffff);
-}
+JSONNumberType JSONValue::GetNumberType() const { return (JSONNumberType)(type_ & 0xffff); }
 
-String JSONValue::GetValueTypeName() const
-{
-    return GetValueTypeName(GetValueType());
-}
+String JSONValue::GetValueTypeName() const { return GetValueTypeName(GetValueType()); }
 
-String JSONValue::GetNumberTypeName() const
-{
-    return GetNumberTypeName(GetNumberType());
-}
+String JSONValue::GetNumberTypeName() const { return GetNumberTypeName(GetNumberType()); }
 
-JSONValue& JSONValue::operator [](unsigned index)
+JSONValue& JSONValue::operator[](unsigned index)
 {
     // Convert to array type
     SetType(JSON_ARRAY);
@@ -191,7 +162,7 @@ JSONValue& JSONValue::operator [](unsigned index)
     return (*arrayValue_)[index];
 }
 
-const JSONValue& JSONValue::operator [](unsigned index) const
+const JSONValue& JSONValue::operator[](unsigned index) const
 {
     if (GetValueType() != JSON_ARRAY)
         return EMPTY;
@@ -249,7 +220,7 @@ unsigned JSONValue::Size() const
     return 0;
 }
 
-JSONValue& JSONValue::operator [](const String& key)
+JSONValue& JSONValue::operator[](const String& key)
 {
     // Convert to object type
     SetType(JSON_OBJECT);
@@ -257,7 +228,7 @@ JSONValue& JSONValue::operator [](const String& key)
     return (*objectValue_)[key];
 }
 
-const JSONValue& JSONValue::operator [](const String& key) const
+const JSONValue& JSONValue::operator[](const String& key) const
 {
     if (GetValueType() != JSON_OBJECT)
         return EMPTY;
@@ -295,7 +266,7 @@ bool JSONValue::Erase(const String& key)
 
 bool JSONValue::Contains(const String& key) const
 {
-    if  (GetValueType() != JSON_OBJECT)
+    if (GetValueType() != JSON_OBJECT)
         return false;
 
     return objectValue_->Contains(key);
@@ -415,7 +386,7 @@ void JSONValue::SetVariantValue(const Variant& variant, Context* context)
     case VAR_BOOL:
         *this = variant.GetBool();
         return;
-    
+
     case VAR_INT:
         *this = variant.GetInt();
         return;
@@ -441,44 +412,44 @@ void JSONValue::SetVariantValue(const Variant& variant, Context* context)
         return;
 
     case VAR_RESOURCEREF:
+    {
+        if (!context)
         {
-            if (!context)
-            {
-                URHO3D_LOGERROR("Context must not be null for ResourceRef");
-                return;
-            }
-
-            const ResourceRef& ref = variant.GetResourceRef();
-            *this = String(context->GetTypeName(ref.type_)) + ";" + ref.name_;
+            URHO3D_LOGERROR("Context must not be null for ResourceRef");
+            return;
         }
+
+        const ResourceRef& ref = variant.GetResourceRef();
+        *this = String(context->GetTypeName(ref.type_)) + ";" + ref.name_;
+    }
         return;
 
     case VAR_RESOURCEREFLIST:
+    {
+        if (!context)
         {
-            if (!context)
-            {
-                URHO3D_LOGERROR("Context must not be null for ResourceRefList");
-                return;
-            }
-
-            const ResourceRefList& refList = variant.GetResourceRefList();
-            String str(context->GetTypeName(refList.type_));
-            for (unsigned i = 0; i < refList.names_.Size(); ++i)
-            {
-                str += ";";
-                str += refList.names_[i];
-            }
-            *this = str;
+            URHO3D_LOGERROR("Context must not be null for ResourceRefList");
+            return;
         }
+
+        const ResourceRefList& refList = variant.GetResourceRefList();
+        String str(context->GetTypeName(refList.type_));
+        for (unsigned i = 0; i < refList.names_.Size(); ++i)
+        {
+            str += ";";
+            str += refList.names_[i];
+        }
+        *this = str;
+    }
         return;
 
     case VAR_STRINGVECTOR:
-        {
-            const StringVector& vector = variant.GetStringVector();
-            Resize(vector.Size());
-            for (unsigned i = 0; i < vector.Size(); ++i)
-                (*this)[i] = vector[i];
-        }
+    {
+        const StringVector& vector = variant.GetStringVector();
+        Resize(vector.Size());
+        for (unsigned i = 0; i < vector.Size(); ++i)
+            (*this)[i] = vector[i];
+    }
         return;
 
     default:
@@ -520,41 +491,41 @@ Variant JSONValue::GetVariantValue(VariantType type) const
         break;
 
     case VAR_RESOURCEREF:
+    {
+        ResourceRef ref;
+        Vector<String> values = GetString().Split(';');
+        if (values.Size() == 2)
         {
-            ResourceRef ref;
-            Vector<String> values = GetString().Split(';');
-            if (values.Size() == 2)
-            {
-                ref.type_ = values[0];
-                ref.name_ = values[1];
-            }
-            variant = ref;
+            ref.type_ = values[0];
+            ref.name_ = values[1];
         }
-        break;
+        variant = ref;
+    }
+    break;
 
     case VAR_RESOURCEREFLIST:
+    {
+        ResourceRefList refList;
+        Vector<String> values = GetString().Split(';', true);
+        if (values.Size() >= 1)
         {
-            ResourceRefList refList;
-            Vector<String> values = GetString().Split(';', true);
-            if (values.Size() >= 1)
-            {
-                refList.type_ = values[0];
-                refList.names_.Resize(values.Size() - 1);
-                for (unsigned i = 1; i < values.Size(); ++i)
-                    refList.names_[i - 1] = values[i];
-            }
-            variant = refList;
+            refList.type_ = values[0];
+            refList.names_.Resize(values.Size() - 1);
+            for (unsigned i = 1; i < values.Size(); ++i)
+                refList.names_[i - 1] = values[i];
         }
-        break;
+        variant = refList;
+    }
+    break;
 
     case VAR_STRINGVECTOR:
-        {
-            StringVector vector;
-            for (unsigned i = 0; i < Size(); ++i)
-                vector.Push((*this)[i].GetString());
-            variant = vector;
-        }
-        break;
+    {
+        StringVector vector;
+        for (unsigned i = 0; i < Size(); ++i)
+            vector.Push((*this)[i].GetString());
+        variant = vector;
+    }
+    break;
 
     default:
         variant.FromString(type, GetString());
@@ -581,7 +552,8 @@ VariantMap JSONValue::GetVariantMap() const
 
     for (ConstJSONObjectIterator i = Begin(); i != End(); ++i)
     {
-        /// \todo Ideally this should allow any strings, but for now the convention is that the keys need to be hexadecimal StringHashes
+        /// \todo Ideally this should allow any strings, but for now the convention is that the keys need to be
+        /// hexadecimal StringHashes
         StringHash key(ToUInt(i->first_, 16));
         Variant variant = i->second_.GetVariant();
         variantMap[key] = variant;
@@ -620,15 +592,9 @@ VariantVector JSONValue::GetVariantVector() const
     return variantVector;
 }
 
-String JSONValue::GetValueTypeName(JSONValueType type)
-{
-    return valueTypeNames[type];
-}
+String JSONValue::GetValueTypeName(JSONValueType type) { return valueTypeNames[type]; }
 
-String JSONValue::GetNumberTypeName(JSONNumberType type)
-{
-    return numberTypeNames[type];
-}
+String JSONValue::GetNumberTypeName(JSONNumberType type) { return numberTypeNames[type]; }
 
 JSONValueType JSONValue::GetValueTypeFromName(const String& typeName)
 {
@@ -649,5 +615,4 @@ JSONNumberType JSONValue::GetNumberTypeFromName(const char* typeName)
 {
     return (JSONNumberType)GetStringListIndex(typeName, numberTypeNames, JSONNT_NAN);
 }
-
 }

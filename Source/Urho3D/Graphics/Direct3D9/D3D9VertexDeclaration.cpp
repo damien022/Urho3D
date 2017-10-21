@@ -32,9 +32,7 @@
 
 namespace Urho3D
 {
-
-const BYTE d3dElementType[] =
-{
+const BYTE d3dElementType[] = {
     D3DDECLTYPE_UNUSED, // Int (not supported by D3D9)
     D3DDECLTYPE_FLOAT1, // Float
     D3DDECLTYPE_FLOAT2, // Vector2
@@ -44,21 +42,14 @@ const BYTE d3dElementType[] =
     D3DDECLTYPE_UBYTE4N // 4 bytes, normalized
 };
 
-const BYTE d3dElementUsage[] =
-{
-    D3DDECLUSAGE_POSITION,
-    D3DDECLUSAGE_NORMAL,
-    D3DDECLUSAGE_BINORMAL,
-    D3DDECLUSAGE_TANGENT,
-    D3DDECLUSAGE_TEXCOORD,
-    D3DDECLUSAGE_COLOR,
-    D3DDECLUSAGE_BLENDWEIGHT,
-    D3DDECLUSAGE_BLENDINDICES, 
+const BYTE d3dElementUsage[] = {
+    D3DDECLUSAGE_POSITION, D3DDECLUSAGE_NORMAL, D3DDECLUSAGE_BINORMAL,    D3DDECLUSAGE_TANGENT,
+    D3DDECLUSAGE_TEXCOORD, D3DDECLUSAGE_COLOR,  D3DDECLUSAGE_BLENDWEIGHT, D3DDECLUSAGE_BLENDINDICES,
     D3DDECLUSAGE_TEXCOORD // Object index (not supported by D3D9)
 };
 
-VertexDeclaration::VertexDeclaration(Graphics* graphics, const PODVector<VertexElement>& srcElements) :
-    declaration_(nullptr)
+VertexDeclaration::VertexDeclaration(Graphics* graphics, const PODVector<VertexElement>& srcElements)
+    : declaration_(nullptr)
 {
     PODVector<VertexDeclarationElement> elements;
 
@@ -84,8 +75,8 @@ VertexDeclaration::VertexDeclaration(Graphics* graphics, const PODVector<VertexE
     Create(graphics, elements);
 }
 
-VertexDeclaration::VertexDeclaration(Graphics* graphics, const PODVector<VertexBuffer*>& buffers) :
-    declaration_(nullptr)
+VertexDeclaration::VertexDeclaration(Graphics* graphics, const PODVector<VertexBuffer*>& buffers)
+    : declaration_(nullptr)
 {
     PODVector<VertexDeclarationElement> elements;
     unsigned prevBufferElements = 0;
@@ -138,8 +129,8 @@ VertexDeclaration::VertexDeclaration(Graphics* graphics, const PODVector<VertexB
     Create(graphics, elements);
 }
 
-VertexDeclaration::VertexDeclaration(Graphics* graphics, const Vector<SharedPtr<VertexBuffer> >& buffers) :
-    declaration_(nullptr)
+VertexDeclaration::VertexDeclaration(Graphics* graphics, const Vector<SharedPtr<VertexBuffer>>& buffers)
+    : declaration_(nullptr)
 {
     PODVector<VertexDeclarationElement> elements;
     unsigned prevBufferElements = 0;
@@ -192,10 +183,7 @@ VertexDeclaration::VertexDeclaration(Graphics* graphics, const Vector<SharedPtr<
     Create(graphics, elements);
 }
 
-VertexDeclaration::~VertexDeclaration()
-{
-    Release();
-}
+VertexDeclaration::~VertexDeclaration() { Release(); }
 
 void VertexDeclaration::Create(Graphics* graphics, const PODVector<VertexDeclarationElement>& elements)
 {
@@ -229,9 +217,5 @@ void VertexDeclaration::Create(Graphics* graphics, const PODVector<VertexDeclara
     }
 }
 
-void VertexDeclaration::Release()
-{
-    URHO3D_SAFE_RELEASE(declaration_);
-}
-
+void VertexDeclaration::Release() { URHO3D_SAFE_RELEASE(declaration_); }
 }

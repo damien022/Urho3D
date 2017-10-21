@@ -29,7 +29,6 @@
 
 namespace Urho3D
 {
-
 class Octree;
 
 static const int NUM_OCTANTS = 8;
@@ -176,7 +175,8 @@ public:
     /// Visualize the component as debug geometry.
     virtual void DrawDebugGeometry(DebugRenderer* debug, bool depthTest) override;
 
-    /// Set size and maximum subdivision levels. If octree is not empty, drawable objects will be temporarily moved to the root.
+    /// Set size and maximum subdivision levels. If octree is not empty, drawable objects will be temporarily moved to
+    /// the root.
     void SetSize(const BoundingBox& box, unsigned numLevels);
     /// Update and reinsert drawable objects.
     void Update(const FrameInfo& frame);
@@ -217,5 +217,4 @@ private:
     /// Subdivision level.
     unsigned numLevels_;
 };
-
 }

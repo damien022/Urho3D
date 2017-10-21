@@ -28,9 +28,9 @@
 
 namespace Urho3D
 {
-    class Constraint;
-    class Node;
-    class RigidBody;
+class Constraint;
+class Node;
+class RigidBody;
 }
 
 using namespace Urho3D;
@@ -50,7 +50,7 @@ class Vehicle : public LogicComponent
 {
     URHO3D_OBJECT(Vehicle, LogicComponent)
 
-public :
+public:
     /// Construct.
     Vehicle(Context* context);
     /// Destruct.

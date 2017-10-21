@@ -46,11 +46,11 @@
 
 URHO3D_DEFINE_APPLICATION_MAIN(Navigation)
 
-Navigation::Navigation(Context* context) :
-    Sample(context),
-    drawDebug_(false),
-    useStreaming_(false),
-    streamingDistance_(2)
+Navigation::Navigation(Context* context)
+    : Sample(context)
+    , drawDebug_(false)
+    , useStreaming_(false)
+    , streamingDistance_(2)
 {
 }
 
@@ -172,8 +172,8 @@ void Navigation::CreateUI()
     ResourceCache* cache = GetSubsystem<ResourceCache>();
     UI* ui = GetSubsystem<UI>();
 
-    // Create a Cursor UI element because we want to be able to hide and show it at will. When hidden, the mouse cursor will
-    // control the camera, and when visible, it will point the raycast target
+    // Create a Cursor UI element because we want to be able to hide and show it at will. When hidden, the mouse cursor
+    // will control the camera, and when visible, it will point the raycast target
     XMLFile* style = cache->GetResource<XMLFile>("UI/DefaultStyle.xml");
     SharedPtr<Cursor> cursor(new Cursor(context_));
     cursor->SetStyleAuto(style);
@@ -185,13 +185,11 @@ void Navigation::CreateUI()
 
     // Construct new Text object, set string to display and font to use
     Text* instructionText = ui->GetRoot()->CreateChild<Text>();
-    instructionText->SetText(
-        "Use WASD keys to move, RMB to rotate view\n"
-        "LMB to set destination, SHIFT+LMB to teleport\n"
-        "MMB or O key to add or remove obstacles\n"
-        "Tab to toggle navigation mesh streaming\n"
-        "Space to toggle debug geometry"
-    );
+    instructionText->SetText("Use WASD keys to move, RMB to rotate view\n"
+                             "LMB to set destination, SHIFT+LMB to teleport\n"
+                             "MMB or O key to add or remove obstacles\n"
+                             "Tab to toggle navigation mesh streaming\n"
+                             "Space to toggle debug geometry");
     instructionText->SetFont(cache->GetResource<Font>("Fonts/Anonymous Pro.ttf"), 15);
     // The text has multiple rows. Center them in relation to each other
     instructionText->SetTextAlignment(HA_CENTER);
@@ -422,7 +420,8 @@ void Navigation::UpdateStreaming()
     for (HashSet<IntVector2>::Iterator i = addedTiles_.Begin(); i != addedTiles_.End();)
     {
         const IntVector2 tileIdx = *i;
-        if (beginTile.x_ <= tileIdx.x_ && tileIdx.x_ <= endTile.x_ && beginTile.y_ <= tileIdx.y_ && tileIdx.y_ <= endTile.y_)
+        if (beginTile.x_ <= tileIdx.x_ && tileIdx.x_ <= endTile.x_ && beginTile.y_ <= tileIdx.y_ &&
+            tileIdx.y_ <= endTile.y_)
             ++i;
         else
         {
@@ -493,7 +492,7 @@ void Navigation::HandlePostRenderUpdate(StringHash eventType, VariantMap& eventD
         // Visualize the current calculated path
         DebugRenderer* debug = scene_->GetComponent<DebugRenderer>();
         debug->AddBoundingBox(BoundingBox(endPos_ - Vector3(0.1f, 0.1f, 0.1f), endPos_ + Vector3(0.1f, 0.1f, 0.1f)),
-            Color(1.0f, 1.0f, 1.0f));
+                              Color(1.0f, 1.0f, 1.0f));
 
         // Draw the path with a small upward bias so that it does not clip into the surfaces
         Vector3 bias(0.0f, 0.05f, 0.0f);

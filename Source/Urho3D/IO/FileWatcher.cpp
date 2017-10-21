@@ -31,14 +31,12 @@
 #include <windows.h>
 #elif __linux__
 #include <sys/inotify.h>
-extern "C"
-{
+extern "C" {
 // Need read/close for inotify
 #include "unistd.h"
 }
 #elif defined(__APPLE__) && !defined(IOS) && !defined(TVOS)
-extern "C"
-{
+extern "C" {
 #include "../IO/MacFileWatcher.h"
 }
 #endif
@@ -49,11 +47,11 @@ namespace Urho3D
 static const unsigned BUFFERSIZE = 4096;
 #endif
 
-FileWatcher::FileWatcher(Context* context) :
-    Object(context),
-    fileSystem_(GetSubsystem<FileSystem>()),
-    delay_(1.0f),
-    watchSubDirs_(false)
+FileWatcher::FileWatcher(Context* context)
+    : Object(context)
+    , fileSystem_(GetSubsystem<FileSystem>())
+    , delay_(1.0f)
+    , watchSubDirs_(false)
 {
 #ifdef URHO3D_FILEWATCHER
 #ifdef __linux__
@@ -89,14 +87,9 @@ bool FileWatcher::StartWatching(const String& pathName, bool watchSubDirs)
 #ifdef _WIN32
     String nativePath = GetNativePath(RemoveTrailingSlash(pathName));
 
-    dirHandle_ = (void*)CreateFileW(
-        WString(nativePath).CString(),
-        FILE_LIST_DIRECTORY,
-        FILE_SHARE_WRITE | FILE_SHARE_READ | FILE_SHARE_DELETE,
-        nullptr,
-        OPEN_EXISTING,
-        FILE_FLAG_BACKUP_SEMANTICS,
-        nullptr);
+    dirHandle_ = (void*)CreateFileW(WString(nativePath).CString(), FILE_LIST_DIRECTORY,
+                                    FILE_SHARE_WRITE | FILE_SHARE_READ | FILE_SHARE_DELETE, nullptr, OPEN_EXISTING,
+                                    FILE_FLAG_BACKUP_SEMANTICS, nullptr);
 
     if (dirHandle_ != INVALID_HANDLE_VALUE)
     {
@@ -159,7 +152,8 @@ bool FileWatcher::StartWatching(const String& pathName, bool watchSubDirs)
 #elif defined(__APPLE__) && !defined(IOS) && !defined(TVOS)
     if (!supported_)
     {
-        URHO3D_LOGERROR("Individual file watching not supported by this OS version, can not start watching path " + pathName);
+        URHO3D_LOGERROR("Individual file watching not supported by this OS version, can not start watching path " +
+                        pathName);
         return false;
     }
 
@@ -229,10 +223,7 @@ void FileWatcher::StopWatching()
     }
 }
 
-void FileWatcher::SetDelay(float interval)
-{
-    delay_ = Max(interval, 0.0f);
-}
+void FileWatcher::SetDelay(float interval) { delay_ = Max(interval, 0.0f); }
 
 void FileWatcher::ThreadFunction()
 {
@@ -243,15 +234,9 @@ void FileWatcher::ThreadFunction()
 
     while (shouldRun_)
     {
-        if (ReadDirectoryChangesW((HANDLE)dirHandle_,
-            buffer,
-            BUFFERSIZE,
-            watchSubDirs_,
-            FILE_NOTIFY_CHANGE_FILE_NAME |
-            FILE_NOTIFY_CHANGE_LAST_WRITE,
-            &bytesFilled,
-            nullptr,
-            nullptr))
+        if (ReadDirectoryChangesW((HANDLE)dirHandle_, buffer, BUFFERSIZE, watchSubDirs_,
+                                  FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_LAST_WRITE, &bytesFilled, nullptr,
+                                  nullptr))
         {
             unsigned offset = 0;
 
@@ -354,5 +339,4 @@ bool FileWatcher::GetNextChange(String& dest)
         return false;
     }
 }
-
 }

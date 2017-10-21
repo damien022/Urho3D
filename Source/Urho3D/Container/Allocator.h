@@ -32,7 +32,6 @@
 
 namespace Urho3D
 {
-
 struct AllocatorBlock;
 struct AllocatorNode;
 
@@ -72,18 +71,15 @@ template <class T> class Allocator
 {
 public:
     /// Construct.
-    Allocator(unsigned initialCapacity = 0) :
-        allocator_(nullptr)
+    Allocator(unsigned initialCapacity = 0)
+        : allocator_(nullptr)
     {
         if (initialCapacity)
             allocator_ = AllocatorInitialize((unsigned)sizeof(T), initialCapacity);
     }
 
     /// Destruct.
-    ~Allocator()
-    {
-        AllocatorUninitialize(allocator_);
-    }
+    ~Allocator() { AllocatorUninitialize(allocator_); }
 
     /// Reserve and default-construct an object.
     T* Reserve()
@@ -91,7 +87,7 @@ public:
         if (!allocator_)
             allocator_ = AllocatorInitialize((unsigned)sizeof(T));
         T* newObject = static_cast<T*>(AllocatorReserve(allocator_));
-        new(newObject) T();
+        new (newObject) T();
 
         return newObject;
     }
@@ -102,7 +98,7 @@ public:
         if (!allocator_)
             allocator_ = AllocatorInitialize((unsigned)sizeof(T));
         T* newObject = static_cast<T*>(AllocatorReserve(allocator_));
-        new(newObject) T(object);
+        new (newObject) T(object);
 
         return newObject;
     }
@@ -118,10 +114,9 @@ private:
     /// Prevent copy construction.
     Allocator(const Allocator<T>& rhs);
     /// Prevent assignment.
-    Allocator<T>& operator =(const Allocator<T>& rhs);
+    Allocator<T>& operator=(const Allocator<T>& rhs);
 
     /// Allocator block.
     AllocatorBlock* allocator_;
 };
-
 }

@@ -24,7 +24,6 @@
 
 namespace Urho3D
 {
-
 /// Animation wrap mode.
 enum WrapMode
 {
@@ -35,6 +34,4 @@ enum WrapMode
     /// Clamp mode.
     WM_CLAMP,
 };
-
 }
-

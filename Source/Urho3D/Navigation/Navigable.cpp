@@ -29,18 +29,15 @@
 
 namespace Urho3D
 {
-
 extern const char* NAVIGATION_CATEGORY;
 
-Navigable::Navigable(Context* context) :
-    Component(context),
-    recursive_(true)
+Navigable::Navigable(Context* context)
+    : Component(context)
+    , recursive_(true)
 {
 }
 
-Navigable::~Navigable()
-{
-}
+Navigable::~Navigable() {}
 
 void Navigable::RegisterObject(Context* context)
 {
@@ -50,9 +47,5 @@ void Navigable::RegisterObject(Context* context)
     URHO3D_ATTRIBUTE("Recursive", bool, recursive_, true, AM_DEFAULT);
 }
 
-void Navigable::SetRecursive(bool enable)
-{
-    recursive_ = enable;
-}
-
+void Navigable::SetRecursive(bool enable) { recursive_ = enable; }
 }

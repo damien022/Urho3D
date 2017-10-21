@@ -45,8 +45,8 @@
 
 URHO3D_DEFINE_APPLICATION_MAIN(LightAnimation)
 
-LightAnimation::LightAnimation(Context* context) :
-    Sample(context)
+LightAnimation::LightAnimation(Context* context)
+    : Sample(context)
 {
 }
 
@@ -77,15 +77,15 @@ void LightAnimation::CreateScene()
 
     scene_ = new Scene(context_);
 
-    // Create the Octree component to the scene. This is required before adding any drawable components, or else nothing will
-    // show up. The default octree volume will be from (-1000, -1000, -1000) to (1000, 1000, 1000) in world coordinates; it
-    // is also legal to place objects outside the volume but their visibility can then not be checked in a hierarchically
-    // optimizing manner
+    // Create the Octree component to the scene. This is required before adding any drawable components, or else nothing
+    // will show up. The default octree volume will be from (-1000, -1000, -1000) to (1000, 1000, 1000) in world
+    // coordinates; it is also legal to place objects outside the volume but their visibility can then not be checked in
+    // a hierarchically optimizing manner
     scene_->CreateComponent<Octree>();
 
-    // Create a child scene node (at world origin) and a StaticModel component into it. Set the StaticModel to show a simple
-    // plane mesh with a "stone" material. Note that naming the scene nodes is optional. Scale the scene node larger
-    // (100 x 100 world units)
+    // Create a child scene node (at world origin) and a StaticModel component into it. Set the StaticModel to show a
+    // simple plane mesh with a "stone" material. Note that naming the scene nodes is optional. Scale the scene node
+    // larger (100 x 100 world units)
     Node* planeNode = scene_->CreateChild("Plane");
     planeNode->SetScale(Vector3(100.0f, 1.0f, 100.0f));
     StaticModel* planeObject = planeNode->CreateComponent<StaticModel>();
@@ -108,9 +108,9 @@ void LightAnimation::CreateScene()
     // Set spline tension
     positionAnimation->SetSplineTension(0.7f);
     positionAnimation->SetKeyFrame(0.0f, Vector3(-30.0f, 5.0f, -30.0f));
-    positionAnimation->SetKeyFrame(1.0f, Vector3( 30.0f, 5.0f, -30.0f));
-    positionAnimation->SetKeyFrame(2.0f, Vector3( 30.0f, 5.0f,  30.0f));
-    positionAnimation->SetKeyFrame(3.0f, Vector3(-30.0f, 5.0f,  30.0f));
+    positionAnimation->SetKeyFrame(1.0f, Vector3(30.0f, 5.0f, -30.0f));
+    positionAnimation->SetKeyFrame(2.0f, Vector3(30.0f, 5.0f, 30.0f));
+    positionAnimation->SetKeyFrame(3.0f, Vector3(-30.0f, 5.0f, 30.0f));
     positionAnimation->SetKeyFrame(4.0f, Vector3(-30.0f, 5.0f, -30.0f));
     // Set position animation
     lightAnimation->AddAttributeAnimation("Position", positionAnimation);
@@ -133,7 +133,10 @@ void LightAnimation::CreateScene()
     spriteAnimation->SetKeyFrame(0.3f, ResourceRef("Texture2D", "Urho2D/GoldIcon/4.png"));
     spriteAnimation->SetKeyFrame(0.4f, ResourceRef("Texture2D", "Urho2D/GoldIcon/5.png"));
     spriteAnimation->SetKeyFrame(0.5f, ResourceRef("Texture2D", "Urho2D/GoldIcon/1.png"));
-    GetSubsystem<UI>()->GetRoot()->GetChild(String("animatingSprite"))->SetAttributeAnimation("Texture", spriteAnimation);
+    GetSubsystem<UI>()
+        ->GetRoot()
+        ->GetChild(String("animatingSprite"))
+        ->SetAttributeAnimation("Texture", spriteAnimation);
 
     // Create light color animation
     SharedPtr<ValueAnimation> colorAnimation(new ValueAnimation(context_));
@@ -148,12 +151,12 @@ void LightAnimation::CreateScene()
     // Apply light animation to light node
     lightNode->SetObjectAnimation(lightAnimation);
 
-    // Create more StaticModel objects to the scene, randomly positioned, rotated and scaled. For rotation, we construct a
-    // quaternion from Euler angles where the Y angle (rotation about the Y axis) is randomized. The mushroom model contains
-    // LOD levels, so the StaticModel component will automatically select the LOD level according to the view distance (you'll
-    // see the model get simpler as it moves further away). Finally, rendering a large number of the same object with the
-    // same material allows instancing to be used, if the GPU supports it. This reduces the amount of CPU work in rendering the
-    // scene.
+    // Create more StaticModel objects to the scene, randomly positioned, rotated and scaled. For rotation, we construct
+    // a quaternion from Euler angles where the Y angle (rotation about the Y axis) is randomized. The mushroom model
+    // contains LOD levels, so the StaticModel component will automatically select the LOD level according to the view
+    // distance (you'll see the model get simpler as it moves further away). Finally, rendering a large number of the
+    // same object with the same material allows instancing to be used, if the GPU supports it. This reduces the amount
+    // of CPU work in rendering the scene.
     const unsigned NUM_OBJECTS = 200;
     for (unsigned i = 0; i < NUM_OBJECTS; ++i)
     {
@@ -208,9 +211,10 @@ void LightAnimation::SetupViewport()
 {
     Renderer* renderer = GetSubsystem<Renderer>();
 
-    // Set up a viewport to the Renderer subsystem so that the 3D scene can be seen. We need to define the scene and the camera
-    // at minimum. Additionally we could configure the viewport screen size and the rendering path (eg. forward / deferred) to
-    // use, but now we just use full screen and default render path configured in the engine command line options
+    // Set up a viewport to the Renderer subsystem so that the 3D scene can be seen. We need to define the scene and the
+    // camera at minimum. Additionally we could configure the viewport screen size and the rendering path (eg. forward /
+    // deferred) to use, but now we just use full screen and default render path configured in the engine command line
+    // options
     SharedPtr<Viewport> viewport(new Viewport(context_, scene_, cameraNode_->GetComponent<Camera>()));
     renderer->SetViewport(0, viewport);
 }

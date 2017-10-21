@@ -27,14 +27,18 @@
 #include "../Core/Timer.h"
 
 #if URHO3D_PROFILING
-#   include <easy/profiler.h>
+#include <easy/profiler.h>
 #else
-namespace profiler { class BaseBlockDescriptor {}; };
+namespace profiler
+{
+class BaseBlockDescriptor
+{
+};
+};
 #endif
 
 namespace Urho3D
 {
-
 static const int PROFILER_DEFAULT_PORT = 28077;
 static const uint32_t PROFILER_COLOR_DEFAULT = 0xffffecb3;
 static const uint32_t PROFILER_COLOR_EVENTS = 0xffff9800;
@@ -50,7 +54,6 @@ enum ProfilerBlockStatus
     ON_WITHOUT_CHILDREN = ON | OFF_RECURSIVE,
     FORCE_ON_WITHOUT_CHILDREN = FORCE_ON | OFF_RECURSIVE,
 };
-
 
 /// Hierarchical performance profiler subsystem.
 class URHO3D_API Profiler : public Object
@@ -72,7 +75,7 @@ public:
     /// Returns true if event profiling is enabled, false otherwise.
     bool GetEventProfilingEnabled() const;
     /// Starts listening for incoming profiler tool connections.
-    void StartListen(unsigned short port=PROFILER_DEFAULT_PORT);
+    void StartListen(unsigned short port = PROFILER_DEFAULT_PORT);
     /// Stops listening for incoming profiler tool connections.
     void StopListen();
     /// Returns true if profiler is currently listening for incoming connections.
@@ -89,31 +92,29 @@ public:
     void SaveProfilerData(const String& filePath);
     /// Begin non-scoped profiled block. Block has to be terminated with call to EndBlock(). This is slow and is for
     /// integration with scripting lnaguages. Use URHO3D_PROFILE* macros when writing c++ code instead.
-    void BeginBlock(const char* name, const char* file, int line, unsigned int argb=PROFILER_COLOR_DEFAULT,
-                    unsigned char status=ProfilerBlockStatus::ON);
+    void BeginBlock(const char* name, const char* file, int line, unsigned int argb = PROFILER_COLOR_DEFAULT,
+                    unsigned char status = ProfilerBlockStatus::ON);
     /// End block started with BeginBlock().
     void EndBlock();
     /// Dummy api for compatibility. May be implemented later.
     String PrintData(bool, bool) const { return ""; }
 
 private:
-
     bool enableEventProfiling_ = true;
     HashMap<unsigned, ::profiler::BaseBlockDescriptor*> blockDescriptorCache_;
 };
 
 #if URHO3D_PROFILING
-#   define URHO3D_PROFILE(name, ...) EASY_BLOCK(#name, __VA_ARGS__)
-#   define URHO3D_PROFILE_SCOPED(name, ...) EASY_BLOCK(name, __VA_ARGS__)
-#   define URHO3D_PROFILE_NONSCOPED(name, ...) EASY_NONSCOPED_BLOCK(name, __VA_ARGS__)
-#   define URHO3D_PROFILE_END(...) EASY_END_BLOCK
-#   define URHO3D_PROFILE_THREAD(name) EASY_THREAD(name)
+#define URHO3D_PROFILE(name, ...) EASY_BLOCK(#name, __VA_ARGS__)
+#define URHO3D_PROFILE_SCOPED(name, ...) EASY_BLOCK(name, __VA_ARGS__)
+#define URHO3D_PROFILE_NONSCOPED(name, ...) EASY_NONSCOPED_BLOCK(name, __VA_ARGS__)
+#define URHO3D_PROFILE_END(...) EASY_END_BLOCK
+#define URHO3D_PROFILE_THREAD(name) EASY_THREAD(name)
 #else
-#   define URHO3D_PROFILE(name, ...)
-#   define URHO3D_PROFILE_NONSCOPED(name, ...)
-#   define URHO3D_PROFILE_SCOPED(name, ...)
-#   define URHO3D_PROFILE_END(...)
-#   define URHO3D_PROFILE_THREAD(name)
+#define URHO3D_PROFILE(name, ...)
+#define URHO3D_PROFILE_NONSCOPED(name, ...)
+#define URHO3D_PROFILE_SCOPED(name, ...)
+#define URHO3D_PROFILE_END(...)
+#define URHO3D_PROFILE_THREAD(name)
 #endif
-
 }

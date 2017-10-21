@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 class Button;
 class DropDownList;
 class Font;
@@ -188,5 +187,4 @@ private:
     /// Ignore events flag, used when changing line edits manually.
     bool ignoreEvents_;
 };
-
 }

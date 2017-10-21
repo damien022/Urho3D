@@ -27,7 +27,6 @@
 
 namespace Urho3D
 {
-
 class XMLElement;
 class JSONValue;
 
@@ -38,7 +37,8 @@ enum InterpMethod
     IM_NONE = 0,
     /// Linear interpolation (default).
     IM_LINEAR,
-    /// Cardinal spline interpolation, default tension value is 0.5f. For more information please refer to http://cubic.org/docs/hermite.htm.
+    /// Cardinal spline interpolation, default tension value is 0.5f. For more information please refer to
+    /// http://cubic.org/docs/hermite.htm.
     IM_SPLINE,
 };
 
@@ -165,5 +165,4 @@ protected:
     /// Event frames.
     Vector<VAnimEventFrame> eventFrames_;
 };
-
 }

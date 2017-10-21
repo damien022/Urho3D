@@ -23,35 +23,32 @@
 #include "../Precompiled.h"
 
 #include "../IO/File.h"
+#include "../IO/FileSystem.h"
 #include "../IO/Log.h"
 #include "../IO/PackageFile.h"
-#include "../IO/FileSystem.h"
 
 namespace Urho3D
 {
-
-PackageFile::PackageFile(Context* context) :
-    Object(context),
-    totalSize_(0),
-    totalDataSize_(0),
-    checksum_(0),
-    compressed_(false)
+PackageFile::PackageFile(Context* context)
+    : Object(context)
+    , totalSize_(0)
+    , totalDataSize_(0)
+    , checksum_(0)
+    , compressed_(false)
 {
 }
 
-PackageFile::PackageFile(Context* context, const String& fileName, unsigned startOffset) :
-    Object(context),
-    totalSize_(0),
-    totalDataSize_(0),
-    checksum_(0),
-    compressed_(false)
+PackageFile::PackageFile(Context* context, const String& fileName, unsigned startOffset)
+    : Object(context)
+    , totalSize_(0)
+    , totalDataSize_(0)
+    , checksum_(0)
+    , compressed_(false)
 {
     Open(fileName, startOffset);
 }
 
-PackageFile::~PackageFile()
-{
-}
+PackageFile::~PackageFile() {}
 
 bool PackageFile::Open(const String& fileName, unsigned startOffset)
 {
@@ -188,5 +185,4 @@ void PackageFile::Scan(Vector<String>& result, const String& pathName, const Str
         }
     }
 }
-
 }

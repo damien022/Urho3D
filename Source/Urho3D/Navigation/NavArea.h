@@ -27,7 +27,6 @@
 
 namespace Urho3D
 {
-
 class URHO3D_API NavArea : public Component
 {
     URHO3D_OBJECT(NavArea, Component);
@@ -64,5 +63,4 @@ private:
     /// Area id to assign to the marked area.
     unsigned char areaID_;
 };
-
 }

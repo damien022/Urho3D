@@ -26,10 +26,8 @@
 
 namespace Urho3D
 {
-
 class Node;
 class Scene;
-
 }
 
 /// Huge object count example.
@@ -52,25 +50,32 @@ public:
 
 protected:
     /// Return XML patch instructions for screen joystick layout for a specific sample app, if any.
-    virtual String GetScreenJoystickPatchString() const override { return
-        "<patch>"
-        "    <remove sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]/attribute[@name='Is Visible']\" />"
-        "    <replace sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]/element[./attribute[@name='Name' and @value='Label']]/attribute[@name='Text']/@value\">Group</replace>"
-        "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]\">"
-        "        <element type=\"Text\">"
-        "            <attribute name=\"Name\" value=\"KeyBinding\" />"
-        "            <attribute name=\"Text\" value=\"G\" />"
-        "        </element>"
-        "    </add>"
-        "    <remove sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]/attribute[@name='Is Visible']\" />"
-        "    <replace sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]/element[./attribute[@name='Name' and @value='Label']]/attribute[@name='Text']/@value\">Animation</replace>"
-        "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]\">"
-        "        <element type=\"Text\">"
-        "            <attribute name=\"Name\" value=\"KeyBinding\" />"
-        "            <attribute name=\"Text\" value=\"SPACE\" />"
-        "        </element>"
-        "    </add>"
-        "</patch>";
+    virtual String GetScreenJoystickPatchString() const override
+    {
+        return "<patch>"
+               "    <remove sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]/attribute[@name='Is "
+               "Visible']\" />"
+               "    <replace sel=\"/element/element[./attribute[@name='Name' and "
+               "@value='Button0']]/element[./attribute[@name='Name' and "
+               "@value='Label']]/attribute[@name='Text']/@value\">Group</replace>"
+               "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]\">"
+               "        <element type=\"Text\">"
+               "            <attribute name=\"Name\" value=\"KeyBinding\" />"
+               "            <attribute name=\"Text\" value=\"G\" />"
+               "        </element>"
+               "    </add>"
+               "    <remove sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]/attribute[@name='Is "
+               "Visible']\" />"
+               "    <replace sel=\"/element/element[./attribute[@name='Name' and "
+               "@value='Button1']]/element[./attribute[@name='Name' and "
+               "@value='Label']]/attribute[@name='Text']/@value\">Animation</replace>"
+               "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]\">"
+               "        <element type=\"Text\">"
+               "            <attribute name=\"Name\" value=\"KeyBinding\" />"
+               "            <attribute name=\"Text\" value=\"SPACE\" />"
+               "        </element>"
+               "    </add>"
+               "</patch>";
     }
 
 private:
@@ -90,7 +95,7 @@ private:
     void HandleUpdate(StringHash eventType, VariantMap& eventData);
 
     /// Box scene nodes.
-    Vector<SharedPtr<Node> > boxNodes_;
+    Vector<SharedPtr<Node>> boxNodes_;
     /// Animation flag.
     bool animate_;
     /// Group optimization flag.

@@ -26,9 +26,9 @@
 
 namespace Urho3D
 {
-    class Node;
-    class Scene;
-    class ConstraintRope2D;
+class Node;
+class Scene;
+class ConstraintRope2D;
 }
 
 /// Urho2D physics rope sample.
@@ -49,25 +49,32 @@ public:
 
 protected:
     /// Return XML patch instructions for screen joystick layout for a specific sample app, if any.
-    virtual String GetScreenJoystickPatchString() const override { return
-        "<patch>"
-        "    <remove sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]/attribute[@name='Is Visible']\" />"
-        "    <replace sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]/element[./attribute[@name='Name' and @value='Label']]/attribute[@name='Text']/@value\">Zoom In</replace>"
-        "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]\">"
-        "        <element type=\"Text\">"
-        "            <attribute name=\"Name\" value=\"KeyBinding\" />"
-        "            <attribute name=\"Text\" value=\"PAGEUP\" />"
-        "        </element>"
-        "    </add>"
-        "    <remove sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]/attribute[@name='Is Visible']\" />"
-        "    <replace sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]/element[./attribute[@name='Name' and @value='Label']]/attribute[@name='Text']/@value\">Zoom Out</replace>"
-        "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]\">"
-        "        <element type=\"Text\">"
-        "            <attribute name=\"Name\" value=\"KeyBinding\" />"
-        "            <attribute name=\"Text\" value=\"PAGEDOWN\" />"
-        "        </element>"
-        "    </add>"
-        "</patch>";
+    virtual String GetScreenJoystickPatchString() const override
+    {
+        return "<patch>"
+               "    <remove sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]/attribute[@name='Is "
+               "Visible']\" />"
+               "    <replace sel=\"/element/element[./attribute[@name='Name' and "
+               "@value='Button0']]/element[./attribute[@name='Name' and "
+               "@value='Label']]/attribute[@name='Text']/@value\">Zoom In</replace>"
+               "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button0']]\">"
+               "        <element type=\"Text\">"
+               "            <attribute name=\"Name\" value=\"KeyBinding\" />"
+               "            <attribute name=\"Text\" value=\"PAGEUP\" />"
+               "        </element>"
+               "    </add>"
+               "    <remove sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]/attribute[@name='Is "
+               "Visible']\" />"
+               "    <replace sel=\"/element/element[./attribute[@name='Name' and "
+               "@value='Button1']]/element[./attribute[@name='Name' and "
+               "@value='Label']]/attribute[@name='Text']/@value\">Zoom Out</replace>"
+               "    <add sel=\"/element/element[./attribute[@name='Name' and @value='Button1']]\">"
+               "        <element type=\"Text\">"
+               "            <attribute name=\"Name\" value=\"KeyBinding\" />"
+               "            <attribute name=\"Text\" value=\"PAGEDOWN\" />"
+               "        </element>"
+               "    </add>"
+               "</patch>";
     }
 
 private:

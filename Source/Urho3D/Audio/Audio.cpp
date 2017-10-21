@@ -37,12 +37,11 @@
 #include "../DebugNew.h"
 
 #ifdef _MSC_VER
-#pragma warning(disable:6293)
+#pragma warning(disable : 6293)
 #endif
 
 namespace Urho3D
 {
-
 const char* AUDIO_CATEGORY = "Audio";
 
 static const int MIN_BUFFERLENGTH = 20;
@@ -52,11 +51,11 @@ static const StringHash SOUND_MASTER_HASH("Master");
 
 static void SDLAudioCallback(void* userdata, Uint8* stream, int len);
 
-Audio::Audio(Context* context) :
-    Object(context),
-    deviceID_(0),
-    sampleSize_(0),
-    playing_(false)
+Audio::Audio(Context* context)
+    : Object(context)
+    , deviceID_(0)
+    , sampleSize_(0)
+    , playing_(false)
 {
     context_->RequireSDL(SDL_INIT_AUDIO);
 
@@ -87,7 +86,8 @@ bool Audio::SetMode(int bufferLengthMSec, int mixRate, bool stereo, bool interpo
 
     desired.freq = mixRate;
 
-// The concept behind the emscripten audio port is to treat it as 16 bit until the final accumulation form the clip buffer
+// The concept behind the emscripten audio port is to treat it as 16 bit until the final accumulation form the clip
+// buffer
 #ifdef __EMSCRIPTEN__
     desired.format = AUDIO_F32LSB;
 #else
@@ -137,7 +137,7 @@ bool Audio::SetMode(int bufferLengthMSec, int mixRate, bool stereo, bool interpo
     clipBuffer_ = new int[stereo ? fragmentSize_ << 1 : fragmentSize_];
 
     URHO3D_LOGINFO("Set audio mode " + String(mixRate_) + " Hz " + (stereo_ ? "stereo" : "mono") + " " +
-            (interpolation_ ? "interpolated" : ""));
+                   (interpolation_ ? "interpolated" : ""));
 
     return Play();
 }
@@ -170,10 +170,7 @@ bool Audio::Play()
     return true;
 }
 
-void Audio::Stop()
-{
-    playing_ = false;
-}
+void Audio::Stop() { playing_ = false; }
 
 void Audio::SetMasterGain(const String& type, float gain)
 {
@@ -183,10 +180,7 @@ void Audio::SetMasterGain(const String& type, float gain)
         (*i)->UpdateMasterGain();
 }
 
-void Audio::PauseSoundType(const String& type)
-{
-    pausedSoundTypes_.Insert(type);
-}
+void Audio::PauseSoundType(const String& type) { pausedSoundTypes_.Insert(type); }
 
 void Audio::ResumeSoundType(const String& type)
 {
@@ -204,10 +198,7 @@ void Audio::ResumeAll()
     UpdateInternal(0.0f);
 }
 
-void Audio::SetListener(SoundListener* listener)
-{
-    listener_ = listener;
-}
+void Audio::SetListener(SoundListener* listener) { listener_ = listener; }
 
 void Audio::StopSound(Sound* soundClip)
 {
@@ -228,15 +219,9 @@ float Audio::GetMasterGain(const String& type) const
     return findIt->second_.GetFloat();
 }
 
-bool Audio::IsSoundTypePaused(const String& type) const
-{
-    return pausedSoundTypes_.Contains(type);
-}
+bool Audio::IsSoundTypePaused(const String& type) const { return pausedSoundTypes_.Contains(type); }
 
-SoundListener* Audio::GetListener() const
-{
-    return listener_;
-}
+SoundListener* Audio::GetListener() const { return listener_; }
 
 void Audio::AddSoundSource(SoundSource* channel)
 {
@@ -312,7 +297,7 @@ void Audio::MixOutput(void* dest, unsigned samples)
 
             source->Mix(clipPtr, workSamples, mixRate_, stereo_, interpolation_);
         }
-        // Copy output from clip buffer to destination
+            // Copy output from clip buffer to destination
 #ifdef __EMSCRIPTEN__
         float* destPtr = (float*)dest;
         while (clipSamples--)
@@ -373,5 +358,4 @@ void RegisterAudioLibrary(Context* context)
     SoundSource3D::RegisterObject(context);
     SoundListener::RegisterObject(context);
 }
-
 }

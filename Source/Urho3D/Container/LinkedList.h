@@ -31,13 +31,12 @@
 
 namespace Urho3D
 {
-
 /// Singly-linked list node base class.
 struct URHO3D_API LinkedListNode
 {
     /// Construct.
-    LinkedListNode() :
-        next_(nullptr)
+    LinkedListNode()
+        : next_(nullptr)
     {
     }
 
@@ -50,12 +49,13 @@ template <class T> class LinkedList
 {
 public:
     /// Construct empty.
-    LinkedList() :
-        head_(0)
+    LinkedList()
+        : head_(0)
     {
     }
     /// Aggregate initialization constructor.
-    LinkedList(const std::initializer_list<T>& list) : LinkedList()
+    LinkedList(const std::initializer_list<T>& list)
+        : LinkedList()
     {
         for (auto it = list.begin(); it != list.end(); it++)
         {
@@ -63,10 +63,7 @@ public:
         }
     }
     /// Destruct.
-    ~LinkedList()
-    {
-        Clear();
-    }
+    ~LinkedList() { Clear(); }
 
     /// Remove all elements.
     void Clear()
@@ -181,5 +178,4 @@ private:
     /// First element.
     T* head_;
 };
-
 }

@@ -26,12 +26,10 @@
 
 namespace Urho3D
 {
-
 class Drawable;
 class Node;
 class Scene;
 class Zone;
-
 }
 
 /// PBR materials example.
@@ -72,7 +70,7 @@ private:
     void HandleMetallicSliderChanged(StringHash eventType, VariantMap& eventData);
     /// Handle the ambient HDR scale slider drag event.
     void HandleAmbientSliderChanged(StringHash eventType, VariantMap& eventData);
-    
+
     /// Dynamic material.
     Material* dynamicMaterial_;
     /// Roughness label.

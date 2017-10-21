@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// Base class for sound streams.
 class URHO3D_API SoundStream : public RefCounted
 {
@@ -38,8 +37,9 @@ public:
 
     /// Seek to sample number. Return true on success. Need not be implemented by all streams.
     virtual bool Seek(unsigned sample_number);
-    
-    /// Produce sound data into destination. Return number of bytes produced. Called by SoundSource from the mixing thread.
+
+    /// Produce sound data into destination. Return number of bytes produced. Called by SoundSource from the mixing
+    /// thread.
     virtual unsigned GetData(signed char* dest, unsigned numBytes) = 0;
 
     /// Set sound data format.
@@ -75,5 +75,4 @@ protected:
     /// Stereo flag.
     bool stereo_;
 };
-
 }

@@ -22,26 +22,23 @@
 
 #include "../Precompiled.h"
 
+#include "../IO/Log.h"
+#include "../Resource/JSONFile.h"
 #include "../Resource/Localization.h"
 #include "../Resource/ResourceCache.h"
-#include "../Resource/JSONFile.h"
 #include "../Resource/ResourceEvents.h"
-#include "../IO/Log.h"
 
 #include "../DebugNew.h"
 
 namespace Urho3D
 {
-
-Localization::Localization(Context* context) :
-    Object(context),
-    languageIndex_(-1)
+Localization::Localization(Context* context)
+    : Object(context)
+    , languageIndex_(-1)
 {
 }
 
-Localization::~Localization()
-{
-}
+Localization::~Localization() {}
 
 int Localization::GetLanguageIndex(const String& language)
 {
@@ -141,7 +138,8 @@ String Localization::Get(const String& id)
     String result = strings_[StringHash(GetLanguage())][StringHash(id)];
     if (result.Empty())
     {
-        URHO3D_LOGWARNING("Localization::Get(\"" + id + "\") not found translation, language=\"" + GetLanguage() + "\"");
+        URHO3D_LOGWARNING("Localization::Get(\"" + id + "\") not found translation, language=\"" + GetLanguage() +
+                          "\"");
         return id;
     }
     return result;
@@ -176,14 +174,14 @@ void Localization::LoadJSON(const JSONValue& source)
             const String& string = j->second_.GetString();
             if (string.Empty())
             {
-                URHO3D_LOGWARNING(
-                    "Localization::LoadJSON(source): translation is empty, string ID=\"" + id + "\", language=\"" + lang + "\"");
+                URHO3D_LOGWARNING("Localization::LoadJSON(source): translation is empty, string ID=\"" + id +
+                                  "\", language=\"" + lang + "\"");
                 continue;
             }
             if (strings_[StringHash(lang)][StringHash(id)] != String::EMPTY)
             {
-                URHO3D_LOGWARNING(
-                    "Localization::LoadJSON(source): override translation, string ID=\"" + id + "\", language=\"" + lang + "\"");
+                URHO3D_LOGWARNING("Localization::LoadJSON(source): override translation, string ID=\"" + id +
+                                  "\", language=\"" + lang + "\"");
             }
             strings_[StringHash(lang)][StringHash(id)] = string;
             if (!languages_.Contains(lang))
@@ -201,5 +199,4 @@ void Localization::LoadJSONFile(const String& name)
     if (jsonFile)
         LoadJSON(jsonFile->GetRoot());
 }
-
 }

@@ -38,27 +38,24 @@
 
 namespace Urho3D
 {
-
 extern const char* URHO2D_CATEGORY;
 extern const char* blendModeNames[];
 
-ParticleEmitter2D::ParticleEmitter2D(Context* context) :
-    Drawable2D(context),
-    blendMode_(BLEND_ADDALPHA),
-    numParticles_(0),
-    emissionTime_(0.0f),
-    emitParticleTime_(0.0f),
-    boundingBoxMinPoint_(Vector3::ZERO),
-    boundingBoxMaxPoint_(Vector3::ZERO),
-    emitting_(true)
+ParticleEmitter2D::ParticleEmitter2D(Context* context)
+    : Drawable2D(context)
+    , blendMode_(BLEND_ADDALPHA)
+    , numParticles_(0)
+    , emissionTime_(0.0f)
+    , emitParticleTime_(0.0f)
+    , boundingBoxMinPoint_(Vector3::ZERO)
+    , boundingBoxMaxPoint_(Vector3::ZERO)
+    , emitting_(true)
 {
     sourceBatches_.Resize(1);
     sourceBatches_[0].owner_ = this;
 }
 
-ParticleEmitter2D::~ParticleEmitter2D()
-{
-}
+ParticleEmitter2D::~ParticleEmitter2D() {}
 
 void ParticleEmitter2D::RegisterObject(Context* context)
 {
@@ -67,10 +64,11 @@ void ParticleEmitter2D::RegisterObject(Context* context)
     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
     URHO3D_COPY_BASE_ATTRIBUTES(Drawable2D);
     URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Particle Effect", GetParticleEffectAttr, SetParticleEffectAttr, ResourceRef,
-        ResourceRef(ParticleEffect2D::GetTypeStatic()), AM_DEFAULT);
-    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Sprite ", GetSpriteAttr, SetSpriteAttr, ResourceRef, ResourceRef(Sprite2D::GetTypeStatic()),
-        AM_DEFAULT);
-    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Blend Mode", GetBlendMode, SetBlendMode, BlendMode, blendModeNames, BLEND_ALPHA, AM_DEFAULT);
+                                    ResourceRef(ParticleEffect2D::GetTypeStatic()), AM_DEFAULT);
+    URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Sprite ", GetSpriteAttr, SetSpriteAttr, ResourceRef,
+                                    ResourceRef(Sprite2D::GetTypeStatic()), AM_DEFAULT);
+    URHO3D_ENUM_ACCESSOR_ATTRIBUTE("Blend Mode", GetBlendMode, SetBlendMode, BlendMode, blendModeNames, BLEND_ALPHA,
+                                   AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Is Emitting", IsEmitting, SetEmitting, bool, true, AM_DEFAULT);
 }
 
@@ -139,15 +137,9 @@ void ParticleEmitter2D::SetMaxParticles(unsigned maxParticles)
     numParticles_ = Min(maxParticles, numParticles_);
 }
 
-ParticleEffect2D* ParticleEmitter2D::GetEffect() const
-{
-    return effect_;
-}
+ParticleEffect2D* ParticleEmitter2D::GetEffect() const { return effect_; }
 
-Sprite2D* ParticleEmitter2D::GetSprite() const
-{
-    return sprite_;
-}
+Sprite2D* ParticleEmitter2D::GetSprite() const { return sprite_; }
 
 void ParticleEmitter2D::SetParticleEffectAttr(const ResourceRef& value)
 {
@@ -176,10 +168,7 @@ void ParticleEmitter2D::SetEmitting(bool enable)
     }
 }
 
-ResourceRef ParticleEmitter2D::GetSpriteAttr() const
-{
-    return Sprite2D::SaveToResourceRef(sprite_);
-}
+ResourceRef ParticleEmitter2D::GetSpriteAttr() const { return Sprite2D::SaveToResourceRef(sprite_); }
 
 void ParticleEmitter2D::OnSceneSet(Scene* scene)
 {
@@ -201,10 +190,7 @@ void ParticleEmitter2D::OnWorldBoundingBoxUpdate()
     worldBoundingBox_ = boundingBox_;
 }
 
-void ParticleEmitter2D::OnDrawOrderChanged()
-{
-    sourceBatches_[0].drawOrder_ = GetDrawOrder();
-}
+void ParticleEmitter2D::OnDrawOrderChanged() { sourceBatches_[0].drawOrder_ = GetDrawOrder(); }
 
 void ParticleEmitter2D::UpdateSourceBatches()
 {
@@ -304,7 +290,7 @@ void ParticleEmitter2D::HandleScenePostUpdate(StringHash eventType, VariantMap& 
         eventData[P_NODE] = node_;
         eventData[P_EFFECT] = effect_;
 
-        SendEvent(E_PARTICLESEND, eventData);      // All particles over
+        SendEvent(E_PARTICLESEND, eventData); // All particles over
     }
 }
 
@@ -374,8 +360,10 @@ bool ParticleEmitter2D::EmitParticle(const Vector3& worldPosition, float worldAn
     Particle2D& particle = particles_[numParticles_++];
     particle.timeToLive_ = lifespan;
 
-    particle.position_.x_ = worldPosition.x_ + worldScale * effect_->GetSourcePositionVariance().x_ * Random(-1.0f, 1.0f);
-    particle.position_.y_ = worldPosition.y_ + worldScale * effect_->GetSourcePositionVariance().y_ * Random(-1.0f, 1.0f);
+    particle.position_.x_ =
+        worldPosition.x_ + worldScale * effect_->GetSourcePositionVariance().x_ * Random(-1.0f, 1.0f);
+    particle.position_.y_ =
+        worldPosition.y_ + worldScale * effect_->GetSourcePositionVariance().y_ * Random(-1.0f, 1.0f);
     particle.position_.z_ = worldPosition.z_;
     particle.startPos_.x_ = worldPosition.x_;
     particle.startPos_.y_ = worldPosition.y_;
@@ -385,21 +373,24 @@ bool ParticleEmitter2D::EmitParticle(const Vector3& worldPosition, float worldAn
     particle.velocity_.x_ = speed * Cos(angle);
     particle.velocity_.y_ = speed * Sin(angle);
 
-    float maxRadius = Max(0.0f, worldScale * (effect_->GetMaxRadius() + effect_->GetMaxRadiusVariance() * Random(-1.0f, 1.0f)));
-    float minRadius = Max(0.0f, worldScale * (effect_->GetMinRadius() + effect_->GetMinRadiusVariance() * Random(-1.0f, 1.0f)));
+    float maxRadius =
+        Max(0.0f, worldScale * (effect_->GetMaxRadius() + effect_->GetMaxRadiusVariance() * Random(-1.0f, 1.0f)));
+    float minRadius =
+        Max(0.0f, worldScale * (effect_->GetMinRadius() + effect_->GetMinRadiusVariance() * Random(-1.0f, 1.0f)));
     particle.emitRadius_ = maxRadius;
     particle.emitRadiusDelta_ = (minRadius - maxRadius) * invLifespan;
     particle.emitRotation_ = worldAngle + effect_->GetAngle() + effect_->GetAngleVariance() * Random(-1.0f, 1.0f);
-    particle.emitRotationDelta_ = effect_->GetRotatePerSecond() + effect_->GetRotatePerSecondVariance() * Random(-1.0f, 1.0f);
+    particle.emitRotationDelta_ =
+        effect_->GetRotatePerSecond() + effect_->GetRotatePerSecondVariance() * Random(-1.0f, 1.0f);
     particle.radialAcceleration_ =
         worldScale * (effect_->GetRadialAcceleration() + effect_->GetRadialAccelVariance() * Random(-1.0f, 1.0f));
-    particle.tangentialAcceleration_ =
-        worldScale * (effect_->GetTangentialAcceleration() + effect_->GetTangentialAccelVariance() * Random(-1.0f, 1.0f));
+    particle.tangentialAcceleration_ = worldScale * (effect_->GetTangentialAcceleration() +
+                                                     effect_->GetTangentialAccelVariance() * Random(-1.0f, 1.0f));
 
-    float startSize =
-        worldScale * Max(0.1f, effect_->GetStartParticleSize() + effect_->GetStartParticleSizeVariance() * Random(-1.0f, 1.0f));
-    float finishSize =
-        worldScale * Max(0.1f, effect_->GetFinishParticleSize() + effect_->GetFinishParticleSizeVariance() * Random(-1.0f, 1.0f));
+    float startSize = worldScale * Max(0.1f, effect_->GetStartParticleSize() +
+                                                 effect_->GetStartParticleSizeVariance() * Random(-1.0f, 1.0f));
+    float finishSize = worldScale * Max(0.1f, effect_->GetFinishParticleSize() +
+                                                  effect_->GetFinishParticleSizeVariance() * Random(-1.0f, 1.0f));
     particle.size_ = startSize;
     particle.sizeDelta_ = (finishSize - startSize) * invLifespan;
 
@@ -407,14 +398,17 @@ bool ParticleEmitter2D::EmitParticle(const Vector3& worldPosition, float worldAn
     Color endColor = effect_->GetFinishColor() + effect_->GetFinishColorVariance() * Random(-1.0f, 1.0f);
     particle.colorDelta_ = (endColor - particle.color_) * invLifespan;
 
-    particle.rotation_ = worldAngle + effect_->GetRotationStart() + effect_->GetRotationStartVariance() * Random(-1.0f, 1.0f);
-    float endRotation = worldAngle + effect_->GetRotationEnd() + effect_->GetRotationEndVariance() * Random(-1.0f, 1.0f);
+    particle.rotation_ =
+        worldAngle + effect_->GetRotationStart() + effect_->GetRotationStartVariance() * Random(-1.0f, 1.0f);
+    float endRotation =
+        worldAngle + effect_->GetRotationEnd() + effect_->GetRotationEndVariance() * Random(-1.0f, 1.0f);
     particle.rotationDelta_ = (endRotation - particle.rotation_) * invLifespan;
 
     return true;
 }
 
-void ParticleEmitter2D::UpdateParticle(Particle2D& particle, float timeStep, const Vector3& worldPosition, float worldScale)
+void ParticleEmitter2D::UpdateParticle(Particle2D& particle, float timeStep, const Vector3& worldPosition,
+                                       float worldScale)
 {
     if (timeStep > particle.timeToLive_)
         timeStep = particle.timeToLive_;
@@ -469,5 +463,4 @@ void ParticleEmitter2D::UpdateParticle(Particle2D& particle, float timeStep, con
     boundingBoxMaxPoint_.y_ = Max(boundingBoxMaxPoint_.y_, particle.position_.y_ + halfSize);
     boundingBoxMaxPoint_.z_ = Max(boundingBoxMaxPoint_.z_, particle.position_.z_);
 }
-
 }

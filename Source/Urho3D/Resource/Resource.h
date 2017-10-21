@@ -28,7 +28,6 @@
 
 namespace Urho3D
 {
-
 class Deserializer;
 class Serializer;
 class XMLElement;
@@ -77,7 +76,8 @@ public:
     void SetMemoryUse(unsigned size);
     /// Reset last used timer.
     void ResetUseTimer();
-    /// Set the asynchronous loading state. Called by ResourceCache. Resources in the middle of asynchronous loading are not normally returned to user.
+    /// Set the asynchronous loading state. Called by ResourceCache. Resources in the middle of asynchronous loading are
+    /// not normally returned to user.
     void SetAsyncLoadState(AsyncLoadState newState);
 
     /// Return name.
@@ -89,7 +89,8 @@ public:
     /// Return memory use in bytes, possibly approximate.
     unsigned GetMemoryUse() const { return memoryUse_; }
 
-    /// Return time since last use in milliseconds. If referred to elsewhere than in the resource cache, returns always zero.
+    /// Return time since last use in milliseconds. If referred to elsewhere than in the resource cache, returns always
+    /// zero.
     unsigned GetUseTimer();
 
     /// Return the asynchronous loading state.
@@ -108,14 +109,18 @@ private:
     AsyncLoadState asyncLoadState_;
 };
 
-/// Base class for resources that support arbitrary metadata stored. Metadata serialization shall be implemented in derived classes.
+/// Base class for resources that support arbitrary metadata stored. Metadata serialization shall be implemented in
+/// derived classes.
 class URHO3D_API ResourceWithMetadata : public Resource
 {
     URHO3D_OBJECT(ResourceWithMetadata, Resource);
 
 public:
     /// Construct.
-    ResourceWithMetadata(Context* context) : Resource(context) {}
+    ResourceWithMetadata(Context* context)
+        : Resource(context)
+    {
+    }
 
     /// Add new metadata variable or overwrite old value.
     void AddMetadata(const String& name, const Variant& value);
@@ -145,10 +150,7 @@ private:
     StringVector metadataKeys_;
 };
 
-inline const String& GetResourceName(Resource* resource)
-{
-    return resource ? resource->GetName() : String::EMPTY;
-}
+inline const String& GetResourceName(Resource* resource) { return resource ? resource->GetName() : String::EMPTY; }
 
 inline StringHash GetResourceType(Resource* resource, StringHash defaultType)
 {
@@ -160,7 +162,7 @@ inline ResourceRef GetResourceRef(Resource* resource, StringHash defaultType)
     return ResourceRef(GetResourceType(resource, defaultType), GetResourceName(resource));
 }
 
-template <class T> Vector<String> GetResourceNames(const Vector<SharedPtr<T> >& resources)
+template <class T> Vector<String> GetResourceNames(const Vector<SharedPtr<T>>& resources)
 {
     Vector<String> ret(resources.Size());
     for (unsigned i = 0; i < resources.Size(); ++i)
@@ -169,9 +171,8 @@ template <class T> Vector<String> GetResourceNames(const Vector<SharedPtr<T> >& 
     return ret;
 }
 
-template <class T> ResourceRefList GetResourceRefList(const Vector<SharedPtr<T> >& resources)
+template <class T> ResourceRefList GetResourceRefList(const Vector<SharedPtr<T>>& resources)
 {
     return ResourceRefList(T::GetTypeStatic(), GetResourceNames(resources));
 }
-
 }

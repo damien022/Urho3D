@@ -30,7 +30,6 @@ struct SDL_Cursor;
 
 namespace Urho3D
 {
-
 /// %Cursor shapes recognized by the UI subsystem.
 enum CursorShape
 {
@@ -53,22 +52,22 @@ enum CursorShape
 struct URHO3D_API CursorShapeInfo
 {
     /// Construct with defaults.
-    CursorShapeInfo() :
-        imageRect_(IntRect::ZERO),
-        hotSpot_(IntVector2::ZERO),
-        osCursor_(nullptr),
-        systemDefined_(false),
-        systemCursor_(-1)
+    CursorShapeInfo()
+        : imageRect_(IntRect::ZERO)
+        , hotSpot_(IntVector2::ZERO)
+        , osCursor_(nullptr)
+        , systemDefined_(false)
+        , systemCursor_(-1)
     {
     }
 
     /// Construct with system cursor.
-    CursorShapeInfo(int systemCursor) :
-        imageRect_(IntRect::ZERO),
-        hotSpot_(IntVector2::ZERO),
-        osCursor_(nullptr),
-        systemDefined_(false),
-        systemCursor_(systemCursor)
+    CursorShapeInfo(int systemCursor)
+        : imageRect_(IntRect::ZERO)
+        , hotSpot_(IntVector2::ZERO)
+        , osCursor_(nullptr)
+        , systemDefined_(false)
+        , systemCursor_(systemCursor)
     {
     }
 
@@ -102,7 +101,8 @@ public:
     static void RegisterObject(Context* context);
 
     /// Return UI rendering batches.
-    virtual void GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData, const IntRect& currentScissor) override;
+    virtual void GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData,
+                            const IntRect& currentScissor) override;
 
     /// Define a shape.
     void DefineShape(const String& shape, Image* image, const IntRect& imageRect, const IntVector2& hotSpot);
@@ -112,7 +112,8 @@ public:
     void SetShape(const String& shape);
     /// Set current shape.
     void SetShape(CursorShape shape);
-    /// Set whether to use system default shapes. Is only possible when the OS mouse cursor has been set visible from the Input subsystem.
+    /// Set whether to use system default shapes. Is only possible when the OS mouse cursor has been set visible from
+    /// the Input subsystem.
     void SetUseSystemShapes(bool enable);
 
     /// Get current shape.
@@ -141,5 +142,4 @@ protected:
     /// OS cursor shape needs update flag.
     bool osShapeDirty_;
 };
-
 }

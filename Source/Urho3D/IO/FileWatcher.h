@@ -30,7 +30,6 @@
 
 namespace Urho3D
 {
-
 class FileSystem;
 
 /// Watches a directory and its subdirectories for files being modified.
@@ -51,7 +50,8 @@ public:
     bool StartWatching(const String& pathName, bool watchSubDirs);
     /// Stop watching the directory.
     void StopWatching();
-    /// Set the delay in seconds before file changes are notified. This (hopefully) avoids notifying when a file save is still in progress. Default 1 second.
+    /// Set the delay in seconds before file changes are notified. This (hopefully) avoids notifying when a file save is
+    /// still in progress. Default 1 second.
     void SetDelay(float interval);
     /// Add a file change into the changes queue.
     void AddChange(const String& fileName);
@@ -91,7 +91,7 @@ private:
     int watchHandle_;
 
 #elif defined(__APPLE__) && !defined(IOS) && !defined(TVOS)
-    
+
     /// Flag indicating whether the running OS supports individual file watching.
     bool supported_;
     /// Pointer to internal MacFileWatcher delegate.
@@ -99,5 +99,4 @@ private:
 
 #endif
 };
-
 }

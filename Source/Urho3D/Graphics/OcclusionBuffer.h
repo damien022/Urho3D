@@ -22,15 +22,14 @@
 
 #pragma once
 
+#include "../Container/ArrayPtr.h"
 #include "../Core/Object.h"
 #include "../Core/Timer.h"
-#include "../Container/ArrayPtr.h"
 #include "../Graphics/GraphicsDefs.h"
 #include "../Math/Frustum.h"
 
 namespace Urho3D
 {
-
 class BoundingBox;
 class Camera;
 class IndexBuffer;
@@ -108,11 +107,14 @@ public:
     void Reset();
     /// Clear the buffer.
     void Clear();
-    /// Submit a triangle mesh to the buffer using non-indexed geometry. Return true if did not overflow the allowed triangle count.
-    bool AddTriangles(const Matrix3x4& model, const void* vertexData, unsigned vertexSize, unsigned vertexStart, unsigned vertexCount);
-    /// Submit a triangle mesh to the buffer using indexed geometry. Return true if did not overflow the allowed triangle count.
-    bool AddTriangles(const Matrix3x4& model, const void* vertexData, unsigned vertexSize, const void* indexData, unsigned indexSize,
-        unsigned indexStart, unsigned indexCount);
+    /// Submit a triangle mesh to the buffer using non-indexed geometry. Return true if did not overflow the allowed
+    /// triangle count.
+    bool AddTriangles(const Matrix3x4& model, const void* vertexData, unsigned vertexSize, unsigned vertexStart,
+                      unsigned vertexCount);
+    /// Submit a triangle mesh to the buffer using indexed geometry. Return true if did not overflow the allowed
+    /// triangle count.
+    bool AddTriangles(const Matrix3x4& model, const void* vertexData, unsigned vertexSize, const void* indexData,
+                      unsigned indexSize, unsigned indexStart, unsigned indexCount);
     /// Draw submitted batches. Uses worker threads if enabled during SetSize().
     void DrawTriangles();
     /// Build reduced size mip levels.
@@ -180,7 +182,7 @@ private:
     /// Highest-level buffer data per thread.
     Vector<OcclusionBufferData> buffers_;
     /// Reduced size depth buffers.
-    Vector<SharedArrayPtr<DepthValue> > mipBuffers_;
+    Vector<SharedArrayPtr<DepthValue>> mipBuffers_;
     /// Submitted render jobs.
     PODVector<OcclusionBatch> batches_;
     /// Buffer width.
@@ -222,5 +224,4 @@ private:
     /// Combined Y projection and viewport transform.
     float projOffsetScaleY_;
 };
-
 }

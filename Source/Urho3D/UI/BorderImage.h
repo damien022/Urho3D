@@ -27,7 +27,6 @@
 
 namespace Urho3D
 {
-
 class Texture;
 class Texture2D;
 
@@ -45,7 +44,8 @@ public:
     static void RegisterObject(Context* context);
 
     /// Return UI rendering batches.
-    virtual void GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData, const IntRect& currentScissor) override;
+    virtual void GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData,
+                            const IntRect& currentScissor) override;
 
     /// Set texture.
     void SetTexture(Texture* texture);
@@ -55,7 +55,8 @@ public:
     void SetFullImageRect();
     /// Set border dimensions on the screen.
     void SetBorder(const IntRect& rect);
-    /// Set border dimensions on the image. If zero (default) uses the screen dimensions, resulting in pixel-perfect borders.
+    /// Set border dimensions on the image. If zero (default) uses the screen dimensions, resulting in pixel-perfect
+    /// borders.
     void SetImageBorder(const IntRect& rect);
     /// Set offset to image rectangle used on hover.
     void SetHoverOffset(const IntVector2& offset);
@@ -94,8 +95,8 @@ public:
 
 protected:
     /// Return UI rendering batches with offset to image rectangle.
-    void GetBatches
-        (PODVector<UIBatch>& batches, PODVector<float>& vertexData, const IntRect& currentScissor, const IntVector2& offset);
+    void GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData, const IntRect& currentScissor,
+                    const IntVector2& offset);
 
     /// Texture.
     SharedPtr<Texture> texture_;
@@ -112,5 +113,4 @@ protected:
     /// Tiled flag.
     bool tiled_;
 };
-
 }

@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// 2D mouse constraint component.
 class URHO3D_API ConstraintMouse2D : public Constraint2D
 {
@@ -70,5 +69,4 @@ private:
     /// Target.
     Vector2 target_;
 };
-
 }

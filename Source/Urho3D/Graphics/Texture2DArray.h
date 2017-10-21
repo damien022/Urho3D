@@ -28,7 +28,6 @@
 
 namespace Urho3D
 {
-
 class Deserializer;
 class Image;
 
@@ -64,7 +63,8 @@ public:
     bool SetData(unsigned layer, unsigned level, int x, int y, int width, int height, const void* data);
     /// Set data of one layer from a stream. Return true if successful.
     bool SetData(unsigned layer, Deserializer& source);
-    /// Set data of one layer from an image. Return true if successful. Optionally make a single channel image alpha-only.
+    /// Set data of one layer from an image. Return true if successful. Optionally make a single channel image
+    /// alpha-only.
     bool SetData(unsigned layer, Image* image, bool useAlpha = false);
 
     /// Return number of layers in the texture.
@@ -89,9 +89,8 @@ private:
     /// Memory use per layer.
     PODVector<unsigned> layerMemoryUse_;
     /// Layer image files acquired during BeginLoad.
-    Vector<SharedPtr<Image> > loadImages_;
+    Vector<SharedPtr<Image>> loadImages_;
     /// Parameter file acquired during BeginLoad.
     SharedPtr<XMLFile> loadParameters_;
 };
-
 }

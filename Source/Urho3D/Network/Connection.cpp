@@ -44,31 +44,30 @@
 
 namespace Urho3D
 {
-
 static const int STATS_INTERVAL_MSEC = 2000;
 
-PackageDownload::PackageDownload() :
-    totalFragments_(0),
-    checksum_(0),
-    initiated_(false)
+PackageDownload::PackageDownload()
+    : totalFragments_(0)
+    , checksum_(0)
+    , initiated_(false)
 {
 }
 
-PackageUpload::PackageUpload() :
-    fragment_(0),
-    totalFragments_(0)
+PackageUpload::PackageUpload()
+    : fragment_(0)
+    , totalFragments_(0)
 {
 }
 
-Connection::Connection(Context* context, bool isClient, kNet::SharedPtr<kNet::MessageConnection> connection) :
-    Object(context),
-    timeStamp_(0),
-    connection_(connection),
-    sendMode_(OPSM_NONE),
-    isClient_(isClient),
-    connectPending_(false),
-    sceneLoaded_(false),
-    logStatistics_(false)
+Connection::Connection(Context* context, bool isClient, kNet::SharedPtr<kNet::MessageConnection> connection)
+    : Object(context)
+    , timeStamp_(0)
+    , connection_(connection)
+    , sendMode_(OPSM_NONE)
+    , isClient_(isClient)
+    , connectPending_(false)
+    , sceneLoaded_(false)
+    , logStatistics_(false)
 {
     sceneState_.connection_ = this;
 
@@ -92,7 +91,7 @@ void Connection::SendMessage(int msgID, bool reliable, bool inOrder, const Vecto
 }
 
 void Connection::SendMessage(int msgID, bool reliable, bool inOrder, const unsigned char* data, unsigned numBytes,
-    unsigned contentID)
+                             unsigned contentID)
 {
     // Make sure not to use kNet internal message ID's
     if (msgID <= 0x4 || msgID >= 0x3ffffffe)
@@ -180,7 +179,7 @@ void Connection::SetScene(Scene* newScene)
         sceneState_.Clear();
 
         // When scene is assigned on the server, instruct the client to load it. This may require downloading packages
-        const Vector<SharedPtr<PackageFile> >& packages = scene_->GetRequiredPackageFiles();
+        const Vector<SharedPtr<PackageFile>>& packages = scene_->GetRequiredPackageFiles();
         unsigned numPackages = packages.Size();
         msg_.Clear();
         msg_.WriteString(scene_->GetFileName());
@@ -202,15 +201,9 @@ void Connection::SetScene(Scene* newScene)
     }
 }
 
-void Connection::SetIdentity(const VariantMap& identity)
-{
-    identity_ = identity;
-}
+void Connection::SetIdentity(const VariantMap& identity) { identity_ = identity; }
 
-void Connection::SetControls(const Controls& newControls)
-{
-    controls_ = newControls;
-}
+void Connection::SetControls(const Controls& newControls) { controls_ = newControls; }
 
 void Connection::SetPosition(const Vector3& position)
 {
@@ -226,20 +219,11 @@ void Connection::SetRotation(const Quaternion& rotation)
         sendMode_ = OPSM_POSITION_ROTATION;
 }
 
-void Connection::SetConnectPending(bool connectPending)
-{
-    connectPending_ = connectPending;
-}
+void Connection::SetConnectPending(bool connectPending) { connectPending_ = connectPending; }
 
-void Connection::SetLogStatistics(bool enable)
-{
-    logStatistics_ = enable;
-}
+void Connection::SetLogStatistics(bool enable) { logStatistics_ = enable; }
 
-void Connection::Disconnect(int waitMSec)
-{
-    connection_->Disconnect(waitMSec);
-}
+void Connection::Disconnect(int waitMSec) { connection_->Disconnect(waitMSec); }
 
 void Connection::SendServerUpdate()
 {
@@ -290,9 +274,9 @@ void Connection::SendRemoteEvents()
     {
         statsTimer_.Reset();
         char statsBuffer[256];
-        sprintf(statsBuffer, "RTT %.3f ms Pkt in %d Pkt out %d Data in %.3f KB/s Data out %.3f KB/s", connection_->RoundTripTime(),
-            (int)connection_->PacketsInPerSec(),
-            (int)connection_->PacketsOutPerSec(), connection_->BytesInPerSec() / 1000.0f, connection_->BytesOutPerSec() / 1000.0f);
+        sprintf(statsBuffer, "RTT %.3f ms Pkt in %d Pkt out %d Data in %.3f KB/s Data out %.3f KB/s",
+                connection_->RoundTripTime(), (int)connection_->PacketsInPerSec(), (int)connection_->PacketsOutPerSec(),
+                connection_->BytesInPerSec() / 1000.0f, connection_->BytesOutPerSec() / 1000.0f);
         URHO3D_LOGINFO(statsBuffer);
     }
 #endif
@@ -333,8 +317,7 @@ void Connection::SendPackages()
         {
             HashMap<StringHash, PackageUpload>::Iterator current = i++;
             PackageUpload& upload = current->second_;
-            unsigned fragmentSize =
-                Min((upload.file_->GetSize() - upload.file_->GetPosition()), PACKAGE_FRAGMENT_SIZE);
+            unsigned fragmentSize = Min((upload.file_->GetSize() - upload.file_->GetPosition()), PACKAGE_FRAGMENT_SIZE);
             upload.file_->Read(buffer, fragmentSize);
 
             msg_.Clear();
@@ -356,9 +339,9 @@ void Connection::ProcessPendingLatestData()
         return;
 
     // Iterate through pending node data and see if we can find the nodes now
-    for (HashMap<unsigned, PODVector<unsigned char> >::Iterator i = nodeLatestData_.Begin(); i != nodeLatestData_.End();)
+    for (HashMap<unsigned, PODVector<unsigned char>>::Iterator i = nodeLatestData_.Begin(); i != nodeLatestData_.End();)
     {
-        HashMap<unsigned, PODVector<unsigned char> >::Iterator current = i++;
+        HashMap<unsigned, PODVector<unsigned char>>::Iterator current = i++;
         Node* node = scene_->GetNode(current->first_);
         if (node)
         {
@@ -372,9 +355,10 @@ void Connection::ProcessPendingLatestData()
     }
 
     // Iterate through pending component data and see if we can find the components now
-    for (HashMap<unsigned, PODVector<unsigned char> >::Iterator i = componentLatestData_.Begin(); i != componentLatestData_.End();)
+    for (HashMap<unsigned, PODVector<unsigned char>>::Iterator i = componentLatestData_.Begin();
+         i != componentLatestData_.End();)
     {
-        HashMap<unsigned, PODVector<unsigned char> >::Iterator current = i++;
+        HashMap<unsigned, PODVector<unsigned char>>::Iterator current = i++;
         Component* component = scene_->GetComponent(current->first_);
         if (component)
         {
@@ -468,12 +452,12 @@ void Connection::ProcessLoadScene(int msgID, MemoryBuffer& msg)
     componentLatestData_.Clear();
     downloads_.Clear();
 
-    // In case we have joined other scenes in this session, remove first all downloaded package files from the resource system
-    // to prevent resource conflicts
+    // In case we have joined other scenes in this session, remove first all downloaded package files from the resource
+    // system to prevent resource conflicts
     ResourceCache* cache = GetSubsystem<ResourceCache>();
     const String& packageCacheDir = GetSubsystem<Network>()->GetPackageCacheDir();
 
-    Vector<SharedPtr<PackageFile> > packages = cache->GetPackageFiles();
+    Vector<SharedPtr<PackageFile>> packages = cache->GetPackageFiles();
     for (unsigned i = 0; i < packages.Size(); ++i)
     {
         PackageFile* package = packages[i];
@@ -508,8 +492,8 @@ void Connection::ProcessSceneChecksumError(int msgID, MemoryBuffer& msg)
 
 void Connection::ProcessSceneUpdate(int msgID, MemoryBuffer& msg)
 {
-    /// \todo On mobile devices processing this message may potentially cause a crash if it attempts to load new GPU resources
-    /// while the application is minimized
+    /// \todo On mobile devices processing this message may potentially cause a crash if it attempts to load new GPU
+    /// resources while the application is minimized
     if (IsClient())
     {
         URHO3D_LOGWARNING("Received unexpected SceneUpdate message from client " + ToString());
@@ -522,195 +506,196 @@ void Connection::ProcessSceneUpdate(int msgID, MemoryBuffer& msg)
     switch (msgID)
     {
     case MSG_CREATENODE:
+    {
+        unsigned nodeID = msg.ReadNetID();
+        // In case of the root node (scene), it should already exist. Do not create in that case
+        Node* node = scene_->GetNode(nodeID);
+        if (!node)
         {
-            unsigned nodeID = msg.ReadNetID();
-            // In case of the root node (scene), it should already exist. Do not create in that case
-            Node* node = scene_->GetNode(nodeID);
-            if (!node)
+            // Add initially to the root level. May be moved as we receive the parent attribute
+            node = scene_->CreateChild(nodeID, REPLICATED);
+            // Create smoothed transform component
+            node->CreateComponent<SmoothedTransform>(LOCAL);
+        }
+
+        // Read initial attributes, then snap the motion smoothing immediately to the end
+        node->ReadDeltaUpdate(msg);
+        SmoothedTransform* transform = node->GetComponent<SmoothedTransform>();
+        if (transform)
+            transform->Update(1.0f, 0.0f);
+
+        // Read initial user variables
+        unsigned numVars = msg.ReadVLE();
+        while (numVars)
+        {
+            StringHash key = msg.ReadStringHash();
+            node->SetVar(key, msg.ReadVariant());
+            --numVars;
+        }
+
+        // Read components
+        unsigned numComponents = msg.ReadVLE();
+        while (numComponents)
+        {
+            --numComponents;
+
+            StringHash type = msg.ReadStringHash();
+            unsigned componentID = msg.ReadNetID();
+
+            // Check if the component by this ID and type already exists in this node
+            Component* component = scene_->GetComponent(componentID);
+            if (!component || component->GetType() != type || component->GetNode() != node)
             {
-                // Add initially to the root level. May be moved as we receive the parent attribute
-                node = scene_->CreateChild(nodeID, REPLICATED);
-                // Create smoothed transform component
-                node->CreateComponent<SmoothedTransform>(LOCAL);
+                if (component)
+                    component->Remove();
+                component = node->CreateComponent(type, REPLICATED, componentID);
             }
 
-            // Read initial attributes, then snap the motion smoothing immediately to the end
-            node->ReadDeltaUpdate(msg);
-            SmoothedTransform* transform = node->GetComponent<SmoothedTransform>();
-            if (transform)
-                transform->Update(1.0f, 0.0f);
+            // If was unable to create the component, would desync the message and therefore have to abort
+            if (!component)
+            {
+                URHO3D_LOGERROR("CreateNode message parsing aborted due to unknown component");
+                return;
+            }
 
-            // Read initial user variables
-            unsigned numVars = msg.ReadVLE();
-            while (numVars)
+            // Read initial attributes and apply
+            component->ReadDeltaUpdate(msg);
+            component->ApplyAttributes();
+        }
+    }
+    break;
+
+    case MSG_NODEDELTAUPDATE:
+    {
+        unsigned nodeID = msg.ReadNetID();
+        Node* node = scene_->GetNode(nodeID);
+        if (node)
+        {
+            node->ReadDeltaUpdate(msg);
+            // ApplyAttributes() is deliberately skipped, as Node has no attributes that require late applying.
+            // Furthermore it would propagate to components and child nodes, which is not desired in this case
+            unsigned changedVars = msg.ReadVLE();
+            while (changedVars)
             {
                 StringHash key = msg.ReadStringHash();
                 node->SetVar(key, msg.ReadVariant());
-                --numVars;
-            }
-
-            // Read components
-            unsigned numComponents = msg.ReadVLE();
-            while (numComponents)
-            {
-                --numComponents;
-
-                StringHash type = msg.ReadStringHash();
-                unsigned componentID = msg.ReadNetID();
-
-                // Check if the component by this ID and type already exists in this node
-                Component* component = scene_->GetComponent(componentID);
-                if (!component || component->GetType() != type || component->GetNode() != node)
-                {
-                    if (component)
-                        component->Remove();
-                    component = node->CreateComponent(type, REPLICATED, componentID);
-                }
-
-                // If was unable to create the component, would desync the message and therefore have to abort
-                if (!component)
-                {
-                    URHO3D_LOGERROR("CreateNode message parsing aborted due to unknown component");
-                    return;
-                }
-
-                // Read initial attributes and apply
-                component->ReadDeltaUpdate(msg);
-                component->ApplyAttributes();
+                --changedVars;
             }
         }
-        break;
-
-    case MSG_NODEDELTAUPDATE:
-        {
-            unsigned nodeID = msg.ReadNetID();
-            Node* node = scene_->GetNode(nodeID);
-            if (node)
-            {
-                node->ReadDeltaUpdate(msg);
-                // ApplyAttributes() is deliberately skipped, as Node has no attributes that require late applying.
-                // Furthermore it would propagate to components and child nodes, which is not desired in this case
-                unsigned changedVars = msg.ReadVLE();
-                while (changedVars)
-                {
-                    StringHash key = msg.ReadStringHash();
-                    node->SetVar(key, msg.ReadVariant());
-                    --changedVars;
-                }
-            }
-            else
-                URHO3D_LOGWARNING("NodeDeltaUpdate message received for missing node " + String(nodeID));
-        }
-        break;
+        else
+            URHO3D_LOGWARNING("NodeDeltaUpdate message received for missing node " + String(nodeID));
+    }
+    break;
 
     case MSG_NODELATESTDATA:
+    {
+        unsigned nodeID = msg.ReadNetID();
+        Node* node = scene_->GetNode(nodeID);
+        if (node)
         {
-            unsigned nodeID = msg.ReadNetID();
-            Node* node = scene_->GetNode(nodeID);
-            if (node)
-            {
-                node->ReadLatestDataUpdate(msg);
-                // ApplyAttributes() is deliberately skipped, as Node has no attributes that require late applying.
-                // Furthermore it would propagate to components and child nodes, which is not desired in this case
-            }
-            else
-            {
-                // Latest data messages may be received out-of-order relative to node creation, so cache if necessary
-                PODVector<unsigned char>& data = nodeLatestData_[nodeID];
-                data.Resize(msg.GetSize());
-                memcpy(&data[0], msg.GetData(), msg.GetSize());
-            }
+            node->ReadLatestDataUpdate(msg);
+            // ApplyAttributes() is deliberately skipped, as Node has no attributes that require late applying.
+            // Furthermore it would propagate to components and child nodes, which is not desired in this case
         }
-        break;
+        else
+        {
+            // Latest data messages may be received out-of-order relative to node creation, so cache if necessary
+            PODVector<unsigned char>& data = nodeLatestData_[nodeID];
+            data.Resize(msg.GetSize());
+            memcpy(&data[0], msg.GetData(), msg.GetSize());
+        }
+    }
+    break;
 
     case MSG_REMOVENODE:
-        {
-            unsigned nodeID = msg.ReadNetID();
-            Node* node = scene_->GetNode(nodeID);
-            if (node)
-                node->Remove();
-            nodeLatestData_.Erase(nodeID);
-        }
-        break;
+    {
+        unsigned nodeID = msg.ReadNetID();
+        Node* node = scene_->GetNode(nodeID);
+        if (node)
+            node->Remove();
+        nodeLatestData_.Erase(nodeID);
+    }
+    break;
 
     case MSG_CREATECOMPONENT:
+    {
+        unsigned nodeID = msg.ReadNetID();
+        Node* node = scene_->GetNode(nodeID);
+        if (node)
         {
-            unsigned nodeID = msg.ReadNetID();
-            Node* node = scene_->GetNode(nodeID);
-            if (node)
+            StringHash type = msg.ReadStringHash();
+            unsigned componentID = msg.ReadNetID();
+
+            // Check if the component by this ID and type already exists in this node
+            Component* component = scene_->GetComponent(componentID);
+            if (!component || component->GetType() != type || component->GetNode() != node)
             {
-                StringHash type = msg.ReadStringHash();
-                unsigned componentID = msg.ReadNetID();
-
-                // Check if the component by this ID and type already exists in this node
-                Component* component = scene_->GetComponent(componentID);
-                if (!component || component->GetType() != type || component->GetNode() != node)
-                {
-                    if (component)
-                        component->Remove();
-                    component = node->CreateComponent(type, REPLICATED, componentID);
-                }
-
-                // If was unable to create the component, would desync the message and therefore have to abort
-                if (!component)
-                {
-                    URHO3D_LOGERROR("CreateComponent message parsing aborted due to unknown component");
-                    return;
-                }
-
-                // Read initial attributes and apply
-                component->ReadDeltaUpdate(msg);
-                component->ApplyAttributes();
+                if (component)
+                    component->Remove();
+                component = node->CreateComponent(type, REPLICATED, componentID);
             }
-            else
-                URHO3D_LOGWARNING("CreateComponent message received for missing node " + String(nodeID));
+
+            // If was unable to create the component, would desync the message and therefore have to abort
+            if (!component)
+            {
+                URHO3D_LOGERROR("CreateComponent message parsing aborted due to unknown component");
+                return;
+            }
+
+            // Read initial attributes and apply
+            component->ReadDeltaUpdate(msg);
+            component->ApplyAttributes();
         }
-        break;
+        else
+            URHO3D_LOGWARNING("CreateComponent message received for missing node " + String(nodeID));
+    }
+    break;
 
     case MSG_COMPONENTDELTAUPDATE:
+    {
+        unsigned componentID = msg.ReadNetID();
+        Component* component = scene_->GetComponent(componentID);
+        if (component)
         {
-            unsigned componentID = msg.ReadNetID();
-            Component* component = scene_->GetComponent(componentID);
-            if (component)
-            {
-                component->ReadDeltaUpdate(msg);
-                component->ApplyAttributes();
-            }
-            else
-                URHO3D_LOGWARNING("ComponentDeltaUpdate message received for missing component " + String(componentID));
+            component->ReadDeltaUpdate(msg);
+            component->ApplyAttributes();
         }
-        break;
+        else
+            URHO3D_LOGWARNING("ComponentDeltaUpdate message received for missing component " + String(componentID));
+    }
+    break;
 
     case MSG_COMPONENTLATESTDATA:
+    {
+        unsigned componentID = msg.ReadNetID();
+        Component* component = scene_->GetComponent(componentID);
+        if (component)
         {
-            unsigned componentID = msg.ReadNetID();
-            Component* component = scene_->GetComponent(componentID);
-            if (component)
-            {
-                if (component->ReadLatestDataUpdate(msg))
-                    component->ApplyAttributes();
-            }
-            else
-            {
-                // Latest data messages may be received out-of-order relative to component creation, so cache if necessary
-                PODVector<unsigned char>& data = componentLatestData_[componentID];
-                data.Resize(msg.GetSize());
-                memcpy(&data[0], msg.GetData(), msg.GetSize());
-            }
+            if (component->ReadLatestDataUpdate(msg))
+                component->ApplyAttributes();
         }
-        break;
+        else
+        {
+            // Latest data messages may be received out-of-order relative to component creation, so cache if necessary
+            PODVector<unsigned char>& data = componentLatestData_[componentID];
+            data.Resize(msg.GetSize());
+            memcpy(&data[0], msg.GetData(), msg.GetSize());
+        }
+    }
+    break;
 
     case MSG_REMOVECOMPONENT:
-        {
-            unsigned componentID = msg.ReadNetID();
-            Component* component = scene_->GetComponent(componentID);
-            if (component)
-                component->Remove();
-            componentLatestData_.Erase(componentID);
-        }
-        break;
+    {
+        unsigned componentID = msg.ReadNetID();
+        Component* component = scene_->GetComponent(componentID);
+        if (component)
+            component->Remove();
+        componentLatestData_.Erase(componentID);
+    }
+    break;
 
-    default: break;
+    default:
+        break;
     }
 }
 
@@ -730,12 +715,13 @@ void Connection::ProcessPackageDownload(int msgID, MemoryBuffer& msg)
 
             if (!scene_)
             {
-                URHO3D_LOGWARNING("Received a RequestPackage message without an assigned scene from client " + ToString());
+                URHO3D_LOGWARNING("Received a RequestPackage message without an assigned scene from client " +
+                                  ToString());
                 return;
             }
 
             // The package must be one of those required by the scene
-            const Vector<SharedPtr<PackageFile> >& packages = scene_->GetRequiredPackageFiles();
+            const Vector<SharedPtr<PackageFile>>& packages = scene_->GetRequiredPackageFiles();
             for (unsigned i = 0; i < packages.Size(); ++i)
             {
                 PackageFile* package = packages[i];
@@ -764,7 +750,8 @@ void Connection::ProcessPackageDownload(int msgID, MemoryBuffer& msg)
 
                     uploads_[nameHash].file_ = file;
                     uploads_[nameHash].fragment_ = 0;
-                    uploads_[nameHash].totalFragments_ = (file->GetSize() + PACKAGE_FRAGMENT_SIZE - 1) / PACKAGE_FRAGMENT_SIZE;
+                    uploads_[nameHash].totalFragments_ =
+                        (file->GetSize() + PACKAGE_FRAGMENT_SIZE - 1) / PACKAGE_FRAGMENT_SIZE;
                     return;
                 }
             }
@@ -787,8 +774,8 @@ void Connection::ProcessPackageDownload(int msgID, MemoryBuffer& msg)
             StringHash nameHash = msg.ReadStringHash();
 
             HashMap<StringHash, PackageDownload>::Iterator i = downloads_.Find(nameHash);
-            // In case of being unable to create the package file into the cache, we will still receive all data from the server.
-            // Simply disregard it
+            // In case of being unable to create the package file into the cache, we will still receive all data from
+            // the server. Simply disregard it
             if (i == downloads_.End())
                 return;
 
@@ -801,12 +788,14 @@ void Connection::ProcessPackageDownload(int msgID, MemoryBuffer& msg)
                 return;
             }
 
-            // If file has not yet been opened, try to open now. Prepend the checksum to the filename to allow multiple versions
+            // If file has not yet been opened, try to open now. Prepend the checksum to the filename to allow multiple
+            // versions
             if (!download.file_)
             {
                 download.file_ = new File(context_,
-                    GetSubsystem<Network>()->GetPackageCacheDir() + ToStringHex(download.checksum_) + "_" + download.name_,
-                    FILE_WRITE);
+                                          GetSubsystem<Network>()->GetPackageCacheDir() +
+                                              ToStringHex(download.checksum_) + "_" + download.name_,
+                                          FILE_WRITE);
                 if (!download.file_->IsOpen())
                 {
                     OnPackageDownloadFailed(download.name_);
@@ -851,7 +840,8 @@ void Connection::ProcessPackageDownload(int msgID, MemoryBuffer& msg)
         }
         break;
 
-    default: break;
+    default:
+        break;
     }
 }
 
@@ -986,55 +976,25 @@ kNet::MessageConnection* Connection::GetMessageConnection() const
     return const_cast<kNet::MessageConnection*>(connection_.ptr());
 }
 
-Scene* Connection::GetScene() const
-{
-    return scene_;
-}
+Scene* Connection::GetScene() const { return scene_; }
 
-bool Connection::IsConnected() const
-{
-    return connection_->GetConnectionState() == kNet::ConnectionOK;
-}
+bool Connection::IsConnected() const { return connection_->GetConnectionState() == kNet::ConnectionOK; }
 
-float Connection::GetRoundTripTime() const
-{
-    return connection_->RoundTripTime();
-}
+float Connection::GetRoundTripTime() const { return connection_->RoundTripTime(); }
 
-float Connection::GetLastHeardTime() const
-{
-    return connection_->LastHeardTime();
-}
+float Connection::GetLastHeardTime() const { return connection_->LastHeardTime(); }
 
-float Connection::GetBytesInPerSec() const
-{
-    return connection_->BytesInPerSec();
-}
+float Connection::GetBytesInPerSec() const { return connection_->BytesInPerSec(); }
 
-float Connection::GetBytesOutPerSec() const
-{
-    return connection_->BytesOutPerSec();
-}
+float Connection::GetBytesOutPerSec() const { return connection_->BytesOutPerSec(); }
 
-float Connection::GetPacketsInPerSec() const
-{
-    return connection_->PacketsInPerSec();
-}
+float Connection::GetPacketsInPerSec() const { return connection_->PacketsInPerSec(); }
 
-float Connection::GetPacketsOutPerSec() const
-{
-    return connection_->PacketsOutPerSec();
-}
+float Connection::GetPacketsOutPerSec() const { return connection_->PacketsOutPerSec(); }
 
-String Connection::ToString() const
-{
-    return GetAddress() + ":" + String(GetPort());
-}
+String Connection::ToString() const { return GetAddress() + ":" + String(GetPort()); }
 
-unsigned Connection::GetNumDownloads() const
-{
-    return downloads_.Size();
-}
+unsigned Connection::GetNumDownloads() const { return downloads_.Size(); }
 
 const String& Connection::GetDownloadName() const
 {
@@ -1118,8 +1078,8 @@ void Connection::ProcessNode(unsigned nodeID)
             msg_.Clear();
             msg_.WriteNetID(nodeID);
 
-            // Note: we will send MSG_REMOVENODE redundantly for each node in the hierarchy, even if removing the root node
-            // would be enough. However, this may be better due to the client not possibly having updated parenting
+            // Note: we will send MSG_REMOVENODE redundantly for each node in the hierarchy, even if removing the root
+            // node would be enough. However, this may be better due to the client not possibly having updated parenting
             // information at the time of receiving this message
             SendMessage(MSG_REMOVENODE, true, true, msg_);
             sceneState_.nodeStates_.Erase(nodeID);
@@ -1175,7 +1135,7 @@ void Connection::ProcessNewNode(Node* node)
 
     // Write node's components
     msg_.WriteVLE(node->GetNumNetworkComponents());
-    const Vector<SharedPtr<Component> >& components = node->GetComponents();
+    const Vector<SharedPtr<Component>>& components = node->GetComponents();
     for (unsigned i = 0; i < components.Size(); ++i)
     {
         Component* component = components[i];
@@ -1257,7 +1217,8 @@ void Connection::ProcessExistingNode(Node* node, NodeReplicationState& nodeState
             // Write changed variables
             msg_.WriteVLE(nodeState.dirtyVars_.Size());
             const VariantMap& vars = node->GetVars();
-            for (HashSet<StringHash>::ConstIterator i = nodeState.dirtyVars_.Begin(); i != nodeState.dirtyVars_.End(); ++i)
+            for (HashSet<StringHash>::ConstIterator i = nodeState.dirtyVars_.Begin(); i != nodeState.dirtyVars_.End();
+                 ++i)
             {
                 VariantMap::ConstIterator j = vars.Find(*i);
                 if (j != vars.End())
@@ -1267,7 +1228,8 @@ void Connection::ProcessExistingNode(Node* node, NodeReplicationState& nodeState
                 }
                 else
                 {
-                    // Variable has been marked dirty, but is removed (which is unsupported): send a dummy variable in place
+                    // Variable has been marked dirty, but is removed (which is unsupported): send a dummy variable in
+                    // place
                     URHO3D_LOGWARNING("Sending dummy user variable as original value was removed");
                     msg_.WriteStringHash(StringHash());
                     msg_.WriteVariant(Variant::EMPTY);
@@ -1343,7 +1305,7 @@ void Connection::ProcessExistingNode(Node* node, NodeReplicationState& nodeState
     // Check for new components
     if (nodeState.componentStates_.Size() != node->GetNumNetworkComponents())
     {
-        const Vector<SharedPtr<Component> >& components = node->GetComponents();
+        const Vector<SharedPtr<Component>>& components = node->GetComponents();
         for (unsigned i = 0; i < components.Size(); ++i)
         {
             Component* component = components[i];
@@ -1351,7 +1313,8 @@ void Connection::ProcessExistingNode(Node* node, NodeReplicationState& nodeState
             if (component->GetID() >= FIRST_LOCAL_ID)
                 continue;
 
-            HashMap<unsigned, ComponentReplicationState>::Iterator j = nodeState.componentStates_.Find(component->GetID());
+            HashMap<unsigned, ComponentReplicationState>::Iterator j =
+                nodeState.componentStates_.Find(component->GetID());
             if (j == nodeState.componentStates_.End())
             {
                 // New component
@@ -1381,7 +1344,7 @@ bool Connection::RequestNeededPackages(unsigned numPackages, MemoryBuffer& msg)
     ResourceCache* cache = GetSubsystem<ResourceCache>();
     const String& packageCacheDir = GetSubsystem<Network>()->GetPackageCacheDir();
 
-    Vector<SharedPtr<PackageFile> > packages = cache->GetPackageFiles();
+    Vector<SharedPtr<PackageFile>> packages = cache->GetPackageFiles();
     Vector<String> downloadedPackages;
     bool packagesScanned = false;
 
@@ -1397,8 +1360,8 @@ bool Connection::RequestNeededPackages(unsigned numPackages, MemoryBuffer& msg)
         for (unsigned j = 0; j < packages.Size(); ++j)
         {
             PackageFile* package = packages[j];
-            if (!GetFileNameAndExtension(package->GetName()).Compare(name, false) && package->GetTotalSize() == fileSize &&
-                package->GetChecksum() == checksum)
+            if (!GetFileNameAndExtension(package->GetName()).Compare(name, false) &&
+                package->GetTotalSize() == fileSize && package->GetChecksum() == checksum)
             {
                 found = true;
                 break;
@@ -1507,7 +1470,8 @@ void Connection::OnPackagesReady()
 
     if (sceneFileName_.Empty())
     {
-        // If the scene filename is empty, just clear the scene of all existing replicated content, and send the loaded reply
+        // If the scene filename is empty, just clear the scene of all existing replicated content, and send the loaded
+        // reply
         scene_->Clear(true, false);
         sceneLoaded_ = true;
 
@@ -1545,5 +1509,4 @@ void Connection::ProcessPackageInfo(int msgID, MemoryBuffer& msg)
 
     RequestNeededPackages(1, msg);
 }
-
 }

@@ -30,18 +30,17 @@
 
 namespace Urho3D
 {
-
-Resource::Resource(Context* context) :
-    Object(context),
-    memoryUse_(0),
-    asyncLoadState_(ASYNC_DONE)
+Resource::Resource(Context* context)
+    : Object(context)
+    , memoryUse_(0)
+    , asyncLoadState_(ASYNC_DONE)
 {
 }
 
 bool Resource::Load(Deserializer& source)
 {
-    // Because BeginLoad() / EndLoad() can be called from worker threads, where profiling would be a no-op,
-    // create a type name -based profile block here
+// Because BeginLoad() / EndLoad() can be called from worker threads, where profiling would be a no-op,
+// create a type name -based profile block here
 #ifdef URHO3D_PROFILING
     String profileBlockName("Load" + GetTypeName());
     URHO3D_PROFILE_SCOPED(profileBlockName.CString(), PROFILER_COLOR_RESOURCES);
@@ -94,20 +93,11 @@ void Resource::SetName(const String& name)
     nameHash_ = name;
 }
 
-void Resource::SetMemoryUse(unsigned size)
-{
-    memoryUse_ = size;
-}
+void Resource::SetMemoryUse(unsigned size) { memoryUse_ = size; }
 
-void Resource::ResetUseTimer()
-{
-    useTimer_.Reset();
-}
+void Resource::ResetUseTimer() { useTimer_.Reset(); }
 
-void Resource::SetAsyncLoadState(AsyncLoadState newState)
-{
-    asyncLoadState_ = newState;
-}
+void Resource::SetAsyncLoadState(AsyncLoadState newState) { asyncLoadState_ = newState; }
 
 unsigned Resource::GetUseTimer()
 {
@@ -147,10 +137,7 @@ const Urho3D::Variant& ResourceWithMetadata::GetMetadata(const String& name) con
     return value ? *value : Variant::EMPTY;
 }
 
-bool ResourceWithMetadata::HasMetadata() const
-{
-    return !metadata_.Empty();
-}
+bool ResourceWithMetadata::HasMetadata() const { return !metadata_.Empty(); }
 
 void ResourceWithMetadata::LoadMetadataFromXML(const XMLElement& source)
 {
@@ -182,5 +169,4 @@ void ResourceWithMetadata::CopyMetadata(const ResourceWithMetadata& source)
     metadata_ = source.metadata_;
     metadataKeys_ = source.metadataKeys_;
 }
-
 }

@@ -22,13 +22,12 @@
 
 #pragma once
 
+#include "../Graphics/AnimationState.h"
 #include "../IO/VectorBuffer.h"
 #include "../Scene/Component.h"
-#include "../Graphics/AnimationState.h"
 
 namespace Urho3D
 {
-
 class AnimatedModel;
 class Animation;
 struct Bone;
@@ -37,18 +36,18 @@ struct Bone;
 struct URHO3D_API AnimationControl
 {
     /// Construct with defaults.
-    AnimationControl() :
-        speed_(1.0f),
-        targetWeight_(0.0f),
-        fadeTime_(0.0f),
-        autoFadeTime_(0.0f),
-        setTimeTtl_(0.0f),
-        setWeightTtl_(0.0f),
-        setTime_(0),
-        setWeight_(0),
-        setTimeRev_(0),
-        setWeightRev_(0),
-        removeOnCompletion_(true)
+    AnimationControl()
+        : speed_(1.0f)
+        , targetWeight_(0.0f)
+        , fadeTime_(0.0f)
+        , autoFadeTime_(0.0f)
+        , setTimeTtl_(0.0f)
+        , setWeightTtl_(0.0f)
+        , setTime_(0)
+        , setWeight_(0)
+        , setTimeRev_(0)
+        , setWeightRev_(0)
+        , removeOnCompletion_(true)
     {
     }
 
@@ -100,7 +99,8 @@ public:
     virtual void Update(float timeStep);
     /// Play an animation and set full target weight. Name must be the full resource name. Return true on success.
     bool Play(const String& name, unsigned char layer, bool looped, float fadeInTime = 0.0f);
-    /// Play an animation, set full target weight and fade out all other animations on the same layer. Name must be the full resource name. Return true on success.
+    /// Play an animation, set full target weight and fade out all other animations on the same layer. Name must be the
+    /// full resource name. Return true on success.
     bool PlayExclusive(const String& name, unsigned char layer, bool looped, float fadeTime = 0.0f);
     /// Stop an animation. Zero fadetime is instant. Return true on success.
     bool Stop(const String& name, float fadeOutTime = 0.0f);
@@ -132,7 +132,8 @@ public:
     /// Set animation blending mode. Return true on success.
     bool SetBlendMode(const String& name, AnimationBlendMode mode);
 
-    /// Return whether an animation is active. Note that non-looping animations that are being clamped at the end also return true.
+    /// Return whether an animation is active. Note that non-looping animations that are being clamped at the end also
+    /// return true.
     bool IsPlaying(const String& name) const;
     /// Return whether any animation is active on a specific layer.
     bool IsPlaying(unsigned char layer) const;
@@ -205,9 +206,8 @@ private:
     /// Animation control structures.
     Vector<AnimationControl> animations_;
     /// Node hierarchy mode animation states.
-    Vector<SharedPtr<AnimationState> > nodeAnimationStates_;
+    Vector<SharedPtr<AnimationState>> nodeAnimationStates_;
     /// Attribute buffer for network replication.
     mutable VectorBuffer attrBuffer_;
 };
-
 }

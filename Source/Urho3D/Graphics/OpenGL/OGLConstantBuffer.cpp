@@ -22,16 +22,15 @@
 
 #include "../../Precompiled.h"
 
+#include "../../Graphics/ConstantBuffer.h"
 #include "../../Graphics/Graphics.h"
 #include "../../Graphics/GraphicsImpl.h"
-#include "../../Graphics/ConstantBuffer.h"
 #include "../../IO/Log.h"
 
 #include "../../DebugNew.h"
 
 namespace Urho3D
 {
-
 void ConstantBuffer::Release()
 {
     if (object_.name_)
@@ -97,5 +96,4 @@ void ConstantBuffer::Apply()
         dirty_ = false;
     }
 }
-
 }

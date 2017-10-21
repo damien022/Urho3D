@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// %Slider bar %UI element.
 class URHO3D_API Slider : public BorderImage
 {
@@ -43,24 +42,23 @@ public:
     /// Perform UI element update.
     virtual void Update(float timeStep) override;
     /// React to mouse hover.
-    virtual void OnHover(const IntVector2& position, const IntVector2& screenPosition, int buttons, int qualifiers, Cursor* cursor) override;
+    virtual void OnHover(const IntVector2& position, const IntVector2& screenPosition, int buttons, int qualifiers,
+                         Cursor* cursor) override;
     /// React to mouse click begin.
-    virtual void OnClickBegin
-        (const IntVector2& position, const IntVector2& screenPosition, int button, int buttons, int qualifiers, Cursor* cursor) override;
+    virtual void OnClickBegin(const IntVector2& position, const IntVector2& screenPosition, int button, int buttons,
+                              int qualifiers, Cursor* cursor) override;
     /// React to mouse click end.
-    virtual void OnClickEnd
-        (const IntVector2& position, const IntVector2& screenPosition, int button, int buttons, int qualifiers, Cursor* cursor,
-            UIElement* beginElement) override;
+    virtual void OnClickEnd(const IntVector2& position, const IntVector2& screenPosition, int button, int buttons,
+                            int qualifiers, Cursor* cursor, UIElement* beginElement) override;
     /// React to mouse drag begin.
-    virtual void
-        OnDragBegin(const IntVector2& position, const IntVector2& screenPosition, int buttons, int qualifiers, Cursor* cursor) override;
+    virtual void OnDragBegin(const IntVector2& position, const IntVector2& screenPosition, int buttons, int qualifiers,
+                             Cursor* cursor) override;
     /// React to mouse drag motion.
-    virtual void OnDragMove
-        (const IntVector2& position, const IntVector2& screenPosition, const IntVector2& deltaPos, int buttons, int qualifiers,
-            Cursor* cursor) override;
+    virtual void OnDragMove(const IntVector2& position, const IntVector2& screenPosition, const IntVector2& deltaPos,
+                            int buttons, int qualifiers, Cursor* cursor) override;
     /// React to mouse drag end.
-    virtual void
-        OnDragEnd(const IntVector2& position, const IntVector2& screenPosition, int dragButtons, int buttons, Cursor* cursor) override;
+    virtual void OnDragEnd(const IntVector2& position, const IntVector2& screenPosition, int dragButtons, int buttons,
+                           Cursor* cursor) override;
     /// React to resize.
     virtual void OnResize(const IntVector2& newSize, const IntVector2& delta) override;
 
@@ -117,5 +115,4 @@ protected:
     /// Paging minimum repeat timer.
     Timer repeatTimer_;
 };
-
 }

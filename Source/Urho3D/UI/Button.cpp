@@ -32,26 +32,23 @@
 
 namespace Urho3D
 {
-
 extern const char* UI_CATEGORY;
 
-Button::Button(Context* context) :
-    BorderImage(context),
-    pressedOffset_(IntVector2::ZERO),
-    disabledOffset_(IntVector2::ZERO),
-    pressedChildOffset_(IntVector2::ZERO),
-    repeatDelay_(1.0f),
-    repeatRate_(0.0f),
-    repeatTimer_(0.0f),
-    pressed_(false)
+Button::Button(Context* context)
+    : BorderImage(context)
+    , pressedOffset_(IntVector2::ZERO)
+    , disabledOffset_(IntVector2::ZERO)
+    , pressedChildOffset_(IntVector2::ZERO)
+    , repeatDelay_(1.0f)
+    , repeatRate_(0.0f)
+    , repeatTimer_(0.0f)
+    , pressed_(false)
 {
     SetEnabled(true);
     focusMode_ = FM_FOCUSABLE;
 }
 
-Button::~Button()
-{
-}
+Button::~Button() {}
 
 void Button::RegisterObject(Context* context)
 {
@@ -60,9 +57,12 @@ void Button::RegisterObject(Context* context)
     URHO3D_COPY_BASE_ATTRIBUTES(BorderImage);
     URHO3D_UPDATE_ATTRIBUTE_DEFAULT_VALUE("Is Enabled", true);
     URHO3D_UPDATE_ATTRIBUTE_DEFAULT_VALUE("Focus Mode", FM_FOCUSABLE);
-    URHO3D_ACCESSOR_ATTRIBUTE("Pressed Image Offset", GetPressedOffset, SetPressedOffset, IntVector2, IntVector2::ZERO, AM_FILE);
-    URHO3D_ACCESSOR_ATTRIBUTE("Disabled Image Offset", GetDisabledOffset, SetDisabledOffset, IntVector2, IntVector2::ZERO, AM_FILE);
-    URHO3D_ACCESSOR_ATTRIBUTE("Pressed Child Offset", GetPressedChildOffset, SetPressedChildOffset, IntVector2, IntVector2::ZERO, AM_FILE);
+    URHO3D_ACCESSOR_ATTRIBUTE("Pressed Image Offset", GetPressedOffset, SetPressedOffset, IntVector2, IntVector2::ZERO,
+                              AM_FILE);
+    URHO3D_ACCESSOR_ATTRIBUTE("Disabled Image Offset", GetDisabledOffset, SetDisabledOffset, IntVector2,
+                              IntVector2::ZERO, AM_FILE);
+    URHO3D_ACCESSOR_ATTRIBUTE("Pressed Child Offset", GetPressedChildOffset, SetPressedChildOffset, IntVector2,
+                              IntVector2::ZERO, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Repeat Delay", GetRepeatDelay, SetRepeatDelay, float, 1.0f, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Repeat Rate", GetRepeatRate, SetRepeatRate, float, 0.0f, AM_FILE);
 }
@@ -103,12 +103,12 @@ void Button::GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexDat
     {
         offset += disabledOffset_;
     }
-    
+
     BorderImage::GetBatches(batches, vertexData, currentScissor, offset);
 }
 
-void Button::OnClickBegin(const IntVector2& position, const IntVector2& screenPosition, int button, int buttons, int qualifiers,
-    Cursor* cursor)
+void Button::OnClickBegin(const IntVector2& position, const IntVector2& screenPosition, int button, int buttons,
+                          int qualifiers, Cursor* cursor)
 {
     if (button == MOUSEB_LEFT)
     {
@@ -124,8 +124,8 @@ void Button::OnClickBegin(const IntVector2& position, const IntVector2& screenPo
     }
 }
 
-void Button::OnClickEnd(const IntVector2& position, const IntVector2& screenPosition, int button, int buttons, int qualifiers,
-    Cursor* cursor, UIElement* beginElement)
+void Button::OnClickEnd(const IntVector2& position, const IntVector2& screenPosition, int button, int buttons,
+                        int qualifiers, Cursor* cursor, UIElement* beginElement)
 {
     if (pressed_ && button == MOUSEB_LEFT)
     {
@@ -142,8 +142,8 @@ void Button::OnClickEnd(const IntVector2& position, const IntVector2& screenPosi
     }
 }
 
-void Button::OnDragMove(const IntVector2& position, const IntVector2& screenPosition, const IntVector2& deltaPos, int buttons,
-    int qualifiers, Cursor* cursor)
+void Button::OnDragMove(const IntVector2& position, const IntVector2& screenPosition, const IntVector2& deltaPos,
+                        int buttons, int qualifiers, Cursor* cursor)
 {
     SetPressed(true);
 }
@@ -158,35 +158,17 @@ void Button::OnKey(int key, int buttons, int qualifiers)
     }
 }
 
-void Button::SetPressedOffset(const IntVector2& offset)
-{
-    pressedOffset_ = offset;
-}
+void Button::SetPressedOffset(const IntVector2& offset) { pressedOffset_ = offset; }
 
-void Button::SetPressedOffset(int x, int y)
-{
-    pressedOffset_ = IntVector2(x, y);
-}
+void Button::SetPressedOffset(int x, int y) { pressedOffset_ = IntVector2(x, y); }
 
-void Button::SetDisabledOffset(const IntVector2& offset)
-{
-    disabledOffset_ = offset;
-}
+void Button::SetDisabledOffset(const IntVector2& offset) { disabledOffset_ = offset; }
 
-void Button::SetDisabledOffset(int x, int y)
-{
-    disabledOffset_ = IntVector2(x, y);
-}
+void Button::SetDisabledOffset(int x, int y) { disabledOffset_ = IntVector2(x, y); }
 
-void Button::SetPressedChildOffset(const IntVector2& offset)
-{
-    pressedChildOffset_ = offset;
-}
+void Button::SetPressedChildOffset(const IntVector2& offset) { pressedChildOffset_ = offset; }
 
-void Button::SetPressedChildOffset(int x, int y)
-{
-    pressedChildOffset_ = IntVector2(x, y);
-}
+void Button::SetPressedChildOffset(int x, int y) { pressedChildOffset_ = IntVector2(x, y); }
 
 void Button::SetRepeat(float delay, float rate)
 {
@@ -194,20 +176,13 @@ void Button::SetRepeat(float delay, float rate)
     SetRepeatRate(rate);
 }
 
-void Button::SetRepeatDelay(float delay)
-{
-    repeatDelay_ = Max(delay, 0.0f);
-}
+void Button::SetRepeatDelay(float delay) { repeatDelay_ = Max(delay, 0.0f); }
 
-void Button::SetRepeatRate(float rate)
-{
-    repeatRate_ = Max(rate, 0.0f);
-}
+void Button::SetRepeatRate(float rate) { repeatRate_ = Max(rate, 0.0f); }
 
 void Button::SetPressed(bool enable)
 {
     pressed_ = enable;
     SetChildOffset(pressed_ ? pressedChildOffset_ : IntVector2::ZERO);
 }
-
 }

@@ -25,22 +25,22 @@
 #include "../Audio/Audio.h"
 #include "../Core/Context.h"
 #include "../Core/CoreEvents.h"
-#include "../Core/Profiler.h"
 #include "../Core/ProcessUtils.h"
+#include "../Core/Profiler.h"
 #include "../Core/WorkQueue.h"
 #ifdef URHO3D_SYSTEMUI
-#include "../SystemUI/SystemUI.h"
 #include "../SystemUI/Console.h"
 #include "../SystemUI/DebugHud.h"
+#include "../SystemUI/SystemUI.h"
 #endif
 #include "../Engine/Engine.h"
 #include "../Engine/EngineDefs.h"
 #include "../Graphics/Graphics.h"
 #include "../Graphics/Renderer.h"
-#include "../Input/Input.h"
 #include "../IO/FileSystem.h"
 #include "../IO/Log.h"
 #include "../IO/PackageFile.h"
+#include "../Input/Input.h"
 #ifdef URHO3D_IK
 #include "../IK/IK.h"
 #endif
@@ -54,8 +54,8 @@
 #include "../Physics/PhysicsWorld.h"
 #include "../Physics/RaycastVehicle.h"
 #endif
-#include "../Resource/ResourceCache.h"
 #include "../Resource/Localization.h"
+#include "../Resource/ResourceCache.h"
 #include "../Scene/Scene.h"
 #include "../Scene/SceneEvents.h"
 #include "../UI/UI.h"
@@ -69,7 +69,6 @@
 #endif
 
 #include "../DebugNew.h"
-
 
 #if defined(_MSC_VER) && defined(_DEBUG)
 // From dbgint.h
@@ -90,31 +89,34 @@ typedef struct _CrtMemBlockHeader
 
 namespace Urho3D
 {
-
 extern const char* logLevelPrefixes[];
 
-Engine::Engine(Context* context) :
-    Object(context),
-    timeStep_(0.0f),
-    timeStepSmoothing_(2),
-    minFps_(10),
+Engine::Engine(Context* context)
+    : Object(context)
+    , timeStep_(0.0f)
+    , timeStepSmoothing_(2)
+    , minFps_(10)
+    ,
 #if defined(IOS) || defined(TVOS) || defined(__ANDROID__) || defined(__arm__) || defined(__aarch64__)
-    maxFps_(60),
-    maxInactiveFps_(10),
-    pauseMinimized_(true),
+    maxFps_(60)
+    , maxInactiveFps_(10)
+    , pauseMinimized_(true)
+    ,
 #else
-    maxFps_(200),
-    maxInactiveFps_(60),
-    pauseMinimized_(false),
+    maxFps_(200)
+    , maxInactiveFps_(60)
+    , pauseMinimized_(false)
+    ,
 #endif
 #ifdef URHO3D_TESTING
-    timeOut_(0),
+    timeOut_(0)
+    ,
 #endif
-    autoExit_(true),
-    initialized_(false),
-    exiting_(false),
-    headless_(false),
-    audioPaused_(false)
+    autoExit_(true)
+    , initialized_(false)
+    , exiting_(false)
+    , headless_(false)
+    , audioPaused_(false)
 {
     // Register self as a subsystem
     context_->RegisterSubsystem(this);
@@ -145,7 +147,7 @@ Engine::Engine(Context* context) :
 #ifdef URHO3D_IK
     RegisterIKLibrary(context_);
 #endif
-    
+
 #ifdef URHO3D_PHYSICS
     RegisterPhysicsLibrary(context_);
 #endif
@@ -176,9 +178,7 @@ Engine::Engine(Context* context) :
     context_->tasks_ = context_->GetSubsystem<Tasks>();
 }
 
-Engine::~Engine()
-{
-}
+Engine::~Engine() {}
 
 bool Engine::Initialize(const VariantMap& parameters)
 {
@@ -200,7 +200,8 @@ bool Engine::Initialize(const VariantMap& parameters)
     }
     else
     {
-        // Register graphics library objects explicitly in headless mode to allow them to work without using actual GPU resources
+        // Register graphics library objects explicitly in headless mode to allow them to work without using actual GPU
+        // resources
         RegisterGraphicsLibrary(context_);
     }
 
@@ -226,8 +227,8 @@ bool Engine::Initialize(const VariantMap& parameters)
     if (GetParameter(parameters, EP_FRAME_LIMITER, true) == false)
         SetMaxFps(0);
 
-    // Set amount of worker threads according to the available physical CPU cores. Using also hyperthreaded cores results in
-    // unpredictable extra synchronization overhead. Also reserve one core for the main thread
+        // Set amount of worker threads according to the available physical CPU cores. Using also hyperthreaded cores
+        // results in unpredictable extra synchronization overhead. Also reserve one core for the main thread
 #ifdef URHO3D_THREADING
     unsigned numThreads = GetParameter(parameters, EP_WORKER_THREADS, true).GetBool() ? GetNumPhysicalCPUs() - 1 : 0;
     if (numThreads)
@@ -254,57 +255,59 @@ bool Engine::Initialize(const VariantMap& parameters)
         if (HasParameter(parameters, EP_EXTERNAL_WINDOW))
             graphics->SetExternalWindow(GetParameter(parameters, EP_EXTERNAL_WINDOW).GetVoidPtr());
         graphics->SetWindowTitle(GetParameter(parameters, EP_WINDOW_TITLE, "Urho3D").GetString());
-        graphics->SetWindowIcon(cache->GetResource<Image>(GetParameter(parameters, EP_WINDOW_ICON, String::EMPTY).GetString()));
+        graphics->SetWindowIcon(
+            cache->GetResource<Image>(GetParameter(parameters, EP_WINDOW_ICON, String::EMPTY).GetString()));
         graphics->SetFlushGPU(GetParameter(parameters, EP_FLUSH_GPU, false).GetBool());
-        graphics->SetOrientations(GetParameter(parameters, EP_ORIENTATIONS, "LandscapeLeft LandscapeRight").GetString());
+        graphics->SetOrientations(
+            GetParameter(parameters, EP_ORIENTATIONS, "LandscapeLeft LandscapeRight").GetString());
 
         if (HasParameter(parameters, EP_WINDOW_POSITION_X) && HasParameter(parameters, EP_WINDOW_POSITION_Y))
             graphics->SetWindowPosition(GetParameter(parameters, EP_WINDOW_POSITION_X).GetInt(),
-                GetParameter(parameters, EP_WINDOW_POSITION_Y).GetInt());
+                                        GetParameter(parameters, EP_WINDOW_POSITION_Y).GetInt());
 
 #ifdef URHO3D_OPENGL
         if (HasParameter(parameters, EP_FORCE_GL2))
             graphics->SetForceGL2(GetParameter(parameters, EP_FORCE_GL2).GetBool());
 #endif
 
-        if (!graphics->SetMode(
-            GetParameter(parameters, EP_WINDOW_WIDTH, 0).GetInt(),
-            GetParameter(parameters, EP_WINDOW_HEIGHT, 0).GetInt(),
-            GetParameter(parameters, EP_FULL_SCREEN, true).GetBool(),
-            GetParameter(parameters, EP_BORDERLESS, false).GetBool(),
-            GetParameter(parameters, EP_WINDOW_RESIZABLE, false).GetBool(),
-            GetParameter(parameters, EP_HIGH_DPI, true).GetBool(),
-            GetParameter(parameters, EP_VSYNC, false).GetBool(),
-            GetParameter(parameters, EP_TRIPLE_BUFFER, false).GetBool(),
-            GetParameter(parameters, EP_MULTI_SAMPLE, 1).GetInt(),
-            GetParameter(parameters, EP_MONITOR, 0).GetInt(),
-            GetParameter(parameters, EP_REFRESH_RATE, 0).GetInt()
-        ))
+        if (!graphics->SetMode(GetParameter(parameters, EP_WINDOW_WIDTH, 0).GetInt(),
+                               GetParameter(parameters, EP_WINDOW_HEIGHT, 0).GetInt(),
+                               GetParameter(parameters, EP_FULL_SCREEN, true).GetBool(),
+                               GetParameter(parameters, EP_BORDERLESS, false).GetBool(),
+                               GetParameter(parameters, EP_WINDOW_RESIZABLE, false).GetBool(),
+                               GetParameter(parameters, EP_HIGH_DPI, true).GetBool(),
+                               GetParameter(parameters, EP_VSYNC, false).GetBool(),
+                               GetParameter(parameters, EP_TRIPLE_BUFFER, false).GetBool(),
+                               GetParameter(parameters, EP_MULTI_SAMPLE, 1).GetInt(),
+                               GetParameter(parameters, EP_MONITOR, 0).GetInt(),
+                               GetParameter(parameters, EP_REFRESH_RATE, 0).GetInt()))
             return false;
 
-        graphics->SetShaderCacheDir(GetParameter(parameters, EP_SHADER_CACHE_DIR, fileSystem->GetAppPreferencesDir("urho3d", "shadercache")).GetString());
+        graphics->SetShaderCacheDir(
+            GetParameter(parameters, EP_SHADER_CACHE_DIR, fileSystem->GetAppPreferencesDir("urho3d", "shadercache"))
+                .GetString());
 
         if (HasParameter(parameters, EP_DUMP_SHADERS))
             graphics->BeginDumpShaders(GetParameter(parameters, EP_DUMP_SHADERS, String::EMPTY).GetString());
         if (HasParameter(parameters, EP_RENDER_PATH))
-            renderer->SetDefaultRenderPath(cache->GetResource<XMLFile>(GetParameter(parameters, EP_RENDER_PATH).GetString()));
+            renderer->SetDefaultRenderPath(
+                cache->GetResource<XMLFile>(GetParameter(parameters, EP_RENDER_PATH).GetString()));
 
         renderer->SetDrawShadows(GetParameter(parameters, EP_SHADOWS, true).GetBool());
         if (renderer->GetDrawShadows() && GetParameter(parameters, EP_LOW_QUALITY_SHADOWS, false).GetBool())
             renderer->SetShadowQuality(SHADOWQUALITY_SIMPLE_16BIT);
         renderer->SetMaterialQuality(GetParameter(parameters, EP_MATERIAL_QUALITY, QUALITY_HIGH).GetInt());
         renderer->SetTextureQuality(GetParameter(parameters, EP_TEXTURE_QUALITY, QUALITY_HIGH).GetInt());
-        renderer->SetTextureFilterMode((TextureFilterMode)GetParameter(parameters, EP_TEXTURE_FILTER_MODE, FILTER_TRILINEAR).GetInt());
+        renderer->SetTextureFilterMode(
+            (TextureFilterMode)GetParameter(parameters, EP_TEXTURE_FILTER_MODE, FILTER_TRILINEAR).GetInt());
         renderer->SetTextureAnisotropy(GetParameter(parameters, EP_TEXTURE_ANISOTROPY, 4).GetInt());
 
         if (GetParameter(parameters, EP_SOUND, true).GetBool())
         {
-            GetSubsystem<Audio>()->SetMode(
-                GetParameter(parameters, EP_SOUND_BUFFER, 100).GetInt(),
-                GetParameter(parameters, EP_SOUND_MIX_RATE, 44100).GetInt(),
-                GetParameter(parameters, EP_SOUND_STEREO, true).GetBool(),
-                GetParameter(parameters, EP_SOUND_INTERPOLATION, true).GetBool()
-            );
+            GetSubsystem<Audio>()->SetMode(GetParameter(parameters, EP_SOUND_BUFFER, 100).GetInt(),
+                                           GetParameter(parameters, EP_SOUND_MIX_RATE, 44100).GetInt(),
+                                           GetParameter(parameters, EP_SOUND_STEREO, true).GetBool(),
+                                           GetParameter(parameters, EP_SOUND_INTERPOLATION, true).GetBool());
         }
     }
 
@@ -315,7 +318,7 @@ bool Engine::Initialize(const VariantMap& parameters)
     if (HasParameter(parameters, EP_TOUCH_EMULATION))
         GetSubsystem<Input>()->SetTouchEmulation(GetParameter(parameters, EP_TOUCH_EMULATION).GetBool());
 
-    // Initialize network
+        // Initialize network
 #ifdef URHO3D_NETWORK
     if (HasParameter(parameters, EP_PACKAGE_CACHE_DIR))
         GetSubsystem<Network>()->SetPackageCacheDir(GetParameter(parameters, EP_PACKAGE_CACHE_DIR).GetString());
@@ -330,7 +333,8 @@ bool Engine::Initialize(const VariantMap& parameters)
     if (Profiler* profiler = GetSubsystem<Profiler>())
     {
         if (GetParameter(parameters, EP_PROFILER_LISTEN, false).GetBool())
-            profiler->StartListen((unsigned short)GetParameter(parameters, EP_PROFILER_PORT, PROFILER_DEFAULT_PORT).GetInt());
+            profiler->StartListen(
+                (unsigned short)GetParameter(parameters, EP_PROFILER_PORT, PROFILER_DEFAULT_PORT).GetInt());
         profiler->SetEventProfilingEnabled(GetParameter(parameters, EP_EVENT_PROFILER, true).GetBool());
     }
 #endif
@@ -357,7 +361,7 @@ bool Engine::InitializeResourceCache(const VariantMap& parameters, bool removeOl
     if (removeOld)
     {
         Vector<String> resourceDirs = cache->GetResourceDirs();
-        Vector<SharedPtr<PackageFile> > packageFiles = cache->GetPackageFiles();
+        Vector<SharedPtr<PackageFile>> packageFiles = cache->GetPackageFiles();
         for (unsigned i = 0; i < resourceDirs.Size(); ++i)
             cache->RemoveResourceDir(resourceDirs[i]);
         for (unsigned i = 0; i < packageFiles.Size(); ++i)
@@ -365,10 +369,12 @@ bool Engine::InitializeResourceCache(const VariantMap& parameters, bool removeOl
     }
 
     // Add resource paths
-    Vector<String> resourcePrefixPaths = GetParameter(parameters, EP_RESOURCE_PREFIX_PATHS, String::EMPTY).GetString().Split(';', true);
+    Vector<String> resourcePrefixPaths =
+        GetParameter(parameters, EP_RESOURCE_PREFIX_PATHS, String::EMPTY).GetString().Split(';', true);
     for (unsigned i = 0; i < resourcePrefixPaths.Size(); ++i)
-        resourcePrefixPaths[i] = AddTrailingSlash(
-            IsAbsolutePath(resourcePrefixPaths[i]) ? resourcePrefixPaths[i] : fileSystem->GetProgramDir() + resourcePrefixPaths[i]);
+        resourcePrefixPaths[i] = AddTrailingSlash(IsAbsolutePath(resourcePrefixPaths[i])
+                                                      ? resourcePrefixPaths[i]
+                                                      : fileSystem->GetProgramDir() + resourcePrefixPaths[i]);
     Vector<String> resourcePaths = GetParameter(parameters, EP_RESOURCE_PATHS, "Data;CoreData").GetString().Split(';');
     Vector<String> resourcePackages = GetParameter(parameters, EP_RESOURCE_PACKAGES).GetString().Split(';');
     Vector<String> autoLoadPaths = GetParameter(parameters, EP_AUTOLOAD_PATHS, "Autoload").GetString().Split(';');
@@ -387,7 +393,7 @@ bool Engine::InitializeResourceCache(const VariantMap& parameters, bool removeOl
                     if (cache->AddPackageFile(packageName))
                         break;
                     else
-                        return false;   // The root cause of the error should have already been logged
+                        return false; // The root cause of the error should have already been logged
                 }
                 String pathName = resourcePrefixPaths[j] + resourcePaths[i];
                 if (fileSystem->DirExists(pathName))
@@ -400,9 +406,9 @@ bool Engine::InitializeResourceCache(const VariantMap& parameters, bool removeOl
             }
             if (j == resourcePrefixPaths.Size() && !headless_)
             {
-                URHO3D_LOGERRORF(
-                    "Failed to add resource path '%s', check the documentation on how to set the 'resource prefix path'",
-                    resourcePaths[i].CString());
+                URHO3D_LOGERRORF("Failed to add resource path '%s', check the documentation on how to set the "
+                                 "'resource prefix path'",
+                                 resourcePaths[i].CString());
                 return false;
             }
         }
@@ -486,13 +492,14 @@ bool Engine::InitializeResourceCache(const VariantMap& parameters, bool removeOl
 
         // The following debug message is confusing when user is not aware of the autoload feature
         // Especially because the autoload feature is enabled by default without user intervention
-        // The following extra conditional check below is to suppress unnecessary debug log entry under such default situation
-        // The cleaner approach is to not enable the autoload by default, i.e. do not use 'Autoload' as default value for 'AutoloadPaths' engine parameter
-        // However, doing so will break the existing applications that rely on this
+        // The following extra conditional check below is to suppress unnecessary debug log entry under such default
+        // situation The cleaner approach is to not enable the autoload by default, i.e. do not use 'Autoload' as
+        // default value for 'AutoloadPaths' engine parameter However, doing so will break the existing applications
+        // that rely on this
         if (!autoLoadPathExist && (autoLoadPaths.Size() > 1 || autoLoadPaths[0] != "Autoload"))
-            URHO3D_LOGDEBUGF(
-                "Skipped autoload path '%s' as it does not exist, check the documentation on how to set the 'resource prefix path'",
-                autoLoadPaths[i].CString());
+            URHO3D_LOGDEBUGF("Skipped autoload path '%s' as it does not exist, check the documentation on how to set "
+                             "the 'resource prefix path'",
+                             autoLoadPaths[i].CString());
     }
 
     return true;
@@ -510,8 +517,8 @@ void Engine::RunFrame()
     if (exiting_)
         return;
 
-    // Note: there is a minimal performance cost to looking up subsystems (uses a hashmap); if they would be looked up several
-    // times per frame it would be better to cache the pointers
+    // Note: there is a minimal performance cost to looking up subsystems (uses a hashmap); if they would be looked up
+    // several times per frame it would be better to cache the pointers
     Time* time = GetSubsystem<Time>();
     Input* input = GetSubsystem<Input>();
     Audio* audio = GetSubsystem<Audio>();
@@ -587,49 +594,31 @@ DebugHud* Engine::CreateDebugHud()
 #endif
 }
 
-void Engine::SetTimeStepSmoothing(int frames)
-{
-    timeStepSmoothing_ = (unsigned)Clamp(frames, 1, 20);
-}
+void Engine::SetTimeStepSmoothing(int frames) { timeStepSmoothing_ = (unsigned)Clamp(frames, 1, 20); }
 
-void Engine::SetMinFps(int fps)
-{
-    minFps_ = (unsigned)Max(fps, 0);
-}
+void Engine::SetMinFps(int fps) { minFps_ = (unsigned)Max(fps, 0); }
 
-void Engine::SetMaxFps(int fps)
-{
-    maxFps_ = (unsigned)Max(fps, 0);
-}
+void Engine::SetMaxFps(int fps) { maxFps_ = (unsigned)Max(fps, 0); }
 
-void Engine::SetMaxInactiveFps(int fps)
-{
-    maxInactiveFps_ = (unsigned)Max(fps, 0);
-}
+void Engine::SetMaxInactiveFps(int fps) { maxInactiveFps_ = (unsigned)Max(fps, 0); }
 
-void Engine::SetPauseMinimized(bool enable)
-{
-    pauseMinimized_ = enable;
-}
+void Engine::SetPauseMinimized(bool enable) { pauseMinimized_ = enable; }
 
 void Engine::SetAutoExit(bool enable)
 {
-    // On mobile platforms exit is mandatory if requested by the platform itself and should not be attempted to be disabled
+// On mobile platforms exit is mandatory if requested by the platform itself and should not be attempted to be disabled
 #if defined(__ANDROID__) || defined(IOS) || defined(TVOS)
     enable = true;
 #endif
     autoExit_ = enable;
 }
 
-void Engine::SetNextTimeStep(float seconds)
-{
-    timeStep_ = Max(seconds, 0.0f);
-}
+void Engine::SetNextTimeStep(float seconds) { timeStep_ = Max(seconds, 0.0f); }
 
 void Engine::Exit()
 {
 #if defined(IOS) || defined(TVOS)
-    // On iOS/tvOS it's not legal for the application to exit on its own, instead it will be minimized with the home key
+// On iOS/tvOS it's not legal for the application to exit on its own, instead it will be minimized with the home key
 #else
     DoExit();
 #endif
@@ -658,12 +647,14 @@ void Engine::DumpResources(bool dumpFileName)
     if (dumpFileName)
     {
         URHO3D_LOGRAW("Used resources:\n");
-        for (HashMap<StringHash, ResourceGroup>::ConstIterator i = resourceGroups.Begin(); i != resourceGroups.End(); ++i)
+        for (HashMap<StringHash, ResourceGroup>::ConstIterator i = resourceGroups.Begin(); i != resourceGroups.End();
+             ++i)
         {
-            const HashMap<StringHash, SharedPtr<Resource> >& resources = i->second_.resources_;
+            const HashMap<StringHash, SharedPtr<Resource>>& resources = i->second_.resources_;
             if (dumpFileName)
             {
-                for (HashMap<StringHash, SharedPtr<Resource> >::ConstIterator j = resources.Begin(); j != resources.End(); ++j)
+                for (HashMap<StringHash, SharedPtr<Resource>>::ConstIterator j = resources.Begin();
+                     j != resources.End(); ++j)
                     URHO3D_LOGRAW(j->second_->GetName() + "\n");
             }
         }
@@ -696,7 +687,8 @@ void Engine::DumpMemory()
         if (block->nBlockUse > 0)
         {
             if (block->szFileName)
-                URHO3D_LOGRAW("Block " + String((int)block->lRequest) + ": " + String(block->nDataSize) + " bytes, file " + String(block->szFileName) + " line " + String(block->nLine) + "\n");
+                URHO3D_LOGRAW("Block " + String((int)block->lRequest) + ": " + String(block->nDataSize) +
+                              " bytes, file " + String(block->szFileName) + " line " + String(block->nLine) + "\n");
             else
                 URHO3D_LOGRAW("Block " + String((int)block->lRequest) + ": " + String(block->nDataSize) + " bytes\n");
 
@@ -909,11 +901,13 @@ VariantMap Engine::ParseParameters(const Vector<String>& arguments)
                 ret[EP_WINDOW_HEIGHT] = ToInt(value);
                 ++i;
             }
-            else if (argument == "monitor" && !value.Empty()) {
+            else if (argument == "monitor" && !value.Empty())
+            {
                 ret[EP_MONITOR] = ToInt(value);
                 ++i;
             }
-            else if (argument == "hz" && !value.Empty()) {
+            else if (argument == "hz" && !value.Empty())
+            {
                 ret[EP_REFRESH_RATE] = ToInt(value);
                 ++i;
             }
@@ -1024,8 +1018,7 @@ void Engine::DoExit()
 
     exiting_ = true;
 #if defined(__EMSCRIPTEN__) && defined(URHO3D_TESTING)
-    emscripten_force_exit(EXIT_SUCCESS);    // Some how this is required to signal emrun to stop
+    emscripten_force_exit(EXIT_SUCCESS); // Some how this is required to signal emrun to stop
 #endif
 }
-
 }

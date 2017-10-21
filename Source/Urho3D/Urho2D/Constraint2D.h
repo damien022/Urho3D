@@ -28,7 +28,6 @@
 
 namespace Urho3D
 {
-
 class RigidBody2D;
 class PhysicsWorld2D;
 
@@ -107,5 +106,4 @@ protected:
     /// Attached constraint.
     WeakPtr<Constraint2D> attachedConstraint_;
 };
-
 }

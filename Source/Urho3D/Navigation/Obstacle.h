@@ -27,7 +27,6 @@
 
 namespace Urho3D
 {
-
 class DynamicNavigationMesh;
 
 /// Obstacle for dynamic navigation mesh.
@@ -90,5 +89,4 @@ private:
     /// Pointer to the navigation mesh we belong to.
     WeakPtr<DynamicNavigationMesh> ownerMesh_;
 };
-
 }

@@ -37,12 +37,11 @@
 #include "../../DebugNew.h"
 
 #ifdef _MSC_VER
-#pragma warning(disable:4355)
+#pragma warning(disable : 4355)
 #endif
 
 namespace Urho3D
 {
-
 void TextureCube::OnDeviceLost()
 {
     GPUObject::OnDeviceLost();
@@ -155,20 +154,20 @@ bool TextureCube::SetData(CubeMapFace face, unsigned level, int x, int y, int wi
     if (!IsCompressed())
     {
         if (wholeLevel)
-            glTexImage2D((GLenum)(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face), level, format, width, height, 0, GetExternalFormat(format_),
-                GetDataType(format_), data);
+            glTexImage2D((GLenum)(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face), level, format, width, height, 0,
+                         GetExternalFormat(format_), GetDataType(format_), data);
         else
-            glTexSubImage2D((GLenum)(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face), level, x, y, width, height, GetExternalFormat(format_),
-                GetDataType(format_), data);
+            glTexSubImage2D((GLenum)(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face), level, x, y, width, height,
+                            GetExternalFormat(format_), GetDataType(format_), data);
     }
     else
     {
         if (wholeLevel)
             glCompressedTexImage2D((GLenum)(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face), level, format, width, height, 0,
-                GetDataSize(width, height), data);
+                                   GetDataSize(width, height), data);
         else
-            glCompressedTexSubImage2D((GLenum)(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face), level, x, y, width, height, format,
-                GetDataSize(width, height), data);
+            glCompressedTexSubImage2D((GLenum)(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face), level, x, y, width, height,
+                                      format, GetDataSize(width, height), data);
     }
 
     graphics_->SetTexture(0, nullptr);
@@ -206,7 +205,8 @@ bool TextureCube::SetData(CubeMapFace face, Image* image, bool useAlpha)
         unsigned components = image->GetComponents();
         if (Graphics::GetGL3Support() && ((components == 1 && !useAlpha) || components == 2))
         {
-            mipImage = image->ConvertToRGBA(); image = mipImage;
+            mipImage = image->ConvertToRGBA();
+            image = mipImage;
             if (!image)
                 return false;
             components = image->GetComponents();
@@ -226,7 +226,8 @@ bool TextureCube::SetData(CubeMapFace face, Image* image, bool useAlpha)
         // Discard unnecessary mip levels
         for (unsigned i = 0; i < mipsToSkip_[quality]; ++i)
         {
-            mipImage = image->GetNextLevel(); image = mipImage;
+            mipImage = image->GetNextLevel();
+            image = mipImage;
             levelData = image->GetData();
             levelWidth = image->GetWidth();
             levelHeight = image->GetHeight();
@@ -251,14 +252,15 @@ bool TextureCube::SetData(CubeMapFace face, Image* image, bool useAlpha)
             break;
 
         default:
-            assert(false);  // Should not reach here
+            assert(false); // Should not reach here
             break;
         }
 
         // Create the texture when face 0 is being loaded, check that rest of the faces are same size & format
         if (!face)
         {
-            // If image was previously compressed, reset number of requested levels to avoid error if level count is too high for new size
+            // If image was previously compressed, reset number of requested levels to avoid error if level count is too
+            // high for new size
             if (IsCompressed() && requestedLevels_ > 1)
                 requestedLevels_ = 0;
             SetSize(levelWidth, format);
@@ -284,7 +286,8 @@ bool TextureCube::SetData(CubeMapFace face, Image* image, bool useAlpha)
 
             if (i < levels_ - 1)
             {
-                mipImage = image->GetNextLevel(); image = mipImage;
+                mipImage = image->GetNextLevel();
+                image = mipImage;
                 levelData = image->GetData();
                 levelWidth = image->GetWidth();
                 levelHeight = image->GetHeight();
@@ -398,14 +401,15 @@ bool TextureCube::GetData(CubeMapFace face, unsigned level, void* dest) const
         URHO3D_LOGERROR("Can not get data from multisampled texture without autoresolve");
         return false;
     }
-    
+
     if (resolveDirty_)
         graphics_->ResolveToTexture(const_cast<TextureCube*>(this));
 
     graphics_->SetTextureForUpdate(const_cast<TextureCube*>(this));
 
     if (!IsCompressed())
-        glGetTexImage((GLenum)(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face), level, GetExternalFormat(format_), GetDataType(format_), dest);
+        glGetTexImage((GLenum)(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face), level, GetExternalFormat(format_),
+                      GetDataType(format_), dest);
     else
         glGetCompressedTexImage((GLenum)(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face), level, dest);
 
@@ -448,7 +452,7 @@ bool TextureCube::Create()
         autoResolve_ = false;
     }
 #endif
-    
+
     glGenTextures(1, &object_.name_);
 
     // Ensure that our texture is bound to OpenGL texture unit 0
@@ -472,7 +476,8 @@ bool TextureCube::Create()
         glGetError();
         for (unsigned i = 0; i < MAX_CUBEMAP_FACES; ++i)
         {
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width_, height_, 0, externalFormat, dataType, nullptr);
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, width_, height_, 0, externalFormat, dataType,
+                         nullptr);
             if (glGetError())
                 success = false;
         }
@@ -511,5 +516,4 @@ bool TextureCube::Create()
 
     return success;
 }
-
 }

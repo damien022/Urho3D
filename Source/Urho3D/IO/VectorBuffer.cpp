@@ -26,25 +26,13 @@
 
 namespace Urho3D
 {
+VectorBuffer::VectorBuffer() {}
 
-VectorBuffer::VectorBuffer()
-{
-}
+VectorBuffer::VectorBuffer(const PODVector<unsigned char>& data) { SetData(data); }
 
-VectorBuffer::VectorBuffer(const PODVector<unsigned char>& data)
-{
-    SetData(data);
-}
+VectorBuffer::VectorBuffer(const void* data, unsigned size) { SetData(data, size); }
 
-VectorBuffer::VectorBuffer(const void* data, unsigned size)
-{
-    SetData(data, size);
-}
-
-VectorBuffer::VectorBuffer(Deserializer& source, unsigned size)
-{
-    SetData(source, size);
-}
+VectorBuffer::VectorBuffer(Deserializer& source, unsigned size) { SetData(source, size); }
 
 unsigned VectorBuffer::Read(void* dest, unsigned size)
 {
@@ -166,5 +154,4 @@ void VectorBuffer::Resize(unsigned size)
     if (position_ > size_)
         position_ = size_;
 }
-
 }

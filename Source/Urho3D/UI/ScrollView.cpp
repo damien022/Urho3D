@@ -35,30 +35,29 @@
 
 namespace Urho3D
 {
-
 static const float STEP_FACTOR = 300.0f;
 
 extern const char* UI_CATEGORY;
 
-ScrollView::ScrollView(Context* context) :
-    UIElement(context),
-    viewPosition_(IntVector2::ZERO),
-    viewSize_(IntVector2::ZERO),
-    viewPositionAttr_(IntVector2::ZERO),
-    touchScrollSpeed_(Vector2::ZERO),
-    touchScrollSpeedMax_(Vector2::ZERO),
-    pageStep_(1.0f),
-    scrollBarsAutoVisible_(true),
-    ignoreEvents_(false),
-    resizeContentWidth_(false),
-    scrollDeceleration_(30.0f),
-    scrollSnapEpsilon_(M_EPSILON),
-    scrollTouchDown_(false),
-    barScrolling_(false),
-    autoDisableChildren_(false),
-    scrollChildrenDisable_(false),
-    touchDistanceSum_(0.0f),
-    autoDisableThreshold_(25.0f)
+ScrollView::ScrollView(Context* context)
+    : UIElement(context)
+    , viewPosition_(IntVector2::ZERO)
+    , viewSize_(IntVector2::ZERO)
+    , viewPositionAttr_(IntVector2::ZERO)
+    , touchScrollSpeed_(Vector2::ZERO)
+    , touchScrollSpeedMax_(Vector2::ZERO)
+    , pageStep_(1.0f)
+    , scrollBarsAutoVisible_(true)
+    , ignoreEvents_(false)
+    , resizeContentWidth_(false)
+    , scrollDeceleration_(30.0f)
+    , scrollSnapEpsilon_(M_EPSILON)
+    , scrollTouchDown_(false)
+    , barScrolling_(false)
+    , autoDisableChildren_(false)
+    , scrollChildrenDisable_(false)
+    , touchDistanceSum_(0.0f)
+    , autoDisableThreshold_(25.0f)
 {
     clipChildren_ = true;
     SetEnabled(true);
@@ -84,12 +83,9 @@ ScrollView::ScrollView(Context* context) :
     SubscribeToEvent(E_TOUCHMOVE, URHO3D_HANDLER(ScrollView, HandleTouchMove));
     SubscribeToEvent(E_TOUCHBEGIN, URHO3D_HANDLER(ScrollView, HandleTouchMove));
     SubscribeToEvent(E_TOUCHEND, URHO3D_HANDLER(ScrollView, HandleTouchMove));
-
 }
 
-ScrollView::~ScrollView()
-{
-}
+ScrollView::~ScrollView() {}
 
 void ScrollView::RegisterObject(Context* context)
 {
@@ -99,14 +95,20 @@ void ScrollView::RegisterObject(Context* context)
     URHO3D_UPDATE_ATTRIBUTE_DEFAULT_VALUE("Clip Children", true);
     URHO3D_UPDATE_ATTRIBUTE_DEFAULT_VALUE("Is Enabled", true);
     URHO3D_UPDATE_ATTRIBUTE_DEFAULT_VALUE("Focus Mode", FM_FOCUSABLE_DEFOCUSABLE);
-    URHO3D_ACCESSOR_ATTRIBUTE("View Position", GetViewPosition, SetViewPositionAttr, IntVector2, IntVector2::ZERO, AM_FILE);
+    URHO3D_ACCESSOR_ATTRIBUTE("View Position", GetViewPosition, SetViewPositionAttr, IntVector2, IntVector2::ZERO,
+                              AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Scroll Step", GetScrollStep, SetScrollStep, float, 0.1f, AM_FILE);
     URHO3D_ACCESSOR_ATTRIBUTE("Page Step", GetPageStep, SetPageStep, float, 1.0f, AM_FILE);
-    URHO3D_ACCESSOR_ATTRIBUTE("Auto Show/Hide Scrollbars", GetScrollBarsAutoVisible, SetScrollBarsAutoVisible, bool, true, AM_FILE);
-    URHO3D_ACCESSOR_ATTRIBUTE("Scroll Deceleration", GetScrollDeceleration, SetScrollDeceleration, float, 30.0f, AM_FILE);
-    URHO3D_ACCESSOR_ATTRIBUTE("Scroll Snap Epsilon", GetScrollSnapEpsilon, SetScrollSnapEpsilon, float, M_EPSILON, AM_FILE);
-    URHO3D_ACCESSOR_ATTRIBUTE("Auto Disable Children", GetAutoDisableChildren, SetAutoDisableChildren, bool, false, AM_FILE);
-    URHO3D_ACCESSOR_ATTRIBUTE("Auto Disable Threshold", GetAutoDisableThreshold, SetAutoDisableThreshold, float, 25.0f, AM_FILE);
+    URHO3D_ACCESSOR_ATTRIBUTE("Auto Show/Hide Scrollbars", GetScrollBarsAutoVisible, SetScrollBarsAutoVisible, bool,
+                              true, AM_FILE);
+    URHO3D_ACCESSOR_ATTRIBUTE("Scroll Deceleration", GetScrollDeceleration, SetScrollDeceleration, float, 30.0f,
+                              AM_FILE);
+    URHO3D_ACCESSOR_ATTRIBUTE("Scroll Snap Epsilon", GetScrollSnapEpsilon, SetScrollSnapEpsilon, float, M_EPSILON,
+                              AM_FILE);
+    URHO3D_ACCESSOR_ATTRIBUTE("Auto Disable Children", GetAutoDisableChildren, SetAutoDisableChildren, bool, false,
+                              AM_FILE);
+    URHO3D_ACCESSOR_ATTRIBUTE("Auto Disable Threshold", GetAutoDisableThreshold, SetAutoDisableThreshold, float, 25.0f,
+                              AM_FILE);
 }
 
 void ScrollView::Update(float timeStep)
@@ -258,7 +260,8 @@ void ScrollView::OnKey(int key, int buttons, int qualifiers)
             verticalScrollBar_->ChangeValue(pageStep_);
         break;
 
-    default: break;
+    default:
+        break;
     }
 }
 
@@ -306,10 +309,7 @@ void ScrollView::SetViewPosition(const IntVector2& position)
     UpdateScrollBars();
 }
 
-void ScrollView::SetViewPosition(int x, int y)
-{
-    SetViewPosition(IntVector2(x, y));
-}
+void ScrollView::SetViewPosition(int x, int y) { SetViewPosition(IntVector2(x, y)); }
 
 void ScrollView::SetScrollBarsVisible(bool horizontal, bool vertical)
 {
@@ -340,15 +340,9 @@ void ScrollView::SetScrollStep(float step)
     verticalScrollBar_->SetScrollStep(step);
 }
 
-void ScrollView::SetPageStep(float step)
-{
-    pageStep_ = Max(step, 0.0f);
-}
+void ScrollView::SetPageStep(float step) { pageStep_ = Max(step, 0.0f); }
 
-float ScrollView::GetScrollStep() const
-{
-    return horizontalScrollBar_->GetScrollStep();
-}
+float ScrollView::GetScrollStep() const { return horizontalScrollBar_->GetScrollStep(); }
 
 void ScrollView::SetViewPositionAttr(const IntVector2& value)
 {
@@ -481,11 +475,12 @@ void ScrollView::UpdateView(const IntVector2& position)
     IntVector2 oldPosition = viewPosition_;
     IntRect panelBorder = scrollPanel_->GetClipBorder();
     IntVector2 panelSize(scrollPanel_->GetWidth() - panelBorder.left_ - panelBorder.right_,
-        scrollPanel_->GetHeight() - panelBorder.top_ - panelBorder.bottom_);
+                         scrollPanel_->GetHeight() - panelBorder.top_ - panelBorder.bottom_);
 
     viewPosition_.x_ = Clamp(position.x_, 0, viewSize_.x_ - panelSize.x_);
     viewPosition_.y_ = Clamp(position.y_, 0, viewSize_.y_ - panelSize.y_);
-    scrollPanel_->SetChildOffset(IntVector2(-viewPosition_.x_ + panelBorder.left_, -viewPosition_.y_ + panelBorder.top_));
+    scrollPanel_->SetChildOffset(
+        IntVector2(-viewPosition_.x_ + panelBorder.left_, -viewPosition_.y_ + panelBorder.top_));
 
     if (viewPosition_ != oldPosition)
     {
@@ -508,10 +503,8 @@ void ScrollView::HandleScrollBarChanged(StringHash eventType, VariantMap& eventD
         size.x_ -= panelBorder.left_ + panelBorder.right_;
         size.y_ -= panelBorder.top_ + panelBorder.bottom_;
 
-        UpdateView(IntVector2(
-            (int)(horizontalScrollBar_->GetValue() * (float)size.x_),
-            (int)(verticalScrollBar_->GetValue() * (float)size.y_)
-        ));
+        UpdateView(IntVector2((int)(horizontalScrollBar_->GetValue() * (float)size.x_),
+                              (int)(verticalScrollBar_->GetValue() * (float)size.y_)));
     }
 }
 
@@ -702,5 +695,4 @@ void ScrollView::ScrollSmooth(float timeStep)
             touchScrollSpeed_.y_ = 0;
     }
 }
-
 }

@@ -28,20 +28,17 @@
 
 namespace Urho3D
 {
-
 extern const char* UI_CATEGORY;
 
-ToolTip::ToolTip(Context* context) :
-    UIElement(context),
-    delay_(0.0f),
-    parentHovered_(false)
+ToolTip::ToolTip(Context* context)
+    : UIElement(context)
+    , delay_(0.0f)
+    , parentHovered_(false)
 {
     SetVisible(false);
 }
 
-ToolTip::~ToolTip()
-{
-}
+ToolTip::~ToolTip() {}
 
 void ToolTip::RegisterObject(Context* context)
 {
@@ -102,9 +99,5 @@ void ToolTip::Update(float timeStep)
     }
 }
 
-void ToolTip::SetDelay(float delay)
-{
-    delay_ = delay;
-}
-
+void ToolTip::SetDelay(float delay) { delay_ = delay; }
 }

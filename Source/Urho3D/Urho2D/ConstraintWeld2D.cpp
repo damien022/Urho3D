@@ -31,18 +31,15 @@
 
 namespace Urho3D
 {
-
 extern const char* URHO2D_CATEGORY;
 
-ConstraintWeld2D::ConstraintWeld2D(Context* context) :
-    Constraint2D(context),
-    anchor_(Vector2::ZERO)
+ConstraintWeld2D::ConstraintWeld2D(Context* context)
+    : Constraint2D(context)
+    , anchor_(Vector2::ZERO)
 {
 }
 
-ConstraintWeld2D::~ConstraintWeld2D()
-{
-}
+ConstraintWeld2D::~ConstraintWeld2D() {}
 
 void ConstraintWeld2D::RegisterObject(Context* context)
 {
@@ -110,5 +107,4 @@ b2JointDef* ConstraintWeld2D::GetJointDef()
 
     return &jointDef_;
 }
-
 }

@@ -47,8 +47,8 @@ URHO3D_DEFINE_APPLICATION_MAIN(Urho2DPhysicsRope)
 
 static const unsigned NUM_OBJECTS = 10;
 
-Urho2DPhysicsRope::Urho2DPhysicsRope(Context* context) :
-    Sample(context)
+Urho2DPhysicsRope::Urho2DPhysicsRope(Context* context)
+    : Sample(context)
 {
 }
 
@@ -88,7 +88,11 @@ void Urho2DPhysicsRope::CreateScene()
 
     Graphics* graphics = GetSubsystem<Graphics>();
     camera->SetOrthoSize((float)graphics->GetHeight() * 0.05f);
-    camera->SetZoom(1.5f * Min((float)graphics->GetWidth() / 1280.0f, (float)graphics->GetHeight() / 800.0f)); // Set zoom according to user's resolution to ensure full visibility (initial zoom (1.5) is set for full visibility at 1280x800 resolution)
+    camera->SetZoom(1.5f * Min((float)graphics->GetWidth() / 1280.0f,
+                               (float)graphics->GetHeight() / 800.0f)); // Set zoom according to user's resolution to
+                                                                        // ensure full visibility (initial zoom (1.5) is
+                                                                        // set for full visibility at 1280x800
+                                                                        // resolution)
 
     // Create 2D physics world component
     PhysicsWorld2D* physicsWorld = scene_->CreateComponent<PhysicsWorld2D>();
@@ -107,7 +111,7 @@ void Urho2DPhysicsRope::CreateScene()
 
     for (unsigned i = 0; i < NUM_OBJECTS; ++i)
     {
-        Node* node  = scene_->CreateChild("RigidBody");
+        Node* node = scene_->CreateChild("RigidBody");
 
         // Create rigid body
         RigidBody2D* body = node->CreateComponent<RigidBody2D>();

@@ -33,16 +33,16 @@ struct spAnimationStateData;
 
 namespace Urho3D
 {
-
 namespace Spriter
 {
-    struct SpriterData;
+struct SpriterData;
 }
 
 class Sprite2D;
 class SpriteSheet2D;
 
-/// Spriter animation set, it includes one or more animations, for more information please refer to http://www.esotericsoftware.com and http://www.brashmonkey.com/spriter.htm.
+/// Spriter animation set, it includes one or more animations, for more information please refer to
+/// http://www.esotericsoftware.com and http://www.brashmonkey.com/spriter.htm.
 class URHO3D_API AnimationSet2D : public Resource
 {
     URHO3D_OBJECT(AnimationSet2D, Resource);
@@ -52,7 +52,7 @@ public:
     AnimationSet2D(Context* context);
     /// Destruct.
     virtual ~AnimationSet2D() override;
-    /// Register object factory. 
+    /// Register object factory.
     static void RegisterObject(Context* context);
 
     /// Load resource from stream. May be called from a worker thread. Return true if successful.
@@ -66,7 +66,7 @@ public:
     String GetAnimation(unsigned index) const;
     /// Check has animation.
     bool HasAnimation(const String& animation) const;
-    
+
     /// Return sprite.
     Sprite2D* GetSprite() const;
 
@@ -95,10 +95,10 @@ private:
     bool EndLoadSpriter();
     /// Dispose all data.
     void Dispose();
-    
+
     /// Spine sprite.
     SharedPtr<Sprite2D> sprite_;
-    
+
 #ifdef URHO3D_SPINE
     /// Spine json data.
     SharedArrayPtr<char> jsonData_;
@@ -107,7 +107,7 @@ private:
     /// Spine atlas.
     spAtlas* atlas_;
 #endif
-    
+
     /// Spriter data.
     UniquePtr<Spriter::SpriterData> spriterData_;
     /// Has sprite sheet.
@@ -117,8 +117,6 @@ private:
     /// Sprite sheet.
     SharedPtr<SpriteSheet2D> spriteSheet_;
     /// Spriter sprites.
-    HashMap<int, SharedPtr<Sprite2D> > spriterFileSprites_;
+    HashMap<int, SharedPtr<Sprite2D>> spriterFileSprites_;
 };
-
 }
-

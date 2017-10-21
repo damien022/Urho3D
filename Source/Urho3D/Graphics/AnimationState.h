@@ -27,7 +27,6 @@
 
 namespace Urho3D
 {
-
 class Animation;
 class AnimatedModel;
 class Deserializer;
@@ -86,7 +85,8 @@ public:
     void SetBlendMode(AnimationBlendMode mode);
     /// Set time position. Does not fire animation triggers.
     void SetTime(float time);
-    /// Set per-bone blending weight by track index. Default is 1.0 (full), is multiplied  with the state's blending weight when applying the animation. Optionally recurses to child bones.
+    /// Set per-bone blending weight by track index. Default is 1.0 (full), is multiplied  with the state's blending
+    /// weight when applying the animation. Optionally recurses to child bones.
     void SetBoneWeight(unsigned index, float weight, bool recursive = false);
     /// Set per-bone blending weight by name.
     void SetBoneWeight(const String& name, float weight, bool recursive = false);
@@ -146,7 +146,8 @@ public:
     void Apply();
 
 private:
-    /// Apply animation to a skeleton. Transform changes are applied silently, so the model needs to dirty its root model afterward.
+    /// Apply animation to a skeleton. Transform changes are applied silently, so the model needs to dirty its root
+    /// model afterward.
     void ApplyToModel();
     /// Apply animation to a scene node hierarchy.
     void ApplyToNodes();
@@ -174,5 +175,4 @@ private:
     /// Blending mode.
     AnimationBlendMode blendingMode_;
 };
-
 }

@@ -28,7 +28,6 @@ struct ik_node_t;
 
 namespace Urho3D
 {
-
 class Context;
 class Node;
 
@@ -37,7 +36,6 @@ class URHO3D_API IKConstraint : public Component
     URHO3D_OBJECT(IKConstraint, Component)
 
 public:
-
     /// Constructs a new IK constraint.
     IKConstraint(Context* context);
 

@@ -34,7 +34,6 @@ struct dtTileCachePolyMesh;
 
 namespace Urho3D
 {
-
 class OffMeshConnection;
 class Obstacle;
 
@@ -147,5 +146,4 @@ private:
     /// Queue of tiles to be built.
     PODVector<IntVector2> tileQueue_;
 };
-
 }

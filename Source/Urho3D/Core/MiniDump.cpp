@@ -27,15 +27,14 @@
 #include "../Core/ProcessUtils.h"
 
 #include <cstdio>
-#include <io.h>
+#include <dbghelp.h>
 #include <fcntl.h>
+#include <io.h>
 #include <time.h>
 #include <windows.h>
-#include <dbghelp.h>
 
 namespace Urho3D
 {
-
 URHO3D_API int WriteMiniDump(const char* applicationName, void* exceptionPointers)
 {
     static bool miniDumpWritten = false;
@@ -65,10 +64,11 @@ URHO3D_API int WriteMiniDump(const char* applicationName, void* exceptionPointer
     String miniDumpName = miniDumpDir + String(applicationName) + "_" + dateTimeStr + ".dmp";
 
     CreateDirectoryW(WString(miniDumpDir).CString(), nullptr);
-    HANDLE file = CreateFileW(WString(miniDumpName).CString(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE | FILE_SHARE_READ,
-        nullptr, CREATE_ALWAYS, 0, nullptr);
+    HANDLE file = CreateFileW(WString(miniDumpName).CString(), GENERIC_READ | GENERIC_WRITE,
+                              FILE_SHARE_WRITE | FILE_SHARE_READ, nullptr, CREATE_ALWAYS, 0, nullptr);
 
-    BOOL success = MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), file, MiniDumpWithDataSegs, &info, nullptr, nullptr);
+    BOOL success = MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), file, MiniDumpWithDataSegs, &info,
+                                     nullptr, nullptr);
     CloseHandle(file);
 
     if (success)
@@ -78,7 +78,6 @@ URHO3D_API int WriteMiniDump(const char* applicationName, void* exceptionPointer
 
     return EXCEPTION_EXECUTE_HANDLER;
 }
-
 }
 
 #endif

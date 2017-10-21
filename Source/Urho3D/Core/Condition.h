@@ -30,7 +30,6 @@
 
 namespace Urho3D
 {
-
 /// %Condition on which a thread can wait.
 class URHO3D_API Condition
 {
@@ -55,5 +54,4 @@ private:
     /// Operating system specific event.
     void* event_;
 };
-
 }

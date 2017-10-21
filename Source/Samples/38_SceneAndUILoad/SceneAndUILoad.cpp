@@ -37,8 +37,8 @@
 
 URHO3D_DEFINE_APPLICATION_MAIN(SceneAndUILoad)
 
-SceneAndUILoad::SceneAndUILoad(Context* context) :
-    Sample(context)
+SceneAndUILoad::SceneAndUILoad(Context* context)
+    : Sample(context)
 {
 }
 
@@ -91,8 +91,8 @@ void SceneAndUILoad::CreateUI()
     XMLFile* style = cache->GetResource<XMLFile>("UI/DefaultStyle.xml");
     ui->GetRoot()->SetDefaultStyle(style);
 
-    // Create a Cursor UI element because we want to be able to hide and show it at will. When hidden, the mouse cursor will
-    // control the camera, and when visible, it will interact with the UI
+    // Create a Cursor UI element because we want to be able to hide and show it at will. When hidden, the mouse cursor
+    // will control the camera, and when visible, it will interact with the UI
     SharedPtr<Cursor> cursor(new Cursor(context_));
     cursor->SetStyleAuto();
     ui->SetCursor(cursor);

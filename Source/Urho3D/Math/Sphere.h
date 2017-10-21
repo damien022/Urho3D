@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 class BoundingBox;
 class Polyhedron;
 class Frustum;
@@ -36,52 +35,40 @@ class URHO3D_API Sphere
 {
 public:
     /// Construct undefined.
-    Sphere() :
-        center_(Vector3::ZERO),
-        radius_(-M_INFINITY)
+    Sphere()
+        : center_(Vector3::ZERO)
+        , radius_(-M_INFINITY)
     {
     }
 
     /// Copy-construct from another sphere.
-    Sphere(const Sphere& sphere) :
-        center_(sphere.center_),
-        radius_(sphere.radius_)
+    Sphere(const Sphere& sphere)
+        : center_(sphere.center_)
+        , radius_(sphere.radius_)
     {
     }
 
     /// Construct from center and radius.
-    Sphere(const Vector3& center, float radius) :
-        center_(center),
-        radius_(radius)
+    Sphere(const Vector3& center, float radius)
+        : center_(center)
+        , radius_(radius)
     {
     }
 
     /// Construct from an array of vertices.
-    Sphere(const Vector3* vertices, unsigned count)
-    {
-        Define(vertices, count);
-    }
+    Sphere(const Vector3* vertices, unsigned count) { Define(vertices, count); }
 
     /// Construct from a bounding box.
-    Sphere(const BoundingBox& box)
-    {
-        Define(box);
-    }
+    Sphere(const BoundingBox& box) { Define(box); }
 
     /// Construct from a frustum.
-    Sphere(const Frustum& frustum)
-    {
-        Define(frustum);
-    }
+    Sphere(const Frustum& frustum) { Define(frustum); }
 
     /// Construct from a polyhedron.
-    Sphere(const Polyhedron& poly)
-    {
-        Define(poly);
-    }
+    Sphere(const Polyhedron& poly) { Define(poly); }
 
     /// Assign from another sphere.
-    Sphere& operator =(const Sphere& rhs)
+    Sphere& operator=(const Sphere& rhs)
     {
         center_ = rhs.center_;
         radius_ = rhs.radius_;
@@ -89,16 +76,13 @@ public:
     }
 
     /// Test for equality with another sphere.
-    bool operator ==(const Sphere& rhs) const { return center_ == rhs.center_ && radius_ == rhs.radius_; }
+    bool operator==(const Sphere& rhs) const { return center_ == rhs.center_ && radius_ == rhs.radius_; }
 
     /// Test for inequality with another sphere.
-    bool operator !=(const Sphere& rhs) const { return center_ != rhs.center_ || radius_ != rhs.radius_; }
+    bool operator!=(const Sphere& rhs) const { return center_ != rhs.center_ || radius_ != rhs.radius_; }
 
     /// Define from another sphere.
-    void Define(const Sphere& sphere)
-    {
-        Define(sphere.center_, sphere.radius_);
-    }
+    void Define(const Sphere& sphere) { Define(sphere.center_, sphere.radius_); }
 
     /// Define from center and radius.
     void Define(const Vector3& center, float radius)
@@ -156,10 +140,7 @@ public:
     }
 
     /// Return true if this sphere is defined via a previous call to Define() or Merge().
-    bool Defined() const
-    {
-        return radius_ >= 0.0f;
-    }
+    bool Defined() const { return radius_ >= 0.0f; }
 
     /// Test if a point is inside.
     Intersection IsInside(const Vector3& point) const
@@ -212,5 +193,4 @@ public:
     /// Sphere radius.
     float radius_;
 };
-
 }

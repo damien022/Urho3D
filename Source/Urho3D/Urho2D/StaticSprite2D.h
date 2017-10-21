@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 class Sprite2D;
 
 /// Static sprite component.
@@ -45,9 +44,9 @@ public:
     /// Set sprite.
     void SetSprite(Sprite2D* sprite);
     /// Set draw rectangle.
-    void SetDrawRect(const Rect &rect);
+    void SetDrawRect(const Rect& rect);
     /// Set texture rectangle.
-    void SetTextureRect(const Rect &rect);
+    void SetTextureRect(const Rect& rect);
     /// Set blend mode.
     void SetBlendMode(BlendMode blendMode);
     /// Set flip.
@@ -119,9 +118,7 @@ public:
     /// Return custom material attribute.
     ResourceRef GetCustomMaterialAttr() const;
 
-
 protected:
-
     /// Handle scene being assigned.
     virtual void OnSceneSet(Scene* scene) override;
     /// Recalculate the world-space bounding box.
@@ -160,5 +157,4 @@ protected:
     /// Custom material.
     SharedPtr<Material> customMaterial_;
 };
-
 }

@@ -23,10 +23,10 @@
 #pragma once
 
 #include <Urho3D/Graphics/Animation.h>
-#include <Urho3D/Math/BoundingBox.h>
 #include <Urho3D/Graphics/Graphics.h>
 #include <Urho3D/Graphics/VertexBuffer.h>
 #include <Urho3D/IO/Serializer.h>
+#include <Urho3D/Math/BoundingBox.h>
 #include <Urho3D/Math/Matrix3x4.h>
 
 using namespace Urho3D;
@@ -73,15 +73,12 @@ bool CompareWeights(const BoneWeightAssignment& lhs, const BoneWeightAssignment&
     return lhs.weight_ > rhs.weight_;
 }
 
-bool CompareKeyFrames(const AnimationKeyFrame& lhs, const AnimationKeyFrame& rhs)
-{
-    return lhs.time_ < rhs.time_;
-}
+bool CompareKeyFrames(const AnimationKeyFrame& lhs, const AnimationKeyFrame& rhs) { return lhs.time_ < rhs.time_; }
 
 struct ModelVertex
 {
-    ModelVertex() :
-        hasBlendWeights_(false)
+    ModelVertex()
+        : hasBlendWeights_(false)
     {
     }
 
@@ -96,7 +93,7 @@ struct ModelVertex
     float blendWeights_[4];
     unsigned char blendIndices_[4];
     bool hasBlendWeights_;
-    
+
     unsigned useCount_;
     int cachePosition_;
     float score_;
@@ -108,31 +105,30 @@ struct ModelVertexBuffer
     unsigned morphStart_;
     unsigned morphCount_;
     Vector<ModelVertex> vertices_;
-    
-    ModelVertexBuffer() :
-        elementMask_(0),
-        morphStart_(0),
-        morphCount_(0)
+
+    ModelVertexBuffer()
+        : elementMask_(0)
+        , morphStart_(0)
+        , morphCount_(0)
     {
     }
-    
+
     void WriteData(Serializer& dest)
     {
         dest.WriteUInt(vertices_.Size());
-        
+
         PODVector<VertexElement> elements = VertexBuffer::GetElements(elementMask_);
         dest.WriteUInt(elements.Size());
         for (unsigned j = 0; j < elements.Size(); ++j)
         {
-            unsigned elementDesc = ((unsigned)elements[j].type_) |
-                (((unsigned)elements[j].semantic_) << 8) |
-                (((unsigned)elements[j].index_) << 16);
+            unsigned elementDesc = ((unsigned)elements[j].type_) | (((unsigned)elements[j].semantic_) << 8) |
+                                   (((unsigned)elements[j].index_) << 16);
             dest.WriteUInt(elementDesc);
         }
 
         dest.WriteUInt(morphStart_);
         dest.WriteUInt(morphCount_);
-        
+
         for (unsigned i = 0; i < vertices_.Size(); ++i)
         {
             if (elementMask_ & MASK_POSITION)
@@ -163,14 +159,14 @@ struct ModelMorphBuffer
 {
     unsigned vertexBuffer_;
     unsigned elementMask_;
-    Vector<Pair<unsigned, ModelVertex> > vertices_;
+    Vector<Pair<unsigned, ModelVertex>> vertices_;
 };
 
 struct ModelMorph
 {
     String name_;
     Vector<ModelMorphBuffer> buffers_;
-    
+
     void WriteData(Serializer& dest)
     {
         dest.WriteString(name_);
@@ -181,9 +177,9 @@ struct ModelMorph
             dest.WriteUInt(buffers_[i].elementMask_);
             dest.WriteUInt(buffers_[i].vertices_.Size());
             unsigned elementMask = buffers_[i].elementMask_;
-            
-            for (Vector<Pair<unsigned, ModelVertex> >::Iterator j = buffers_[i].vertices_.Begin();
-                j != buffers_[i].vertices_.End(); ++j)
+
+            for (Vector<Pair<unsigned, ModelVertex>>::Iterator j = buffers_[i].vertices_.Begin();
+                 j != buffers_[i].vertices_.End(); ++j)
             {
                 dest.WriteUInt(j->first_);
                 if (elementMask & MASK_POSITION)
@@ -201,17 +197,17 @@ struct ModelIndexBuffer
 {
     unsigned indexSize_;
     PODVector<unsigned> indices_;
-    
-    ModelIndexBuffer() :
-        indexSize_(sizeof(unsigned short))
+
+    ModelIndexBuffer()
+        : indexSize_(sizeof(unsigned short))
     {
     }
-    
+
     void WriteData(Serializer& dest)
     {
         dest.WriteUInt(indices_.Size());
         dest.WriteUInt(indexSize_);
-        
+
         for (unsigned i = 0; i < indices_.Size(); ++i)
         {
             if (indexSize_ == sizeof(unsigned short))
@@ -230,15 +226,15 @@ struct ModelSubGeometryLodLevel
     unsigned indexBuffer_;
     unsigned indexStart_;
     unsigned indexCount_;
-    HashMap<unsigned, PODVector<BoneWeightAssignment> > boneWeights_;
+    HashMap<unsigned, PODVector<BoneWeightAssignment>> boneWeights_;
     PODVector<unsigned> boneMapping_;
-    
-    ModelSubGeometryLodLevel() : 
-        distance_(0.0f),
-        primitiveType_(TRIANGLE_LIST),
-        indexBuffer_(0),
-        indexStart_(0),
-        indexCount_(0)
+
+    ModelSubGeometryLodLevel()
+        : distance_(0.0f)
+        , primitiveType_(TRIANGLE_LIST)
+        , indexBuffer_(0)
+        , indexStart_(0)
+        , indexCount_(0)
     {
     }
 };

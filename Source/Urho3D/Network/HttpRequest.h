@@ -23,14 +23,13 @@
 #pragma once
 
 #include "../Container/ArrayPtr.h"
-#include "../Core/Mutex.h"
 #include "../Container/RefCounted.h"
+#include "../Core/Mutex.h"
 #include "../Core/Thread.h"
 #include "../IO/Deserializer.h"
 
 namespace Urho3D
 {
-
 /// HTTP connection state
 enum HttpRequestState
 {
@@ -52,7 +51,9 @@ public:
     /// Process the connection in the worker thread until closed.
     virtual void ThreadFunction() override;
 
-    /// Read response data from the HTTP connection and return number of bytes actually read. While the connection is open, will block while trying to read the specified size. To avoid blocking, only read up to as many bytes as GetAvailableSize() returns.
+    /// Read response data from the HTTP connection and return number of bytes actually read. While the connection is
+    /// open, will block while trying to read the specified size. To avoid blocking, only read up to as many bytes as
+    /// GetAvailableSize() returns.
     virtual unsigned Read(void* dest, unsigned size) override;
     /// Set position from the beginning of the stream. Not supported.
     virtual unsigned Seek(unsigned position) override;
@@ -76,7 +77,8 @@ public:
     bool IsOpen() const { return GetState() == HTTP_OPEN; }
 
 private:
-    /// Check for available read data in buffer and whether end has been reached. Must only be called when the mutex is held by the main thread.
+    /// Check for available read data in buffer and whether end has been reached. Must only be called when the mutex is
+    /// held by the main thread.
     Pair<unsigned, bool> CheckAvailableSizeAndEof() const;
 
     /// URL.
@@ -102,5 +104,4 @@ private:
     /// Read buffer write cursor.
     unsigned writePosition_;
 };
-
 }

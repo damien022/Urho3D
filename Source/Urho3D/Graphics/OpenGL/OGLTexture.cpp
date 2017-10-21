@@ -34,27 +34,16 @@
 
 namespace Urho3D
 {
-
-static GLenum glWrapModes[] =
-{
-    GL_REPEAT,
-    GL_MIRRORED_REPEAT,
-    GL_CLAMP_TO_EDGE,
+static GLenum glWrapModes[] = {GL_REPEAT, GL_MIRRORED_REPEAT, GL_CLAMP_TO_EDGE,
 #ifndef GL_ES_VERSION_2_0
-    GL_CLAMP
+                               GL_CLAMP
 #else
-    GL_CLAMP_TO_EDGE
+                               GL_CLAMP_TO_EDGE
 #endif
 };
 
 #ifndef GL_ES_VERSION_2_0
-static GLenum gl3WrapModes[] =
-{
-    GL_REPEAT,
-    GL_MIRRORED_REPEAT,
-    GL_CLAMP_TO_EDGE,
-    GL_CLAMP_TO_BORDER
-};
+static GLenum gl3WrapModes[] = {GL_REPEAT, GL_MIRRORED_REPEAT, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER};
 #endif
 
 static GLenum GetWrapMode(TextureAddressMode mode)
@@ -89,7 +78,7 @@ void Texture::UpdateParameters()
     if (!object_.name_ || !graphics_)
         return;
 
-    // If texture is multisampled, do not attempt to set parameters as it's illegal, just return
+        // If texture is multisampled, do not attempt to set parameters as it's illegal, just return
 #ifndef GL_ES_VERSION_2_0
     if (target_ == GL_TEXTURE_2D_MULTISAMPLE)
     {
@@ -155,7 +144,9 @@ void Texture::UpdateParameters()
     {
         unsigned maxAnisotropy = anisotropy_ ? anisotropy_ : graphics_->GetDefaultTextureAnisotropy();
         glTexParameterf(target_, GL_TEXTURE_MAX_ANISOTROPY_EXT,
-            (filterMode == FILTER_ANISOTROPIC || filterMode == FILTER_NEAREST_ANISOTROPIC) ? (float)maxAnisotropy : 1.0f);
+                        (filterMode == FILTER_ANISOTROPIC || filterMode == FILTER_NEAREST_ANISOTROPIC)
+                            ? (float)maxAnisotropy
+                            : 1.0f);
     }
 
     // Shadow compare
@@ -173,10 +164,7 @@ void Texture::UpdateParameters()
     parametersDirty_ = false;
 }
 
-bool Texture::GetParametersDirty() const
-{
-    return parametersDirty_;
-}
+bool Texture::GetParametersDirty() const { return parametersDirty_; }
 
 bool Texture::IsCompressed() const
 {
@@ -344,14 +332,7 @@ void Texture::RegenerateLevels()
     levelsDirty_ = false;
 }
 
-unsigned Texture::GetSRVFormat(unsigned format)
-{
-    return 0;
-}
+unsigned Texture::GetSRVFormat(unsigned format) { return 0; }
 
-unsigned Texture::GetDSVFormat(unsigned format)
-{
-    return 0;
-}
-
+unsigned Texture::GetDSVFormat(unsigned format) { return 0; }
 }

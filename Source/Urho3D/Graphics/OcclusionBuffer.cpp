@@ -22,8 +22,8 @@
 
 #include "../Precompiled.h"
 
-#include "../Core/WorkQueue.h"
 #include "../Core/Profiler.h"
+#include "../Core/WorkQueue.h"
 #include "../Graphics/Camera.h"
 #include "../Graphics/OcclusionBuffer.h"
 #include "../IO/Log.h"
@@ -32,7 +32,6 @@
 
 namespace Urho3D
 {
-
 static const unsigned CLIPMASK_X_POS = 0x1;
 static const unsigned CLIPMASK_X_NEG = 0x2;
 static const unsigned CLIPMASK_Y_POS = 0x4;
@@ -47,23 +46,21 @@ void DrawOcclusionBatchWork(const WorkItem* item, unsigned threadIndex)
     buffer->DrawBatch(batch, threadIndex);
 }
 
-OcclusionBuffer::OcclusionBuffer(Context* context) :
-    Object(context),
-    width_(0),
-    height_(0),
-    numTriangles_(0),
-    maxTriangles_(OCCLUSION_DEFAULT_MAX_TRIANGLES),
-    cullMode_(CULL_CCW),
-    depthHierarchyDirty_(true),
-    reverseCulling_(false),
-    nearClip_(0.0f),
-    farClip_(0.0f)
+OcclusionBuffer::OcclusionBuffer(Context* context)
+    : Object(context)
+    , width_(0)
+    , height_(0)
+    , numTriangles_(0)
+    , maxTriangles_(OCCLUSION_DEFAULT_MAX_TRIANGLES)
+    , cullMode_(CULL_CCW)
+    , depthHierarchyDirty_(true)
+    , reverseCulling_(false)
+    , nearClip_(0.0f)
+    , farClip_(0.0f)
 {
 }
 
-OcclusionBuffer::~OcclusionBuffer()
-{
-}
+OcclusionBuffer::~OcclusionBuffer() {}
 
 bool OcclusionBuffer::SetSize(int width, int height, bool threaded)
 {
@@ -113,7 +110,7 @@ bool OcclusionBuffer::SetSize(int width, int height, bool threaded)
     }
 
     URHO3D_LOGDEBUG("Set occlusion buffer size " + String(width_) + "x" + String(height_) + " with " +
-             String(mipBuffers_.Size()) + " mip levels and " + String(numThreadBuffers) + " thread buffers");
+                    String(mipBuffers_.Size()) + " mip levels and " + String(numThreadBuffers) + " thread buffers");
 
     CalculateViewport();
     return true;
@@ -133,10 +130,7 @@ void OcclusionBuffer::SetView(Camera* camera)
     CalculateViewport();
 }
 
-void OcclusionBuffer::SetMaxTriangles(unsigned triangles)
-{
-    maxTriangles_ = triangles;
-}
+void OcclusionBuffer::SetMaxTriangles(unsigned triangles) { maxTriangles_ = triangles; }
 
 void OcclusionBuffer::SetCullMode(CullMode mode)
 {
@@ -168,8 +162,8 @@ void OcclusionBuffer::Clear()
     depthHierarchyDirty_ = true;
 }
 
-bool OcclusionBuffer::AddTriangles(const Matrix3x4& model, const void* vertexData, unsigned vertexSize, unsigned vertexStart,
-    unsigned vertexCount)
+bool OcclusionBuffer::AddTriangles(const Matrix3x4& model, const void* vertexData, unsigned vertexSize,
+                                   unsigned vertexStart, unsigned vertexCount)
 {
     batches_.Resize(batches_.Size() + 1);
     OcclusionBatch& batch = batches_.Back();
@@ -186,8 +180,8 @@ bool OcclusionBuffer::AddTriangles(const Matrix3x4& model, const void* vertexDat
     return numTriangles_ <= maxTriangles_;
 }
 
-bool OcclusionBuffer::AddTriangles(const Matrix3x4& model, const void* vertexData, unsigned vertexSize, const void* indexData,
-    unsigned indexSize, unsigned indexStart, unsigned indexCount)
+bool OcclusionBuffer::AddTriangles(const Matrix3x4& model, const void* vertexData, unsigned vertexSize,
+                                   const void* indexData, unsigned indexSize, unsigned indexStart, unsigned indexCount)
 {
     batches_.Resize(batches_.Size() + 1);
     OcclusionBatch& batch = batches_.Back();
@@ -335,10 +329,7 @@ void OcclusionBuffer::BuildDepthHierarchy()
     depthHierarchyDirty_ = false;
 }
 
-void OcclusionBuffer::ResetUseTimer()
-{
-    useTimer_.Reset();
-}
+void OcclusionBuffer::ResetUseTimer() { useTimer_.Reset(); }
 
 bool OcclusionBuffer::IsVisible(const BoundingBox& worldSpaceBox) const
 {
@@ -348,12 +339,18 @@ bool OcclusionBuffer::IsVisible(const BoundingBox& worldSpaceBox) const
     // Transform corners to projection space
     Vector4 vertices[8];
     vertices[0] = ModelTransform(viewProj_, worldSpaceBox.min_);
-    vertices[1] = ModelTransform(viewProj_, Vector3(worldSpaceBox.max_.x_, worldSpaceBox.min_.y_, worldSpaceBox.min_.z_));
-    vertices[2] = ModelTransform(viewProj_, Vector3(worldSpaceBox.min_.x_, worldSpaceBox.max_.y_, worldSpaceBox.min_.z_));
-    vertices[3] = ModelTransform(viewProj_, Vector3(worldSpaceBox.max_.x_, worldSpaceBox.max_.y_, worldSpaceBox.min_.z_));
-    vertices[4] = ModelTransform(viewProj_, Vector3(worldSpaceBox.min_.x_, worldSpaceBox.min_.y_, worldSpaceBox.max_.z_));
-    vertices[5] = ModelTransform(viewProj_, Vector3(worldSpaceBox.max_.x_, worldSpaceBox.min_.y_, worldSpaceBox.max_.z_));
-    vertices[6] = ModelTransform(viewProj_, Vector3(worldSpaceBox.min_.x_, worldSpaceBox.max_.y_, worldSpaceBox.max_.z_));
+    vertices[1] =
+        ModelTransform(viewProj_, Vector3(worldSpaceBox.max_.x_, worldSpaceBox.min_.y_, worldSpaceBox.min_.z_));
+    vertices[2] =
+        ModelTransform(viewProj_, Vector3(worldSpaceBox.min_.x_, worldSpaceBox.max_.y_, worldSpaceBox.min_.z_));
+    vertices[3] =
+        ModelTransform(viewProj_, Vector3(worldSpaceBox.max_.x_, worldSpaceBox.max_.y_, worldSpaceBox.min_.z_));
+    vertices[4] =
+        ModelTransform(viewProj_, Vector3(worldSpaceBox.min_.x_, worldSpaceBox.min_.y_, worldSpaceBox.max_.z_));
+    vertices[5] =
+        ModelTransform(viewProj_, Vector3(worldSpaceBox.max_.x_, worldSpaceBox.min_.y_, worldSpaceBox.max_.z_));
+    vertices[6] =
+        ModelTransform(viewProj_, Vector3(worldSpaceBox.min_.x_, worldSpaceBox.max_.y_, worldSpaceBox.max_.z_));
     vertices[7] = ModelTransform(viewProj_, worldSpaceBox.max_);
 
     // Apply a far clip relative bias
@@ -379,18 +376,20 @@ bool OcclusionBuffer::IsVisible(const BoundingBox& worldSpaceBox) const
 
         projected = ViewportTransform(vertices[i]);
 
-        if (projected.x_ < minX) minX = projected.x_;
-        if (projected.x_ > maxX) maxX = projected.x_;
-        if (projected.y_ < minY) minY = projected.y_;
-        if (projected.y_ > maxY) maxY = projected.y_;
-        if (projected.z_ < minZ) minZ = projected.z_;
+        if (projected.x_ < minX)
+            minX = projected.x_;
+        if (projected.x_ > maxX)
+            maxX = projected.x_;
+        if (projected.y_ < minY)
+            minY = projected.y_;
+        if (projected.y_ > maxY)
+            maxY = projected.y_;
+        if (projected.z_ < minZ)
+            minZ = projected.z_;
     }
 
     // Expand the bounding box 1 pixel in each direction to be conservative and correct rasterization offset
-    IntRect rect(
-        (int)(minX - 1.5f), (int)(minY - 1.5f),
-        (int)(maxX + 0.5f), (int)(maxY + 0.5f)
-    );
+    IntRect rect((int)(minX - 1.5f), (int)(minY - 1.5f), (int)(maxX + 0.5f), (int)(maxY + 0.5f));
 
     // If the rect is outside, let frustum culling handle
     if (rect.right_ < 0 || rect.bottom_ < 0)
@@ -465,11 +464,7 @@ bool OcclusionBuffer::IsVisible(const BoundingBox& worldSpaceBox) const
     return false;
 }
 
-unsigned OcclusionBuffer::GetUseTimer()
-{
-    return useTimer_.GetMSec(false);
-}
-
+unsigned OcclusionBuffer::GetUseTimer() { return useTimer_.GetMSec(false); }
 
 void OcclusionBuffer::DrawBatch(const OcclusionBatch& batch, unsigned threadIndex)
 {
@@ -556,18 +551,14 @@ inline Vector4 OcclusionBuffer::ModelTransform(const Matrix4& transform, const V
         transform.m00_ * vertex.x_ + transform.m01_ * vertex.y_ + transform.m02_ * vertex.z_ + transform.m03_,
         transform.m10_ * vertex.x_ + transform.m11_ * vertex.y_ + transform.m12_ * vertex.z_ + transform.m13_,
         transform.m20_ * vertex.x_ + transform.m21_ * vertex.y_ + transform.m22_ * vertex.z_ + transform.m23_,
-        transform.m30_ * vertex.x_ + transform.m31_ * vertex.y_ + transform.m32_ * vertex.z_ + transform.m33_
-    );
+        transform.m30_ * vertex.x_ + transform.m31_ * vertex.y_ + transform.m32_ * vertex.z_ + transform.m33_);
 }
 
 inline Vector3 OcclusionBuffer::ViewportTransform(const Vector4& vertex) const
 {
     float invW = 1.0f / vertex.w_;
-    return Vector3(
-        invW * vertex.x_ * scaleX_ + offsetX_,
-        invW * vertex.y_ * scaleY_ + offsetY_,
-        invW * vertex.z_ * OCCLUSION_Z_SCALE
-    );
+    return Vector3(invW * vertex.x_ * scaleX_ + offsetX_, invW * vertex.y_ * scaleY_ + offsetY_,
+                   invW * vertex.z_ * OCCLUSION_Z_SCALE);
 }
 
 inline Vector4 OcclusionBuffer::ClipEdge(const Vector4& v0, const Vector4& v1, float d0, float d1) const
@@ -679,7 +670,8 @@ void OcclusionBuffer::DrawTriangle(Vector4* vertices, unsigned threadIndex)
                 projected[2] = ViewportTransform(vertices[index + 2]);
 
                 bool clockwise = SignedArea(projected[0], projected[1], projected[2]) < 0.0f;
-                if (cullMode_ == CULL_NONE || (cullMode_ == CULL_CCW && clockwise) || (cullMode_ == CULL_CW && !clockwise))
+                if (cullMode_ == CULL_NONE || (cullMode_ == CULL_CCW && clockwise) ||
+                    (cullMode_ == CULL_CW && !clockwise))
                 {
                     DrawTriangle2D(projected, clockwise, threadIndex);
                     drawOk = true;
@@ -771,10 +763,8 @@ struct Gradients
     /// Construct from vertices.
     Gradients(const Vector3* vertices)
     {
-        float invdX = 1.0f / (((vertices[1].x_ - vertices[2].x_) *
-                               (vertices[0].y_ - vertices[2].y_)) -
-                              ((vertices[0].x_ - vertices[2].x_) *
-                               (vertices[1].y_ - vertices[2].y_)));
+        float invdX = 1.0f / (((vertices[1].x_ - vertices[2].x_) * (vertices[0].y_ - vertices[2].y_)) -
+                              ((vertices[0].x_ - vertices[2].x_) * (vertices[1].y_ - vertices[2].y_)));
 
         float invdY = -invdX;
 
@@ -1030,5 +1020,4 @@ void OcclusionBuffer::ClearBuffer(unsigned threadIndex)
     while (count--)
         *dest++ = fillValue;
 }
-
 }

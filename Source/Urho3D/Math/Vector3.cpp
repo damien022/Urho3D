@@ -30,7 +30,6 @@
 
 namespace Urho3D
 {
-
 const Vector3 Vector3::ZERO;
 const Vector3 Vector3::LEFT(-1.0f, 0.0f, 0.0f);
 const Vector3 Vector3::RIGHT(1.0f, 0.0f, 0.0f);
@@ -62,5 +61,4 @@ String IntVector3::ToString() const
     sprintf(tempBuffer, "%d %d %d", x_, y_, z_);
     return String(tempBuffer);
 }
-
 }

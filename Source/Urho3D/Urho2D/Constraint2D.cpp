@@ -28,29 +28,24 @@
 #include "../Scene/Scene.h"
 #include "../Urho2D/Constraint2D.h"
 #include "../Urho2D/PhysicsUtils2D.h"
-#include "../Urho2D/RigidBody2D.h"
 #include "../Urho2D/PhysicsWorld2D.h"
+#include "../Urho2D/RigidBody2D.h"
 
 #include "../DebugNew.h"
 
 namespace Urho3D
 {
-
 extern const char* URHO2D_CATEGORY;
 
-Constraint2D::Constraint2D(Context* context) :
-    Component(context),
-    joint_(nullptr),
-    collideConnected_(false),
-    otherBodyNodeIDDirty_(false)
+Constraint2D::Constraint2D(Context* context)
+    : Component(context)
+    , joint_(nullptr)
+    , collideConnected_(false)
+    , otherBodyNodeIDDirty_(false)
 {
-
 }
 
-Constraint2D::~Constraint2D()
-{
-    ReleaseJoint();
-}
+Constraint2D::~Constraint2D() { ReleaseJoint(); }
 
 void Constraint2D::RegisterObject(Context* context)
 {
@@ -151,10 +146,7 @@ void Constraint2D::SetCollideConnected(bool collideConnected)
     MarkNetworkUpdate();
 }
 
-void Constraint2D::SetAttachedConstraint(Constraint2D* constraint)
-{
-    attachedConstraint_ = constraint;
-}
+void Constraint2D::SetAttachedConstraint(Constraint2D* constraint) { attachedConstraint_ = constraint; }
 
 void Constraint2D::OnNodeSet(Node* node)
 {
@@ -199,5 +191,4 @@ void Constraint2D::RecreateJoint()
     if (attachedConstraint_)
         attachedConstraint_->CreateJoint();
 }
-
 }

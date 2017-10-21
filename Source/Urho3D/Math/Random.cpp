@@ -28,18 +28,11 @@
 
 namespace Urho3D
 {
-
 static unsigned randomSeed = 1;
 
-void SetRandomSeed(unsigned seed)
-{
-    randomSeed = seed;
-}
+void SetRandomSeed(unsigned seed) { randomSeed = seed; }
 
-unsigned GetRandomSeed()
-{
-    return randomSeed;
-}
+unsigned GetRandomSeed() { return randomSeed; }
 
 int Rand()
 {
@@ -57,5 +50,4 @@ float RandStandardNormal()
     // Now val is approximatly standard normal distributed
     return val;
 }
-
 }

@@ -25,23 +25,23 @@
 #include <Urho3D/Graphics/AnimatedModel.h>
 #include <Urho3D/Graphics/AnimationController.h>
 #include <Urho3D/Graphics/Camera.h>
+#include <Urho3D/Graphics/DebugRenderer.h>
 #include <Urho3D/Graphics/Graphics.h>
 #include <Urho3D/Graphics/Material.h>
 #include <Urho3D/Graphics/Octree.h>
-#include <Urho3D/Graphics/DebugRenderer.h>
 #include <Urho3D/Graphics/RibbonTrail.h>
 #include <Urho3D/IK/IKEffector.h>
 #include <Urho3D/IK/IKSolver.h>
 #include <Urho3D/Input/Input.h>
 #include <Urho3D/Math/Matrix2.h>
-#include <Urho3D/Physics/PhysicsWorld.h>
 #include <Urho3D/Physics/CollisionShape.h>
+#include <Urho3D/Physics/PhysicsWorld.h>
 #include <Urho3D/Physics/RigidBody.h>
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/UI/Font.h>
 #include <Urho3D/UI/Text.h>
-#include <Urho3D/UI/UI.h>
 #include <Urho3D/UI/Text3D.h>
+#include <Urho3D/UI/UI.h>
 
 #include "InverseKinematics.h"
 
@@ -49,10 +49,10 @@
 
 URHO3D_DEFINE_APPLICATION_MAIN(InverseKinematics)
 
-InverseKinematics::InverseKinematics(Context* context) :
-    Sample(context),
-    floorPitch_(0.0f),
-    floorRoll_(0.0f)
+InverseKinematics::InverseKinematics(Context* context)
+    : Sample(context)
+    , floorPitch_(0.0f)
+    , floorRoll_(0.0f)
 {
 }
 
@@ -126,9 +126,9 @@ void InverseKinematics::CreateScene()
 
     // We need to attach two inverse kinematic effectors to Jack's feet to
     // control the grounding.
-    leftFoot_  = jackNode_->GetChild("Bip01_L_Foot", true);
+    leftFoot_ = jackNode_->GetChild("Bip01_L_Foot", true);
     rightFoot_ = jackNode_->GetChild("Bip01_R_Foot", true);
-    leftEffector_  = leftFoot_->CreateComponent<IKEffector>();
+    leftEffector_ = leftFoot_->CreateComponent<IKEffector>();
     rightEffector_ = rightFoot_->CreateComponent<IKEffector>();
     // Control 2 segments up to the hips
     leftEffector_->SetChainLength(2);
@@ -172,7 +172,8 @@ void InverseKinematics::CreateInstructions()
 
     // Construct new Text object, set string to display and font to use
     Text* instructionText = ui->GetRoot()->CreateChild<Text>();
-    instructionText->SetText("Left-Click and drag to look around\nRight-Click and drag to change incline\nPress space to reset floor\nPress D to draw debug geometry");
+    instructionText->SetText("Left-Click and drag to look around\nRight-Click and drag to change incline\nPress space "
+                             "to reset floor\nPress D to draw debug geometry");
     instructionText->SetFont(cache->GetResource<Font>("Fonts/Anonymous Pro.ttf"), 15);
 
     // Position the text relative to the screen center
@@ -185,9 +186,10 @@ void InverseKinematics::SetupViewport()
 {
     Renderer* renderer = GetSubsystem<Renderer>();
 
-    // Set up a viewport to the Renderer subsystem so that the 3D scene can be seen. We need to define the scene and the camera
-    // at minimum. Additionally we could configure the viewport screen size and the rendering path (eg. forward / deferred) to
-    // use, but now we just use full screen and default render path configured in the engine command line options
+    // Set up a viewport to the Renderer subsystem so that the 3D scene can be seen. We need to define the scene and the
+    // camera at minimum. Additionally we could configure the viewport screen size and the rendering path (eg. forward /
+    // deferred) to use, but now we just use full screen and default render path configured in the engine command line
+    // options
     SharedPtr<Viewport> viewport(new Viewport(context_, scene_, cameraNode_->GetComponent<Camera>()));
     renderer->SetViewport(0, viewport);
 }
@@ -215,10 +217,8 @@ void InverseKinematics::UpdateCameraAndFloor(float /*timeStep*/)
     if (input->GetMouseButtonDown(MOUSEB_RIGHT))
     {
         IntVector2 mouseMoveInt = input->GetMouseMove();
-        Vector2 mouseMove = Matrix2(
-            -Cos(yaw_), Sin(yaw_),
-            Sin(yaw_),  Cos(yaw_)
-        ) * Vector2(mouseMoveInt.y_, -mouseMoveInt.x_);
+        Vector2 mouseMove =
+            Matrix2(-Cos(yaw_), Sin(yaw_), Sin(yaw_), Cos(yaw_)) * Vector2(mouseMoveInt.y_, -mouseMoveInt.x_);
         floorPitch_ += MOUSE_SENSITIVITY * mouseMove.x_;
         floorPitch_ = Clamp(floorPitch_, -90.0f, 90.0f);
         floorRoll_ += MOUSE_SENSITIVITY * mouseMove.y_;
@@ -245,7 +245,8 @@ void InverseKinematics::SubscribeToEvents()
     // Subscribe HandleUpdate() function for processing update events
     SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(InverseKinematics, HandleUpdate));
     SubscribeToEvent(E_POSTRENDERUPDATE, URHO3D_HANDLER(InverseKinematics, HandlePostRenderUpdate));
-    SubscribeToEvent(E_SCENEDRAWABLEUPDATEFINISHED, URHO3D_HANDLER(InverseKinematics, HandleSceneDrawableUpdateFinished));
+    SubscribeToEvent(E_SCENEDRAWABLEUPDATEFINISHED,
+                     URHO3D_HANDLER(InverseKinematics, HandleSceneDrawableUpdateFinished));
 }
 
 void InverseKinematics::HandleUpdate(StringHash /*eventType*/, VariantMap& eventData)

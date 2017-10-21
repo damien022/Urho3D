@@ -131,10 +131,7 @@ void MultithreadedTasksWork(const WorkItem* item, unsigned threadIndex)
         SharedPtr<Task> task(taskScheduler.Create([&]() {
             struct DummyStruct
             {
-                ~DummyStruct()
-                {
-                    URHO3D_LOGINFO("Task1 terminated by exception.");
-                }
+                ~DummyStruct() { URHO3D_LOGINFO("Task1 terminated by exception."); }
             } dummy;
             for (;;)
             {
@@ -195,8 +192,8 @@ void MultithreadedTasksWork(const WorkItem* item, unsigned threadIndex)
 }
 #endif
 
-TasksSample::TasksSample(Context* context) :
-    Sample(context)
+TasksSample::TasksSample(Context* context)
+    : Sample(context)
 {
 }
 
@@ -225,24 +222,24 @@ void TasksSample::CreateScene()
 
     scene_ = new Scene(context_);
 
-    // Create the Octree component to the scene. This is required before adding any drawable components, or else nothing will
-    // show up. The default octree volume will be from (-1000, -1000, -1000) to (1000, 1000, 1000) in world coordinates; it
-    // is also legal to place objects outside the volume but their visibility can then not be checked in a hierarchically
-    // optimizing manner
+    // Create the Octree component to the scene. This is required before adding any drawable components, or else nothing
+    // will show up. The default octree volume will be from (-1000, -1000, -1000) to (1000, 1000, 1000) in world
+    // coordinates; it is also legal to place objects outside the volume but their visibility can then not be checked in
+    // a hierarchically optimizing manner
     scene_->CreateComponent<Octree>();
 
-    // Create a child scene node (at world origin) and a StaticModel component into it. Set the StaticModel to show a simple
-    // plane mesh with a "stone" material. Note that naming the scene nodes is optional. Scale the scene node larger
-    // (100 x 100 world units)
+    // Create a child scene node (at world origin) and a StaticModel component into it. Set the StaticModel to show a
+    // simple plane mesh with a "stone" material. Note that naming the scene nodes is optional. Scale the scene node
+    // larger (100 x 100 world units)
     Node* planeNode = scene_->CreateChild("Plane");
     planeNode->SetScale(Vector3(100.0f, 1.0f, 100.0f));
     StaticModel* planeObject = planeNode->CreateComponent<StaticModel>();
     planeObject->SetModel(cache->GetResource<Model>("Models/Plane.mdl"));
     planeObject->SetMaterial(cache->GetResource<Material>("Materials/StoneTiled.xml"));
 
-    // Create a directional light to the world so that we can see something. The light scene node's orientation controls the
-    // light direction; we will use the SetDirection() function which calculates the orientation from a forward direction vector.
-    // The light will use default settings (white light, no shadows)
+    // Create a directional light to the world so that we can see something. The light scene node's orientation controls
+    // the light direction; we will use the SetDirection() function which calculates the orientation from a forward
+    // direction vector. The light will use default settings (white light, no shadows)
     Node* lightNode = scene_->CreateChild("DirectionalLight");
     lightNode->SetDirection(Vector3(0.6f, -1.0f, 0.8f)); // The direction vector does not need to be normalized
     Light* light = lightNode->CreateComponent<Light>();
@@ -302,7 +299,7 @@ void TasksSample::MushroomAI()
 
     // This task runs as long as title node exists in a scene.
     WeakPtr<Node> titleNode(scene_->GetChild("MushroomTitle", true));
-    for (;!titleNode.Expired();)
+    for (; !titleNode.Expired();)
     {
         auto index = Random(0, SDL_arraysize(mushroomText) / 2);
         auto text3D = titleNode->GetComponent<Text3D>();
@@ -330,9 +327,10 @@ void TasksSample::SetupViewport()
 {
     Renderer* renderer = GetSubsystem<Renderer>();
 
-    // Set up a viewport to the Renderer subsystem so that the 3D scene can be seen. We need to define the scene and the camera
-    // at minimum. Additionally we could configure the viewport screen size and the rendering path (eg. forward / deferred) to
-    // use, but now we just use full screen and default render path configured in the engine command line options
+    // Set up a viewport to the Renderer subsystem so that the 3D scene can be seen. We need to define the scene and the
+    // camera at minimum. Additionally we could configure the viewport screen size and the rendering path (eg. forward /
+    // deferred) to use, but now we just use full screen and default render path configured in the engine command line
+    // options
     SharedPtr<Viewport> viewport(new Viewport(context_, scene_, cameraNode_->GetComponent<Camera>()));
     renderer->SetViewport(0, viewport);
 }

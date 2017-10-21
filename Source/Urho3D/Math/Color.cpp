@@ -30,7 +30,6 @@
 
 namespace Urho3D
 {
-
 unsigned Color::ToUInt() const
 {
     unsigned r = (unsigned)Clamp(((int)(r_ * 255.0f)), 0, 255);
@@ -213,12 +212,7 @@ void Color::Invert(bool invertAlpha)
 Color Color::Lerp(const Color& rhs, float t) const
 {
     float invT = 1.0f - t;
-    return Color(
-        r_ * invT + rhs.r_ * t,
-        g_ * invT + rhs.g_ * t,
-        b_ * invT + rhs.b_ * t,
-        a_ * invT + rhs.a_ * t
-    );
+    return Color(r_ * invT + rhs.r_ * t, g_ * invT + rhs.g_ * t, b_ * invT + rhs.b_ * t, a_ * invT + rhs.a_ * t);
 }
 
 String Color::ToString() const
@@ -246,7 +240,6 @@ float Color::Hue(float min, float max) const
         float r = (g_ - b_) / (6.0f * chroma);
         return (r < 0.0f) ? 1.0f + r : ((r >= 1.0f) ? r - 1.0f : r);
     }
-
 }
 
 float Color::SaturationHSV(float min, float max) const
@@ -271,7 +264,6 @@ float Color::SaturationHSL(float min, float max) const
         return (max - min) / hl;
     else
         return (min - max) / (hl - 2.0f);
-
 }
 
 void Color::FromHCM(float h, float c, float m)

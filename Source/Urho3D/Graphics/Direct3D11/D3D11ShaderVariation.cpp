@@ -37,19 +37,8 @@
 
 namespace Urho3D
 {
-
-const char* ShaderVariation::elementSemanticNames[] =
-{
-    "POSITION",
-    "NORMAL",
-    "BINORMAL",
-    "TANGENT",
-    "TEXCOORD",
-    "COLOR",
-    "BLENDWEIGHT",
-    "BLENDINDICES",
-    "OBJECTINDEX"
-};
+const char* ShaderVariation::elementSemanticNames[] = {
+    "POSITION", "NORMAL", "BINORMAL", "TANGENT", "TEXCOORD", "COLOR", "BLENDWEIGHT", "BLENDINDICES", "OBJECTINDEX"};
 
 void ShaderVariation::OnDeviceLost()
 {
@@ -92,7 +81,8 @@ bool ShaderVariation::Create()
     {
         if (device && byteCode_.Size())
         {
-            HRESULT hr = device->CreateVertexShader(&byteCode_[0], byteCode_.Size(), nullptr, (ID3D11VertexShader**)&object_.ptr_);
+            HRESULT hr = device->CreateVertexShader(&byteCode_[0], byteCode_.Size(), nullptr,
+                                                    (ID3D11VertexShader**)&object_.ptr_);
             if (FAILED(hr))
             {
                 URHO3D_SAFE_RELEASE(object_.ptr_);
@@ -106,7 +96,8 @@ bool ShaderVariation::Create()
     {
         if (device && byteCode_.Size())
         {
-            HRESULT hr = device->CreatePixelShader(&byteCode_[0], byteCode_.Size(), nullptr, (ID3D11PixelShader**)&object_.ptr_);
+            HRESULT hr =
+                device->CreatePixelShader(&byteCode_[0], byteCode_.Size(), nullptr, (ID3D11PixelShader**)&object_.ptr_);
             if (FAILED(hr))
             {
                 URHO3D_SAFE_RELEASE(object_.ptr_);
@@ -174,7 +165,8 @@ bool ShaderVariation::LoadByteCode(const String& binaryShaderName)
     unsigned sourceTimeStamp = owner_->GetTimeStamp();
     // If source code is loaded from a package, its timestamp will be zero. Else check that binary is not older
     // than source
-    if (sourceTimeStamp && fileSystem->GetLastModifiedTime(cache->GetResourceFileName(binaryShaderName)) < sourceTimeStamp)
+    if (sourceTimeStamp &&
+        fileSystem->GetLastModifiedTime(cache->GetResourceFileName(binaryShaderName)) < sourceTimeStamp)
         return false;
 
     SharedPtr<File> file = cache->GetFile(binaryShaderName);
@@ -185,8 +177,8 @@ bool ShaderVariation::LoadByteCode(const String& binaryShaderName)
     }
 
     /// \todo Check that shader type and model match
-    /*unsigned short shaderType = */file->ReadUShort();
-    /*unsigned short shaderModel = */file->ReadUShort();
+    /*unsigned short shaderType = */ file->ReadUShort();
+    /*unsigned short shaderModel = */ file->ReadUShort();
     elementHash_ = file->ReadUInt();
     elementHash_ <<= 32;
 
@@ -210,7 +202,7 @@ bool ShaderVariation::LoadByteCode(const String& binaryShaderName)
     unsigned numTextureUnits = file->ReadUInt();
     for (unsigned i = 0; i < numTextureUnits; ++i)
     {
-        /*String unitName = */file->ReadString();
+        /*String unitName = */ file->ReadString();
         unsigned reg = file->ReadUByte();
 
         if (reg < MAX_TEXTURE_UNITS)
@@ -304,8 +296,8 @@ bool ShaderVariation::Compile()
     ID3DBlob* shaderCode = nullptr;
     ID3DBlob* errorMsgs = nullptr;
 
-    HRESULT hr = D3DCompile(sourceCode.CString(), sourceCode.Length(), owner_->GetName().CString(), &macros.Front(), nullptr,
-        entryPoint, profile, flags, 0, &shaderCode, &errorMsgs);
+    HRESULT hr = D3DCompile(sourceCode.CString(), sourceCode.Length(), owner_->GetName().CString(), &macros.Front(),
+                            nullptr, entryPoint, profile, flags, 0, &shaderCode, &errorMsgs);
     if (FAILED(hr))
     {
         // Do not include end zero unnecessarily
@@ -327,7 +319,8 @@ bool ShaderVariation::Compile()
         // Then strip everything not necessary to use the shader
         ID3DBlob* strippedCode = nullptr;
         D3DStripShader(bufData, bufSize,
-            D3DCOMPILER_STRIP_REFLECTION_DATA | D3DCOMPILER_STRIP_DEBUG_INFO | D3DCOMPILER_STRIP_TEST_BLOBS, &strippedCode);
+                       D3DCOMPILER_STRIP_REFLECTION_DATA | D3DCOMPILER_STRIP_DEBUG_INFO | D3DCOMPILER_STRIP_TEST_BLOBS,
+                       &strippedCode);
         byteCode_.Resize((unsigned)strippedCode->GetBufferSize());
         memcpy(&byteCode_[0], strippedCode->GetBufferPointer(), byteCode_.Size());
         strippedCode->Release();
@@ -335,7 +328,7 @@ bool ShaderVariation::Compile()
 
     URHO3D_SAFE_RELEASE(shaderCode);
     URHO3D_SAFE_RELEASE(errorMsgs);
-    
+
     return !byteCode_.Empty();
 }
 
@@ -360,7 +353,8 @@ void ShaderVariation::ParseParameters(unsigned char* bufData, unsigned bufSize)
         {
             D3D11_SIGNATURE_PARAMETER_DESC paramDesc;
             reflection->GetInputParameterDesc((UINT)i, &paramDesc);
-            VertexElementSemantic semantic = (VertexElementSemantic)GetStringListIndex(paramDesc.SemanticName, elementSemanticNames, MAX_VERTEX_ELEMENT_SEMANTICS, true);
+            VertexElementSemantic semantic = (VertexElementSemantic)GetStringListIndex(
+                paramDesc.SemanticName, elementSemanticNames, MAX_VERTEX_ELEMENT_SEMANTICS, true);
             if (semantic != MAX_VERTEX_ELEMENT_SEMANTICS)
             {
                 elementHash_ <<= 4;
@@ -487,5 +481,4 @@ void ShaderVariation::CalculateConstantBufferSizes()
         }
     }
 }
-
 }

@@ -29,18 +29,15 @@
 
 namespace pugi
 {
-
 struct xml_node_struct;
 class xpath_node;
 class xpath_node_set;
 class xpath_query;
 class xpath_variable_set;
-
 }
 
 namespace Urho3D
 {
-
 class XMLFile;
 class XPathQuery;
 class XPathResultSet;
@@ -54,13 +51,14 @@ public:
     /// Construct with document and node pointers.
     XMLElement(XMLFile* file, pugi::xml_node_struct* node);
     /// Construct from xpath query result set.
-    XMLElement(XMLFile* file, const XPathResultSet* resultSet, const pugi::xpath_node* xpathNode, unsigned xpathResultIndex);
+    XMLElement(XMLFile* file, const XPathResultSet* resultSet, const pugi::xpath_node* xpathNode,
+               unsigned xpathResultIndex);
     /// Copy-construct from another element.
     XMLElement(const XMLElement& rhs);
     /// Destruct.
     ~XMLElement();
     /// Assignment operator.
-    XMLElement& operator =(const XMLElement& rhs);
+    XMLElement& operator=(const XMLElement& rhs);
 
     /// Create a child element.
     XMLElement CreateChild(const String& name);
@@ -70,8 +68,9 @@ public:
     XMLElement GetOrCreateChild(const String& name);
     /// Return the first child element with name or create if does not exist.
     XMLElement GetOrCreateChild(const char* name);
-    /// Append element. If asCopy is set to true then original element is copied and appended, otherwise specified element is appended.
-    bool AppendChild(XMLElement element, bool asCopy=false);
+    /// Append element. If asCopy is set to true then original element is copied and appended, otherwise specified
+    /// element is appended.
+    bool AppendChild(XMLElement element, bool asCopy = false);
     /// Remove element from it's parent.
     bool Remove();
     /// Remove a child element. Return true if successful.
@@ -296,7 +295,8 @@ public:
     /// Return current result index.
     unsigned GetXPathResultIndex() const { return xpathResultIndex_; }
 
-    /// Return next XPath query result. Only valid when this instance of XMLElement is itself one of the query result in the result set.
+    /// Return next XPath query result. Only valid when this instance of XMLElement is itself one of the query result in
+    /// the result set.
     XMLElement NextResult() const;
 
     /// Empty XMLElement.
@@ -328,12 +328,16 @@ public:
     /// Destruct.
     ~XPathResultSet();
     /// Assignment operator.
-    XPathResultSet& operator =(const XPathResultSet& rhs);
+    XPathResultSet& operator=(const XPathResultSet& rhs);
     /// Return the n-th result in the set. Call XMLElement::GetNextResult() to get the subsequent result in the set.
-    /// Note: The XPathResultSet return value must be stored in a lhs variable to ensure the underlying xpath_node_set* is still valid while performing XPathResultSet::FirstResult(), XPathResultSet::operator [], and XMLElement::NextResult().
-    XMLElement operator [](unsigned index) const;
+    /// Note: The XPathResultSet return value must be stored in a lhs variable to ensure the underlying xpath_node_set*
+    /// is still valid while performing XPathResultSet::FirstResult(), XPathResultSet::operator [], and
+    /// XMLElement::NextResult().
+    XMLElement operator[](unsigned index) const;
     /// Return the first result in the set. Call XMLElement::GetNextResult() to get the subsequent result in the set.
-    /// Note: The XPathResultSet return value must be stored in a lhs variable to ensure the underlying xpath_node_set* is still valid while performing XPathResultSet::FirstResult(), XPathResultSet::operator [], and XMLElement::NextResult().
+    /// Note: The XPathResultSet return value must be stored in a lhs variable to ensure the underlying xpath_node_set*
+    /// is still valid while performing XPathResultSet::FirstResult(), XPathResultSet::operator [], and
+    /// XMLElement::NextResult().
     XMLElement FirstResult();
     /// Return size of result set.
     unsigned Size() const;
@@ -356,7 +360,8 @@ class URHO3D_API XPathQuery
 public:
     /// Construct empty.
     XPathQuery();
-    /// Construct XPath query object with query string and variable string. The variable string format is "name1:type1,name2:type2,..." where type is one of "Bool", "Float", "String", "ResultSet".
+    /// Construct XPath query object with query string and variable string. The variable string format is
+    /// "name1:type1,name2:type2,..." where type is one of "Bool", "Float", "String", "ResultSet".
     XPathQuery(const String& queryString, const String& variableString = String::EMPTY);
     /// Destruct.
     ~XPathQuery();
@@ -372,7 +377,8 @@ public:
     bool SetVariable(const char* name, const char* value);
     /// Add/Set an XPath query result set variable. Return true if successful.
     bool SetVariable(const String& name, const XPathResultSet& value);
-    /// Set XPath query string and variable string. The variable string format is "name1:type1,name2:type2,..." where type is one of "Bool", "Float", "String", "ResultSet".
+    /// Set XPath query string and variable string. The variable string format is "name1:type1,name2:type2,..." where
+    /// type is one of "Bool", "Float", "String", "ResultSet".
     bool SetQuery(const String& queryString, const String& variableString = String::EMPTY, bool bind = true);
     /// Clear by removing all variables and XPath query object.
     void Clear();
@@ -383,7 +389,9 @@ public:
     /// Evaluate XPath query and expecting a string return value.
     String EvaluateToString(XMLElement element) const;
     /// Evaluate XPath query and expecting an XPath query result set as return value.
-    /// Note: The XPathResultSet return value must be stored in a lhs variable to ensure the underlying xpath_node_set* is still valid while performing XPathResultSet::FirstResult(), XPathResultSet::operator [], and XMLElement::NextResult().
+    /// Note: The XPathResultSet return value must be stored in a lhs variable to ensure the underlying xpath_node_set*
+    /// is still valid while performing XPathResultSet::FirstResult(), XPathResultSet::operator [], and
+    /// XMLElement::NextResult().
     XPathResultSet Evaluate(XMLElement element) const;
 
     /// Return query string.
@@ -403,5 +411,4 @@ private:
     /// Pugixml xpath_variable_set.
     UniquePtr<pugi::xpath_variable_set> variables_;
 };
-
 }

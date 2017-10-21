@@ -28,7 +28,6 @@
 
 namespace Urho3D
 {
-
 class Graphics;
 class ShaderVariation;
 class VertexBuffer;
@@ -49,5 +48,4 @@ private:
     /// Input layout object.
     void* inputLayout_;
 };
-
 }

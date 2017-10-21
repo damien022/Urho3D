@@ -27,7 +27,6 @@
 
 namespace Urho3D
 {
-
 /// Doubly-linked list template class.
 template <class T> class List : public ListBase
 {
@@ -36,13 +35,11 @@ public:
     struct Node : public ListNodeBase
     {
         /// Construct undefined.
-        Node()
-        {
-        }
+        Node() {}
 
         /// Construct with value.
-        Node(const T& value) :
-            value_(value)
+        Node(const T& value)
+            : value_(value)
         {
         }
 
@@ -60,25 +57,23 @@ public:
     struct Iterator : public ListIteratorBase
     {
         /// Construct.
-        Iterator()
-        {
-        }
+        Iterator() {}
 
         /// Construct with a node pointer.
-        explicit Iterator(Node* ptr) :
-            ListIteratorBase(ptr)
+        explicit Iterator(Node* ptr)
+            : ListIteratorBase(ptr)
         {
         }
 
         /// Preincrement the pointer.
-        Iterator& operator ++()
+        Iterator& operator++()
         {
             GotoNext();
             return *this;
         }
 
         /// Postincrement the pointer.
-        Iterator operator ++(int)
+        Iterator operator++(int)
         {
             Iterator it = *this;
             GotoNext();
@@ -86,14 +81,14 @@ public:
         }
 
         /// Predecrement the pointer.
-        Iterator& operator --()
+        Iterator& operator--()
         {
             GotoPrev();
             return *this;
         }
 
         /// Postdecrement the pointer.
-        Iterator operator --(int)
+        Iterator operator--(int)
         {
             Iterator it = *this;
             GotoPrev();
@@ -101,48 +96,46 @@ public:
         }
 
         /// Point to the node value.
-        T* operator ->() const { return &(static_cast<Node*>(ptr_))->value_; }
+        T* operator->() const { return &(static_cast<Node*>(ptr_))->value_; }
 
         /// Dereference the node value.
-        T& operator *() const { return (static_cast<Node*>(ptr_))->value_; }
+        T& operator*() const { return (static_cast<Node*>(ptr_))->value_; }
     };
 
     /// %List const iterator.
     struct ConstIterator : public ListIteratorBase
     {
         /// Construct.
-        ConstIterator()
-        {
-        }
+        ConstIterator() {}
 
         /// Construct with a node pointer.
-        explicit ConstIterator(Node* ptr) :
-            ListIteratorBase(ptr)
+        explicit ConstIterator(Node* ptr)
+            : ListIteratorBase(ptr)
         {
         }
 
         /// Construct from a non-const iterator.
-        ConstIterator(const Iterator& rhs) :
-            ListIteratorBase(rhs.ptr_)
+        ConstIterator(const Iterator& rhs)
+            : ListIteratorBase(rhs.ptr_)
         {
         }
 
         /// Assign from a non-const iterator.
-        ConstIterator& operator =(const Iterator& rhs)
+        ConstIterator& operator=(const Iterator& rhs)
         {
             ptr_ = rhs.ptr_;
             return *this;
         }
 
         /// Preincrement the pointer.
-        ConstIterator& operator ++()
+        ConstIterator& operator++()
         {
             GotoNext();
             return *this;
         }
 
         /// Postincrement the pointer.
-        ConstIterator operator ++(int)
+        ConstIterator operator++(int)
         {
             ConstIterator it = *this;
             GotoNext();
@@ -150,14 +143,14 @@ public:
         }
 
         /// Predecrement the pointer.
-        ConstIterator& operator --()
+        ConstIterator& operator--()
         {
             GotoPrev();
             return *this;
         }
 
         /// Postdecrement the pointer.
-        ConstIterator operator --(int)
+        ConstIterator operator--(int)
         {
             ConstIterator it = *this;
             GotoPrev();
@@ -165,10 +158,10 @@ public:
         }
 
         /// Point to the node value.
-        const T* operator ->() const { return &(static_cast<Node*>(ptr_))->value_; }
+        const T* operator->() const { return &(static_cast<Node*>(ptr_))->value_; }
 
         /// Dereference the node value.
-        const T& operator *() const { return (static_cast<Node*>(ptr_))->value_; }
+        const T& operator*() const { return (static_cast<Node*>(ptr_))->value_; }
     };
 
     /// Construct empty.
@@ -187,7 +180,8 @@ public:
         *this = list;
     }
     /// Aggregate initialization constructor.
-    List(const std::initializer_list<T>& list) : List()
+    List(const std::initializer_list<T>& list)
+        : List()
     {
         for (auto it = list.begin(); it != list.end(); it++)
         {
@@ -203,7 +197,7 @@ public:
     }
 
     /// Assign from another list.
-    List& operator =(const List<T>& rhs)
+    List& operator=(const List<T>& rhs)
     {
         // Clear, then insert the nodes of the other list. In case of self-assignment do nothing
         if (&rhs != this)
@@ -215,21 +209,21 @@ public:
     }
 
     /// Add-assign an element.
-    List& operator +=(const T& rhs)
+    List& operator+=(const T& rhs)
     {
         Push(rhs);
         return *this;
     }
 
     /// Add-assign a list.
-    List& operator +=(const List<T>& rhs)
+    List& operator+=(const List<T>& rhs)
     {
         Insert(End(), rhs);
         return *this;
     }
 
     /// Test for equality with another list.
-    bool operator ==(const List<T>& rhs) const
+    bool operator==(const List<T>& rhs) const
     {
         if (rhs.size_ != size_)
             return false;
@@ -248,7 +242,7 @@ public:
     }
 
     /// Test for inequality with another list.
-    bool operator !=(const List<T>& rhs) const
+    bool operator!=(const List<T>& rhs) const
     {
         if (rhs.size_ != size_)
             return true;
@@ -318,10 +312,7 @@ public:
     }
 
     /// Erase an element by iterator. Return iterator to the next element.
-    Iterator Erase(Iterator it)
-    {
-        return Iterator(EraseNode(static_cast<Node*>(it.ptr_)));
-    }
+    Iterator Erase(Iterator it) { return Iterator(EraseNode(static_cast<Node*>(it.ptr_))); }
 
     /// Erase a range by iterators. Return an iterator to the next element.
     Iterator Erase(const Iterator& start, const Iterator& end)
@@ -465,7 +456,7 @@ private:
     Node* ReserveNode()
     {
         Node* newNode = static_cast<Node*>(AllocatorReserve(allocator_));
-        new(newNode) Node();
+        new (newNode) Node();
         return newNode;
     }
 
@@ -473,7 +464,7 @@ private:
     Node* ReserveNode(const T& value)
     {
         Node* newNode = static_cast<Node*>(AllocatorReserve(allocator_));
-        new(newNode) Node(value);
+        new (newNode) Node(value);
         return newNode;
     }
 
@@ -492,5 +483,4 @@ template <class T> typename Urho3D::List<T>::ConstIterator end(const Urho3D::Lis
 template <class T> typename Urho3D::List<T>::Iterator begin(Urho3D::List<T>& v) { return v.Begin(); }
 
 template <class T> typename Urho3D::List<T>::Iterator end(Urho3D::List<T>& v) { return v.End(); }
-
 }

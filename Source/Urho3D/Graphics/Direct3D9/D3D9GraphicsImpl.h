@@ -30,13 +30,17 @@
 
 namespace Urho3D
 {
-
-#define URHO3D_SAFE_RELEASE(p) if (p) { ((IUnknown*)p)->Release();  p = 0; }
+#define URHO3D_SAFE_RELEASE(p)                                                                                         \
+    if (p)                                                                                                             \
+    {                                                                                                                  \
+        ((IUnknown*)p)->Release();                                                                                     \
+        p = 0;                                                                                                         \
+    }
 
 #define URHO3D_LOGD3DERROR(msg, hr) URHO3D_LOGERRORF("%s (HRESULT %x)", msg, (unsigned)hr)
 
-using ShaderProgramMap = HashMap<Pair<ShaderVariation*, ShaderVariation*>, SharedPtr<ShaderProgram> >;
-using VertexDeclarationMap = HashMap<unsigned long long, SharedPtr<VertexDeclaration> >;
+using ShaderProgramMap = HashMap<Pair<ShaderVariation*, ShaderVariation*>, SharedPtr<ShaderProgram>>;
+using VertexDeclarationMap = HashMap<unsigned long long, SharedPtr<VertexDeclaration>>;
 
 /// %Graphics implementation. Holds API-specific objects.
 class URHO3D_API GraphicsImpl
@@ -131,7 +135,5 @@ private:
     ShaderProgramMap shaderPrograms_;
     /// Shader program in use.
     ShaderProgram* shaderProgram_;
-
 };
-
 }

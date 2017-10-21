@@ -29,7 +29,6 @@
 
 namespace Urho3D
 {
-
 void BoundingBox::Define(const Vector3* vertices, unsigned count)
 {
     Clear();
@@ -67,10 +66,7 @@ void BoundingBox::Merge(const Vector3* vertices, unsigned count)
         Merge(*vertices++);
 }
 
-void BoundingBox::Merge(const Frustum& frustum)
-{
-    Merge(frustum.vertices_, NUM_FRUSTUM_VERTICES);
-}
+void BoundingBox::Merge(const Frustum& frustum) { Merge(frustum.vertices_, NUM_FRUSTUM_VERTICES); }
 
 void BoundingBox::Merge(const Polyhedron& poly)
 {
@@ -113,27 +109,20 @@ void BoundingBox::Clip(const BoundingBox& box)
     }
 }
 
-void BoundingBox::Transform(const Matrix3& transform)
-{
-    *this = Transformed(Matrix3x4(transform));
-}
+void BoundingBox::Transform(const Matrix3& transform) { *this = Transformed(Matrix3x4(transform)); }
 
-void BoundingBox::Transform(const Matrix3x4& transform)
-{
-    *this = Transformed(transform);
-}
+void BoundingBox::Transform(const Matrix3x4& transform) { *this = Transformed(transform); }
 
-BoundingBox BoundingBox::Transformed(const Matrix3& transform) const
-{
-    return Transformed(Matrix3x4(transform));
-}
+BoundingBox BoundingBox::Transformed(const Matrix3& transform) const { return Transformed(Matrix3x4(transform)); }
 
 BoundingBox BoundingBox::Transformed(const Matrix3x4& transform) const
 {
 #ifdef URHO3D_SSE
     const __m128 one = _mm_set_ss(1.f);
-    __m128 minPt = _mm_movelh_ps(_mm_loadl_pi(_mm_setzero_ps(), (const __m64*)&min_.x_), _mm_unpacklo_ps(_mm_set_ss(min_.z_), one));
-    __m128 maxPt = _mm_movelh_ps(_mm_loadl_pi(_mm_setzero_ps(), (const __m64*)&max_.x_), _mm_unpacklo_ps(_mm_set_ss(max_.z_), one));
+    __m128 minPt = _mm_movelh_ps(_mm_loadl_pi(_mm_setzero_ps(), (const __m64*)&min_.x_),
+                                 _mm_unpacklo_ps(_mm_set_ss(min_.z_), one));
+    __m128 maxPt = _mm_movelh_ps(_mm_loadl_pi(_mm_setzero_ps(), (const __m64*)&max_.x_),
+                                 _mm_unpacklo_ps(_mm_set_ss(max_.z_), one));
     __m128 centerPoint = _mm_mul_ps(_mm_add_ps(minPt, maxPt), _mm_set1_ps(0.5f));
     __m128 halfSize = _mm_sub_ps(centerPoint, minPt);
     __m128 m0 = _mm_loadu_ps(&transform.m00_);
@@ -157,11 +146,10 @@ BoundingBox BoundingBox::Transformed(const Matrix3x4& transform) const
 #else
     Vector3 newCenter = transform * Center();
     Vector3 oldEdge = Size() * 0.5f;
-    Vector3 newEdge = Vector3(
-        Abs(transform.m00_) * oldEdge.x_ + Abs(transform.m01_) * oldEdge.y_ + Abs(transform.m02_) * oldEdge.z_,
-        Abs(transform.m10_) * oldEdge.x_ + Abs(transform.m11_) * oldEdge.y_ + Abs(transform.m12_) * oldEdge.z_,
-        Abs(transform.m20_) * oldEdge.x_ + Abs(transform.m21_) * oldEdge.y_ + Abs(transform.m22_) * oldEdge.z_
-    );
+    Vector3 newEdge =
+        Vector3(Abs(transform.m00_) * oldEdge.x_ + Abs(transform.m01_) * oldEdge.y_ + Abs(transform.m02_) * oldEdge.z_,
+                Abs(transform.m10_) * oldEdge.x_ + Abs(transform.m11_) * oldEdge.y_ + Abs(transform.m12_) * oldEdge.z_,
+                Abs(transform.m20_) * oldEdge.x_ + Abs(transform.m21_) * oldEdge.y_ + Abs(transform.m22_) * oldEdge.z_);
 
     return BoundingBox(newCenter - newEdge, newCenter + newEdge);
 #endif
@@ -294,9 +282,5 @@ Intersection BoundingBox::IsInsideFast(const Sphere& sphere) const
         return INSIDE;
 }
 
-String BoundingBox::ToString() const
-{
-    return min_.ToString() + " - " + max_.ToString();
-}
-
+String BoundingBox::ToString() const { return min_.ToString() + " - " + max_.ToString(); }
 }

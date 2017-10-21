@@ -35,7 +35,6 @@
 
 namespace Urho3D
 {
-
 static const Vector3 DEFAULT_BOUNDING_BOX_MIN(-10.0f, -10.0f, -10.0f);
 static const Vector3 DEFAULT_BOUNDING_BOX_MAX(10.0f, 10.0f, 10.0f);
 static const Color DEFAULT_AMBIENT_COLOR(0.1f, 0.1f, 0.1f);
@@ -47,26 +46,24 @@ static const float DEFAULT_FOG_HEIGHT_SCALE = 0.5f;
 
 extern const char* SCENE_CATEGORY;
 
-Zone::Zone(Context* context) :
-    Drawable(context, DRAWABLE_ZONE),
-    inverseWorldDirty_(true),
-    heightFog_(false),
-    override_(false),
-    ambientGradient_(false),
-    ambientColor_(DEFAULT_AMBIENT_COLOR),
-    fogColor_(DEFAULT_FOG_COLOR),
-    fogStart_(DEFAULT_FOG_START),
-    fogEnd_(DEFAULT_FOG_END),
-    fogHeight_(DEFAULT_FOG_HEIGHT),
-    fogHeightScale_(DEFAULT_FOG_HEIGHT_SCALE),
-    priority_(0)
+Zone::Zone(Context* context)
+    : Drawable(context, DRAWABLE_ZONE)
+    , inverseWorldDirty_(true)
+    , heightFog_(false)
+    , override_(false)
+    , ambientGradient_(false)
+    , ambientColor_(DEFAULT_AMBIENT_COLOR)
+    , fogColor_(DEFAULT_FOG_COLOR)
+    , fogStart_(DEFAULT_FOG_START)
+    , fogEnd_(DEFAULT_FOG_END)
+    , fogHeight_(DEFAULT_FOG_HEIGHT)
+    , fogHeightScale_(DEFAULT_FOG_HEIGHT_SCALE)
+    , priority_(0)
 {
     boundingBox_ = BoundingBox(DEFAULT_BOUNDING_BOX_MIN, DEFAULT_BOUNDING_BOX_MAX);
 }
 
-Zone::~Zone()
-{
-}
+Zone::~Zone() {}
 
 void Zone::RegisterObject(Context* context)
 {
@@ -86,7 +83,7 @@ void Zone::RegisterObject(Context* context)
     URHO3D_ATTRIBUTE("Ambient Gradient", bool, ambientGradient_, false, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Priority", int, priority_, 0, AM_DEFAULT);
     URHO3D_MIXED_ACCESSOR_ATTRIBUTE("Zone Texture", GetZoneTextureAttr, SetZoneTextureAttr, ResourceRef,
-        ResourceRef(TextureCube::GetTypeStatic()), AM_DEFAULT);
+                                    ResourceRef(TextureCube::GetTypeStatic()), AM_DEFAULT);
     URHO3D_ATTRIBUTE("Light Mask", int, lightMask_, DEFAULT_LIGHTMASK, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Shadow Mask", int, shadowMask_, DEFAULT_SHADOWMASK, AM_DEFAULT);
     URHO3D_ACCESSOR_ATTRIBUTE("Zone Mask", GetZoneMask, SetZoneMask, unsigned, DEFAULT_ZONEMASK, AM_DEFAULT);
@@ -97,7 +94,8 @@ void Zone::OnSetAttribute(const AttributeInfo& attr, const Variant& src)
     Serializable::OnSetAttribute(attr, src);
 
     // If bounding box or priority changes, dirty the drawable as applicable
-    if ((attr.offset_ >= offsetof(Zone, boundingBox_) && attr.offset_ < (offsetof(Zone, boundingBox_) + sizeof(BoundingBox))) ||
+    if ((attr.offset_ >= offsetof(Zone, boundingBox_) &&
+         attr.offset_ < (offsetof(Zone, boundingBox_) + sizeof(BoundingBox))) ||
         attr.offset_ == offsetof(Zone, priority_))
         OnMarkedDirty(node_);
 }
@@ -233,10 +231,7 @@ void Zone::SetZoneTextureAttr(const ResourceRef& value)
     zoneTexture_ = static_cast<Texture*>(cache->GetResource(value.type_, value.name_));
 }
 
-ResourceRef Zone::GetZoneTextureAttr() const
-{
-    return GetResourceRef(zoneTexture_, TextureCube::GetTypeStatic());
-}
+ResourceRef Zone::GetZoneTextureAttr() const { return GetResourceRef(zoneTexture_, TextureCube::GetTypeStatic()); }
 
 void Zone::OnMarkedDirty(Node* node)
 {
@@ -256,10 +251,7 @@ void Zone::OnMarkedDirty(Node* node)
     inverseWorldDirty_ = true;
 }
 
-void Zone::OnWorldBoundingBoxUpdate()
-{
-    worldBoundingBox_ = boundingBox_.Transformed(node_->GetWorldTransform());
-}
+void Zone::OnWorldBoundingBoxUpdate() { worldBoundingBox_ = boundingBox_.Transformed(node_->GetWorldTransform()); }
 
 void Zone::UpdateAmbientGradient()
 {
@@ -329,10 +321,7 @@ void Zone::UpdateAmbientGradient()
     }
 }
 
-void Zone::OnRemoveFromOctree()
-{
-    ClearDrawablesZone();
-}
+void Zone::OnRemoveFromOctree() { ClearDrawablesZone(); }
 
 void Zone::ClearDrawablesZone()
 {
@@ -361,5 +350,4 @@ void Zone::ClearDrawablesZone()
     lastAmbientStartZone_.Reset();
     lastAmbientEndZone_.Reset();
 }
-
 }

@@ -27,8 +27,8 @@
 #include <Urho3D/Graphics/Material.h>
 #include <Urho3D/Graphics/Model.h>
 #include <Urho3D/Graphics/Octree.h>
-#include <Urho3D/Graphics/Renderer.h>
 #include <Urho3D/Graphics/RenderSurface.h>
+#include <Urho3D/Graphics/Renderer.h>
 #include <Urho3D/Graphics/StaticModel.h>
 #include <Urho3D/Graphics/Technique.h>
 #include <Urho3D/Graphics/Texture2D.h>
@@ -47,8 +47,8 @@
 
 URHO3D_DEFINE_APPLICATION_MAIN(RenderToTexture)
 
-RenderToTexture::RenderToTexture(Context* context) :
-    Sample(context)
+RenderToTexture::RenderToTexture(Context* context)
+    : Sample(context)
 {
     // Register an object factory for our custom Rotator component so that we can create them to scene nodes
     context->RegisterFactory<Rotator>();
@@ -108,13 +108,14 @@ void RenderToTexture::CreateScene()
             boxObject->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
             boxObject->SetMaterial(cache->GetResource<Material>("Materials/Stone.xml"));
 
-            // Add our custom Rotator component which will rotate the scene node each frame, when the scene sends its update event.
-            // Simply set same rotation speed for all objects
+            // Add our custom Rotator component which will rotate the scene node each frame, when the scene sends its
+            // update event. Simply set same rotation speed for all objects
             Rotator* rotator = boxNode->CreateComponent<Rotator>();
             rotator->SetRotationSpeed(Vector3(10.0f, 20.0f, 30.0f));
         }
 
-        // Create a camera for the render-to-texture scene. Simply leave it at the world origin and let it observe the scene
+        // Create a camera for the render-to-texture scene. Simply leave it at the world origin and let it observe the
+        // scene
         rttCameraNode_ = rttScene_->CreateChild("Camera");
         Camera* camera = rttCameraNode_->CreateComponent<Camera>();
         camera->SetFarClip(100.0f);
@@ -162,8 +163,8 @@ void RenderToTexture::CreateScene()
             }
         }
 
-        // Create a "screen" like object for viewing the second scene. Construct it from two StaticModels, a box for the frame
-        // and a plane for the actual view
+        // Create a "screen" like object for viewing the second scene. Construct it from two StaticModels, a box for the
+        // frame and a plane for the actual view
         {
             Node* boxNode = scene_->CreateChild("ScreenBox");
             boxNode->SetPosition(Vector3(0.0f, 10.0f, 0.0f));

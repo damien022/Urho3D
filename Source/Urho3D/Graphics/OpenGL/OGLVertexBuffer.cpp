@@ -31,11 +31,7 @@
 
 namespace Urho3D
 {
-
-void VertexBuffer::OnDeviceLost()
-{
-    GPUObject::OnDeviceLost();
-}
+void VertexBuffer::OnDeviceLost() { GPUObject::OnDeviceLost(); }
 
 void VertexBuffer::OnDeviceReset()
 {
@@ -97,7 +93,8 @@ bool VertexBuffer::SetData(const void* data)
         if (!graphics_->IsDeviceLost())
         {
             graphics_->SetVBO(object_.name_);
-            glBufferData(GL_ARRAY_BUFFER, vertexCount_ * vertexSize_, data, dynamic_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, vertexCount_ * vertexSize_, data,
+                         dynamic_ ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
         }
         else
         {
@@ -272,5 +269,4 @@ void VertexBuffer::UnmapBuffer()
 {
     // Never called on OpenGL
 }
-
 }

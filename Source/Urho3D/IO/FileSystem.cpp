@@ -40,25 +40,25 @@
 #include <SDL/SDL_filesystem.h>
 #endif
 
-#include <sys/stat.h>
 #include <cstdio>
+#include <sys/stat.h>
 
 #ifdef _WIN32
 #ifndef _MSC_VER
 #define _WIN32_IE 0x501
 #endif
-#include <windows.h>
-#include <shellapi.h>
 #include <direct.h>
+#include <shellapi.h>
 #include <shlobj.h>
 #include <sys/types.h>
 #include <sys/utime.h>
+#include <windows.h>
 #else
 #include <dirent.h>
 #include <errno.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <utime.h>
-#include <sys/wait.h>
 #define MAX_PATH 256
 #endif
 
@@ -66,8 +66,7 @@
 #include <mach-o/dyld.h>
 #endif
 
-extern "C"
-{
+extern "C" {
 #ifdef __ANDROID__
 const char* SDL_Android_GetFilesDir();
 char** SDL_Android_GetFileList(const char* path, int* count);
@@ -82,7 +81,6 @@ const char* SDL_IOS_GetDocumentsDir();
 
 namespace Urho3D
 {
-
 int DoSystemCommand(const String& commandLine, bool redirectToLog, Context* context)
 {
 #if defined(TVOS) || defined(IOS)
@@ -106,8 +104,8 @@ int DoSystemCommand(const String& commandLine, bool redirectToLog, Context* cont
     }
 
 #ifdef _MSC_VER
-    #define popen _popen
-    #define pclose _pclose
+#define popen _popen
+#define pclose _pclose
 #endif
 
     // Use popen/pclose to capture the stdout and stderr of the command
@@ -163,7 +161,8 @@ int DoSystemRun(const String& fileName, const Vector<String>& arguments)
     memset(&processInfo, 0, sizeof processInfo);
 
     WString commandLineW(commandLine);
-    if (!CreateProcessW(nullptr, (wchar_t*)commandLineW.CString(), nullptr, nullptr, 0, CREATE_NO_WINDOW, nullptr, nullptr, &startupInfo, &processInfo))
+    if (!CreateProcessW(nullptr, (wchar_t*)commandLineW.CString(), nullptr, nullptr, 0, CREATE_NO_WINDOW, nullptr,
+                        nullptr, &startupInfo, &processInfo))
         return -1;
 
     WaitForSingleObject(processInfo.hProcess, INFINITE);
@@ -204,9 +203,9 @@ class AsyncExecRequest : public Thread
 {
 public:
     /// Construct.
-    AsyncExecRequest(unsigned& requestID) :
-        requestID_(requestID),
-        completed_(false)
+    AsyncExecRequest(unsigned& requestID)
+        : requestID_(requestID)
+        , completed_(false)
     {
         // Increment ID for next request
         ++requestID;
@@ -237,9 +236,9 @@ class AsyncSystemCommand : public AsyncExecRequest
 {
 public:
     /// Construct and run.
-    AsyncSystemCommand(unsigned requestID, const String& commandLine) :
-        AsyncExecRequest(requestID),
-        commandLine_(commandLine)
+    AsyncSystemCommand(unsigned requestID, const String& commandLine)
+        : AsyncExecRequest(requestID)
+        , commandLine_(commandLine)
     {
         Run();
     }
@@ -261,10 +260,10 @@ class AsyncSystemRun : public AsyncExecRequest
 {
 public:
     /// Construct and run.
-    AsyncSystemRun(unsigned requestID, const String& fileName, const Vector<String>& arguments) :
-        AsyncExecRequest(requestID),
-        fileName_(fileName),
-        arguments_(arguments)
+    AsyncSystemRun(unsigned requestID, const String& fileName, const Vector<String>& arguments)
+        : AsyncExecRequest(requestID)
+        , fileName_(fileName)
+        , arguments_(arguments)
     {
         Run();
     }
@@ -283,10 +282,10 @@ private:
     const Vector<String>& arguments_;
 };
 
-FileSystem::FileSystem(Context* context) :
-    Object(context),
-    nextAsyncExecID_(1),
-    executeConsoleCommands_(false)
+FileSystem::FileSystem(Context* context)
+    : Object(context)
+    , nextAsyncExecID_(1)
+    , executeConsoleCommands_(false)
 {
     SubscribeToEvent(E_BEGINFRAME, URHO3D_HANDLER(FileSystem, HandleBeginFrame));
 
@@ -300,7 +299,7 @@ FileSystem::~FileSystem()
     if (asyncExecQueue_.Size())
     {
         for (List<AsyncExecRequest*>::Iterator i = asyncExecQueue_.Begin(); i != asyncExecQueue_.End(); ++i)
-            delete(*i);
+            delete (*i);
 
         asyncExecQueue_.Clear();
     }
@@ -348,7 +347,7 @@ bool FileSystem::CreateDir(const String& pathName)
 
 #ifdef _WIN32
     bool success = (CreateDirectoryW(GetWideNativePath(RemoveTrailingSlash(pathName)).CString(), nullptr) == TRUE) ||
-        (GetLastError() == ERROR_ALREADY_EXISTS);
+                   (GetLastError() == ERROR_ALREADY_EXISTS);
 #else
     bool success = mkdir(GetNativePath(RemoveTrailingSlash(pathName)).CString(), S_IRWXU) == 0 || errno == EEXIST;
 #endif
@@ -453,17 +452,17 @@ bool FileSystem::SystemOpen(const String& fileName, const String& mode)
 
 #ifdef _WIN32
         bool success = (size_t)ShellExecuteW(nullptr, !mode.Empty() ? WString(mode).CString() : nullptr,
-            GetWideNativePath(fileName).CString(), nullptr, nullptr, SW_SHOW) > 32;
+                                             GetWideNativePath(fileName).CString(), nullptr, nullptr, SW_SHOW) > 32;
 #else
         Vector<String> arguments;
         arguments.Push(fileName);
         bool success = SystemRun(
 #if defined(__APPLE__)
-            "/usr/bin/open",
+                           "/usr/bin/open",
 #else
-            "/usr/bin/xdg-open",
+                           "/usr/bin/xdg-open",
 #endif
-            arguments) == 0;
+                           arguments) == 0;
 #endif
         if (!success)
             URHO3D_LOGERROR("Failed to open " + fileName + " externally");
@@ -685,7 +684,8 @@ bool FileSystem::DirExists(const String& pathName) const
     return true;
 }
 
-void FileSystem::ScanDir(Vector<String>& result, const String& pathName, const String& filter, unsigned flags, bool recursive) const
+void FileSystem::ScanDir(Vector<String>& result, const String& pathName, const String& filter, unsigned flags,
+                         bool recursive) const
 {
     result.Clear();
 
@@ -795,8 +795,8 @@ bool FileSystem::SetLastModifiedTime(const String& fileName, unsigned newTime)
 #endif
 }
 
-void FileSystem::ScanDirInternal(Vector<String>& result, String path, const String& startPath,
-    const String& filter, unsigned flags, bool recursive) const
+void FileSystem::ScanDirInternal(Vector<String>& result, String path, const String& startPath, const String& filter,
+                                 unsigned flags, bool recursive) const
 {
     path = AddTrailingSlash(path);
     String deltaPath;
@@ -811,7 +811,7 @@ void FileSystem::ScanDirInternal(Vector<String>& result, String path, const Stri
     if (URHO3D_IS_ASSET(path))
     {
         String assetPath(URHO3D_ASSET(path));
-        assetPath.Resize(assetPath.Length() - 1);       // AssetManager.list() does not like trailing slash
+        assetPath.Resize(assetPath.Length() - 1); // AssetManager.list() does not like trailing slash
         int count;
         char** list = SDL_Android_GetFileList(assetPath.CString(), &count);
         for (int i = 0; i < count; ++i)
@@ -867,8 +867,7 @@ void FileSystem::ScanDirInternal(Vector<String>& result, String path, const Stri
                         result.Push(deltaPath + fileName);
                 }
             }
-        }
-        while (FindNextFileW(handle, &info));
+        } while (FindNextFileW(handle, &info));
 
         FindClose(handle);
     }
@@ -1030,10 +1029,7 @@ String GetParentPath(const String& path)
         return String();
 }
 
-String GetInternalPath(const String& pathName)
-{
-    return pathName.Replaced('\\', '/');
-}
+String GetInternalPath(const String& pathName) { return pathName.Replaced('\\', '/'); }
 
 String GetNativePath(const String& pathName)
 {
@@ -1092,7 +1088,6 @@ bool FileSystem::CreateDirs(const String& root, const String& subdirectory)
     }
 
     return true;
-
 }
 
 bool FileSystem::CreateDirsRecursive(const String& directoryIn)
@@ -1124,7 +1119,7 @@ bool FileSystem::CreateDirsRecursive(const String& directoryIn)
     if (!paths.Size())
         return false;
 
-    for (int i = (int) (paths.Size() - 1); i >= 0; i--)
+    for (int i = (int)(paths.Size() - 1); i >= 0; i--)
     {
         const String& pathName = paths[i];
 
@@ -1140,11 +1135,9 @@ bool FileSystem::CreateDirsRecursive(const String& directoryIn)
         // double check
         if (!DirExists(pathName))
             return false;
-
     }
 
     return true;
-
 }
 
 bool FileSystem::RemoveDir(const String& directoryIn, bool recursive)
@@ -1159,9 +1152,13 @@ bool FileSystem::RemoveDir(const String& directoryIn, bool recursive)
     // ensure empty if not recursive
     if (!recursive)
     {
-        ScanDir(results, directory, "*", SCAN_DIRS | SCAN_FILES | SCAN_HIDDEN, true );
-        while (results.Remove(".")) {}
-        while (results.Remove("..")) {}
+        ScanDir(results, directory, "*", SCAN_DIRS | SCAN_FILES | SCAN_HIDDEN, true);
+        while (results.Remove("."))
+        {
+        }
+        while (results.Remove(".."))
+        {
+        }
 
         if (results.Size())
             return false;
@@ -1176,7 +1173,7 @@ bool FileSystem::RemoveDir(const String& directoryIn, bool recursive)
     }
 
     // delete all files at this level
-    ScanDir(results, directory, "*", SCAN_FILES | SCAN_HIDDEN, false );
+    ScanDir(results, directory, "*", SCAN_FILES | SCAN_HIDDEN, false);
     for (unsigned i = 0; i < results.Size(); i++)
     {
         if (!Delete(directory + results[i]))
@@ -1185,7 +1182,7 @@ bool FileSystem::RemoveDir(const String& directoryIn, bool recursive)
     results.Clear();
 
     // recurse into subfolders
-    ScanDir(results, directory, "*", SCAN_DIRS, false );
+    ScanDir(results, directory, "*", SCAN_DIRS, false);
     for (unsigned i = 0; i < results.Size(); i++)
     {
         if (results[i] == "." || results[i] == "..")
@@ -1196,7 +1193,6 @@ bool FileSystem::RemoveDir(const String& directoryIn, bool recursive)
     }
 
     return RemoveDir(directory, false);
-
 }
 
 bool FileSystem::CopyDir(const String& directoryIn, const String& directoryOut)
@@ -1205,7 +1201,7 @@ bool FileSystem::CopyDir(const String& directoryIn, const String& directoryOut)
         return false;
 
     Vector<String> results;
-    ScanDir(results, directoryIn, "*", SCAN_FILES, true );
+    ScanDir(results, directoryIn, "*", SCAN_FILES, true);
 
     for (unsigned i = 0; i < results.Size(); i++)
     {
@@ -1217,19 +1213,15 @@ bool FileSystem::CopyDir(const String& directoryIn, const String& directoryOut)
         if (!CreateDirsRecursive(dstPath))
             return false;
 
-        //LOGINFOF("SRC: %s DST: %s", srcFile.CString(), dstFile.CString());
+        // LOGINFOF("SRC: %s DST: %s", srcFile.CString(), dstFile.CString());
         if (!Copy(srcFile, dstFile))
             return false;
     }
 
     return true;
-
 }
 
-String FileSystem::GetTemporaryPath() const
-{
-    return SDL_GetPrefPath("urho3d", "temp");
-}
+String FileSystem::GetTemporaryPath() const { return SDL_GetPrefPath("urho3d", "temp"); }
 
 bool IsAbsoluteParentPath(const String& absParentPath, const String& fullPath)
 {
@@ -1269,7 +1261,6 @@ String GetSanitizedPath(const String& path)
         sanitized += "/";
 
     return sanitized;
-
 }
 
 bool GetRelativePath(const String& fromPath, const String& toPath, String& output)
@@ -1321,13 +1312,11 @@ bool GetRelativePath(const String& fromPath, const String& toPath, String& outpu
         output += "../";
     }
 
-    for (int i = startIdx; i < (int) toParts.Size(); i++)
+    for (int i = startIdx; i < (int)toParts.Size(); i++)
     {
         output += toParts[i] + "/";
     }
 
     return true;
-
 }
-
 }

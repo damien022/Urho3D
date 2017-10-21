@@ -32,7 +32,6 @@
 
 namespace Urho3D
 {
-
 class Camera;
 class DebugRenderer;
 class Light;
@@ -106,7 +105,8 @@ struct PerThreadSceneResult
 
 static const unsigned MAX_VIEWPORT_TEXTURES = 2;
 
-/// Internal structure for 3D rendering work. Created for each backbuffer and texture viewport, but not for shadow cameras.
+/// Internal structure for 3D rendering work. Created for each backbuffer and texture viewport, but not for shadow
+/// cameras.
 class URHO3D_API View : public Object
 {
     friend void CheckVisibilityWork(const WorkItem* item, unsigned threadIndex);
@@ -141,7 +141,7 @@ public:
 
     /// Return information of the frame being rendered.
     const FrameInfo& GetFrameInfo() const { return frame_; }
-    
+
     /// Return the rendertarget. 0 if using the backbuffer.
     RenderSurface* GetRenderTarget() const { return renderTarget_; }
 
@@ -150,10 +150,10 @@ public:
 
     /// Return view rectangle.
     const IntRect& GetViewRect() const { return viewRect_; }
-    
+
     /// Return view dimensions.
     const IntVector2& GetViewSize() const { return viewSize_; }
-    
+
     /// Return geometry objects.
     const PODVector<Drawable*>& GetGeometries() const { return geometries_; }
 
@@ -169,7 +169,8 @@ public:
     /// Return the last used software occlusion buffer.
     OcclusionBuffer* GetOcclusionBuffer() const { return occlusionBuffer_; }
 
-    /// Return number of occluders that were actually rendered. Occluders may be rejected if running out of triangles or if behind other occluders.
+    /// Return number of occluders that were actually rendered. Occluders may be rejected if running out of triangles or
+    /// if behind other occluders.
     unsigned GetNumActiveOccluders() const { return activeOccluders_; }
 
     /// Return the source view that was already prepared. Used when viewports specify the same culling camera.
@@ -184,10 +185,12 @@ public:
     /// Set G-buffer offset and inverse size shader parameters. Called by Batch and internally by View.
     void SetGBufferShaderParameters(const IntVector2& texSize, const IntRect& viewRect);
 
-    /// Draw a fullscreen quad. Shaders and renderstates must have been set beforehand. Quad will be drawn to the middle of depth range, similarly to deferred directional lights.
+    /// Draw a fullscreen quad. Shaders and renderstates must have been set beforehand. Quad will be drawn to the middle
+    /// of depth range, similarly to deferred directional lights.
     void DrawFullscreenQuad(bool setIdentityProjection = false);
 
-    /// Get a named texture from the rendertarget list or from the resource cache, to be either used as a rendertarget or texture binding.
+    /// Get a named texture from the rendertarget list or from the resource cache, to be either used as a rendertarget
+    /// or texture binding.
     Texture* FindNamedTexture(const String& name, bool isRenderTarget, bool isVolumeMap = false);
 
 private:
@@ -209,17 +212,20 @@ private:
     void ExecuteRenderPathCommands();
     /// Set rendertargets for current render command.
     void SetRenderTargets(RenderPathCommand& command);
-    /// Set textures for current render command. Return whether depth write is allowed (depth-stencil not bound as a texture.)
+    /// Set textures for current render command. Return whether depth write is allowed (depth-stencil not bound as a
+    /// texture.)
     bool SetTextures(RenderPathCommand& command);
     /// Perform a quad rendering command.
     void RenderQuad(RenderPathCommand& command);
-    /// Check if a command is enabled and has content to render. To be called only after render update has completed for the frame.
+    /// Check if a command is enabled and has content to render. To be called only after render update has completed for
+    /// the frame.
     bool IsNecessary(const RenderPathCommand& command);
     /// Check if a command reads the destination render target.
     bool CheckViewportRead(const RenderPathCommand& command);
     /// Check if a command writes into the destination render target.
     bool CheckViewportWrite(const RenderPathCommand& command);
-    /// Check whether a command should use pingponging instead of resolve from destination render target to viewport texture.
+    /// Check whether a command should use pingponging instead of resolve from destination render target to viewport
+    /// texture.
     bool CheckPingpong(unsigned index);
     /// Allocate needed screen buffers.
     void AllocateScreenBuffers();
@@ -238,14 +244,15 @@ private:
     /// Set up a directional light shadow camera
     void SetupDirLightShadowCamera(Camera* shadowCamera, Light* light, float nearSplit, float farSplit);
     /// Finalize shadow camera view after shadow casters and the shadow map are known.
-    void
-        FinalizeShadowCamera(Camera* shadowCamera, Light* light, const IntRect& shadowViewport, const BoundingBox& shadowCasterBox);
+    void FinalizeShadowCamera(Camera* shadowCamera, Light* light, const IntRect& shadowViewport,
+                              const BoundingBox& shadowCasterBox);
     /// Quantize a directional light shadow camera view to eliminate swimming.
-    void
-        QuantizeDirLightShadowCamera(Camera* shadowCamera, Light* light, const IntRect& shadowViewport, const BoundingBox& viewBox);
+    void QuantizeDirLightShadowCamera(Camera* shadowCamera, Light* light, const IntRect& shadowViewport,
+                                      const BoundingBox& viewBox);
     /// Check visibility of one shadow caster.
-    bool IsShadowCasterVisible(Drawable* drawable, BoundingBox lightViewBox, Camera* shadowCamera, const Matrix3x4& lightView,
-        const Frustum& lightViewFrustum, const BoundingBox& lightViewFrustumBox);
+    bool IsShadowCasterVisible(Drawable* drawable, BoundingBox lightViewBox, Camera* shadowCamera,
+                               const Matrix3x4& lightView, const Frustum& lightViewFrustum,
+                               const BoundingBox& lightViewFrustumBox);
     /// Return the viewport for a shadow map split.
     IntRect GetShadowMapViewport(Light* light, unsigned splitIndex, Texture2D* shadowMap);
     /// Find and set a new zone for a drawable when it has moved.
@@ -257,7 +264,8 @@ private:
     /// Set shader defines for a batch queue if used.
     void SetQueueShaderDefines(BatchQueue& queue, const RenderPathCommand& command);
     /// Choose shaders for a batch and add it to queue.
-    void AddBatchToQueue(BatchQueue& queue, Batch& batch, Technique* tech, bool allowInstancing = true, bool allowShadows = true);
+    void AddBatchToQueue(BatchQueue& queue, Batch& batch, Technique* tech, bool allowInstancing = true,
+                         bool allowShadows = true);
     /// Prepare instancing buffer by filling it with all instance transforms.
     void PrepareInstancingBuffer();
     /// Set up a light volume rendering batch.
@@ -270,7 +278,8 @@ private:
     RenderSurface* GetDepthStencil(RenderSurface* renderTarget);
     /// Helper function to get the render surface from a texture. 2D textures will always return the first face only.
     RenderSurface* GetRenderSurfaceFromTexture(Texture* texture, CubeMapFace face = FACE_POSITIVE_X);
-    /// Send a view update or render related event through the Renderer subsystem. The parameters are the same for all of them.
+    /// Send a view update or render related event through the Renderer subsystem. The parameters are the same for all
+    /// of them.
     void SendViewEvent(StringHash eventType);
 
     /// Return the drawable's zone, or camera zone if it has override mode enabled.
@@ -283,10 +292,7 @@ private:
     }
 
     /// Return the drawable's light mask, considering also its zone.
-    unsigned GetLightMask(Drawable* drawable)
-    {
-        return drawable->GetLightMask() & GetZone(drawable)->GetLightMask();
-    }
+    unsigned GetLightMask(Drawable* drawable) { return drawable->GetLightMask() & GetZone(drawable)->GetLightMask(); }
 
     /// Return the drawable's shadow mask, considering also its zone.
     unsigned GetShadowMask(Drawable* drawable)
@@ -367,11 +373,14 @@ private:
     bool drawShadows_;
     /// Deferred flag. Inferred from the existence of a light volume command in the renderpath.
     bool deferred_;
-    /// Deferred ambient pass flag. This means that the destination rendertarget is being written to at the same time as albedo/normal/depth buffers, and needs to be RGBA on OpenGL.
+    /// Deferred ambient pass flag. This means that the destination rendertarget is being written to at the same time as
+    /// albedo/normal/depth buffers, and needs to be RGBA on OpenGL.
     bool deferredAmbient_;
-    /// Forward light base pass optimization flag. If in use, combine the base pass and first light for all opaque objects.
+    /// Forward light base pass optimization flag. If in use, combine the base pass and first light for all opaque
+    /// objects.
     bool useLitBase_;
-    /// Has scene passes flag. If no scene passes, view can be defined without a valid scene or camera to only perform quad rendering.
+    /// Has scene passes flag. If no scene passes, view can be defined without a valid scene or camera to only perform
+    /// quad rendering.
     bool hasScenePasses_;
     /// Whether is using a custom readable depth texture without a stencil channel.
     bool noStencil_;
@@ -380,7 +389,7 @@ private:
     /// Renderpath.
     RenderPath* renderPath_;
     /// Per-thread octree query results.
-    Vector<PODVector<Drawable*> > tempDrawables_;
+    Vector<PODVector<Drawable*>> tempDrawables_;
     /// Per-thread geometries, lights and Z range collection results.
     Vector<PerThreadSceneResult> sceneResults_;
     /// Visible zones.
@@ -433,5 +442,4 @@ private:
     /// Flag for scene being resolved from the backbuffer.
     bool usedResolve_;
 };
-
 }

@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 class ParticleEffect;
 
 /// One particle in the particle system.
@@ -76,15 +75,18 @@ public:
     void SetEmitting(bool enable);
     /// Set whether particles should be serialized. Default true, set false to reduce scene file size.
     void SetSerializeParticles(bool enable);
-    //// Set to remove either the emitter component or its owner node from the scene automatically on particle effect completion. Disabled by default.
+    //// Set to remove either the emitter component or its owner node from the scene automatically on particle effect
+    /// completion. Disabled by default.
     void SetAutoRemoveMode(AutoRemoveMode mode);
     /// Reset the emission period timer.
     void ResetEmissionTimer();
     /// Remove all current particles.
     void RemoveAllParticles();
-    /// Reset the particle emitter completely. Removes current particles, sets emitting state on, and resets the emission timer.
+    /// Reset the particle emitter completely. Removes current particles, sets emitting state on, and resets the
+    /// emission timer.
     void Reset();
-    /// Apply not continuously updated values such as the material, the number of particles and sorting mode from the particle effect. Call this if you change the effect programmatically.
+    /// Apply not continuously updated values such as the material, the number of particles and sorting mode from the
+    /// particle effect. Call this if you change the effect programmatically.
     void ApplyEffect();
 
     /// Return particle effect.
@@ -153,5 +155,4 @@ private:
     /// Automatic removal mode.
     AutoRemoveMode autoRemove_;
 };
-
 }

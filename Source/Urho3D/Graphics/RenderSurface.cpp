@@ -25,18 +25,17 @@
 #include "../Graphics/Camera.h"
 #include "../Graphics/Graphics.h"
 #include "../Graphics/GraphicsImpl.h"
-#include "../Graphics/Renderer.h"
 #include "../Graphics/RenderSurface.h"
+#include "../Graphics/Renderer.h"
 #include "../Graphics/Texture.h"
 
 #include "../DebugNew.h"
 
 namespace Urho3D
 {
-
 RenderSurface::~RenderSurface()
 {
-    // only release if parent texture hasn't expired, in that case 
+    // only release if parent texture hasn't expired, in that case
     // parent texture was deleted and will have called release on render surface
     if (!parentTexture_.Expired())
     {
@@ -44,10 +43,7 @@ RenderSurface::~RenderSurface()
     }
 }
 
-void RenderSurface::SetNumViewports(unsigned num)
-{
-    viewports_.Resize(num);
-}
+void RenderSurface::SetNumViewports(unsigned num) { viewports_.Resize(num); }
 
 void RenderSurface::SetViewport(unsigned index, Viewport* viewport)
 {
@@ -57,10 +53,7 @@ void RenderSurface::SetViewport(unsigned index, Viewport* viewport)
     viewports_[index] = viewport;
 }
 
-void RenderSurface::SetUpdateMode(RenderSurfaceUpdateMode mode)
-{
-    updateMode_ = mode;
-}
+void RenderSurface::SetUpdateMode(RenderSurfaceUpdateMode mode) { updateMode_ = mode; }
 
 void RenderSurface::SetLinkedRenderTarget(RenderSurface* renderTarget)
 {
@@ -74,44 +67,22 @@ void RenderSurface::SetLinkedDepthStencil(RenderSurface* depthStencil)
         linkedDepthStencil_ = depthStencil;
 }
 
-void RenderSurface::QueueUpdate()
-{
-    updateQueued_ = true;
-}
+void RenderSurface::QueueUpdate() { updateQueued_ = true; }
 
-void RenderSurface::ResetUpdateQueued()
-{
-    updateQueued_ = false;
-}
+void RenderSurface::ResetUpdateQueued() { updateQueued_ = false; }
 
-int RenderSurface::GetWidth() const
-{
-    return parentTexture_->GetWidth();
-}
+int RenderSurface::GetWidth() const { return parentTexture_->GetWidth(); }
 
-int RenderSurface::GetHeight() const
-{
-    return parentTexture_->GetHeight();
-}
+int RenderSurface::GetHeight() const { return parentTexture_->GetHeight(); }
 
-TextureUsage RenderSurface::GetUsage() const
-{
-    return parentTexture_->GetUsage();
-}
+TextureUsage RenderSurface::GetUsage() const { return parentTexture_->GetUsage(); }
 
-int RenderSurface::GetMultiSample() const
-{
-    return parentTexture_->GetMultiSample();
-}
+int RenderSurface::GetMultiSample() const { return parentTexture_->GetMultiSample(); }
 
-bool RenderSurface::GetAutoResolve() const
-{
-    return parentTexture_->GetAutoResolve();
-}
+bool RenderSurface::GetAutoResolve() const { return parentTexture_->GetAutoResolve(); }
 
 Viewport* RenderSurface::GetViewport(unsigned index) const
 {
     return index < viewports_.Size() ? viewports_[index] : nullptr;
 }
-
 }

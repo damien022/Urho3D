@@ -35,28 +35,19 @@
 
 namespace Urho3D
 {
+static const D3D11_FILTER d3dFilterMode[] = {D3D11_FILTER_MIN_MAG_MIP_POINT,
+                                             D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT,
+                                             D3D11_FILTER_MIN_MAG_MIP_LINEAR,
+                                             D3D11_FILTER_ANISOTROPIC,
+                                             D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR,
+                                             D3D11_FILTER_COMPARISON_MIN_MAG_MIP_POINT,
+                                             D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT,
+                                             D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR,
+                                             D3D11_FILTER_COMPARISON_ANISOTROPIC,
+                                             D3D11_FILTER_COMPARISON_MIN_MAG_POINT_MIP_LINEAR};
 
-static const D3D11_FILTER d3dFilterMode[] =
-{
-    D3D11_FILTER_MIN_MAG_MIP_POINT,
-    D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT,
-    D3D11_FILTER_MIN_MAG_MIP_LINEAR,
-    D3D11_FILTER_ANISOTROPIC,
-    D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR,
-    D3D11_FILTER_COMPARISON_MIN_MAG_MIP_POINT,
-    D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT,
-    D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR,
-    D3D11_FILTER_COMPARISON_ANISOTROPIC,
-    D3D11_FILTER_COMPARISON_MIN_MAG_POINT_MIP_LINEAR
-};
-
-static const D3D11_TEXTURE_ADDRESS_MODE d3dAddressMode[] =
-{
-    D3D11_TEXTURE_ADDRESS_WRAP,
-    D3D11_TEXTURE_ADDRESS_MIRROR,
-    D3D11_TEXTURE_ADDRESS_CLAMP,
-    D3D11_TEXTURE_ADDRESS_BORDER
-};
+static const D3D11_TEXTURE_ADDRESS_MODE d3dAddressMode[] = {D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_MIRROR,
+                                                            D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_BORDER};
 
 void Texture::SetSRGB(bool enable)
 {
@@ -72,10 +63,7 @@ void Texture::SetSRGB(bool enable)
     }
 }
 
-bool Texture::GetParametersDirty() const
-{
-    return parametersDirty_ || !sampler_;
-}
+bool Texture::GetParametersDirty() const { return parametersDirty_ || !sampler_; }
 
 bool Texture::IsCompressed() const
 {
@@ -203,14 +191,7 @@ void Texture::RegenerateLevels()
     levelsDirty_ = false;
 }
 
-unsigned Texture::GetExternalFormat(unsigned format)
-{
-    return 0;
-}
+unsigned Texture::GetExternalFormat(unsigned format) { return 0; }
 
-unsigned Texture::GetDataType(unsigned format)
-{
-    return 0;
-}
-
+unsigned Texture::GetDataType(unsigned format) { return 0; }
 }

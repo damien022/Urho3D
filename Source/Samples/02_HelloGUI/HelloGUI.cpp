@@ -41,10 +41,10 @@
 
 URHO3D_DEFINE_APPLICATION_MAIN(HelloGUI)
 
-HelloGUI::HelloGUI(Context* context) :
-    Sample(context),
-    uiRoot_(GetSubsystem<UI>()->GetRoot()),
-    dragBeginPosition_(IntVector2::ZERO)
+HelloGUI::HelloGUI(Context* context)
+    : Sample(context)
+    , uiRoot_(GetSubsystem<UI>()->GetRoot())
+    , dragBeginPosition_(IntVector2::ZERO)
 {
 }
 
@@ -166,7 +166,8 @@ void HelloGUI::CreateDraggableFish()
     // Add a tooltip to Fish button
     ToolTip* toolTip = new ToolTip(context_);
     draggableFish->AddChild(toolTip);
-    toolTip->SetPosition(IntVector2(draggableFish->GetWidth() + 5, draggableFish->GetWidth() / 2)); // slightly offset from close button
+    toolTip->SetPosition(
+        IntVector2(draggableFish->GetWidth() + 5, draggableFish->GetWidth() / 2)); // slightly offset from close button
     BorderImage* textHolder = new BorderImage(context_);
     toolTip->AddChild(textHolder);
     textHolder->SetStyle("ToolTipBorderImage");

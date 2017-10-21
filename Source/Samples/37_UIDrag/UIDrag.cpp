@@ -32,8 +32,8 @@
 
 URHO3D_DEFINE_APPLICATION_MAIN(UIDrag)
 
-UIDrag::UIDrag(Context* context) :
-    Sample(context)
+UIDrag::UIDrag(Context* context)
+    : Sample(context)
 {
 }
 
@@ -67,14 +67,14 @@ void UIDrag::CreateGUI()
     // Load the style sheet from xml
     root->SetDefaultStyle(cache->GetResource<XMLFile>("UI/DefaultStyle.xml"));
 
-    for (int i=0; i < 10; i++)
+    for (int i = 0; i < 10; i++)
     {
         Button* b = new Button(context_);
         root->AddChild(b);
         // Reference a style from the style sheet loaded earlier:
         b->SetStyle("Button");
         b->SetSize(300, 100);
-        b->SetPosition(IntVector2(50*i, 50*i));
+        b->SetPosition(IntVector2(50 * i, 50 * i));
 
         if (i % 2 == 0)
             b->AddTag("SomeTag");
@@ -117,7 +117,7 @@ void UIDrag::CreateGUI()
         Text* t = new Text(context_);
         root->AddChild(t);
         t->SetStyle("Text");
-        t->SetName("Touch "+ String(i));
+        t->SetName("Touch " + String(i));
         t->SetVisible(false);
     }
 }
@@ -141,10 +141,7 @@ void UIDrag::CreateInstructions()
     instructionText->SetPosition(0, ui->GetRoot()->GetHeight() / 4);
 }
 
-void UIDrag::SubscribeToEvents()
-{
-    SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(UIDrag, HandleUpdate));
-}
+void UIDrag::SubscribeToEvents() { SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(UIDrag, HandleUpdate)); }
 
 void UIDrag::HandleDragBegin(StringHash eventType, VariantMap& eventData)
 {
@@ -225,7 +222,7 @@ void UIDrag::HandleUpdate(StringHash eventType, VariantMap& eventData)
         Text* t = (Text*)root->GetChild("Touch " + String(i));
         t->SetVisible(false);
     }
-    
+
     if (input->GetKeyPress(KEY_SPACE))
     {
         PODVector<UIElement*> elements;

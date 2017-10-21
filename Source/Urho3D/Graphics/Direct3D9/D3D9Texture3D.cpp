@@ -38,7 +38,6 @@
 
 namespace Urho3D
 {
-
 void Texture3D::OnDeviceLost()
 {
     if (usage_ > TEXTURE_STATIC)
@@ -116,8 +115,8 @@ bool Texture3D::SetData(unsigned level, int x, int y, int z, int width, int heig
     int levelWidth = GetLevelWidth(level);
     int levelHeight = GetLevelHeight(level);
     int levelDepth = GetLevelDepth(level);
-    if (x < 0 || x + width > levelWidth || y < 0 || y + height > levelHeight || z < 0 || z + depth > levelDepth || width <= 0 ||
-        height <= 0 || depth <= 0)
+    if (x < 0 || x + width > levelWidth || y < 0 || y + height > levelHeight || z < 0 || z + depth > levelDepth ||
+        width <= 0 || height <= 0 || depth <= 0)
     {
         URHO3D_LOGERROR("Illegal dimensions for setting data");
         return false;
@@ -133,11 +132,12 @@ bool Texture3D::SetData(unsigned level, int x, int y, int z, int width, int heig
     d3dBox.Back = (UINT)(z + depth);
 
     DWORD flags = 0;
-    if (level == 0 && x == 0 && y == 0 && z == 0 && width == levelWidth && height == levelHeight && depth == levelDepth &&
-        usage_ > TEXTURE_STATIC)
+    if (level == 0 && x == 0 && y == 0 && z == 0 && width == levelWidth && height == levelHeight &&
+        depth == levelDepth && usage_ > TEXTURE_STATIC)
         flags |= D3DLOCK_DISCARD;
 
-    HRESULT hr = ((IDirect3DVolumeTexture9*)object_.ptr_)->LockBox(level, &d3dLockedBox, (flags & D3DLOCK_DISCARD) ? nullptr : &d3dBox, flags);
+    HRESULT hr = ((IDirect3DVolumeTexture9*)object_.ptr_)
+                     ->LockBox(level, &d3dLockedBox, (flags & D3DLOCK_DISCARD) ? nullptr : &d3dBox, flags);
     if (FAILED(hr))
     {
         URHO3D_LOGD3DERROR("Could not lock texture", hr);
@@ -165,8 +165,8 @@ bool Texture3D::SetData(unsigned level, int x, int y, int z, int width, int heig
         {
             for (int i = 0; i < height; ++i)
             {
-                unsigned char
-                    * dest = (unsigned char*)d3dLockedBox.pBits + (k * d3dLockedBox.SlicePitch) + i * d3dLockedBox.RowPitch;
+                unsigned char* dest =
+                    (unsigned char*)d3dLockedBox.pBits + (k * d3dLockedBox.SlicePitch) + i * d3dLockedBox.RowPitch;
                 memcpy(dest, src, rowSize);
                 src += rowSize;
             }
@@ -178,8 +178,8 @@ bool Texture3D::SetData(unsigned level, int x, int y, int z, int width, int heig
         {
             for (int i = 0; i < height; ++i)
             {
-                unsigned char
-                    * dest = (unsigned char*)d3dLockedBox.pBits + (k * d3dLockedBox.SlicePitch) + i * d3dLockedBox.RowPitch;
+                unsigned char* dest =
+                    (unsigned char*)d3dLockedBox.pBits + (k * d3dLockedBox.SlicePitch) + i * d3dLockedBox.RowPitch;
                 for (int j = 0; j < width; ++j)
                 {
                     *dest++ = src[2];
@@ -197,8 +197,8 @@ bool Texture3D::SetData(unsigned level, int x, int y, int z, int width, int heig
         {
             for (int i = 0; i < height; ++i)
             {
-                unsigned char
-                    * dest = (unsigned char*)d3dLockedBox.pBits + (k * d3dLockedBox.SlicePitch) + i * d3dLockedBox.RowPitch;
+                unsigned char* dest =
+                    (unsigned char*)d3dLockedBox.pBits + (k * d3dLockedBox.SlicePitch) + i * d3dLockedBox.RowPitch;
                 for (int j = 0; j < width; ++j)
                 {
                     *dest++ = src[2];
@@ -244,7 +244,8 @@ bool Texture3D::SetData(Image* image, bool useAlpha)
         // Discard unnecessary mip levels
         for (unsigned i = 0; i < mipsToSkip_[quality]; ++i)
         {
-            mipImage = image->GetNextLevel(); image = mipImage;
+            mipImage = image->GetNextLevel();
+            image = mipImage;
             levelData = image->GetData();
             levelWidth = image->GetWidth();
             levelHeight = image->GetHeight();
@@ -270,11 +271,12 @@ bool Texture3D::SetData(Image* image, bool useAlpha)
             break;
 
         default:
-            assert(false);  // Should never reach here
+            assert(false); // Should never reach here
             break;
         }
 
-        // If image was previously compressed, reset number of requested levels to avoid error if level count is too high for new size
+        // If image was previously compressed, reset number of requested levels to avoid error if level count is too
+        // high for new size
         if (IsCompressed() && requestedLevels_ > 1)
             requestedLevels_ = 0;
         SetSize(levelWidth, levelHeight, levelDepth, format);
@@ -286,7 +288,8 @@ bool Texture3D::SetData(Image* image, bool useAlpha)
 
             if (i < levels_ - 1)
             {
-                mipImage = image->GetNextLevel(); image = mipImage;
+                mipImage = image->GetNextLevel();
+                image = mipImage;
                 levelData = image->GetData();
                 levelWidth = image->GetWidth();
                 levelHeight = image->GetHeight();
@@ -312,7 +315,8 @@ bool Texture3D::SetData(Image* image, bool useAlpha)
         unsigned mipsToSkip = mipsToSkip_[quality];
         if (mipsToSkip >= levels)
             mipsToSkip = levels - 1;
-        while (mipsToSkip && (width / (1 << mipsToSkip) < 4 || height / (1 << mipsToSkip) < 4 || depth / (1 << mipsToSkip) < 4))
+        while (mipsToSkip &&
+               (width / (1 << mipsToSkip) < 4 || height / (1 << mipsToSkip) < 4 || depth / (1 << mipsToSkip) < 4))
             --mipsToSkip;
         width /= (1 << mipsToSkip);
         height /= (1 << mipsToSkip);
@@ -408,7 +412,8 @@ bool Texture3D::GetData(unsigned level, void* dest) const
         {
             for (int i = 0; i < height; ++i)
             {
-                unsigned char* src = (unsigned char*)d3dLockedBox.pBits + (k * d3dLockedBox.SlicePitch) + i * d3dLockedBox.RowPitch;
+                unsigned char* src =
+                    (unsigned char*)d3dLockedBox.pBits + (k * d3dLockedBox.SlicePitch) + i * d3dLockedBox.RowPitch;
                 memcpy(destPtr, src, rowSize);
                 destPtr += rowSize;
             }
@@ -420,7 +425,8 @@ bool Texture3D::GetData(unsigned level, void* dest) const
         {
             for (int i = 0; i < height; ++i)
             {
-                unsigned char* src = (unsigned char*)d3dLockedBox.pBits + (k * d3dLockedBox.SlicePitch) + i * d3dLockedBox.RowPitch;
+                unsigned char* src =
+                    (unsigned char*)d3dLockedBox.pBits + (k * d3dLockedBox.SlicePitch) + i * d3dLockedBox.RowPitch;
                 for (int j = 0; j < levelWidth; ++j)
                 {
                     destPtr[2] = *src++;
@@ -438,7 +444,8 @@ bool Texture3D::GetData(unsigned level, void* dest) const
         {
             for (int i = 0; i < height; ++i)
             {
-                unsigned char* src = (unsigned char*)d3dLockedBox.pBits + (k * d3dLockedBox.SlicePitch) + i * d3dLockedBox.RowPitch;
+                unsigned char* src =
+                    (unsigned char*)d3dLockedBox.pBits + (k * d3dLockedBox.SlicePitch) + i * d3dLockedBox.RowPitch;
                 for (int j = 0; j < levelWidth; ++j)
                 {
                     destPtr[2] = *src++;
@@ -473,16 +480,9 @@ bool Texture3D::Create()
     unsigned d3dUsage = usage_ == TEXTURE_DYNAMIC ? D3DUSAGE_DYNAMIC : 0;
 
     IDirect3DDevice9* device = graphics_->GetImpl()->GetDevice();
-    HRESULT hr = device->CreateVolumeTexture(
-        (UINT)width_,
-        (UINT)height_,
-        (UINT)depth_,
-        requestedLevels_,
-        d3dUsage,
-        (D3DFORMAT)format_,
-        (D3DPOOL)pool,
-        (IDirect3DVolumeTexture9**)&object_,
-        nullptr);
+    HRESULT hr =
+        device->CreateVolumeTexture((UINT)width_, (UINT)height_, (UINT)depth_, requestedLevels_, d3dUsage,
+                                    (D3DFORMAT)format_, (D3DPOOL)pool, (IDirect3DVolumeTexture9**)&object_, nullptr);
     if (FAILED(hr))
     {
         URHO3D_LOGD3DERROR("Could not create texture", hr);
@@ -494,5 +494,4 @@ bool Texture3D::Create()
 
     return true;
 }
-
 }

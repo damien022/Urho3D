@@ -27,7 +27,6 @@
 
 namespace Urho3D
 {
-
 class Component;
 class Node;
 
@@ -51,9 +50,8 @@ public:
 
 private:
     /// Nodes.
-    HashMap<unsigned, WeakPtr<Node> > nodes_;
+    HashMap<unsigned, WeakPtr<Node>> nodes_;
     /// Components.
-    HashMap<unsigned, WeakPtr<Component> > components_;
+    HashMap<unsigned, WeakPtr<Component>> components_;
 };
-
 }

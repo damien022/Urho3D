@@ -29,7 +29,6 @@ typedef struct ik_node_t ik_node_t;
 
 namespace Urho3D
 {
-
 class Context;
 class IKSolver;
 
@@ -38,7 +37,6 @@ class URHO3D_API IKEffector : public Component
     URHO3D_OBJECT(IKEffector, Component)
 
 public:
-
     enum Feature
     {
 
@@ -121,9 +119,11 @@ public:
     /// Required for the editor, sets the target rotation in euler angles
     void SetTargetRotationEuler(const Vector3& targetRotation);
 
-    /// Returns the number of segments that will be affected by this effector. 0 Means all nodes between this effector and the next IKSolver.
+    /// Returns the number of segments that will be affected by this effector. 0 Means all nodes between this effector
+    /// and the next IKSolver.
     unsigned GetChainLength() const;
-    /// Sets the number of segments that will be affected. 0 Means all nodes between this effector and the next IKSolver.
+    /// Sets the number of segments that will be affected. 0 Means all nodes between this effector and the next
+    /// IKSolver.
     void SetChainLength(unsigned chainLength);
 
     /// How strongly the effector affects the solution.
@@ -179,7 +179,8 @@ private:
     void UpdateTargetNodePosition();
 
 public:
-    /// Need these wrapper functions flags of GetFeature/SetFeature can be correctly exposed to the editor and to AngelScript and lua
+    /// Need these wrapper functions flags of GetFeature/SetFeature can be correctly exposed to the editor and to
+    /// AngelScript and lua
     bool GetWEIGHT_NLERP() const;
     bool GetINHERIT_PARENT_ROTATION() const;
     void SetWEIGHT_NLERP(bool enable);

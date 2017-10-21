@@ -39,7 +39,6 @@
 
 namespace Urho3D
 {
-
 static bool CompareEntries(const FileSelectorEntry& lhs, const FileSelectorEntry& rhs)
 {
     if (lhs.directory_ && !rhs.directory_)
@@ -49,10 +48,10 @@ static bool CompareEntries(const FileSelectorEntry& lhs, const FileSelectorEntry
     return lhs.name_.Compare(rhs.name_, false) < 0;
 }
 
-FileSelector::FileSelector(Context* context) :
-    Object(context),
-    directoryMode_(false),
-    ignoreEvents_(false)
+FileSelector::FileSelector(Context* context)
+    : Object(context)
+    , directoryMode_(false)
+    , ignoreEvents_(false)
 {
     window_ = new Window(context_);
     window_->SetLayout(LM_VERTICAL);
@@ -130,15 +129,9 @@ FileSelector::FileSelector(Context* context) :
     SubscribeToEvent(window_, E_MODALCHANGED, URHO3D_HANDLER(FileSelector, HandleCancelPressed));
 }
 
-FileSelector::~FileSelector()
-{
-    window_->Remove();
-}
+FileSelector::~FileSelector() { window_->Remove(); }
 
-void FileSelector::RegisterObject(Context* context)
-{
-    context->RegisterFactory<FileSelector>();
-}
+void FileSelector::RegisterObject(Context* context) { context->RegisterFactory<FileSelector>(); }
 
 void FileSelector::SetDefaultStyle(XMLFile* style)
 {
@@ -168,21 +161,18 @@ void FileSelector::SetDefaultStyle(XMLFile* style)
     okButton_->SetStyle("FileSelectorButton");
     cancelButton_->SetStyle("FileSelectorButton");
 
-    const Vector<SharedPtr<UIElement> >& filterTexts = filterList_->GetListView()->GetContentElement()->GetChildren();
+    const Vector<SharedPtr<UIElement>>& filterTexts = filterList_->GetListView()->GetContentElement()->GetChildren();
     for (unsigned i = 0; i < filterTexts.Size(); ++i)
         filterTexts[i]->SetStyle("FileSelectorFilterText");
 
-    const Vector<SharedPtr<UIElement> >& listTexts = fileList_->GetContentElement()->GetChildren();
+    const Vector<SharedPtr<UIElement>>& listTexts = fileList_->GetContentElement()->GetChildren();
     for (unsigned i = 0; i < listTexts.Size(); ++i)
         listTexts[i]->SetStyle("FileSelectorListText");
 
     UpdateElements();
 }
 
-void FileSelector::SetTitle(const String& text)
-{
-    titleText_->SetText(text);
-}
+void FileSelector::SetTitle(const String& text) { titleText_->SetText(text); }
 
 void FileSelector::SetButtonTexts(const String& okText, const String& cancelText)
 {
@@ -207,10 +197,7 @@ void FileSelector::SetPath(const String& path)
     }
 }
 
-void FileSelector::SetFileName(const String& fileName)
-{
-    SetLineEditText(fileNameEdit_, fileName);
-}
+void FileSelector::SetFileName(const String& fileName) { SetLineEditText(fileNameEdit_, fileName); }
 
 void FileSelector::SetFilters(const Vector<String>& filters, unsigned defaultIndex)
 {
@@ -238,30 +225,18 @@ void FileSelector::SetFilters(const Vector<String>& filters, unsigned defaultInd
         RefreshFiles();
 }
 
-void FileSelector::SetDirectoryMode(bool enable)
-{
-    directoryMode_ = enable;
-}
+void FileSelector::SetDirectoryMode(bool enable) { directoryMode_ = enable; }
 
 void FileSelector::UpdateElements()
 {
     buttonLayout_->SetFixedHeight(Max(okButton_->GetHeight(), cancelButton_->GetHeight()));
 }
 
-XMLFile* FileSelector::GetDefaultStyle() const
-{
-    return window_->GetDefaultStyle(false);
-}
+XMLFile* FileSelector::GetDefaultStyle() const { return window_->GetDefaultStyle(false); }
 
-const String& FileSelector::GetTitle() const
-{
-    return titleText_->GetText();
-}
+const String& FileSelector::GetTitle() const { return titleText_->GetText(); }
 
-const String& FileSelector::GetFileName() const
-{
-    return fileNameEdit_->GetText();
-}
+const String& FileSelector::GetFileName() const { return fileNameEdit_->GetText(); }
 
 const String& FileSelector::GetFilter() const
 {
@@ -272,10 +247,7 @@ const String& FileSelector::GetFilter() const
         return String::EMPTY;
 }
 
-unsigned FileSelector::GetFilterIndex() const
-{
-    return filterList_->GetSelection();
-}
+unsigned FileSelector::GetFilterIndex() const { return filterList_->GetSelection(); }
 
 void FileSelector::SetLineEditText(LineEdit* edit, const String& text)
 {
@@ -487,5 +459,4 @@ void FileSelector::HandleCancelPressed(StringHash eventType, VariantMap& eventDa
     newEventData[P_OK] = false;
     SendEvent(E_FILESELECTED, newEventData);
 }
-
 }

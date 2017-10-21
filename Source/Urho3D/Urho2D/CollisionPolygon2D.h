@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// 2D polygon collision component.
 class URHO3D_API CollisionPolygon2D : public CollisionShape2D
 {
@@ -51,7 +50,10 @@ public:
     unsigned GetVertexCount() const { return vertices_.Size(); }
 
     /// Return vertex.
-    const Vector2& GetVertex(unsigned index) const { return (index < vertices_.Size()) ? vertices_[index] : Vector2::ZERO; }
+    const Vector2& GetVertex(unsigned index) const
+    {
+        return (index < vertices_.Size()) ? vertices_[index] : Vector2::ZERO;
+    }
 
     /// Return vertices.
     const PODVector<Vector2>& GetVertices() const { return vertices_; }
@@ -72,5 +74,4 @@ private:
     /// Vertices.
     PODVector<Vector2> vertices_;
 };
-
 }

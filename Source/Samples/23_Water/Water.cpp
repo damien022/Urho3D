@@ -28,15 +28,15 @@
 #include <Urho3D/Graphics/Material.h>
 #include <Urho3D/Graphics/Model.h>
 #include <Urho3D/Graphics/Octree.h>
-#include <Urho3D/Graphics/Renderer.h>
 #include <Urho3D/Graphics/RenderSurface.h>
+#include <Urho3D/Graphics/Renderer.h>
 #include <Urho3D/Graphics/Skybox.h>
 #include <Urho3D/Graphics/Terrain.h>
 #include <Urho3D/Graphics/Texture2D.h>
 #include <Urho3D/Graphics/Zone.h>
-#include <Urho3D/Input/Input.h>
 #include <Urho3D/IO/File.h>
 #include <Urho3D/IO/FileSystem.h>
+#include <Urho3D/Input/Input.h>
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Scene/Scene.h>
 #include <Urho3D/UI/Font.h>
@@ -49,8 +49,8 @@
 
 URHO3D_DEFINE_APPLICATION_MAIN(Water)
 
-Water::Water(Context* context) :
-    Sample(context)
+Water::Water(Context* context)
+    : Sample(context)
 {
 }
 
@@ -105,9 +105,9 @@ void Water::CreateScene()
     // Apply slightly overbright lighting to match the skybox
     light->SetColor(Color(1.2f, 1.2f, 1.2f));
 
-    // Create skybox. The Skybox component is used like StaticModel, but it will be always located at the camera, giving the
-    // illusion of the box planes being far away. Use just the ordinary Box model and a suitable material, whose shader will
-    // generate the necessary 3D texture coordinates for cube mapping
+    // Create skybox. The Skybox component is used like StaticModel, but it will be always located at the camera, giving
+    // the illusion of the box planes being far away. Use just the ordinary Box model and a suitable material, whose
+    // shader will generate the necessary 3D texture coordinates for cube mapping
     Node* skyNode = scene_->CreateChild("Sky");
     skyNode->SetScale(500.0f); // The scale actually does not matter
     Skybox* skybox = skyNode->CreateComponent<Skybox>();
@@ -119,7 +119,8 @@ void Water::CreateScene()
     terrainNode->SetPosition(Vector3(0.0f, 0.0f, 0.0f));
     Terrain* terrain = terrainNode->CreateComponent<Terrain>();
     terrain->SetPatchSize(64);
-    terrain->SetSpacing(Vector3(2.0f, 0.5f, 2.0f)); // Spacing between vertices and vertical resolution of the height map
+    terrain->SetSpacing(
+        Vector3(2.0f, 0.5f, 2.0f)); // Spacing between vertices and vertical resolution of the height map
     terrain->SetSmoothing(true);
     terrain->SetHeightMap(cache->GetResource<Image>("Textures/HeightMap.png"));
     terrain->SetMaterial(cache->GetResource<Material>("Materials/Terrain.xml"));
@@ -193,9 +194,10 @@ void Water::SetupViewport()
 
     // Create a mathematical plane to represent the water in calculations
     waterPlane_ = Plane(waterNode_->GetWorldRotation() * Vector3(0.0f, 1.0f, 0.0f), waterNode_->GetWorldPosition());
-    // Create a downward biased plane for reflection view clipping. Biasing is necessary to avoid too aggressive clipping
-    waterClipPlane_ = Plane(waterNode_->GetWorldRotation() * Vector3(0.0f, 1.0f, 0.0f), waterNode_->GetWorldPosition() -
-        Vector3(0.0f, 0.1f, 0.0f));
+    // Create a downward biased plane for reflection view clipping. Biasing is necessary to avoid too aggressive
+    // clipping
+    waterClipPlane_ = Plane(waterNode_->GetWorldRotation() * Vector3(0.0f, 1.0f, 0.0f),
+                            waterNode_->GetWorldPosition() - Vector3(0.0f, 0.1f, 0.0f));
 
     // Create camera for water reflection
     // It will have the same farclip and position as the main viewport camera, but uses a reflection plane to modify
@@ -212,7 +214,7 @@ void Water::SetupViewport()
     // The water reflection texture is rectangular. Set reflection camera aspect ratio to match
     reflectionCamera->SetAspectRatio((float)graphics->GetWidth() / (float)graphics->GetHeight());
     // View override flags could be used to optimize reflection rendering. For example disable shadows
-    //reflectionCamera->SetViewOverrideFlags(VO_DISABLE_SHADOWS);
+    // reflectionCamera->SetViewOverrideFlags(VO_DISABLE_SHADOWS);
 
     // Create a texture and setup viewport for water reflection. Assign the reflection texture to the diffuse
     // texture unit of the water material

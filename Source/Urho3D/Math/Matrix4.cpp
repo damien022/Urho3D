@@ -31,35 +31,23 @@
 
 namespace Urho3D
 {
-
-const Matrix4 Matrix4::ZERO(
-    0.0f, 0.0f, 0.0f, 0.0f,
-    0.0f, 0.0f, 0.0f, 0.0f,
-    0.0f, 0.0f, 0.0f, 0.0f,
-    0.0f, 0.0f, 0.0f, 0.0f);
+const Matrix4 Matrix4::ZERO(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+                            0.0f);
 
 const Matrix4 Matrix4::IDENTITY;
 
-Matrix4 Matrix4::operator *(const Matrix3x4& rhs) const
+Matrix4 Matrix4::operator*(const Matrix3x4& rhs) const
 {
     return Matrix4(
-        m00_ * rhs.m00_ + m01_ * rhs.m10_ + m02_ * rhs.m20_,
-        m00_ * rhs.m01_ + m01_ * rhs.m11_ + m02_ * rhs.m21_,
-        m00_ * rhs.m02_ + m01_ * rhs.m12_ + m02_ * rhs.m22_,
-        m00_ * rhs.m03_ + m01_ * rhs.m13_ + m02_ * rhs.m23_ + m03_,
-        m10_ * rhs.m00_ + m11_ * rhs.m10_ + m12_ * rhs.m20_,
-        m10_ * rhs.m01_ + m11_ * rhs.m11_ + m12_ * rhs.m21_,
-        m10_ * rhs.m02_ + m11_ * rhs.m12_ + m12_ * rhs.m22_,
-        m10_ * rhs.m03_ + m11_ * rhs.m13_ + m12_ * rhs.m23_ + m13_,
-        m20_ * rhs.m00_ + m21_ * rhs.m10_ + m22_ * rhs.m20_,
-        m20_ * rhs.m01_ + m21_ * rhs.m11_ + m22_ * rhs.m21_,
-        m20_ * rhs.m02_ + m21_ * rhs.m12_ + m22_ * rhs.m22_,
-        m20_ * rhs.m03_ + m21_ * rhs.m13_ + m22_ * rhs.m23_ + m23_,
-        m30_ * rhs.m00_ + m31_ * rhs.m10_ + m32_ * rhs.m20_,
-        m30_ * rhs.m01_ + m31_ * rhs.m11_ + m32_ * rhs.m21_,
+        m00_ * rhs.m00_ + m01_ * rhs.m10_ + m02_ * rhs.m20_, m00_ * rhs.m01_ + m01_ * rhs.m11_ + m02_ * rhs.m21_,
+        m00_ * rhs.m02_ + m01_ * rhs.m12_ + m02_ * rhs.m22_, m00_ * rhs.m03_ + m01_ * rhs.m13_ + m02_ * rhs.m23_ + m03_,
+        m10_ * rhs.m00_ + m11_ * rhs.m10_ + m12_ * rhs.m20_, m10_ * rhs.m01_ + m11_ * rhs.m11_ + m12_ * rhs.m21_,
+        m10_ * rhs.m02_ + m11_ * rhs.m12_ + m12_ * rhs.m22_, m10_ * rhs.m03_ + m11_ * rhs.m13_ + m12_ * rhs.m23_ + m13_,
+        m20_ * rhs.m00_ + m21_ * rhs.m10_ + m22_ * rhs.m20_, m20_ * rhs.m01_ + m21_ * rhs.m11_ + m22_ * rhs.m21_,
+        m20_ * rhs.m02_ + m21_ * rhs.m12_ + m22_ * rhs.m22_, m20_ * rhs.m03_ + m21_ * rhs.m13_ + m22_ * rhs.m23_ + m23_,
+        m30_ * rhs.m00_ + m31_ * rhs.m10_ + m32_ * rhs.m20_, m30_ * rhs.m01_ + m31_ * rhs.m11_ + m32_ * rhs.m21_,
         m30_ * rhs.m02_ + m31_ * rhs.m12_ + m32_ * rhs.m22_,
-        m30_ * rhs.m03_ + m31_ * rhs.m13_ + m32_ * rhs.m23_ + m33_
-    );
+        m30_ * rhs.m03_ + m31_ * rhs.m13_ + m32_ * rhs.m23_ + m33_);
 }
 
 void Matrix4::Decompose(Vector3& translation, Quaternion& rotation, Vector3& scale) const
@@ -126,19 +114,14 @@ Matrix4 Matrix4::Inverse() const
     float i23 = -(v4 * m00_ - v2 * m01_ + v0 * m03_) * invDet;
     float i33 = (v3 * m00_ - v1 * m01_ + v0 * m02_) * invDet;
 
-    return Matrix4(
-        i00, i01, i02, i03,
-        i10, i11, i12, i13,
-        i20, i21, i22, i23,
-        i30, i31, i32, i33);
+    return Matrix4(i00, i01, i02, i03, i10, i11, i12, i13, i20, i21, i22, i23, i30, i31, i32, i33);
 }
 
 String Matrix4::ToString() const
 {
     char tempBuffer[MATRIX_CONVERSION_BUFFER_LENGTH];
-    sprintf(tempBuffer, "%g %g %g %g %g %g %g %g %g %g %g %g %g %g %g %g", m00_, m01_, m02_, m03_, m10_, m11_, m12_, m13_, m20_,
-        m21_, m22_, m23_, m30_, m31_, m32_, m33_);
+    sprintf(tempBuffer, "%g %g %g %g %g %g %g %g %g %g %g %g %g %g %g %g", m00_, m01_, m02_, m03_, m10_, m11_, m12_,
+            m13_, m20_, m21_, m22_, m23_, m30_, m31_, m32_, m33_);
     return String(tempBuffer);
 }
-
 }

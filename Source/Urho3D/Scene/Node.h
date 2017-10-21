@@ -28,7 +28,6 @@
 
 namespace Urho3D
 {
-
 class Component;
 class Connection;
 class Node;
@@ -99,7 +98,8 @@ public:
     /// Apply attribute changes that can not be applied immediately recursively to child nodes and components.
     virtual void ApplyAttributes() override;
 
-    /// Return whether should save default-valued attributes into XML. Always save node transforms for readability, even if identity.
+    /// Return whether should save default-valued attributes into XML. Always save node transforms for readability, even
+    /// if identity.
     virtual bool SaveDefaultAttributes() const override { return true; }
 
     /// Mark for attribute check on the next network update.
@@ -127,7 +127,8 @@ public:
     /// Remove all tags.
     void RemoveAllTags();
 
-    /// Set position in parent space. If the scene node is on the root level (is child of the scene itself), this is same as world space.
+    /// Set position in parent space. If the scene node is on the root level (is child of the scene itself), this is
+    /// same as world space.
     void SetPosition(const Vector3& position);
 
     /// Set position in parent space (for Urho2D).
@@ -155,7 +156,8 @@ public:
     /// Set scale in parent space (for Urho2D).
     void SetScale2D(float x, float y) { SetScale(Vector3(x, y, 1.0f)); }
 
-    /// Set both position and rotation in parent space as an atomic operation. This is faster than setting position and rotation separately.
+    /// Set both position and rotation in parent space as an atomic operation. This is faster than setting position and
+    /// rotation separately.
     void SetTransform(const Vector3& position, const Quaternion& rotation);
     /// Set both position, rotation and uniform scale in parent space as an atomic operation.
     void SetTransform(const Vector3& position, const Quaternion& rotation, float scale);
@@ -165,7 +167,10 @@ public:
     void SetTransform(const Matrix3x4& matrix);
 
     /// Set both position and rotation in parent space as an atomic operation (for Urho2D).
-    void SetTransform2D(const Vector2& position, float rotation) { SetTransform(Vector3(position), Quaternion(rotation)); }
+    void SetTransform2D(const Vector2& position, float rotation)
+    {
+        SetTransform(Vector3(position), Quaternion(rotation));
+    }
 
     /// Set both position, rotation and uniform scale in parent space as an atomic operation (for Urho2D).
     void SetTransform2D(const Vector2& position, float rotation, float scale)
@@ -259,7 +264,9 @@ public:
     void Yaw(float angle, TransformSpace space = TS_LOCAL);
     /// Rotate around the Z axis.
     void Roll(float angle, TransformSpace space = TS_LOCAL);
-    /// Look at a target position in the chosen transform space. Note that the up vector is always specified in world space. Return true if successful, or false if resulted in an illegal rotation, in which case the current rotation remains.
+    /// Look at a target position in the chosen transform space. Note that the up vector is always specified in world
+    /// space. Return true if successful, or false if resulted in an illegal rotation, in which case the current
+    /// rotation remains.
     bool LookAt(const Vector3& target, const Vector3& up = Vector3::UP, TransformSpace space = TS_WORLD);
     /// Modify scale in parent space uniformly.
     void Scale(float scale);
@@ -269,23 +276,28 @@ public:
     /// Modify scale in parent space (for Urho2D).
     void Scale2D(const Vector2& scale) { Scale(Vector3(scale, 1.0f)); }
 
-    /// Set enabled/disabled state without recursion. Components in a disabled node become effectively disabled regardless of their own enable/disable state.
+    /// Set enabled/disabled state without recursion. Components in a disabled node become effectively disabled
+    /// regardless of their own enable/disable state.
     void SetEnabled(bool enable);
-    /// Set enabled state on self and child nodes. Nodes' own enabled state is remembered (IsEnabledSelf) and can be restored.
+    /// Set enabled state on self and child nodes. Nodes' own enabled state is remembered (IsEnabledSelf) and can be
+    /// restored.
     void SetDeepEnabled(bool enable);
     /// Reset enabled state to the node's remembered state prior to calling SetDeepEnabled.
     void ResetDeepEnabled();
-    /// Set enabled state on self and child nodes. Unlike SetDeepEnabled this does not remember the nodes' own enabled state, but overwrites it.
+    /// Set enabled state on self and child nodes. Unlike SetDeepEnabled this does not remember the nodes' own enabled
+    /// state, but overwrites it.
     void SetEnabledRecursive(bool enable);
     /// Set owner connection for networking.
     void SetOwner(Connection* owner);
     /// Mark node and child nodes to need world transform recalculation. Notify listener components.
     void MarkDirty();
     /// Create a child scene node (with specified ID if provided).
-    Node* CreateChild(const String& name = String::EMPTY, CreateMode mode = REPLICATED, unsigned id = 0, bool temporary = false);
+    Node* CreateChild(const String& name = String::EMPTY, CreateMode mode = REPLICATED, unsigned id = 0,
+                      bool temporary = false);
     /// Create a temporary child scene node (with specified ID if provided).
     Node* CreateTemporaryChild(const String& name = String::EMPTY, CreateMode mode = REPLICATED, unsigned id = 0);
-    /// Add a child scene node at a specific index. If index is not explicitly specified or is greater than current children size, append the new child at the end.
+    /// Add a child scene node at a specific index. If index is not explicitly specified or is greater than current
+    /// children size, append the new child at the end.
     void AddChild(Node* node, unsigned index = M_MAX_UNSIGNED);
     /// Remove a child scene node.
     void RemoveChild(Node* node);
@@ -299,7 +311,8 @@ public:
     Component* GetOrCreateComponent(StringHash type, CreateMode mode = REPLICATED, unsigned id = 0);
     /// Clone a component from another node using its create mode. Return the clone if successful or null on failure.
     Component* CloneComponent(Component* component, unsigned id = 0);
-    /// Clone a component from another node and specify the create mode. Return the clone if successful or null on failure.
+    /// Clone a component from another node and specify the create mode. Return the clone if successful or null on
+    /// failure.
     Component* CloneComponent(Component* component, CreateMode mode, unsigned id = 0);
     /// Remove a component from this node.
     void RemoveComponent(Component* component);
@@ -361,7 +374,8 @@ public:
     /// Return whether is enabled. Disables nodes effectively disable all their components.
     bool IsEnabled() const { return enabled_; }
 
-    /// Return the node's last own enabled state. May be different than the value returned by IsEnabled when SetDeepEnabled has been used.
+    /// Return the node's last own enabled state. May be different than the value returned by IsEnabled when
+    /// SetDeepEnabled has been used.
     bool IsEnabledSelf() const { return enabledPrev_; }
 
     /// Return owner connection in networking.
@@ -423,10 +437,7 @@ public:
     }
 
     /// Return rotation in world space (for Urho2D).
-    float GetWorldRotation2D() const
-    {
-        return GetWorldRotation().RollAngle();
-    }
+    float GetWorldRotation2D() const { return GetWorldRotation().RollAngle(); }
 
     /// Return direction in world space.
     Vector3 GetWorldDirection() const
@@ -503,7 +514,7 @@ public:
     unsigned GetNumChildren(bool recursive = false) const;
 
     /// Return immediate child scene nodes.
-    const Vector<SharedPtr<Node> >& GetChildren() const { return children_; }
+    const Vector<SharedPtr<Node>>& GetChildren() const { return children_; }
 
     /// Return child scene nodes, optionally recursive.
     void GetChildren(PODVector<Node*>& dest, bool recursive = false) const;
@@ -534,18 +545,19 @@ public:
     unsigned GetNumNetworkComponents() const;
 
     /// Return all components.
-    const Vector<SharedPtr<Component> >& GetComponents() const { return components_; }
+    const Vector<SharedPtr<Component>>& GetComponents() const { return components_; }
 
     /// Return all components of type. Optionally recursive.
     void GetComponents(PODVector<Component*>& dest, StringHash type, bool recursive = false) const;
     /// Return component by type. If there are several, returns the first.
     Component* GetComponent(StringHash type, bool recursive = false) const;
-    /// Return component in parent node. If there are several, returns the first. May optional traverse up to the root node.
+    /// Return component in parent node. If there are several, returns the first. May optional traverse up to the root
+    /// node.
     Component* GetParentComponent(StringHash type, bool fullTraversal = false) const;
     /// Return whether has a specific component.
     bool HasComponent(StringHash type) const;
     /// Return listener components.
-    const Vector<WeakPtr<Component> > GetListeners() const { return listeners_; }
+    const Vector<WeakPtr<Component>> GetListeners() const { return listeners_; }
 
     /// Return a user variable.
     const Variant& GetVar(StringHash key) const;
@@ -555,10 +567,12 @@ public:
 
     /// Return first component derived from class.
     template <class T> T* GetDerivedComponent(bool recursive = false) const;
-    /// Return first component derived from class in the parent node, or if fully traversing then the first node up the tree with one.
+    /// Return first component derived from class in the parent node, or if fully traversing then the first node up the
+    /// tree with one.
     template <class T> T* GetParentDerivedComponent(bool fullTraversal = false) const;
     /// Return components derived from class.
-    template <class T> void GetDerivedComponents(PODVector<T*>& dest, bool recursive = false, bool clearVector = true) const;
+    template <class T>
+    void GetDerivedComponents(PODVector<T*>& dest, bool recursive = false, bool clearVector = true) const;
     /// Template version of returning child nodes with a specific component.
     template <class T> void GetChildrenWithComponent(PODVector<Node*>& dest, bool recursive = false) const;
     /// Template version of returning a component by type.
@@ -590,13 +604,13 @@ public:
     const PODVector<unsigned char>& GetNetParentAttr() const;
     /// Load components and optionally load child nodes.
     bool Load(Deserializer& source, SceneResolver& resolver, bool loadChildren = true, bool rewriteIDs = false,
-        CreateMode mode = REPLICATED);
+              CreateMode mode = REPLICATED);
     /// Load components from XML data and optionally load child nodes.
     bool LoadXML(const XMLElement& source, SceneResolver& resolver, bool loadChildren = true, bool rewriteIDs = false,
-        CreateMode mode = REPLICATED);
+                 CreateMode mode = REPLICATED);
     /// Load components from XML data and optionally load child nodes.
     bool LoadJSON(const JSONValue& source, SceneResolver& resolver, bool loadChildren = true, bool rewriteIDs = false,
-        CreateMode mode = REPLICATED);
+                  CreateMode mode = REPLICATED);
     /// Return the depended on nodes to order network updates.
     const PODVector<Node*>& GetDependencyNodes() const { return impl_->dependencyNodes_; }
 
@@ -608,7 +622,8 @@ public:
     void MarkReplicationDirty();
     /// Create a child node with specific ID.
     Node* CreateChild(unsigned id, CreateMode mode, bool temporary = false);
-    /// Add a pre-created component. Using this function from application code is discouraged, as component operation without an owner node may not be well-defined in all cases. Prefer CreateComponent() instead.
+    /// Add a pre-created component. Using this function from application code is discouraged, as component operation
+    /// without an owner node may not be well-defined in all cases. Prefer CreateComponent() instead.
     void AddComponent(Component* component, unsigned id, CreateMode mode);
     /// Calculate number of non-temporary child nodes.
     unsigned GetNumPersistentChildren() const;
@@ -643,7 +658,7 @@ private:
     /// Recalculate the world transform.
     void UpdateWorldTransform() const;
     /// Remove child node by iterator.
-    void RemoveChild(Vector<SharedPtr<Node> >::Iterator i);
+    void RemoveChild(Vector<SharedPtr<Node>>::Iterator i);
     /// Return child nodes recursively.
     void GetChildrenRecursive(PODVector<Node*>& dest) const;
     /// Return child nodes with a specific component recursively.
@@ -655,7 +670,7 @@ private:
     /// Clone node recursively.
     Node* CloneRecursive(Node* parent, SceneResolver& resolver, CreateMode mode);
     /// Remove a component from this node with the specified iterator.
-    void RemoveComponent(Vector<SharedPtr<Component> >::Iterator i);
+    void RemoveComponent(Vector<SharedPtr<Component>>::Iterator i);
     /// Handle attribute animation update event.
     void HandleAttributeAnimationUpdate(StringHash eventType, VariantMap& eventData);
 
@@ -688,11 +703,11 @@ private:
     /// World-space rotation.
     mutable Quaternion worldRotation_;
     /// Components.
-    Vector<SharedPtr<Component> > components_;
+    Vector<SharedPtr<Component>> components_;
     /// Child scene nodes.
-    Vector<SharedPtr<Node> > children_;
+    Vector<SharedPtr<Node>> children_;
     /// Node listeners.
-    Vector<WeakPtr<Component> > listeners_;
+    Vector<WeakPtr<Component>> listeners_;
     /// Pointer to implementation.
     UniquePtr<NodeImpl> impl_;
 
@@ -720,9 +735,15 @@ template <class T> void Node::GetChildrenWithComponent(PODVector<Node*>& dest, b
     GetChildrenWithComponent(dest, T::GetTypeStatic(), recursive);
 }
 
-template <class T> T* Node::GetComponent(bool recursive) const { return static_cast<T*>(GetComponent(T::GetTypeStatic(), recursive)); }
+template <class T> T* Node::GetComponent(bool recursive) const
+{
+    return static_cast<T*>(GetComponent(T::GetTypeStatic(), recursive));
+}
 
-template <class T> T* Node::GetParentComponent(bool fullTraversal) const { return static_cast<T*>(GetParentComponent(T::GetTypeStatic(), fullTraversal)); }
+template <class T> T* Node::GetParentComponent(bool fullTraversal) const
+{
+    return static_cast<T*>(GetParentComponent(T::GetTypeStatic(), fullTraversal));
+}
 
 template <class T> void Node::GetComponents(PODVector<T*>& dest, bool recursive) const
 {
@@ -733,7 +754,7 @@ template <class T> bool Node::HasComponent() const { return HasComponent(T::GetT
 
 template <class T> T* Node::GetDerivedComponent(bool recursive) const
 {
-    for (Vector<SharedPtr<Component> >::ConstIterator i = components_.Begin(); i != components_.End(); ++i)
+    for (Vector<SharedPtr<Component>>::ConstIterator i = components_.Begin(); i != components_.End(); ++i)
     {
         T* component = dynamic_cast<T*>(i->Get());
         if (component)
@@ -742,7 +763,7 @@ template <class T> T* Node::GetDerivedComponent(bool recursive) const
 
     if (recursive)
     {
-        for (Vector<SharedPtr<Node> >::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
+        for (Vector<SharedPtr<Node>>::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
         {
             T* component = (*i)->GetDerivedComponent<T>(true);
             if (component)
@@ -775,7 +796,7 @@ template <class T> void Node::GetDerivedComponents(PODVector<T*>& dest, bool rec
     if (clearVector)
         dest.Clear();
 
-    for (Vector<SharedPtr<Component> >::ConstIterator i = components_.Begin(); i != components_.End(); ++i)
+    for (Vector<SharedPtr<Component>>::ConstIterator i = components_.Begin(); i != components_.End(); ++i)
     {
         T* component = dynamic_cast<T*>(i->Get());
         if (component)
@@ -784,9 +805,8 @@ template <class T> void Node::GetDerivedComponents(PODVector<T*>& dest, bool rec
 
     if (recursive)
     {
-        for (Vector<SharedPtr<Node> >::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
+        for (Vector<SharedPtr<Node>>::ConstIterator i = children_.Begin(); i != children_.End(); ++i)
             (*i)->GetDerivedComponents<T>(dest, true, false);
     }
 }
-
 }

@@ -30,7 +30,6 @@
 
 namespace Urho3D
 {
-
 class AudioImpl;
 class Sound;
 class SoundListener;
@@ -49,7 +48,8 @@ public:
 
     /// Initialize sound output with specified buffer length and output mode.
     bool SetMode(int bufferLengthMSec, int mixRate, bool stereo, bool interpolation = true);
-    /// Run update on sound sources. Not required for continued playback, but frees unused sound sources & sounds and updates 3D positions.
+    /// Run update on sound sources. Not required for continued playback, but frees unused sound sources & sounds and
+    /// updates 3D positions.
     void Update(float timeStep);
     /// Restart sound output.
     bool Play();
@@ -57,7 +57,8 @@ public:
     void Stop();
     /// Set master gain on a specific sound type such as sound effects, music or voice.
     void SetMasterGain(const String& type, float gain);
-    /// Pause playback of specific sound type. This allows to suspend e.g. sound effects or voice when the game is paused. By default all sound types are unpaused.
+    /// Pause playback of specific sound type. This allows to suspend e.g. sound effects or voice when the game is
+    /// paused. By default all sound types are unpaused.
     void PauseSoundType(const String& type);
     /// Resume playback of specific sound type.
     void ResumeSoundType(const String& type);
@@ -159,5 +160,4 @@ private:
 
 /// Register Audio library objects.
 void URHO3D_API RegisterAudioLibrary(Context* context);
-
 }

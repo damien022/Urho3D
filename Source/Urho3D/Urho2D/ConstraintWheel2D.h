@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// 2D wheel constraint component.
 class URHO3D_API ConstraintWheel2D : public Constraint2D
 {
@@ -87,5 +86,4 @@ private:
     /// Axis.
     Vector2 axis_;
 };
-
 }

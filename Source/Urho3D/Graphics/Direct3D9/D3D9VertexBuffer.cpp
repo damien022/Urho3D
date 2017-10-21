@@ -31,7 +31,6 @@
 
 namespace Urho3D
 {
-
 void VertexBuffer::OnDeviceLost()
 {
     // Dynamic buffers are in the default pool and need to be released on device loss
@@ -225,7 +224,8 @@ void VertexBuffer::Unlock()
         lockState_ = LOCK_NONE;
         break;
 
-    default: break;
+    default:
+        break;
     }
 }
 
@@ -248,13 +248,8 @@ bool VertexBuffer::Create()
         unsigned d3dUsage = dynamic_ ? D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY : 0;
 
         IDirect3DDevice9* device = graphics_->GetImpl()->GetDevice();
-        HRESULT hr = device->CreateVertexBuffer(
-            vertexCount_ * vertexSize_,
-            d3dUsage,
-            0,
-            (D3DPOOL)pool,
-            (IDirect3DVertexBuffer9**)&object_.ptr_,
-            nullptr);
+        HRESULT hr = device->CreateVertexBuffer(vertexCount_ * vertexSize_, d3dUsage, 0, (D3DPOOL)pool,
+                                                (IDirect3DVertexBuffer9**)&object_.ptr_, nullptr);
         if (FAILED(hr))
         {
             URHO3D_SAFE_RELEASE(object_.ptr_);
@@ -285,7 +280,8 @@ void* VertexBuffer::MapBuffer(unsigned start, unsigned count, bool discard)
         if (discard && dynamic_)
             flags = D3DLOCK_DISCARD;
 
-        HRESULT hr = ((IDirect3DVertexBuffer9*)object_.ptr_)->Lock(start * vertexSize_, count * vertexSize_, &hwData, flags);
+        HRESULT hr =
+            ((IDirect3DVertexBuffer9*)object_.ptr_)->Lock(start * vertexSize_, count * vertexSize_, &hwData, flags);
         if (FAILED(hr))
             URHO3D_LOGD3DERROR("Could not lock vertex buffer", hr);
         else
@@ -303,5 +299,4 @@ void VertexBuffer::UnmapBuffer()
         lockState_ = LOCK_NONE;
     }
 }
-
 }

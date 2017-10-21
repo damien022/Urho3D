@@ -20,13 +20,12 @@
 // THE SOFTWARE.
 //
 
-#include "../Precompiled.h"
 #include "../Core/Profiler.h"
 #include "../Core/StringUtils.h"
+#include "../Precompiled.h"
 
 namespace Urho3D
 {
-
 Profiler::Profiler(Context* context)
     : Object(context)
 {
@@ -36,9 +35,7 @@ Profiler::Profiler(Context* context)
 #endif
 }
 
-Profiler::~Profiler()
-{
-}
+Profiler::~Profiler() {}
 
 void Profiler::SetEnabled(bool enabled)
 {
@@ -125,10 +122,7 @@ void Profiler::SetEventProfilingEnabled(bool enabled)
 #endif
 }
 
-bool Profiler::GetEventProfilingEnabled() const
-{
-    return enableEventProfiling_;
-}
+bool Profiler::GetEventProfilingEnabled() const { return enableEventProfiling_; }
 
 void Profiler::BeginBlock(const char* name, const char* file, int line, unsigned int argb, unsigned char status)
 {
@@ -156,5 +150,4 @@ void Profiler::EndBlock()
     ::profiler::endBlock();
 #endif
 }
-
 }

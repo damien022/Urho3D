@@ -30,7 +30,6 @@
 
 namespace Urho3D
 {
-
 /// Frustum planes.
 enum FrustumPlane
 {
@@ -55,11 +54,11 @@ public:
     Frustum(const Frustum& frustum);
 
     /// Assign from another frustum.
-    Frustum& operator =(const Frustum& rhs);
+    Frustum& operator=(const Frustum& rhs);
 
     /// Define with projection parameters and a transform matrix.
-    void
-        Define(float fov, float aspectRatio, float zoom, float nearZ, float farZ, const Matrix3x4& transform = Matrix3x4::IDENTITY);
+    void Define(float fov, float aspectRatio, float zoom, float nearZ, float farZ,
+                const Matrix3x4& transform = Matrix3x4::IDENTITY);
     /// Define with near and far dimension vectors and a transform matrix.
     void Define(const Vector3& near, const Vector3& far, const Matrix3x4& transform = Matrix3x4::IDENTITY);
     /// Define with a bounding box and a transform matrix.
@@ -67,8 +66,8 @@ public:
     /// Define from a projection or view-projection matrix.
     void Define(const Matrix4& projection);
     /// Define with orthographic projection parameters and a transform matrix.
-    void DefineOrtho
-        (float orthoSize, float aspectRatio, float zoom, float nearZ, float farZ, const Matrix3x4& transform = Matrix3x4::IDENTITY);
+    void DefineOrtho(float orthoSize, float aspectRatio, float zoom, float nearZ, float farZ,
+                     const Matrix3x4& transform = Matrix3x4::IDENTITY);
     /// Define a split (limited) frustum from a projection matrix, with near & far distances specified.
     void DefineSplit(const Matrix4& projection, float near, float far);
     /// Transform by a 3x3 matrix.
@@ -182,5 +181,4 @@ public:
     /// Frustum vertices.
     Vector3 vertices_[NUM_FRUSTUM_VERTICES];
 };
-
 }

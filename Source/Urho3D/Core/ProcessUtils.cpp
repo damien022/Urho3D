@@ -42,22 +42,22 @@ extern "C" unsigned SDL_TVOS_GetActiveProcessorCount();
 #endif
 
 #if defined(_WIN32)
-#include <windows.h>
 #include <io.h>
+#include <windows.h>
 #if defined(_MSC_VER)
+#include <Lmcons.h> // For UNLEN.
 #include <float.h>
-#include <Lmcons.h> // For UNLEN. 
 #elif defined(__MINGW32__)
-#include <lmcons.h> // For UNLEN. Apparently MSVC defines "<Lmcons.h>" (with an upperscore 'L' but MinGW uses an underscore 'l'). 
-#include <ntdef.h> 
+#include <lmcons.h> // For UNLEN. Apparently MSVC defines "<Lmcons.h>" (with an upperscore 'L' but MinGW uses an underscore 'l').
+#include <ntdef.h>
 #endif
-#elif defined(__linux__) && !defined(__ANDROID__) 
-#include <pwd.h> 
+#elif defined(__linux__) && !defined(__ANDROID__)
+#include <pwd.h>
 #include <sys/sysinfo.h>
 #include <sys/utsname.h>
 #elif defined(__APPLE__)
+#include <SystemConfiguration/SystemConfiguration.h> // For the detection functions inside GetLoginName().
 #include <sys/sysctl.h>
-#include <SystemConfiguration/SystemConfiguration.h> // For the detection functions inside GetLoginName(). 
 #endif
 #ifndef _WIN32
 #include <unistd.h>
@@ -70,27 +70,24 @@ extern "C" unsigned SDL_TVOS_GetActiveProcessorCount();
 #if defined(__i386__)
 // From http://stereopsis.com/FPU.html
 
-#define FPU_CW_PREC_MASK        0x0300
-#define FPU_CW_PREC_SINGLE      0x0000
-#define FPU_CW_PREC_DOUBLE      0x0200
-#define FPU_CW_PREC_EXTENDED    0x0300
-#define FPU_CW_ROUND_MASK       0x0c00
-#define FPU_CW_ROUND_NEAR       0x0000
-#define FPU_CW_ROUND_DOWN       0x0400
-#define FPU_CW_ROUND_UP         0x0800
-#define FPU_CW_ROUND_CHOP       0x0c00
+#define FPU_CW_PREC_MASK 0x0300
+#define FPU_CW_PREC_SINGLE 0x0000
+#define FPU_CW_PREC_DOUBLE 0x0200
+#define FPU_CW_PREC_EXTENDED 0x0300
+#define FPU_CW_ROUND_MASK 0x0c00
+#define FPU_CW_ROUND_NEAR 0x0000
+#define FPU_CW_ROUND_DOWN 0x0400
+#define FPU_CW_ROUND_UP 0x0800
+#define FPU_CW_ROUND_CHOP 0x0c00
 
 inline unsigned GetFPUState()
 {
     unsigned control = 0;
-    __asm__ __volatile__ ("fnstcw %0" : "=m" (control));
+    __asm__ __volatile__("fnstcw %0" : "=m"(control));
     return control;
 }
 
-inline void SetFPUState(unsigned control)
-{
-    __asm__ __volatile__ ("fldcw %0" : : "m" (control));
-}
+inline void SetFPUState(unsigned control) { __asm__ __volatile__("fldcw %0" : : "m"(control)); }
 #endif
 
 #ifndef MINI_URHO
@@ -101,7 +98,6 @@ inline void SetFPUState(unsigned control)
 
 namespace Urho3D
 {
-
 #ifdef _WIN32
 static bool consoleOpened = false;
 #endif
@@ -172,8 +168,8 @@ static void GetCPUData(struct cpu_id_t* data)
 
 void InitFPU()
 {
-    // Make sure FPU is in round-to-nearest, single precision mode
-    // This ensures Direct3D and OpenGL behave similarly, and all threads behave similarly
+// Make sure FPU is in round-to-nearest, single precision mode
+// This ensures Direct3D and OpenGL behave similarly, and all threads behave similarly
 #if defined(_MSC_VER) && defined(_M_IX86)
     _controlfp(_RC_NEAR | _PC_24, _MCW_RC | _MCW_PC);
 #elif defined(__i386__)
@@ -238,10 +234,7 @@ void PrintUnicode(const String& str, bool error)
 #endif
 }
 
-void PrintUnicodeLine(const String& str, bool error)
-{
-    PrintUnicode(str + "\n", error);
-}
+void PrintUnicodeLine(const String& str, bool error) { PrintUnicode(str + "\n", error); }
 
 void PrintLine(const String& str, bool error)
 {
@@ -297,20 +290,11 @@ const Vector<String>& ParseArguments(const String& cmdLine, bool skipFirstArgume
     return arguments;
 }
 
-const Vector<String>& ParseArguments(const char* cmdLine)
-{
-    return ParseArguments(String(cmdLine));
-}
+const Vector<String>& ParseArguments(const char* cmdLine) { return ParseArguments(String(cmdLine)); }
 
-const Vector<String>& ParseArguments(const WString& cmdLine)
-{
-    return ParseArguments(String(cmdLine));
-}
+const Vector<String>& ParseArguments(const WString& cmdLine) { return ParseArguments(String(cmdLine)); }
 
-const Vector<String>& ParseArguments(const wchar_t* cmdLine)
-{
-    return ParseArguments(String(cmdLine));
-}
+const Vector<String>& ParseArguments(const wchar_t* cmdLine) { return ParseArguments(String(cmdLine)); }
 
 const Vector<String>& ParseArguments(int argc, char** argv)
 {
@@ -322,10 +306,7 @@ const Vector<String>& ParseArguments(int argc, char** argv)
     return ParseArguments(cmdLine);
 }
 
-const Vector<String>& GetArguments()
-{
-    return arguments;
-}
+const Vector<String>& GetArguments() { return arguments; }
 
 String GetConsoleInput()
 {
@@ -490,10 +471,7 @@ unsigned GetNumLogicalCPUs()
 #endif
 }
 
-void SetMiniDumpDir(const String& pathName)
-{
-    miniDumpDir = AddTrailingSlash(pathName);
-}
+void SetMiniDumpDir(const String& pathName) { miniDumpDir = AddTrailingSlash(pathName); }
 
 String GetMiniDumpDir()
 {
@@ -518,16 +496,16 @@ unsigned long long GetTotalMemory()
 #if defined(__linux__) && !defined(__ANDROID__)
     struct sysinfo s;
     if (sysinfo(&s) != -1)
-        return s.totalram; 
+        return s.totalram;
 #elif defined(_WIN32)
     MEMORYSTATUSEX state;
-    state.dwLength = sizeof(state); 
-    if (GlobalMemoryStatusEx(&state)) 
-        return state.ullTotalPhys; 
+    state.dwLength = sizeof(state);
+    if (GlobalMemoryStatusEx(&state))
+        return state.ullTotalPhys;
 #elif defined(__APPLE__)
     unsigned long long memSize;
     size_t len = sizeof(memSize);
-    int mib[2]; 
+    int mib[2];
     mib[0] = CTL_HW;
     mib[1] = HW_MEMSIZE;
     sysctl(mib, 2, &memSize, &len, NULL, 0);
@@ -536,11 +514,11 @@ unsigned long long GetTotalMemory()
     return 0ull;
 }
 
-String GetLoginName() 
+String GetLoginName()
 {
 #if defined(__linux__) && !defined(__ANDROID__)
-    struct passwd *p = getpwuid(getuid());
-    if (p != NULL) 
+    struct passwd* p = getpwuid(getuid());
+    if (p != NULL)
         return p->pw_name;
 #elif defined(_WIN32)
     char name[UNLEN + 1];
@@ -551,158 +529,185 @@ String GetLoginName()
     SCDynamicStoreRef s = SCDynamicStoreCreate(NULL, CFSTR("GetConsoleUser"), NULL, NULL);
     if (s != NULL)
     {
-        uid_t u; 
+        uid_t u;
         CFStringRef n = SCDynamicStoreCopyConsoleUser(s, &u, NULL);
-        CFRelease(s); 
+        CFRelease(s);
         if (n != NULL)
         {
-            char name[256]; 
+            char name[256];
             Boolean b = CFStringGetCString(n, name, 256, kCFStringEncodingUTF8);
-            CFRelease(n); 
+            CFRelease(n);
 
             if (b == true)
-                return name; 
+                return name;
         }
     }
 #endif
     return "(?)";
 }
 
-String GetHostName() 
+String GetHostName()
 {
 #if (defined(__linux__) || defined(__APPLE__)) && !defined(__ANDROID__)
-    char buffer[256]; 
-    if (gethostname(buffer, 256) == 0) 
-        return buffer; 
+    char buffer[256];
+    if (gethostname(buffer, 256) == 0)
+        return buffer;
 #elif defined(_WIN32)
-    char buffer[MAX_COMPUTERNAME_LENGTH + 1]; 
-    DWORD len = MAX_COMPUTERNAME_LENGTH + 1; 
+    char buffer[MAX_COMPUTERNAME_LENGTH + 1];
+    DWORD len = MAX_COMPUTERNAME_LENGTH + 1;
     if (GetComputerName(buffer, &len))
         return buffer;
 #endif
     return "(?)";
 }
 
-// Disable Windows OS version functionality when compiling mini version for Web, see https://github.com/urho3d/Urho3D/issues/1998
+// Disable Windows OS version functionality when compiling mini version for Web, see
+// https://github.com/urho3d/Urho3D/issues/1998
 #if defined(_WIN32) && defined(HAVE_RTL_OSVERSIONINFOW) && !defined(MINI_URHO)
-using RtlGetVersionPtr = NTSTATUS (WINAPI *)(PRTL_OSVERSIONINFOW);
+using RtlGetVersionPtr = NTSTATUS(WINAPI*)(PRTL_OSVERSIONINFOW);
 
-static void GetOS(RTL_OSVERSIONINFOW *r)
+static void GetOS(RTL_OSVERSIONINFOW* r)
 {
     HMODULE m = GetModuleHandle("ntdll.dll");
     if (m)
     {
-        RtlGetVersionPtr fPtr = (RtlGetVersionPtr) GetProcAddress(m, "RtlGetVersion");
+        RtlGetVersionPtr fPtr = (RtlGetVersionPtr)GetProcAddress(m, "RtlGetVersion");
         if (r && fPtr && fPtr(r) == 0)
-            r->dwOSVersionInfoSize = sizeof *r; 
+            r->dwOSVersionInfoSize = sizeof *r;
     }
 }
-#endif 
+#endif
 
-String GetOSVersion() 
+String GetOSVersion()
 {
 #if defined(__linux__) && !defined(__ANDROID__)
     struct utsname u;
     if (uname(&u) == 0)
-        return String(u.sysname) + " " + u.release; 
+        return String(u.sysname) + " " + u.release;
 #elif defined(_WIN32) && defined(HAVE_RTL_OSVERSIONINFOW) && !defined(MINI_URHO)
     RTL_OSVERSIONINFOW r;
-    GetOS(&r); 
+    GetOS(&r);
     // https://msdn.microsoft.com/en-us/library/windows/desktop/ms724832(v=vs.85).aspx
-    if (r.dwMajorVersion == 5 && r.dwMinorVersion == 0) 
-        return "Windows 2000"; 
-    else if (r.dwMajorVersion == 5 && r.dwMinorVersion == 1) 
-        return "Windows XP"; 
-    else if (r.dwMajorVersion == 5 && r.dwMinorVersion == 2) 
-        return "Windows XP 64-Bit Edition/Windows Server 2003/Windows Server 2003 R2"; 
-    else if (r.dwMajorVersion == 6 && r.dwMinorVersion == 0) 
-        return "Windows Vista/Windows Server 2008"; 
-    else if (r.dwMajorVersion == 6 && r.dwMinorVersion == 1) 
-        return "Windows 7/Windows Server 2008 R2"; 
-    else if (r.dwMajorVersion == 6 && r.dwMinorVersion == 2) 
+    if (r.dwMajorVersion == 5 && r.dwMinorVersion == 0)
+        return "Windows 2000";
+    else if (r.dwMajorVersion == 5 && r.dwMinorVersion == 1)
+        return "Windows XP";
+    else if (r.dwMajorVersion == 5 && r.dwMinorVersion == 2)
+        return "Windows XP 64-Bit Edition/Windows Server 2003/Windows Server 2003 R2";
+    else if (r.dwMajorVersion == 6 && r.dwMinorVersion == 0)
+        return "Windows Vista/Windows Server 2008";
+    else if (r.dwMajorVersion == 6 && r.dwMinorVersion == 1)
+        return "Windows 7/Windows Server 2008 R2";
+    else if (r.dwMajorVersion == 6 && r.dwMinorVersion == 2)
         return "Windows 8/Windows Server 2012";
-    else if (r.dwMajorVersion == 6 && r.dwMinorVersion == 3) 
-        return "Windows 8.1/Windows Server 2012 R2"; 
-    else if (r.dwMajorVersion == 10 && r.dwMinorVersion == 0) 
-        return "Windows 10/Windows Server 2016"; 
-    else 
+    else if (r.dwMajorVersion == 6 && r.dwMinorVersion == 3)
+        return "Windows 8.1/Windows Server 2012 R2";
+    else if (r.dwMajorVersion == 10 && r.dwMinorVersion == 0)
+        return "Windows 10/Windows Server 2016";
+    else
         return "Windows Unknown";
 #elif defined(__APPLE__)
-    char kernel_r[256]; 
-    size_t size = sizeof(kernel_r); 
+    char kernel_r[256];
+    size_t size = sizeof(kernel_r);
 
     if (sysctlbyname("kern.osrelease", &kernel_r, &size, NULL, 0) != -1)
     {
-        Vector<String> kernel_version = String(kernel_r).Split('.'); 
-        String version = "macOS/Mac OS X "; 
+        Vector<String> kernel_version = String(kernel_r).Split('.');
+        String version = "macOS/Mac OS X ";
         int major = ToInt(kernel_version[0]);
         int minor = ToInt(kernel_version[1]);
 
         // https://en.wikipedia.org/wiki/Darwin_(operating_system)
-        if (major == 16) // macOS Sierra 
+        if (major == 16) // macOS Sierra
         {
-            version += "Sierra "; 
-            switch(minor)
+            version += "Sierra ";
+            switch (minor)
             {
-                case 0: version += "10.12.0 "; break; 
-                case 1: version += "10.12.1 "; break; 
-                case 3: version += "10.12.2 "; break; 
+            case 0:
+                version += "10.12.0 ";
+                break;
+            case 1:
+                version += "10.12.1 ";
+                break;
+            case 3:
+                version += "10.12.2 ";
+                break;
             }
         }
         else if (major == 15) // OS X El Capitan
         {
             version += "El Capitan ";
-            switch(minor)
+            switch (minor)
             {
-                case 0: version += "10.11.0 "; break; 
-                case 6: version += "10.11.6 "; break; 
+            case 0:
+                version += "10.11.0 ";
+                break;
+            case 6:
+                version += "10.11.6 ";
+                break;
             }
         }
-        else if (major == 14) // OS X Yosemite 
+        else if (major == 14) // OS X Yosemite
         {
-            version += "Yosemite "; 
-            switch(minor) 
+            version += "Yosemite ";
+            switch (minor)
             {
-                case 0: version += "10.10.0 "; break; 
-                case 5: version += "10.10.5 "; break; 
+            case 0:
+                version += "10.10.0 ";
+                break;
+            case 5:
+                version += "10.10.5 ";
+                break;
             }
         }
         else if (major == 13) // OS X Mavericks
         {
             version += "Mavericks ";
-            switch(minor)
+            switch (minor)
             {
-                case 0: version += "10.9.0 "; break; 
-                case 4: version += "10.9.5 "; break; 
+            case 0:
+                version += "10.9.0 ";
+                break;
+            case 4:
+                version += "10.9.5 ";
+                break;
             }
         }
         else if (major == 12) // OS X Mountain Lion
         {
-            version += "Mountain Lion "; 
-            switch(minor) 
+            version += "Mountain Lion ";
+            switch (minor)
             {
-                case 0: version += "10.8.0 "; break; 
-                case 6: version += "10.8.5 "; break; 
+            case 0:
+                version += "10.8.0 ";
+                break;
+            case 6:
+                version += "10.8.5 ";
+                break;
             }
         }
         else if (major == 11) // Mac OS X Lion
         {
             version += "Lion ";
-            switch(minor)
+            switch (minor)
             {
-                case 0: version += "10.7.0 "; break; 
-                case 4: version += "10.7.5 "; break; 
+            case 0:
+                version += "10.7.0 ";
+                break;
+            case 4:
+                version += "10.7.5 ";
+                break;
             }
         }
-        else 
+        else
         {
             version += "Unknown ";
         }
 
-        return version + " (Darwin kernel " + kernel_version[0] + "." + kernel_version[1] + "." + kernel_version[2] + ")"; 
+        return version + " (Darwin kernel " + kernel_version[0] + "." + kernel_version[1] + "." + kernel_version[2] +
+               ")";
     }
 #endif
     return "(?)";
 }
-
 }

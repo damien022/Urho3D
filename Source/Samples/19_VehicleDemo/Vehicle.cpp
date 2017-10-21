@@ -34,9 +34,9 @@
 
 #include "Vehicle.h"
 
-Vehicle::Vehicle(Context* context) :
-    LogicComponent(context),
-    steering_(0.0f)
+Vehicle::Vehicle(Context* context)
+    : LogicComponent(context)
+    , steering_(0.0f)
 {
     // Only the physics update event is needed: unsubscribe from the rest for optimization
     SetUpdateEventMask(USE_FIXEDUPDATE);
@@ -49,8 +49,9 @@ void Vehicle::RegisterObject(Context* context)
     URHO3D_ATTRIBUTE("Controls Yaw", float, controls_.yaw_, 0.0f, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Controls Pitch", float, controls_.pitch_, 0.0f, AM_DEFAULT);
     URHO3D_ATTRIBUTE("Steering", float, steering_, 0.0f, AM_DEFAULT);
-    // Register wheel node IDs as attributes so that the wheel nodes can be reaquired on deserialization. They need to be tagged
-    // as node ID's so that the deserialization code knows to rewrite the IDs in case they are different on load than on save
+    // Register wheel node IDs as attributes so that the wheel nodes can be reaquired on deserialization. They need to
+    // be tagged as node ID's so that the deserialization code knows to rewrite the IDs in case they are different on
+    // load than on save
     URHO3D_ATTRIBUTE("Front Left Node", unsigned, frontLeftID_, 0, AM_DEFAULT | AM_NODEID);
     URHO3D_ATTRIBUTE("Front Right Node", unsigned, frontRightID_, 0, AM_DEFAULT | AM_NODEID);
     URHO3D_ATTRIBUTE("Rear Left Node", unsigned, rearLeftID_, 0, AM_DEFAULT | AM_NODEID);
@@ -59,8 +60,8 @@ void Vehicle::RegisterObject(Context* context)
 
 void Vehicle::ApplyAttributes()
 {
-    // This function is called on each Serializable after the whole scene has been loaded. Reacquire wheel nodes from ID's
-    // as well as all required physics components
+    // This function is called on each Serializable after the whole scene has been loaded. Reacquire wheel nodes from
+    // ID's as well as all required physics components
     Scene* scene = GetScene();
 
     frontLeft_ = scene->GetNode(frontLeftID_);
@@ -154,8 +155,8 @@ void Vehicle::InitWheel(const String& name, const Vector3& offset, WeakPtr<Node>
     // constraint keep it together
     wheelNode = GetScene()->CreateChild(name);
     wheelNode->SetPosition(node_->LocalToWorld(offset));
-    wheelNode->SetRotation(node_->GetRotation() * (offset.x_ >= 0.0 ? Quaternion(0.0f, 0.0f, -90.0f) :
-        Quaternion(0.0f, 0.0f, 90.0f)));
+    wheelNode->SetRotation(node_->GetRotation() *
+                           (offset.x_ >= 0.0 ? Quaternion(0.0f, 0.0f, -90.0f) : Quaternion(0.0f, 0.0f, 90.0f)));
     wheelNode->SetScale(Vector3(0.8f, 0.5f, 0.8f));
     // Remember the ID for serialization
     wheelNodeID = wheelNode->GetID();
@@ -171,15 +172,16 @@ void Vehicle::InitWheel(const String& name, const Vector3& offset, WeakPtr<Node>
     wheelShape->SetSphere(1.0f);
     wheelBody->SetFriction(1.0f);
     wheelBody->SetMass(1.0f);
-    wheelBody->SetLinearDamping(0.2f); // Some air resistance
+    wheelBody->SetLinearDamping(0.2f);   // Some air resistance
     wheelBody->SetAngularDamping(0.75f); // Could also use rolling friction
     wheelBody->SetCollisionLayer(1);
     wheelConstraint->SetConstraintType(CONSTRAINT_HINGE);
-    wheelConstraint->SetOtherBody(GetComponent<RigidBody>()); // Connect to the hull body
+    wheelConstraint->SetOtherBody(GetComponent<RigidBody>());    // Connect to the hull body
     wheelConstraint->SetWorldPosition(wheelNode->GetPosition()); // Set constraint's both ends at wheel's location
-    wheelConstraint->SetAxis(Vector3::UP); // Wheel rotates around its local Y-axis
-    wheelConstraint->SetOtherAxis(offset.x_ >= 0.0 ? Vector3::RIGHT : Vector3::LEFT); // Wheel's hull axis points either left or right
-    wheelConstraint->SetLowLimit(Vector2(-180.0f, 0.0f)); // Let the wheel rotate freely around the axis
+    wheelConstraint->SetAxis(Vector3::UP);                       // Wheel rotates around its local Y-axis
+    wheelConstraint->SetOtherAxis(offset.x_ >= 0.0 ? Vector3::RIGHT
+                                                   : Vector3::LEFT); // Wheel's hull axis points either left or right
+    wheelConstraint->SetLowLimit(Vector2(-180.0f, 0.0f));            // Let the wheel rotate freely around the axis
     wheelConstraint->SetHighLimit(Vector2(180.0f, 0.0f));
     wheelConstraint->SetDisableCollision(true); // Let the wheel intersect the vehicle hull
 }

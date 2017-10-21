@@ -26,22 +26,21 @@
 #include "../Graphics/DebugRenderer.h"
 #include "../IO/Log.h"
 #include "../Navigation/DynamicNavigationMesh.h"
-#include "../Navigation/Obstacle.h"
 #include "../Navigation/NavigationEvents.h"
+#include "../Navigation/Obstacle.h"
 #include "../Scene/Scene.h"
 
 #include "../DebugNew.h"
 
 namespace Urho3D
 {
-
 extern const char* NAVIGATION_CATEGORY;
 
-Obstacle::Obstacle(Context* context) :
-    Component(context),
-    height_(5.0f),
-    radius_(5.0f),
-    obstacleId_(0)
+Obstacle::Obstacle(Context* context)
+    : Component(context)
+    , height_(5.0f)
+    , radius_(5.0f)
+    , obstacleId_(0)
 {
 }
 
@@ -159,5 +158,4 @@ void Obstacle::DrawDebugGeometry(bool depthTest)
     if (scene)
         DrawDebugGeometry(scene->GetComponent<DebugRenderer>(), depthTest);
 }
-
 }

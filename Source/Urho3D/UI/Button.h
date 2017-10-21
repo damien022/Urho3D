@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// Push button %UI element.
 class URHO3D_API Button : public BorderImage
 {
@@ -43,18 +42,17 @@ public:
     /// Perform UI element update.
     virtual void Update(float timeStep) override;
     /// Return UI rendering batches.
-    virtual void GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData, const IntRect& currentScissor) override;
+    virtual void GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData,
+                            const IntRect& currentScissor) override;
     /// React to mouse click begin.
-    virtual void OnClickBegin
-        (const IntVector2& position, const IntVector2& screenPosition, int button, int buttons, int qualifiers, Cursor* cursor) override;
+    virtual void OnClickBegin(const IntVector2& position, const IntVector2& screenPosition, int button, int buttons,
+                              int qualifiers, Cursor* cursor) override;
     /// React to mouse click end.
-    virtual void OnClickEnd
-        (const IntVector2& position, const IntVector2& screenPosition, int button, int buttons, int qualifiers, Cursor* cursor,
-            UIElement* beginElement) override;
+    virtual void OnClickEnd(const IntVector2& position, const IntVector2& screenPosition, int button, int buttons,
+                            int qualifiers, Cursor* cursor, UIElement* beginElement) override;
     /// React to mouse drag motion.
-    virtual void OnDragMove
-        (const IntVector2& position, const IntVector2& screenPosition, const IntVector2& deltaPos, int buttons, int qualifiers,
-            Cursor* cursor) override;
+    virtual void OnDragMove(const IntVector2& position, const IntVector2& screenPosition, const IntVector2& deltaPos,
+                            int buttons, int qualifiers, Cursor* cursor) override;
     /// React to a key press.
     virtual void OnKey(int key, int buttons, int qualifiers) override;
 
@@ -79,7 +77,7 @@ public:
 
     /// Return pressed image offset.
     const IntVector2& GetPressedOffset() const { return pressedOffset_; }
-    
+
     /// Return disabled image offset.
     const IntVector2& GetDisabledOffset() const { return disabledOffset_; }
 
@@ -114,5 +112,4 @@ protected:
     /// Current pressed state.
     bool pressed_;
 };
-
 }

@@ -20,22 +20,20 @@
 // THE SOFTWARE.
 //
 
-#include "../../SystemUI/SystemUI.h"
-#include "../../Core/StringUtils.h"
+#include "AttributeInspector.h"
 #include "../../Core/CoreEvents.h"
-#include "../../Scene/Serializable.h"
-#include "../../Resource/ResourceCache.h"
+#include "../../Core/StringUtils.h"
 #include "../../IO/FileSystem.h"
 #include "../../IO/Log.h"
-#include "AttributeInspector.h"
+#include "../../Resource/ResourceCache.h"
+#include "../../Scene/Serializable.h"
+#include "../../SystemUI/SystemUI.h"
 
 #include <IconFontCppHeaders/IconsFontAwesome.h>
 #include <tinyfiledialogs/tinyfiledialogs.h>
 
-
 namespace Urho3D
 {
-
 AttributeInspector::AttributeInspector(Urho3D::Context* context)
     : Object(context)
 {
@@ -69,7 +67,7 @@ void AttributeInspector::RenderAttributes(Serializable* item)
     ui::PushID(item);
     const char* modifiedThisFrame = nullptr;
     const auto& attributes = *item->GetAttributes();
-    for (const AttributeInfo& info: attributes)
+    for (const AttributeInfo& info : attributes)
     {
         bool hidden = false;
         Color color = Color::WHITE;
@@ -147,7 +145,8 @@ void AttributeInspector::RenderAttributes(Serializable* item)
             // This attribute was modified on last frame, but not on this frame. Continous attribute value modification
             // has ended and we can fire attribute modification event.
             using namespace AttributeInspectorValueModified;
-            SendEvent(E_ATTRIBUTEINSPECTVALUEMODIFIED, P_SERIALIZABLE, item, P_ATTRIBUTEINFO, (void*)&info, P_OLDVALUE, originalValue_, P_NEWVALUE, value);
+            SendEvent(E_ATTRIBUTEINSPECTVALUEMODIFIED, P_SERIALIZABLE, item, P_ATTRIBUTEINFO, (void*)&info, P_OLDVALUE,
+                      originalValue_, P_NEWVALUE, value);
         }
 
         ui::PopID();
@@ -175,10 +174,7 @@ std::array<char, 0x1000>& AttributeInspector::GetBuffer(const String& name, cons
         return it->second_;
 }
 
-void AttributeInspector::RemoveBuffer(const String& name)
-{
-    buffers_.Erase(name);
-}
+void AttributeInspector::RemoveBuffer(const String& name) { buffers_.Erase(name); }
 
 bool AttributeInspector::RenderSingleAttribute(const AttributeInfo& info, Variant& value)
 {
@@ -193,7 +189,8 @@ bool AttributeInspector::RenderSingleAttribute(const AttributeInfo& info, Varian
     if (info.enumNames_)
     {
         comboValues = info.enumNames_;
-        for (; comboValues[++comboValuesNum];);
+        for (; comboValues[++comboValuesNum];)
+            ;
     }
 
     if (comboValues)
@@ -276,7 +273,7 @@ bool AttributeInspector::RenderSingleAttribute(const AttributeInfo& info, Varian
                 value = &buffer.front();
             break;
         }
-//            case VAR_BUFFER:
+            //            case VAR_BUFFER:
         case VAR_VOIDPTR:
             ui::Text("%p", value.GetVoidPtr());
             break;
@@ -302,9 +299,9 @@ bool AttributeInspector::RenderSingleAttribute(const AttributeInfo& info, Varian
             }
             break;
         }
-//            case VAR_RESOURCEREFLIST:
-//            case VAR_VARIANTVECTOR:
-//            case VAR_VARIANTMAP:
+            //            case VAR_RESOURCEREFLIST:
+            //            case VAR_VARIANTVECTOR:
+            //            case VAR_VARIANTMAP:
         case VAR_INTRECT:
         {
             auto& v = value.GetIntRect();
@@ -373,7 +370,7 @@ bool AttributeInspector::RenderSingleAttribute(const AttributeInfo& info, Varian
             }
 
             // List of current items.
-            for (String& sv: v)
+            for (String& sv : v)
             {
                 auto bufferName = ToString("%s-%d", info.name_.CString(), index);
                 auto& buffer = GetBuffer(bufferName, sv);
@@ -388,8 +385,7 @@ bool AttributeInspector::RenderSingleAttribute(const AttributeInfo& info, Varian
                 }
                 ui::SameLine();
 
-                modified |= ui::InputText("", &buffer.front(), buffer.size() - 1,
-                                          ImGuiInputTextFlags_EnterReturnsTrue);
+                modified |= ui::InputText("", &buffer.front(), buffer.size() - 1, ImGuiInputTextFlags_EnterReturnsTrue);
                 if (modified)
                     sv = &buffer.front();
                 ui::PopID();
@@ -403,11 +399,11 @@ bool AttributeInspector::RenderSingleAttribute(const AttributeInfo& info, Varian
         case VAR_RECT:
         {
             auto& v = value.GetRect();
-            modified |= ui::DragFloat2("min xy", const_cast<float*>(&v.min_.x_), floatStep, floatMin,
-                                       floatMax, "%.3f", power);
+            modified |=
+                ui::DragFloat2("min xy", const_cast<float*>(&v.min_.x_), floatStep, floatMin, floatMax, "%.3f", power);
             ui::SameLine();
-            modified |= ui::DragFloat2("max xy", const_cast<float*>(&v.max_.x_), floatStep, floatMin,
-                                       floatMax, "%.3f", power);
+            modified |=
+                ui::DragFloat2("max xy", const_cast<float*>(&v.max_.x_), floatStep, floatMin, floatMax, "%.3f", power);
             break;
         }
         case VAR_INTVECTOR3:
@@ -433,9 +429,9 @@ bool AttributeInspector::RenderSingleAttribute(const AttributeInfo& info, Varian
     return modified;
 }
 
-AttributeInspectorWindow::AttributeInspectorWindow(Context* context) : AttributeInspector(context)
+AttributeInspectorWindow::AttributeInspectorWindow(Context* context)
+    : AttributeInspector(context)
 {
-
 }
 
 void AttributeInspectorWindow::SetEnabled(bool enabled)
@@ -446,10 +442,7 @@ void AttributeInspectorWindow::SetEnabled(bool enabled)
         UnsubscribeFromEvent(E_UPDATE);
 }
 
-void AttributeInspectorWindow::SetSerializable(Serializable* item)
-{
-    currentSerializable_ = item;
-}
+void AttributeInspectorWindow::SetSerializable(Serializable* item) { currentSerializable_ = item; }
 
 void AttributeInspectorWindow::RenderUi()
 {
@@ -464,9 +457,5 @@ void AttributeInspectorWindow::RenderUi()
     ui::End();
 }
 
-bool AttributeInspectorWindow::IsEnabled() const
-{
-    return HasSubscribedToEvent(E_UPDATE);
-}
-
+bool AttributeInspectorWindow::IsEnabled() const { return HasSubscribedToEvent(E_UPDATE); }
 }

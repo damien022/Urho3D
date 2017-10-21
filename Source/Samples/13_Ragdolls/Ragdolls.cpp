@@ -31,9 +31,9 @@
 #include <Urho3D/Graphics/Octree.h>
 #include <Urho3D/Graphics/Renderer.h>
 #include <Urho3D/Graphics/Zone.h>
-#include <Urho3D/Input/Input.h>
 #include <Urho3D/IO/File.h>
 #include <Urho3D/IO/FileSystem.h>
+#include <Urho3D/Input/Input.h>
 #include <Urho3D/Physics/CollisionShape.h>
 #include <Urho3D/Physics/PhysicsWorld.h>
 #include <Urho3D/Physics/RigidBody.h>
@@ -50,9 +50,9 @@
 
 URHO3D_DEFINE_APPLICATION_MAIN(Ragdolls)
 
-Ragdolls::Ragdolls(Context* context) :
-    Sample(context),
-    drawDebug_(false)
+Ragdolls::Ragdolls(Context* context)
+    : Sample(context)
+    , drawDebug_(false)
 {
     // Register an object factory for our custom CreateRagdoll component so that we can create them to scene nodes
     context->RegisterFactory<CreateRagdoll>();
@@ -181,12 +181,10 @@ void Ragdolls::CreateInstructions()
 
     // Construct new Text object, set string to display and font to use
     Text* instructionText = ui->GetRoot()->CreateChild<Text>();
-    instructionText->SetText(
-        "Use WASD keys and mouse/touch to move\n"
-        "LMB to spawn physics objects\n"
-        "F5 to save scene, F7 to load\n"
-        "Space to toggle physics debug geometry"
-    );
+    instructionText->SetText("Use WASD keys and mouse/touch to move\n"
+                             "LMB to spawn physics objects\n"
+                             "F5 to save scene, F7 to load\n"
+                             "Space to toggle physics debug geometry");
     instructionText->SetFont(cache->GetResource<Font>("Fonts/Anonymous Pro.ttf"), 15);
     // The text has multiple rows. Center them in relation to each other
     instructionText->SetTextAlignment(HA_CENTER);

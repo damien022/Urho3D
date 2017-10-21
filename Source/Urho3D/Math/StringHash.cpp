@@ -22,9 +22,9 @@
 
 #include "../Precompiled.h"
 
+#include "../Core/Context.h"
 #include "../Math/MathDefs.h"
 #include "../Math/StringHash.h"
-#include "../Core/Context.h"
 
 #include <cstdio>
 
@@ -32,16 +32,15 @@
 
 namespace Urho3D
 {
-
 const StringHash StringHash::ZERO;
 
-StringHash::StringHash(const char* str) :
-    value_(Calculate(str))
+StringHash::StringHash(const char* str)
+    : value_(Calculate(str))
 {
 }
 
-StringHash::StringHash(const String& str) :
-    value_(Calculate(str.CString()))
+StringHash::StringHash(const String& str)
+    : value_(Calculate(str.CString()))
 {
 }
 
@@ -67,5 +66,4 @@ String StringHash::ToString() const
     sprintf(tempBuffer, "%08X", value_);
     return String(tempBuffer);
 }
-
 }

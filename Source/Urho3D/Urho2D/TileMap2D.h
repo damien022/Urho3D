@@ -27,7 +27,6 @@
 
 namespace Urho3D
 {
-
 class TileMapLayer2D;
 class TmxFile2D;
 
@@ -73,7 +72,8 @@ public:
     /// Return tile map file attribute.
     ResourceRef GetTmxFileAttr() const;
     ///
-    Vector<SharedPtr<TileMapObject2D> > GetTileCollisionShapes(int gid) const;
+    Vector<SharedPtr<TileMapObject2D>> GetTileCollisionShapes(int gid) const;
+
 private:
     /// Tmx file.
     SharedPtr<TmxFile2D> tmxFile_;
@@ -82,7 +82,6 @@ private:
     /// Root node for tile map layer.
     SharedPtr<Node> rootNode_;
     /// Tile map layers.
-    Vector<WeakPtr<TileMapLayer2D> > layers_;
+    Vector<WeakPtr<TileMapLayer2D>> layers_;
 };
-
 }

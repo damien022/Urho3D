@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 class XMLElement;
 
 /// PList value types.
@@ -73,7 +72,7 @@ public:
     ~PListValue();
 
     /// Assign operator.
-    PListValue& operator =(const PListValue& rhs);
+    PListValue& operator=(const PListValue& rhs);
 
     /// Return true if is valid.
     operator bool() const { return type_ != PLVT_NONE; }
@@ -125,8 +124,7 @@ private:
     /// Type.
     PListValueType type_;
     /// Values.
-    union
-    {
+    union {
         int int_;
         bool bool_;
         float float_;
@@ -166,5 +164,4 @@ private:
     /// Root dictionary.
     PListValueMap root_;
 };
-
 }

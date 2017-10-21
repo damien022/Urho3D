@@ -41,12 +41,12 @@ URHO3D_DEFINE_APPLICATION_MAIN(Typography)
 
 namespace
 {
-    // Tag used to find all Text elements
-    const String TEXT_TAG("Typography_text_tag");
+// Tag used to find all Text elements
+const String TEXT_TAG("Typography_text_tag");
 }
 
-Typography::Typography(Context* context) :
-    Sample(context)
+Typography::Typography(Context* context)
+    : Sample(context)
 {
 }
 
@@ -78,8 +78,7 @@ void Typography::Start()
     CreateText();
 
     // Add a checkbox to toggle the background color.
-    CreateCheckbox("White background", URHO3D_HANDLER(Typography, HandleWhiteBackground))
-        ->SetChecked(false);
+    CreateCheckbox("White background", URHO3D_HANDLER(Typography, HandleWhiteBackground))->SetChecked(false);
 
     // Add a checkbox to toggle SRGB output conversion (if available).
     // This will give more correct text output for FreeType fonts, as the FreeType rasterizer
@@ -93,42 +92,17 @@ void Typography::Start()
         ->SetChecked(ui->GetForceAutoHint());
 
     // Add a drop-down menu to control the font hinting level.
-    const char* levels[] = {
-        "FONT_HINT_LEVEL_NONE",
-        "FONT_HINT_LEVEL_LIGHT",
-        "FONT_HINT_LEVEL_NORMAL",
-        nullptr
-    };
+    const char* levels[] = {"FONT_HINT_LEVEL_NONE", "FONT_HINT_LEVEL_LIGHT", "FONT_HINT_LEVEL_NORMAL", nullptr};
     CreateMenu("UI::SetFontHintLevel", levels, URHO3D_HANDLER(Typography, HandleFontHintLevel))
         ->SetSelection(ui->GetFontHintLevel());
 
     // Add a drop-down menu to control the subpixel threshold.
-    const char* thresholds[] = {
-        "0",
-        "3",
-        "6",
-        "9",
-        "12",
-        "15",
-        "18",
-        "21",
-        nullptr
-    };
+    const char* thresholds[] = {"0", "3", "6", "9", "12", "15", "18", "21", nullptr};
     CreateMenu("UI::SetFontSubpixelThreshold", thresholds, URHO3D_HANDLER(Typography, HandleFontSubpixel))
         ->SetSelection(ui->GetFontSubpixelThreshold() / 3);
 
     // Add a drop-down menu to control oversampling.
-    const char* limits[] = {
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        nullptr
-    };
+    const char* limits[] = {"1", "2", "3", "4", "5", "6", "7", "8", nullptr};
     CreateMenu("UI::SetFontOversampling", limits, URHO3D_HANDLER(Typography, HandleFontOversampling))
         ->SetSelection(ui->GetFontOversampling() - 1);
 

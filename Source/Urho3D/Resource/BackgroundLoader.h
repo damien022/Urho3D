@@ -24,15 +24,14 @@
 
 #include "../Container/HashMap.h"
 #include "../Container/HashSet.h"
-#include "../Core/Mutex.h"
 #include "../Container/Ptr.h"
 #include "../Container/RefCounted.h"
+#include "../Core/Mutex.h"
 #include "../Core/Thread.h"
 #include "../Math/StringHash.h"
 
 namespace Urho3D
 {
-
 class Resource;
 class ResourceCache;
 
@@ -42,9 +41,9 @@ struct BackgroundLoadItem
     /// Resource.
     SharedPtr<Resource> resource_;
     /// Resources depended on for loading.
-    HashSet<Pair<StringHash, StringHash> > dependencies_;
+    HashSet<Pair<StringHash, StringHash>> dependencies_;
     /// Resources that depend on this resource's loading.
-    HashSet<Pair<StringHash, StringHash> > dependents_;
+    HashSet<Pair<StringHash, StringHash>> dependents_;
     /// Whether to send failure event.
     bool sendEventOnFailure_;
 };
@@ -62,7 +61,8 @@ public:
     /// Resource background loading loop.
     virtual void ThreadFunction() override;
 
-    /// Queue loading of a resource. The name must be sanitated to ensure consistent format. Return true if queued (not a duplicate and resource was a known type).
+    /// Queue loading of a resource. The name must be sanitated to ensure consistent format. Return true if queued (not
+    /// a duplicate and resource was a known type).
     bool QueueResource(StringHash type, const String& name, bool sendEventOnFailure, Resource* caller);
     /// Wait and finish possible loading of a resource when being requested from the cache.
     void WaitForResource(StringHash type, StringHash nameHash);
@@ -83,5 +83,4 @@ private:
     /// Resources that are queued for background loading.
     HashMap<Pair<StringHash, StringHash>, BackgroundLoadItem> backgroundLoadQueue_;
 };
-
 }

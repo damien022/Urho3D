@@ -35,24 +35,23 @@
 
 namespace Urho3D
 {
-
 StringHash VAR_DRAGDROPCONTENT("DragDropContent");
 
 extern const char* UI_CATEGORY;
 
-LineEdit::LineEdit(Context* context) :
-    BorderImage(context),
-    lastFont_(nullptr),
-    lastFontSize_(0),
-    cursorPosition_(0),
-    dragBeginCursor_(M_MAX_UNSIGNED),
-    cursorBlinkRate_(1.0f),
-    cursorBlinkTimer_(0.0f),
-    maxLength_(0),
-    echoCharacter_(0),
-    cursorMovable_(true),
-    textSelectable_(true),
-    textCopyable_(true)
+LineEdit::LineEdit(Context* context)
+    : BorderImage(context)
+    , lastFont_(nullptr)
+    , lastFontSize_(0)
+    , cursorPosition_(0)
+    , dragBeginCursor_(M_MAX_UNSIGNED)
+    , cursorBlinkRate_(1.0f)
+    , cursorBlinkTimer_(0.0f)
+    , maxLength_(0)
+    , echoCharacter_(0)
+    , cursorMovable_(true)
+    , textSelectable_(true)
+    , textCopyable_(true)
 {
     clipChildren_ = true;
     SetEnabled(true);
@@ -69,9 +68,7 @@ LineEdit::LineEdit(Context* context) :
     SubscribeToEvent(this, E_LAYOUTUPDATED, URHO3D_HANDLER(LineEdit, HandleLayoutUpdated));
 }
 
-LineEdit::~LineEdit()
-{
-}
+LineEdit::~LineEdit() {}
 
 void LineEdit::RegisterObject(Context* context)
 {
@@ -117,8 +114,8 @@ void LineEdit::Update(float timeStep)
     cursor_->SetVisible(cursorVisible);
 }
 
-void LineEdit::OnClickBegin(const IntVector2& position, const IntVector2& screenPosition, int button, int buttons, int qualifiers,
-    Cursor* cursor)
+void LineEdit::OnClickBegin(const IntVector2& position, const IntVector2& screenPosition, int button, int buttons,
+                            int qualifiers, Cursor* cursor)
 {
     if (button == MOUSEB_LEFT && cursorMovable_)
     {
@@ -131,23 +128,23 @@ void LineEdit::OnClickBegin(const IntVector2& position, const IntVector2& screen
     }
 }
 
-void LineEdit::OnDoubleClick(const IntVector2& position, const IntVector2& screenPosition, int button, int buttons, int qualifiers,
-    Cursor* cursor)
+void LineEdit::OnDoubleClick(const IntVector2& position, const IntVector2& screenPosition, int button, int buttons,
+                             int qualifiers, Cursor* cursor)
 {
     if (button == MOUSEB_LEFT)
         text_->SetSelection(0);
 }
 
 void LineEdit::OnDragBegin(const IntVector2& position, const IntVector2& screenPosition, int buttons, int qualifiers,
-    Cursor* cursor)
+                           Cursor* cursor)
 {
     UIElement::OnDragBegin(position, screenPosition, buttons, qualifiers, cursor);
 
     dragBeginCursor_ = GetCharIndex(position);
 }
 
-void LineEdit::OnDragMove(const IntVector2& position, const IntVector2& screenPosition, const IntVector2& deltaPos, int buttons,
-    int qualifiers, Cursor* cursor)
+void LineEdit::OnDragMove(const IntVector2& position, const IntVector2& screenPosition, const IntVector2& deltaPos,
+                          int buttons, int qualifiers, Cursor* cursor)
 {
     if (cursorMovable_ && textSelectable_)
     {
@@ -359,16 +356,16 @@ void LineEdit::OnKey(int key, int buttons, int qualifiers)
     case KEY_DOWN:
     case KEY_PAGEUP:
     case KEY_PAGEDOWN:
-        {
-            using namespace UnhandledKey;
+    {
+        using namespace UnhandledKey;
 
-            VariantMap& eventData = GetEventDataMap();
-            eventData[P_ELEMENT] = this;
-            eventData[P_KEY] = key;
-            eventData[P_BUTTONS] = buttons;
-            eventData[P_QUALIFIERS] = qualifiers;
-            SendEvent(E_UNHANDLEDKEY, eventData);
-        }
+        VariantMap& eventData = GetEventDataMap();
+        eventData[P_ELEMENT] = this;
+        eventData[P_KEY] = key;
+        eventData[P_BUTTONS] = buttons;
+        eventData[P_QUALIFIERS] = qualifiers;
+        SendEvent(E_UNHANDLEDKEY, eventData);
+    }
         return;
 
     case KEY_BACKSPACE:
@@ -405,21 +402,22 @@ void LineEdit::OnKey(int key, int buttons, int qualifiers)
     case KEY_RETURN:
     case KEY_RETURN2:
     case KEY_KP_ENTER:
-        {
-            // If using the on-screen keyboard, defocus this element to hide it now
-            if (GetSubsystem<UI>()->GetUseScreenKeyboard() && HasFocus())
-                SetFocus(false);
+    {
+        // If using the on-screen keyboard, defocus this element to hide it now
+        if (GetSubsystem<UI>()->GetUseScreenKeyboard() && HasFocus())
+            SetFocus(false);
 
-            using namespace TextFinished;
+        using namespace TextFinished;
 
-            VariantMap& eventData = GetEventDataMap();
-            eventData[P_ELEMENT] = this;
-            eventData[P_TEXT] = line_;
-            SendEvent(E_TEXTFINISHED, eventData);
-            return;
-        }
+        VariantMap& eventData = GetEventDataMap();
+        eventData[P_ELEMENT] = this;
+        eventData[P_TEXT] = line_;
+        SendEvent(E_TEXTFINISHED, eventData);
+        return;
+    }
 
-    default: break;
+    default:
+        break;
     }
 
     if (changed)
@@ -507,13 +505,10 @@ void LineEdit::SetCursorBlinkRate(float rate)
     cursorBlinkRate_ = Max(rate, 0.0f);
 
     if (cursorBlinkRate_ == 0.0f)
-        cursorBlinkTimer_ = 0.0f;   // Cursor does not blink, i.e. always visible
+        cursorBlinkTimer_ = 0.0f; // Cursor does not blink, i.e. always visible
 }
 
-void LineEdit::SetMaxLength(unsigned length)
-{
-    maxLength_ = length;
-}
+void LineEdit::SetMaxLength(unsigned length) { maxLength_ = length; }
 
 void LineEdit::SetEchoCharacter(unsigned c)
 {
@@ -521,20 +516,11 @@ void LineEdit::SetEchoCharacter(unsigned c)
     UpdateText();
 }
 
-void LineEdit::SetCursorMovable(bool enable)
-{
-    cursorMovable_ = enable;
-}
+void LineEdit::SetCursorMovable(bool enable) { cursorMovable_ = enable; }
 
-void LineEdit::SetTextSelectable(bool enable)
-{
-    textSelectable_ = enable;
-}
+void LineEdit::SetTextSelectable(bool enable) { textSelectable_ = enable; }
 
-void LineEdit::SetTextCopyable(bool enable)
-{
-    textCopyable_ = enable;
-}
+void LineEdit::SetTextCopyable(bool enable) { textCopyable_ = enable; }
 
 bool LineEdit::FilterImplicitAttributes(XMLElement& dest) const
 {
@@ -657,9 +643,5 @@ void LineEdit::HandleDefocused(StringHash /*eventType*/, VariantMap& /*eventData
         GetSubsystem<Input>()->SetScreenKeyboardVisible(false);
 }
 
-void LineEdit::HandleLayoutUpdated(StringHash /*eventType*/, VariantMap& /*eventData*/)
-{
-    UpdateCursor();
-}
-
+void LineEdit::HandleLayoutUpdated(StringHash /*eventType*/, VariantMap& /*eventData*/) { UpdateCursor(); }
 }

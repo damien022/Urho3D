@@ -23,11 +23,11 @@
 #include <Urho3D/Core/CoreEvents.h>
 #include <Urho3D/Core/ProcessUtils.h>
 #include <Urho3D/Core/Timer.h>
-#include <Urho3D/SystemUI/Console.h>
 #include <Urho3D/Engine/Engine.h>
 #include <Urho3D/Engine/EngineEvents.h>
-#include <Urho3D/Input/Input.h>
 #include <Urho3D/IO/Log.h>
+#include <Urho3D/Input/Input.h>
+#include <Urho3D/SystemUI/Console.h>
 #include <Urho3D/UI/Button.h>
 
 #include "ConsoleInput.h"
@@ -38,24 +38,14 @@
 URHO3D_DEFINE_APPLICATION_MAIN(ConsoleInput)
 
 // Hunger level descriptions
-String hungerLevels[] = {
-    "bursting",
-    "well-fed",
-    "fed",
-    "hungry",
-    "very hungry",
-    "starving"
-};
+String hungerLevels[] = {"bursting", "well-fed", "fed", "hungry", "very hungry", "starving"};
 
 // Urho threat level descriptions
-String urhoThreatLevels[] = {
-    "Suddenly Urho appears from a dark corner of the fish tank",
-    "Urho seems to have his eyes set on you",
-    "Urho is homing in on you mercilessly"
-};
+String urhoThreatLevels[] = {"Suddenly Urho appears from a dark corner of the fish tank",
+                             "Urho seems to have his eyes set on you", "Urho is homing in on you mercilessly"};
 
-ConsoleInput::ConsoleInput(Context* context) :
-    Sample(context)
+ConsoleInput::ConsoleInput(Context* context)
+    : Sample(context)
 {
 }
 
@@ -137,7 +127,8 @@ void ConsoleInput::StartGame()
 void ConsoleInput::EndGame(const String& message)
 {
     Print(message);
-    Print("Game over! You survived " + String(numTurns_) + " turns.\n"
+    Print("Game over! You survived " + String(numTurns_) +
+          " turns.\n"
           "Do you want to play again (Y/N)?");
 
     gameOn_ = false;

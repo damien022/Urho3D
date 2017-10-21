@@ -22,16 +22,13 @@
 
 #pragma once
 
-
-#include "../Core/Object.h"
-#include "../Core/Timer.h"
-#include "../Core/Thread.h"
 #include "../Container/List.h"
-
+#include "../Core/Object.h"
+#include "../Core/Thread.h"
+#include "../Core/Timer.h"
 
 namespace Urho3D
 {
-
 class TaskScheduler;
 class Tasks;
 
@@ -56,7 +53,8 @@ class URHO3D_API Task : public RefCounted
 public:
     /// Construct empty task. It can not be scheduled.
     Task() = default;
-    /// Construct a task. It has to be manually scheduled by calling Task::SwitchTo(). Caller is responsible for freeing returned object after task finishes execution.
+    /// Construct a task. It has to be manually scheduled by calling Task::SwitchTo(). Caller is responsible for freeing
+    /// returned object after task finishes execution.
     Task(const std::function<void()>& taskFunction, unsigned stackSize = DEFAULT_TASK_SIZE);
     /// Destruct.
     ~Task();
@@ -66,14 +64,18 @@ public:
     bool IsTerminating() const { return state_ == TSTATE_TERMINATE; };
     /// Return true if task is ready, false if task is still sleeping.
     bool IsReady();
-    /// Suspend execution of current task. Must be called from within function invoked by callback passed to TaskScheduler::Create() or Tasks::Create().
+    /// Suspend execution of current task. Must be called from within function invoked by callback passed to
+    /// TaskScheduler::Create() or Tasks::Create().
     void Suspend(float time = 0.f);
-    /// Explicitly switch execution to specified task. Task must be created on the same thread where this function is called. Task can be switched to at any time.
+    /// Explicitly switch execution to specified task. Task must be created on the same thread where this function is
+    /// called. Task can be switched to at any time.
     bool SwitchTo();
-    /// Request task termination. If exception support is disabled then user must return from the task manually when IsTerminating() returns true.
-    /// If exception support is enabled then task will be terminated next time Suspend() method is called. Suspend() will throw an exception that will be caught out-most layer of the task.
+    /// Request task termination. If exception support is disabled then user must return from the task manually when
+    /// IsTerminating() returns true. If exception support is enabled then task will be terminated next time Suspend()
+    /// method is called. Suspend() will throw an exception that will be caught out-most layer of the task.
     void Terminate() { state_ = TSTATE_TERMINATE; }
-    /// Get current thread task. Other tasks should switch into returned task periodically. This function must be called at least once before creating tasks. Do not store return value in a shared pointer.
+    /// Get current thread task. Other tasks should switch into returned task periodically. This function must be called
+    /// at least once before creating tasks. Do not store return value in a shared pointer.
     static Task* GetThreadTask();
 
 protected:
@@ -103,6 +105,7 @@ protected:
 class URHO3D_API TaskScheduler : public Object
 {
     URHO3D_OBJECT(TaskScheduler, Object);
+
 public:
     /// Construct.
     explicit TaskScheduler(Context* context);
@@ -120,21 +123,24 @@ public:
 
 private:
     /// List of tasks for every event tasks are executed on.
-    List<SharedPtr<Task> > tasks_;
+    List<SharedPtr<Task>> tasks_;
 };
 
-/// Suspend execution of current task. Must be called from within function invoked by callback passed to TaskScheduler::Create() or Tasks::Create().
+/// Suspend execution of current task. Must be called from within function invoked by callback passed to
+/// TaskScheduler::Create() or Tasks::Create().
 URHO3D_API void SuspendTask(float time = 0.f);
 
 /// Tasks subsystem. Handles execution of tasks on the main thread.
 class URHO3D_API Tasks : public Object
 {
     URHO3D_OBJECT(Tasks, Object);
+
 public:
     /// Construct.
     explicit Tasks(Context* context);
     /// Create a task and schedule it for execution.
-    Task* Create(StringHash eventType, const std::function<void()>& taskFunction, unsigned stackSize = DEFAULT_TASK_SIZE);
+    Task* Create(StringHash eventType, const std::function<void()>& taskFunction,
+                 unsigned stackSize = DEFAULT_TASK_SIZE);
     /// Return number of active tasks.
     unsigned GetActiveTaskCount() const;
 
@@ -143,7 +149,6 @@ private:
     void ExecuteTasks(StringHash eventType);
 
     /// Task schedulers for each scene event.
-    HashMap<StringHash, SharedPtr<TaskScheduler> > taskSchedulers_;
+    HashMap<StringHash, SharedPtr<TaskScheduler>> taskSchedulers_;
 };
-
 };

@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 class ListView;
 
 /// %Menu %UI element that displays a popup list view.
@@ -45,7 +44,8 @@ public:
     /// Apply attribute changes that can not be applied immediately.
     virtual void ApplyAttributes() override;
     /// Return UI rendering batches.
-    virtual void GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData, const IntRect& currentScissor) override;
+    virtual void GetBatches(PODVector<UIBatch>& batches, PODVector<float>& vertexData,
+                            const IntRect& currentScissor) override;
     /// React to the popup being shown.
     virtual void OnShowPopup() override;
     /// React to the popup being hidden.
@@ -65,7 +65,8 @@ public:
     void RemoveAllItems();
     /// Set selection.
     void SetSelection(unsigned index);
-    /// Set place holder text. This is the text shown when there is no selection (-1) in drop down list. Note that if the list has items, the default is to show the first item, so the "no selection" state has to be set explicitly.
+    /// Set place holder text. This is the text shown when there is no selection (-1) in drop down list. Note that if
+    /// the list has items, the default is to show the first item, so the "no selection" state has to be set explicitly.
     void SetPlaceholderText(const String& text);
     /// Set whether popup should be automatically resized to match the dropdown button width.
     void SetResizePopup(bool enable);
@@ -120,5 +121,4 @@ private:
     /// Selected item index attribute.
     unsigned selectionAttr_;
 };
-
 }

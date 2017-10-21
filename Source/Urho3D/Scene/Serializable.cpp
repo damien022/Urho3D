@@ -26,8 +26,8 @@
 #include "../IO/Deserializer.h"
 #include "../IO/Log.h"
 #include "../IO/Serializer.h"
-#include "../Resource/XMLElement.h"
 #include "../Resource/JSONValue.h"
+#include "../Resource/XMLElement.h"
 #include "../Scene/ReplicationState.h"
 #include "../Scene/SceneEvents.h"
 #include "../Scene/Serializable.h"
@@ -36,8 +36,8 @@
 
 namespace Urho3D
 {
-
-static unsigned RemapAttributeIndex(const Vector<AttributeInfo>* attributes, const AttributeInfo& netAttr, unsigned netAttrIndex)
+static unsigned RemapAttributeIndex(const Vector<AttributeInfo>* attributes, const AttributeInfo& netAttr,
+                                    unsigned netAttrIndex)
 {
     if (!attributes)
         return netAttrIndex; // Could not remap
@@ -55,15 +55,13 @@ static unsigned RemapAttributeIndex(const Vector<AttributeInfo>* attributes, con
     return netAttrIndex; // Could not remap
 }
 
-Serializable::Serializable(Context* context) :
-    Object(context),
-    temporary_(false)
+Serializable::Serializable(Context* context)
+    : Object(context)
+    , temporary_(false)
 {
 }
 
-Serializable::~Serializable()
-{
-}
+Serializable::~Serializable() {}
 
 void Serializable::OnSetAttribute(const AttributeInfo& attr, const Variant& src)
 {
@@ -276,10 +274,7 @@ void Serializable::OnGetAttribute(const AttributeInfo& attr, Variant& dest) cons
     }
 }
 
-const Vector<AttributeInfo>* Serializable::GetAttributes() const
-{
-    return context_->GetAttributes(GetType());
-}
+const Vector<AttributeInfo>* Serializable::GetAttributes() const { return context_->GetAttributes(GetType()); }
 
 const Vector<AttributeInfo>* Serializable::GetNetworkAttributes() const
 {
@@ -439,7 +434,8 @@ bool Serializable::LoadJSON(const JSONValue& source, bool setInstanceDefault)
     // Warn if the attributes value isn't an object
     if (!attributesValue.IsObject())
     {
-        URHO3D_LOGWARNING("'attributes' object is present in " + GetTypeName() + " but is not a JSON object; skipping load");
+        URHO3D_LOGWARNING("'attributes' object is present in " + GetTypeName() +
+                          " but is not a JSON object; skipping load");
         return true;
     }
 
@@ -618,8 +614,8 @@ bool Serializable::SetAttribute(unsigned index, const Variant& value)
     }
     else
     {
-        URHO3D_LOGERROR("Could not set attribute " + attr.name_ + ": expected type " + Variant::GetTypeName(attr.type_) +
-                 " but got " + value.GetTypeName());
+        URHO3D_LOGERROR("Could not set attribute " + attr.name_ + ": expected type " +
+                        Variant::GetTypeName(attr.type_) + " but got " + value.GetTypeName());
         return false;
     }
 }
@@ -645,8 +641,8 @@ bool Serializable::SetAttribute(const String& name, const Variant& value)
             }
             else
             {
-                URHO3D_LOGERROR("Could not set attribute " + i->name_ + ": expected type " + Variant::GetTypeName(i->type_)
-                         + " but got " + value.GetTypeName());
+                URHO3D_LOGERROR("Could not set attribute " + i->name_ + ": expected type " +
+                                Variant::GetTypeName(i->type_) + " but got " + value.GetTypeName());
                 return false;
             }
         }
@@ -676,10 +672,7 @@ void Serializable::ResetToDefault()
     }
 }
 
-void Serializable::RemoveInstanceDefault()
-{
-    instanceDefaultValues_.Reset();
-}
+void Serializable::RemoveInstanceDefault() { instanceDefaultValues_.Reset(); }
 
 void Serializable::SetTemporary(bool enable)
 {
@@ -1002,8 +995,8 @@ unsigned Serializable::GetNumAttributes() const
 
 unsigned Serializable::GetNumNetworkAttributes() const
 {
-    const Vector<AttributeInfo>* attributes = networkState_ ? networkState_->attributes_ :
-        context_->GetNetworkAttributes(GetType());
+    const Vector<AttributeInfo>* attributes =
+        networkState_ ? networkState_->attributes_ : context_->GetNetworkAttributes(GetType());
     return attributes ? attributes->Size() : 0;
 }
 
@@ -1030,7 +1023,7 @@ void Serializable::SetInstanceDefault(const String& name, const Variant& default
     // Allocate the instance level default value
     if (!instanceDefaultValues_)
         instanceDefaultValues_ = new VariantMap();
-    instanceDefaultValues_->operator [](name) = defaultValue;
+    instanceDefaultValues_->operator[](name) = defaultValue;
 }
 
 Variant Serializable::GetInstanceDefault(const String& name) const
@@ -1044,5 +1037,4 @@ Variant Serializable::GetInstanceDefault(const String& name) const
 
     return Variant::EMPTY;
 }
-
 }

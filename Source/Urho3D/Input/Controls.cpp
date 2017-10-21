@@ -26,17 +26,14 @@
 
 namespace Urho3D
 {
-
-Controls::Controls() :
-    buttons_(0),
-    yaw_(0.f),
-    pitch_(0.f)
+Controls::Controls()
+    : buttons_(0)
+    , yaw_(0.f)
+    , pitch_(0.f)
 {
 }
 
-Controls::~Controls()
-{
-}
+Controls::~Controls() {}
 
 void Controls::Reset()
 {
@@ -45,5 +42,4 @@ void Controls::Reset()
     pitch_ = 0.0f;
     extraData_.Clear();
 }
-
 }

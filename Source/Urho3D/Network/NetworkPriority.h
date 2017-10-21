@@ -26,7 +26,6 @@
 
 namespace Urho3D
 {
-
 /// %Network interest management settings component.
 class URHO3D_API NetworkPriority : public Component
 {
@@ -74,5 +73,4 @@ private:
     /// Update owner at full rate flag.
     bool alwaysUpdateOwner_;
 };
-
 }

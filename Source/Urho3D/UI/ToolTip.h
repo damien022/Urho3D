@@ -27,7 +27,6 @@
 
 namespace Urho3D
 {
-
 /// Tooltip %UI element.
 class URHO3D_API ToolTip : public UIElement
 {
@@ -44,7 +43,8 @@ public:
     /// Perform UI element update.
     virtual void Update(float timeStep) override;
 
-    /// Set the delay in seconds until the tooltip shows once hovering. Set zero to use the default from the UI subsystem.
+    /// Set the delay in seconds until the tooltip shows once hovering. Set zero to use the default from the UI
+    /// subsystem.
     void SetDelay(float delay);
 
     /// Return the delay in seconds until the tooltip shows once hovering.
@@ -62,5 +62,4 @@ private:
     /// Original offset position to the parent.
     IntVector2 originalPosition_;
 };
-
 }
