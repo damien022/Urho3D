@@ -1,0 +1,13 @@
+UseTab: Never
+IndentWidth: 4
+BreakBeforeBraces: Allman
+AllowShortIfStatementsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: All
+KeepEmptyLinesAtTheStartOfBlocks: false
+IndentCaseLabels: false
+ColumnLimit: 0
+PointerAlignment: Left
+AccessModifierOffset: -4
+BreakConstructorInitializers: BeforeComma
+ColumnLimit: 120
+AllowShortBlocksOnASingleLine: true
