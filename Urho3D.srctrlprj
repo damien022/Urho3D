@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<config>
+    <source_groups>
+        <source_group_995a5e52-b927-44f8-86c8-10543ba3dfc0>
+            <cross_compilation>
+                <target>
+                    <abi>unknown</abi>
+                    <arch>x86_64</arch>
+                    <sys>unknown</sys>
+                    <vendor>unknown</vendor>
+                </target>
+                <target_options_enabled>1</target_options_enabled>
+            </cross_compilation>
+            <header_search_paths>
+                <header_search_path>Source/ThirdParty</header_search_path>
+                <header_search_path>Source</header_search_path>
+            </header_search_paths>
+            <name>C++ Source Group</name>
+            <should_apply_anonymous_typedef_transformation>1</should_apply_anonymous_typedef_transformation>
+            <source_extensions>
+                <source_extension>.cpp</source_extension>
+                <source_extension>.cxx</source_extension>
+                <source_extension>.cc</source_extension>
+                <source_extension>.c</source_extension>
+            </source_extensions>
+            <source_paths>
+                <source_path>Source/Urho3D</source_path>
+                <source_path>Source/Samples</source_path>
+                <source_path>Source/Extras</source_path>
+                <source_path>Source/Tools</source_path>
+            </source_paths>
+            <standard>gnu++11</standard>
+            <type>C++ Source Group</type>
+        </source_group_995a5e52-b927-44f8-86c8-10543ba3dfc0>
+    </source_groups>
+    <version>4</version>
+</config>

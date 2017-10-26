@@ -1,0 +1,21 @@
+{
+	"name" : "Input",
+	"sources" : ["Source/Urho3D/Input"],
+	"includes" : ["<Urho3D/UI/UIWidget.h>"],
+	"classes" : ["Input", "JoystickState"],
+	"overloads" : {
+	},
+   	"typescript_decl" : {
+		"Input" : [
+		     "getTouch(index:number):any;"
+        ]
+	},
+
+   	"haxe_decl" : {
+		"Input" : [
+		     "getTouch(index:number):Dynamic;"
+        ]
+	}
+
+
+}

@@ -35,6 +35,7 @@ if (URHO3D_TOOLS)
     add_subdirectory (RampGenerator)
     add_subdirectory (SpritePacker)
     add_subdirectory (UIEditor)
+    add_subdirectory (AtomicTool)
 endif ()
 
 file(GLOB tool_dirs RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*)

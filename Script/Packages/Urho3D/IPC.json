@@ -1,0 +1,6 @@
+{
+	"name" : "IPC",
+	"includes" : ["Urho3D/IPC/IPCMessage.h"],
+	"sources" : ["Source/Urho3D/IPC"],
+	"classes" : ["IPC"]
+}

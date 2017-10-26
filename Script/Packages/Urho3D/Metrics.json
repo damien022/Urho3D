@@ -1,0 +1,5 @@
+{
+	"name" : "Metrics",
+	"sources" : ["Source/Urho3D/Metrics"],
+	"classes" : ["Metrics", "MetricsSnapshot"]
+}

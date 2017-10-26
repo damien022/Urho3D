@@ -1,0 +1,13 @@
+{
+	"name" : "Physics",
+	"requires" : ["3D"],
+	"sources" : ["Source/Urho3D/Physics"],
+	"includes" : ["<Urho3D/Graphics/Model.h>"],
+	"classes" : ["CollisionShape", "Constraint", "PhysicsWorld", "RigidBody"],
+ 	"overloads" : {
+		"RigidBody" : {
+			"ApplyImpulse" : ["Vector3"]
+		}
+
+	}
+}

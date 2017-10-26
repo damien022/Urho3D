@@ -1,0 +1,12 @@
+
+{
+	"name" : "Urho3D",
+	"namespace" : "Urho3D",
+	"modules" : ["Container", "Math", "Core", "Scene", "Graphics", "Audio",
+		"Physics", "Navigation", "Input", "Resource", "Network", "IO", "Engine"],
+		"moduleExclude" : {
+			"WEB" : ["Navigation"],
+			"ANDROID" : ["IPC"],
+			"IOS" : ["IPC"]
+		}
+	}
