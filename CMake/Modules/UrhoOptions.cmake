@@ -96,6 +96,7 @@ option(URHO3D_LOGGING "Enable logging subsystem" ${URHO3D_LOGGING_DEFAULT})
 option(URHO3D_SYSTEMUI "Build SystemUI subsystem" ${URHO3D_DEVELOPER})
 option(URHO3D_PACKAGING "Package resources" ${URHO3D_RELEASE})
 option(URHO3D_FILEWATCHER "Watch filesystem for resource changes" ${URHO3D_DEVELOPER})
+option(URHO3D_DOTNET "Enable .NET bindings" ${URHO3D_ENABLE_ALL})
 
 if (WIN32)
     set(URHO3D_RENDERER D3D11 CACHE STRING "Select renderer: D3D9 | D3D11 | OpenGL")

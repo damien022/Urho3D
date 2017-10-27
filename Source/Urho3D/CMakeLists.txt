@@ -263,16 +263,47 @@ set (HEADER_FILES "#include <Urho3D/${HEADER_FILES}>")
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/Urho3DAll.h.in ${CMAKE_CURRENT_BINARY_DIR}/Urho3DAll.h @ONLY)
 install (FILES ${CMAKE_CURRENT_BINARY_DIR}/Urho3DAll.h DESTINATION ${DEST_INCLUDE_DIR})
 
-find_package(SWIG REQUIRED)
-include(${SWIG_USE_FILE})
-set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR}/Urho3DNET)
-set_source_files_properties(Urho3DAll.i PROPERTIES CPLUSPLUS ON)
-set_property(SOURCE Urho3DAll.i PROPERTY SWIG_MODULE_NAME Urho3D.${CMAKE_SHARED_LIBRARY_SUFFIX})
-set_source_files_properties(Urho3DAll.i PROPERTIES SWIG_FLAGS "-O;-fastdispatch;-fvirtual;-namespace;Urho3D;-w473;-w516")
-# -w473  Returning a pointer or reference in a director method is not recommended.
-# -w516  Overloaded method XX ignored, using YY instead. Usually spam about const vs non-const methods, defaults to non-consts.
-swig_add_module(Urho3DNET csharp Urho3DAll.i)
-target_compile_definitions(Urho3DNET PRIVATE ${URHO3D_COMPILE_DEFINITIONS})
-get_property(URHO3D_INCLUDE_DIRECTORIES TARGET Urho3D PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
-target_include_directories(Urho3DNET PRIVATE .. ${URHO3D_INCLUDE_DIRECTORIES})
-target_link_libraries(Urho3DNET Urho3D)
+if (URHO3D_DOTNET)
+    find_package(SWIG REQUIRED)
+    include(${SWIG_USE_FILE})
+    set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR}/Urho3DNET)
+    set_source_files_properties(Urho3D.i PROPERTIES CPLUSPLUS ON)
+    set_property(SOURCE Urho3D.i PROPERTY SWIG_MODULE_NAME Urho3D.${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set_source_files_properties(Urho3D.i PROPERTIES SWIG_FLAGS "-O;-fastdispatch;-fvirtual;-namespace;Urho3D;-w473;-w516")
+    # -w473  Returning a pointer or reference in a director method is not recommended.
+    # -w516  Overloaded method XX ignored, using YY instead. Usually spam about const vs non-const methods, defaults to non-consts.
+    swig_add_module(Urho3DNETNative csharp Urho3D.i)
+    target_compile_definitions(Urho3DNETNative PRIVATE ${URHO3D_COMPILE_DEFINITIONS})
+    get_property(URHO3D_INCLUDE_DIRECTORIES TARGET Urho3D PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+    target_include_directories(Urho3DNETNative PRIVATE .. ${URHO3D_INCLUDE_DIRECTORIES})
+    target_link_libraries(Urho3DNETNative Urho3D)
+    set_target_properties(Urho3DNETNative PROPERTIES PREFIX ${CMAKE_SHARED_LIBRARY_PREFIX})
+
+    file(COPY ../Urho3DNET/Properties ../Urho3DNET/Urho3DNET.csproj DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Urho3DNET)
+
+    if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+        set (URHO3DNET_BUILD_TYPE "Debug")
+    else ()
+        set (URHO3DNET_BUILD_TYPE "Release")
+    endif ()
+
+    find_program (URHO3DNET_BUILD_TOOL msbuild)
+    if (NOT URHO3DNET_BUILD_TOOL)
+        find_program (URHO3DNET_BUILD_TOOL xbuild)
+    endif ()
+    if (NOT URHO3DNET_BUILD_TOOL)
+        message(FATAL_ERROR ".NET bindings require msbuild or xbuild tool")
+    endif ()
+
+    add_custom_target(Urho3DNET
+        COMMAND ${URHO3DNET_BUILD_TOOL} /property:Configuration=${URHO3DNET_BUILD_TYPE} /property:Platform=${URHO3D_PLATFORM_NAME} /property:OutputPath=${CMAKE_LIBRARY_OUTPUT_DIRECTORY} Urho3DNET.csproj
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Urho3DNET
+    )
+    add_dependencies(Urho3DNET Urho3DNETNative)
+    install(TARGETS Urho3DNETNative
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION ${SHARED_LIB_INSTALL_DIR}
+        ARCHIVE DESTINATION lib${LIB_SUFFIX}
+    )
+    install (FILES ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/Urho3DNET.dll DESTINATION ${SHARED_LIB_INSTALL_DIR})
+endif ()
