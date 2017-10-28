@@ -1,5 +1,5 @@
 {
 	"name" : "Math",
 	"sources" : ["Source/Urho3D/Math"],
-	"classes" : ["Color", "Vector2", "Vector3", "Vector4", "Quaternion", "BoundingBox", "Rect", "IntRect", "IntVector2", "Frustum"]
+	"classes" : ["Color", "Vector2", "Vector3", "Vector4", "Quaternion", "BoundingBox", "Rect", "IntRect", "IntVector2", "Frustum", "Polyhedron", "Sphere", "Ray"]
 }

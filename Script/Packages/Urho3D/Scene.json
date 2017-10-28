@@ -4,7 +4,8 @@
 	"includes" : ["<Urho3D/Scene/LogicComponent.h>", "<Urho3D/Network/Connection.h>"],
 	"classes" : ["Animatable", "Node", "Scene", "Component", "Serializable",
 				 "ObjectAnimation", "SmoothedTransform", "SplinePath",
-				 "ValueAnimation", "ValueAnimationInfo"],
+				 "ValueAnimation", "ValueAnimationInfo", "VAnimKeyFrame", "VAnimEventFrame", "DirtyBits", "NetworkState", "ReplicationState", "ComponentReplicationState", "NodeReplicationState",
+				 "SceneReplicationState", "SceneResolver", "AsyncProgress", "UnknownComponent", "LogicComponent", "AttributeAnimationInfo"],
 	"excludes" : {
 		"Scene" : {
 			"GetComponent" : ["unsigned"],

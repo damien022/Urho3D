@@ -2,7 +2,8 @@
 	"name" : "Resource",
 	"sources" : ["Source/Urho3D/Resource"],
 	"includes" : ["<Urho3D/IO/PackageFile.h>"],
-	"classes" : ["Resource", "ResourceWithMetadata", "ResourceCache", "XMLFile", "PListFile", "JSONFile", "Image"],
+	"classes" : ["Resource", "ResourceWithMetadata", "ResourceCache", "XMLFile", "PListFile", "JSONFile", "Image",
+				 "ResourceGroup", "ResourceRouter", "Localization", "CompressedLevel", "BackgroundLoadItem", "BackgroundLoader"],
 	"overloads": {
 		"Image": {
 			"GetPixel": ["int", "int"],

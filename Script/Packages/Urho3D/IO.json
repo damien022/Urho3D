@@ -1,7 +1,7 @@
 {
 	"name" : "IO",
 	"sources" : ["Source/Urho3D/IO"],
-	"classes" : ["Log", "File", "FileSystem", "FileWatcher", "PackageFile"],
+	"classes" : ["Log", "File", "FileSystem", "FileWatcher", "PackageFile", "VectorBuffer", "MemoryBuffer", "StoredLogMessage", "PackageEntry", "NamedPipe"],
 	"interfaces" : ["Serializer", "Deserializer", "AbstractFile"],
 	"overloads" : {
 		"File" : {

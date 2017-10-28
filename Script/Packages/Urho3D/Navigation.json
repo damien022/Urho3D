@@ -3,7 +3,9 @@
 	"requires" : ["3D"],
 	"sources" : ["Source/Urho3D/Navigation"],
 	"includes" : ["<Urho3D/Scene/Node.h>"],
-	"classes" : ["Navigable", "NavigationMesh", "DynamicNavigationMesh", "NavArea", "OffMeshConnection", "Obstacle", "CrowdAgent", "CrowdManager"],
+	"classes" : ["Navigable", "NavigationMesh", "DynamicNavigationMesh", "NavArea", "OffMeshConnection", "Obstacle", "CrowdAgent", "CrowdManager",
+				 "NavigationGeometryInfo", "NavigationPathPoint", "CrowdObstacleAvoidanceParams", "NavAreaStub", "NavBuildData", "SimpleNavBuildData",
+				 "DynamicNavBuildData"],
 	"overloads" : {
 		"NavigationMesh" : {
 			"Build" : []

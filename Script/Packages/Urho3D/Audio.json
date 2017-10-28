@@ -1,7 +1,7 @@
 {
 	"name" : "Audio",
 	"sources" : ["Source/Urho3D/Audio"],
-	"classes" : ["Sound", "SoundSource", "SoundSource3D", "SoundListener", "Audio"],
+	"classes" : ["Sound", "SoundSource", "SoundSource3D", "SoundListener", "Audio", "SoundStream", "OggVorbisSoundStream", "BufferedSoundStream"],
 	"overloads" : {
 		"SoundSource" : {
 			"Play" : ["Sound"]

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2014-2016 THUNDERBEAST GAMES LLC
+// Copyright (c) 2014-2017, THUNDERBEAST GAMES LLC All rights reserved
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,49 +20,10 @@
 // THE SOFTWARE.
 //
 
-#pragma once
 
-#include <Urho3D/Core/Object.h>
+#include "ScriptRenderPathCommand.h"
 
-#include "Subprocess.h"
-
-using namespace Urho3D;
-
-namespace ToolCore
+namespace Atomic
 {
-
-URHO3D_EVENT(E_SUBPROCESSOUTPUT, SubprocessOutput)
-{
-    URHO3D_PARAM(P_TEXT, Text);      // string
-}
-
-URHO3D_EVENT(E_SUBPROCESSCOMPLETE, SubprocessComplete)
-{
-    URHO3D_PARAM(P_PROCESSKEY, ProcessKey); // unsigned
-    URHO3D_PARAM(P_RETCODE, RetCode);      // int (return code of process)
-}
-
-class SubprocessSystem : public Object
-{
-    URHO3D_OBJECT(SubprocessSystem, Object);
-
-public:
-    /// Construct.
-    SubprocessSystem(Context* context);
-    /// Destruct.
-    virtual ~SubprocessSystem();
-
-
-    Subprocess* Launch(const String& command, const Vector<String>& args, const String& initialDirectory = "");
-    Subprocess* Launch(const String& command, const Vector<String>& args, const String& initialDirectory, const Poco::Process::Env& env);
-
-private:
-
-    void HandleUpdate(StringHash eventType, VariantMap& eventData);
-
-    Vector<SharedPtr<Subprocess> > processes_;
-    float updateTimer_;
-
-};
 
 }

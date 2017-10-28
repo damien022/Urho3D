@@ -1,8 +1,8 @@
 {
 	"name" : "Input",
 	"sources" : ["Source/Urho3D/Input"],
-	"includes" : ["<Urho3D/UI/UIWidget.h>"],
-	"classes" : ["Input", "JoystickState"],
+	"includes" : [],
+	"classes" : ["Input", "JoystickState", "TouchState", "Controls"],
 	"overloads" : {
 	},
    	"typescript_decl" : {

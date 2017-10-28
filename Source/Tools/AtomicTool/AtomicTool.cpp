@@ -85,7 +85,10 @@ void AtomicTool::Start()
         );
 
         jsbind->GenerateCSharpBindings();
+
     }
+
+    engine_->Exit();
 }
 
 }

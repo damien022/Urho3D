@@ -444,18 +444,23 @@ public:
     JSBFunction* processFunction(JSBClass* klass, Function* function)
     {
         JSBFunction* jfunction = new JSBFunction(klass);
+        String name = getNameString(function->name());
 
         // don't ... atm
         if (function->isVariadic())
+        {
+            URHO3D_LOGWARNINGF("Skip: %s::%s (because variadic)", klass->GetName().CString(), name.CString());
             return NULL;
-
-        String name = getNameString(function->name());
+        }
 
         jfunction->SetName(name);
 
         // don't support operators atm
         if (name.StartsWith("operator "))
+        {
+            URHO3D_LOGWARNINGF("Skip: %s::%s (because operator)", klass->GetName().CString(), name.CString());
             return NULL;
+        }
 
         if (name == klass->GetNativeName())
             jfunction->SetConstructor();
@@ -475,8 +480,10 @@ public:
             JSBFunctionType* returnType = processFunctionReturnType(function);
 
             if (!returnType)
+            {
+                URHO3D_LOGWARNINGF("Skip: %s::%s (because return type)", klass->GetName().CString(), name.CString());
                 return NULL;
-
+            }
             jfunction->SetReturnType(returnType);
         }
 
@@ -503,8 +510,10 @@ public:
                         // if we don't have an initializer, the function cannot be bound
                         // as unscriptable type
                         if (!arg->hasInitializer())
+                        {
+                            URHO3D_LOGWARNINGF("Skip: %s::%s (because no initializer)", klass->GetName().CString(), name.CString());
                             return NULL;
-
+                        }
                         // otherwise, break and the optional args will be ignored
                         break;
                     }
@@ -522,6 +531,7 @@ public:
                 }
                 else
                 {
+                    URHO3D_LOGWARNINGF("Skip: %s::%s (because not argument)", klass->GetName().CString(), name.CString());
                     return NULL;
                 }
 

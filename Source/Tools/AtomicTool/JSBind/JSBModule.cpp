@@ -456,6 +456,9 @@ void JSBModule::RegisterClass(String name)
 {
     String nativeName = name;
 
+    if (name == "ANONYMOUS_UNIMPLEMENTED")
+        return;
+
     if (classnames_.Contains(name) || interfaceNames_.Contains(name))
     {
         if (classRenames_.Contains(name))
@@ -486,6 +489,8 @@ void JSBModule::RegisterClass(String name)
 
         package_->RegisterClass(cls);
     }
+    else
+        URHO3D_LOGWARNINGF("Skip: class %s", name.CString());
 }
 
 void JSBModule::RegisterEvent(JSBEvent* event)

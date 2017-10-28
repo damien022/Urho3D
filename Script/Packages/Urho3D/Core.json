@@ -12,7 +12,7 @@
 		"<Urho3D/Graphics/Renderer.h>",
 		"<Urho3D/Metrics/Metrics.h>"
 	],
-	"classes" : ["Context", "Object", "Time", "Profiler"],
+	"classes" : ["Context", "Object", "Time", "Profiler", "Condition", "WorkQueue", "Timer", "HiresTimer", "Spline", "AttributeInfo", "AttributeHandle"],
 	"classes_rename" : {
 		"Object" : "AObject"
 	},

@@ -2,5 +2,5 @@
 	"name" : "Network",
 	"sources" : ["Source/Urho3D/Network"],
 	"includes" : ["<Urho3D/Network/Protocol.h>", "<Urho3D/Scene/Scene.h>"],
-	"classes" : ["Network", "NetworkPriority", "HttpRequest", "Connection"]
+	"classes" : ["Network", "NetworkPriority", "HttpRequest", "Connection", "RemoteEvent", "PackageDownload", "PackageUpload"]
 }

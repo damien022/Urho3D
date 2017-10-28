@@ -3,7 +3,8 @@
 	"requires" : ["3D"],
 	"sources" : ["Source/Urho3D/Physics"],
 	"includes" : ["<Urho3D/Graphics/Model.h>"],
-	"classes" : ["CollisionShape", "Constraint", "PhysicsWorld", "RigidBody"],
+	"classes" : ["CollisionShape", "Constraint", "PhysicsWorld", "RigidBody", "PhysicsRaycastResult", "DelayedWorldTransform", "ManifoldPair",
+				 "PhysicsWorldConfig", "RaycastVehicle", "CollisionGeometryData", "TriangleMeshData", "GImpactMeshData", "ConvexData", "HeightfieldData"],
  	"overloads" : {
 		"RigidBody" : {
 			"ApplyImpulse" : ["Vector3"]
