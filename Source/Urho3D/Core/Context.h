@@ -242,6 +242,8 @@ public:
     /// Return renderer subsystem.
     Renderer* GetRenderer() const;
 
+    /// Return application context.
+    static Context* GetContext();
 private:
     /// Add event receiver.
     void AddEventReceiver(Object* receiver, StringHash eventType);
