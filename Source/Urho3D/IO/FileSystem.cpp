@@ -1067,4 +1067,13 @@ bool IsAbsolutePath(const String& pathName)
     return false;
 }
 
+String FileSystem::GetTemporaryPath() const
+{
+#ifdef MINI_URHO
+    return ".";
+#else
+    return SDL_GetPrefPath("urho3d", "temp");
+#endif
+}
+
 }

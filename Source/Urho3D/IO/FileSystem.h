@@ -101,6 +101,8 @@ public:
     String GetUserDocumentsDir() const;
     /// Return the application preferences directory.
     String GetAppPreferencesDir(const String& org, const String& app) const;
+    /// Return path of temporary directory. Result is a directory in application settings directory, not system temporary directory.
+    String GetTemporaryPath() const;
 
 private:
     /// Scan directory, called internally.
