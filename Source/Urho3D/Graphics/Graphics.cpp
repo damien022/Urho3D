@@ -371,6 +371,44 @@ void Graphics::CreateWindowIcon()
     }
 }
 
+int Graphics::GetCurrentMonitor() const
+{
+    return SDL_GetWindowDisplayIndex((SDL_Window*) this->GetSDLWindow());
+}
+
+int Graphics::GetNumMonitors() const
+{
+    return SDL_GetNumVideoDisplays();
+}
+
+bool Graphics::GetMaximized() const
+{
+    if (!window_)
+        return false;
+
+    return SDL_GetWindowFlags(window_) & SDL_WINDOW_MAXIMIZED;
+}
+
+IntVector2 Graphics::GetMonitorResolution(int monitorId) const
+{
+    SDL_DisplayMode mode;
+    SDL_GetDesktopDisplayMode(monitorId, &mode);
+    return IntVector2(mode.w, mode.h);
+}
+
+void Graphics::RaiseWindow() const
+{
+    if (window_)
+        SDL_RaiseWindow(window_);
+}
+
+Vector3 Graphics::GetDisplayDPI() const
+{
+    Vector3 result;
+    SDL_GetDisplayDPI(0, &result.z_, &result.x_, &result.y_);
+    return result;
+}
+
 void RegisterGraphicsLibrary(Context* context)
 {
     Animation::RegisterObject(context);

@@ -562,6 +562,21 @@ public:
     /// Return whether is using an OpenGL 3 context. Return always false on Direct3D9 & Direct3D11.
     static bool GetGL3Support();
 
+    /// Get the SDL_Window as a void* to avoid having to include the graphics implementation
+    void* GetSDLWindow() const { return window_; }
+    /// Returns the index of the display containing the center of the window on success or a negative error code on failure.
+    int GetCurrentMonitor() const;
+    /// Returns number of monitors currently connected.
+    int GetNumMonitors() const;
+    /// Returns true if window is maximized or runs in full screen mode.
+    bool GetMaximized() const;
+    /// Returns resolution of monitor. monitorId should be less or equal to result of GetNumMonitors().
+    IntVector2 GetMonitorResolution(int monitorId) const;
+    /// Raises window if it was minimized.
+    void RaiseWindow() const;
+    /// Return display dpi information: (hdpi, vdpi, ddpi). On failure returns zero vector.
+    Vector3 GetDisplayDPI() const;
+
 private:
     /// Create the application window.
     bool OpenWindow(int width, int height, bool resizable, bool borderless);
