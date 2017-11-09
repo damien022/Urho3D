@@ -210,7 +210,23 @@ bool TerrainPatch::DrawOcclusion(OcclusionBuffer* buffer)
 
 void TerrainPatch::DrawDebugGeometry(DebugRenderer* debug, bool depthTest)
 {
-    // Intentionally no operation
+    if (!vertexBuffer_->IsShadowed())
+    {
+        URHO3D_LOGERROR("TerrainPatch requires shadowed vertex buffer for drawing debug geometry.");
+        return;
+    }
+
+    if (auto node = GetNode())
+    {
+        auto geometry = GetLodGeometry(0, lodLevel_);
+        auto vbo = geometry->GetVertexBuffer(0);
+        auto ibo = geometry->GetIndexBuffer();
+        auto vboData = vbo->GetShadowData();
+        auto iboData = ibo->GetShadowData();
+        debug->AddTriangleMesh(vboData, vbo->GetVertexSize(), geometry->GetVertexStart(), iboData, ibo->GetIndexSize(),
+                               geometry->GetIndexStart(), geometry->GetIndexCount(), node->GetWorldTransform(),
+                               Color::GREEN, depthTest);
+    }
 }
 
 void TerrainPatch::SetOwner(Terrain* terrain)

@@ -110,7 +110,8 @@ Terrain::Terrain(Context* context) :
     westID_(0),
     eastID_(0),
     recreateTerrain_(false),
-    neighborsDirty_(false)
+    neighborsDirty_(false),
+    debugGeometry_(false)
 {
     indexBuffer_->SetShadowed(true);
 }
@@ -523,6 +524,10 @@ void Terrain::SetOccludee(bool enable)
     }
 
     MarkNetworkUpdate();
+}
+void Terrain::SetEnableDebug(bool enable)
+{
+    debugGeometry_ = enable;
 }
 
 void Terrain::ApplyHeightMap()
@@ -1066,6 +1071,8 @@ void Terrain::CreateGeometry()
                         patch = patchNode->CreateComponent<TerrainPatch>();
                         patch->SetOwner(this);
                         patch->SetCoordinates(IntVector2(x, z));
+                        if (debugGeometry_)
+                            patch->GetVertexBuffer()->SetShadowed(true);
 
                         // Copy initial drawable parameters
                         patch->SetEnabled(enabled);
@@ -1481,6 +1488,12 @@ void Terrain::UpdateEdgePatchNeighbors()
     SetPatchNeighbors(GetPatch(numPatches_.x_ - 1, 0));
     SetPatchNeighbors(GetPatch(0, numPatches_.y_ - 1));
     SetPatchNeighbors(GetPatch(numPatches_.x_ - 1, numPatches_.y_ - 1));
+}
+
+void Terrain::DrawDebugGeometry(DebugRenderer* debug, bool depthTest)
+{
+    for (const auto& patch: patches_)
+        patch->DrawDebugGeometry(debug, depthTest);
 }
 
 }
