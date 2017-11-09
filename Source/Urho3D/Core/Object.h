@@ -31,6 +31,22 @@ namespace Urho3D
 
 class Context;
 class EventHandler;
+class Engine;
+class Time;
+class WorkQueue;
+class Profiler;
+class EventProfiler;
+class FileSystem;
+class Log;
+class ResourceCache;
+class Localization;
+class Network;
+class Input;
+class Audio;
+class Database;
+class UI;
+class Graphics;
+class Renderer;
 
 /// Type info.
 class URHO3D_API TypeInfo
@@ -165,6 +181,47 @@ public:
     void SetBlockEvents(bool block) { blockEvents_ = block; }
     /// Return sending and receiving events blocking status.
     bool GetBlockEvents() const { return blockEvents_; }
+
+    /// Return engine subsystem.
+    Engine* GetEngine() const;
+    /// Return time subsystem.
+    Time* GetTime() const;
+    /// Return work queue subsystem.
+    WorkQueue* GetWorkQueue() const;
+#ifdef URHO3D_PROFILING
+    /// Return profiler subsystem.
+    Profiler* GetProfiler() const;
+    /// Return event profiler subsystem.
+    EventProfiler* GetEventProfiler() const;
+#endif
+    /// Return file system subsystem.
+    FileSystem* GetFileSystem() const;
+#ifdef URHO3D_LOGGING
+    /// Return logging subsystem.
+    Log* GetLog() const;
+#endif
+    /// Return resource cache subsystem.
+    ResourceCache* GetCache() const;
+    /// Return localization subsystem.
+    Localization* GetLocalization() const;
+#ifdef URHO3D_NETWORK
+    /// Return network subsystem.
+    Network* GetNetwork() const;
+#endif
+    /// Return input subsystem.
+    Input* GetInput() const;
+    /// Return audio subsystem.
+    Audio* GetAudio() const;
+#ifdef URHO3D_DATABASE
+    /// Return database subsystem.
+    Database* GetDatabase() const;
+#endif
+    /// Return UI subsystem.
+    UI* GetUI() const;
+    /// Return graphics subsystem.
+    Graphics* GetGraphics() const;
+    /// Return renderer subsystem.
+    Renderer* GetRenderer() const;
 
 protected:
     /// Execution context.

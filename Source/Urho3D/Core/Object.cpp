@@ -24,7 +24,22 @@
 
 #include "../Core/Context.h"
 #include "../Core/Thread.h"
+#include "../Core/EventProfiler.h"
+#include "../Core/WorkQueue.h"
+#include "../Engine/Engine.h"
+#include "../Resource/ResourceCache.h"
+#include "../Resource/Localization.h"
+#include "../Network/Network.h"
+#include "../Input/Input.h"
+#include "../Audio/Audio.h"
+#include "../Graphics/Graphics.h"
+#include "../Graphics/Renderer.h"
+#ifdef URHO3D_DATABASE
+#include "../Database/Database.h"
+#endif
 #include "../IO/Log.h"
+#include "../IO/FileSystem.h"
+#include "../UI/UI.h"
 
 #include "../DebugNew.h"
 
@@ -547,6 +562,93 @@ HashMap<StringHash, String>& EventNameRegistrar::GetEventNameMap()
 {
     static HashMap<StringHash, String> eventNames_;
     return eventNames_;
+}
+
+Engine* Object::GetEngine() const
+{
+    return GetSubsystem<Engine>();
+}
+
+Time* Object::GetTime() const
+{
+    return GetSubsystem<Time>(); }
+
+WorkQueue* Object::GetWorkQueue() const
+{
+    return GetSubsystem<WorkQueue>();
+}
+
+#ifdef URHO3D_PROFILING
+Profiler* Object::GetProfiler() const
+{
+    return GetSubsystem<Profiler>();
+}
+
+EventProfiler* Object::GetEventProfiler() const
+{
+    return GetSubsystem<EventProfiler>();
+}
+#endif
+
+FileSystem* Object::GetFileSystem() const
+{
+    return GetSubsystem<FileSystem>();
+}
+
+#ifdef URHO3D_LOGGING
+Log* Object::GetLog() const
+{
+    return GetSubsystem<Log>();
+}
+#endif
+
+ResourceCache* Object::GetCache() const
+{
+    return GetSubsystem<ResourceCache>();
+}
+
+Localization* Object::GetLocalization() const
+{
+    return GetSubsystem<Localization>();
+}
+
+#ifdef URHO3D_NETWORK
+Network* Object::GetNetwork() const
+{
+    return GetSubsystem<Network>();
+}
+#endif
+
+Input* Object::GetInput() const
+{
+    return GetSubsystem<Input>();
+}
+
+Audio* Object::GetAudio() const
+{
+    return GetSubsystem<Audio>();
+}
+
+#ifdef URHO3D_DATABASE
+Database* Object::GetDatabase() const
+{
+    return GetSubsystem<Database>();
+}
+#endif
+
+UI* Object::GetUI() const
+{
+    return GetSubsystem<UI>();
+}
+
+Graphics* Object::GetGraphics() const
+{
+    return GetSubsystem<Graphics>();
+}
+
+Renderer* Object::GetRenderer() const
+{
+    return GetSubsystem<Renderer>();
 }
 
 }

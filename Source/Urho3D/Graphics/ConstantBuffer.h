@@ -61,6 +61,7 @@ public:
     /// Return whether has unapplied data.
     bool IsDirty() const { return dirty_; }
 
+    using GPUObject::GetGraphics;
 private:
     /// Shadow data.
     SharedArrayPtr<unsigned char> shadowData_;

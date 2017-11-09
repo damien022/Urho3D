@@ -33,6 +33,20 @@
 #include <ik/memory.h>
 #endif
 #endif
+#include "../Core/WorkQueue.h"
+#include "../Engine/Engine.h"
+#include "../Resource/ResourceCache.h"
+#include "../Resource/Localization.h"
+#include "../Network/Network.h"
+#include "../Input/Input.h"
+#include "../Audio/Audio.h"
+#include "../Graphics/Graphics.h"
+#include "../Graphics/Renderer.h"
+#ifdef URHO3D_DATABASE
+#include "../Database/Database.h"
+#endif
+#include "../IO/FileSystem.h"
+#include "../UI/UI.h"
 
 #include "../DebugNew.h"
 
@@ -471,6 +485,93 @@ void Context::EndSendEvent()
             eventProfiler->EndBlock();
     }
 #endif
+}
+
+Engine* Context::GetEngine() const
+{
+    return GetSubsystem<Engine>();
+}
+
+Time* Context::GetTime() const
+{
+    return GetSubsystem<Time>(); }
+
+WorkQueue* Context::GetWorkQueue() const
+{
+    return GetSubsystem<WorkQueue>();
+}
+
+#ifdef URHO3D_PROFILING
+Profiler* Context::GetProfiler() const
+{
+    return GetSubsystem<Profiler>();
+}
+
+EventProfiler* Context::GetEventProfiler() const
+{
+    return GetSubsystem<EventProfiler>();
+}
+#endif
+
+FileSystem* Context::GetFileSystem() const
+{
+    return GetSubsystem<FileSystem>();
+}
+
+#ifdef URHO3D_LOGGING
+Log* Context::GetLog() const
+{
+    return GetSubsystem<Log>();
+}
+#endif
+
+ResourceCache* Context::GetCache() const
+{
+    return GetSubsystem<ResourceCache>();
+}
+
+Localization* Context::GetLocalization() const
+{
+    return GetSubsystem<Localization>();
+}
+
+#ifdef URHO3D_NETWORK
+Network* Context::GetNetwork() const
+{
+    return GetSubsystem<Network>();
+}
+#endif
+
+Input* Context::GetInput() const
+{
+    return GetSubsystem<Input>();
+}
+
+Audio* Context::GetAudio() const
+{
+    return GetSubsystem<Audio>();
+}
+
+#ifdef URHO3D_DATABASE
+Database* Context::GetDatabase() const
+{
+    return GetSubsystem<Database>();
+}
+#endif
+
+UI* Context::GetUI() const
+{
+    return GetSubsystem<UI>();
+}
+
+Graphics* Context::GetGraphics() const
+{
+    return GetSubsystem<Graphics>();
+}
+
+Renderer* Context::GetRenderer() const
+{
+    return GetSubsystem<Renderer>();
 }
 
 }

@@ -132,6 +132,7 @@ public:
     /// Update offsets of vertex elements.
     static void UpdateOffsets(PODVector<VertexElement>& elements);
 
+    using GPUObject::GetGraphics;
 private:
     /// Update offsets of vertex elements.
     void UpdateOffsets();

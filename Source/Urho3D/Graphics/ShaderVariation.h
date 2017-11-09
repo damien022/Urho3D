@@ -137,6 +137,7 @@ public:
     /// D3D11 vertex semantic names. Used internally.
     static const char* elementSemanticNames[];
 
+    using GPUObject::GetGraphics;
 private:
     /// Load bytecode from a file. Return true if successful.
     bool LoadByteCode(const String& binaryShaderName);

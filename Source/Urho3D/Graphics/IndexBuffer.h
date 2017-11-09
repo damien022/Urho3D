@@ -85,6 +85,7 @@ public:
     /// Return shared array pointer to the CPU memory shadow data.
     SharedArrayPtr<unsigned char> GetShadowDataShared() const { return shadowData_; }
 
+    using GPUObject::GetGraphics;
 private:
     /// Create buffer.
     bool Create();

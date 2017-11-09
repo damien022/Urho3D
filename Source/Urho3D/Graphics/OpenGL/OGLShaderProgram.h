@@ -86,6 +86,7 @@ public:
     /// Clear a global parameter source when constant buffers change.
     static void ClearGlobalParameterSource(ShaderParameterGroup group);
 
+    using GPUObject::GetGraphics;
 private:
     /// Vertex shader.
     WeakPtr<ShaderVariation> vertexShader_;

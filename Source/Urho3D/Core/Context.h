@@ -197,6 +197,47 @@ public:
         return i != eventReceivers_.End() ? i->second_ : nullptr;
     }
 
+    /// Return engine subsystem.
+    Engine* GetEngine() const;
+    /// Return time subsystem.
+    Time* GetTime() const;
+    /// Return work queue subsystem.
+    WorkQueue* GetWorkQueue() const;
+#ifdef URHO3D_PROFILING
+    /// Return profiler subsystem.
+    Profiler* GetProfiler() const;
+    /// Return event profiler subsystem.
+    EventProfiler* GetEventProfiler() const;
+#endif
+    /// Return file system subsystem.
+    FileSystem* GetFileSystem() const;
+#ifdef URHO3D_LOGGING
+    /// Return logging subsystem.
+    Log* GetLog() const;
+#endif
+    /// Return resource cache subsystem.
+    ResourceCache* GetCache() const;
+    /// Return localization subsystem.
+    Localization* GetLocalization() const;
+#ifdef URHO3D_NETWORK
+    /// Return network subsystem.
+    Network* GetNetwork() const;
+#endif
+    /// Return input subsystem.
+    Input* GetInput() const;
+    /// Return audio subsystem.
+    Audio* GetAudio() const;
+#ifdef URHO3D_DATABASE
+    /// Return database subsystem.
+    Database* GetDatabase() const;
+#endif
+    /// Return UI subsystem.
+    UI* GetUI() const;
+    /// Return graphics subsystem.
+    Graphics* GetGraphics() const;
+    /// Return renderer subsystem.
+    Renderer* GetRenderer() const;
+
 private:
     /// Add event receiver.
     void AddEventReceiver(Object* receiver, StringHash eventType);
