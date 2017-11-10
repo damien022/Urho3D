@@ -403,6 +403,9 @@ else ()
     pkg_check_modules_internal(URHO3D_PKGCONF Urho3D)
     # Urho3D library is already included in URHO3D_LIBRARIES as a full path
     list (REMOVE_ITEM URHO3D_PKGCONF_LIBRARIES Urho3D.lib)
+    list (REMOVE_ITEM URHO3D_PKGCONF_LIBRARIES Urho3D_d.lib)
+    list (REMOVE_ITEM URHO3D_PKGCONF_LIBRARIES Urho3D.dll)
+    list (REMOVE_ITEM URHO3D_PKGCONF_LIBRARIES Urho3D_d.dll)
     list (REMOVE_ITEM URHO3D_PKGCONF_LIBRARIES -lUrho3D)
     # Include any system libraries to URHO3D_LIBRARIES
     list (APPEND URHO3D_LIBRARIES "${URHO3D_PKGCONF_LIBRARIES}")
