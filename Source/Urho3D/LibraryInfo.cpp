@@ -30,7 +30,7 @@ namespace Urho3D
 
 const char* GetRevision()
 {
-    return revision;
+    return "1.5-2664-g8010f0f";
 }
 
 const char* GetCompilerDefines()

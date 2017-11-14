@@ -52,8 +52,8 @@
 #include "../IO/FileSystem.h"
 #include "../IO/Log.h"
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_syswm.h>
+#include <SDL.h>
+#include <SDL_syswm.h>
 
 #include "../DebugNew.h"
 

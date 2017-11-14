@@ -66,7 +66,7 @@
 #endif
 
 #include <assert.h>
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 #include "../DebugNew.h"
 

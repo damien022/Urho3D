@@ -33,11 +33,11 @@
 #include "../IO/Log.h"
 
 #ifdef __ANDROID__
-#include <SDL/SDL_rwops.h>
+#include <SDL_rwops.h>
 #endif
 
 #ifndef MINI_URHO
-#include <SDL/SDL_filesystem.h>
+#include <SDL_filesystem.h>
 #endif
 
 #include <sys/stat.h>

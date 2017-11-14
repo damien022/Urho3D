@@ -30,7 +30,7 @@
 #include "../Resource/Decompress.h"
 
 #include <JO/jo_jpeg.h>
-#include <SDL/SDL_surface.h>
+#include <SDL_surface.h>
 #include <STB/stb_image.h>
 #include <STB/stb_image_write.h>
 #ifdef URHO3D_WEBP

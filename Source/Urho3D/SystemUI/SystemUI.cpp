@@ -31,7 +31,7 @@
 #include "Urho3D/Resource/ResourceCache.h"
 #include "SystemUI.h"
 #include "Console.h"
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include <ImGuizmo/ImGuizmo.h>
 #include <ImGui/imgui_internal.h>
 #include <ImGui/imgui_freetype.h>
