@@ -47,7 +47,7 @@ public:
 
 protected:
     /// Current camera speed.
-    float speed_ = 2.f;
+    float speed_ = 10.f;
     /// Current mouse sensitivity.
     float mouseSensitivity_ = 0.1f;
     /// Light which is attached to camera in order to make lit objects visible.
